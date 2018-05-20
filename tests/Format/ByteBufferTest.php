@@ -35,6 +35,9 @@ class ByteBufferTest extends TestCase
     {
         $buf = ByteBuffer::fromHex('abcdef0102');
         $this->assertSame(hex2bin('abcdef0102'), $buf->getBinaryString());
+
+        $buf = ByteBuffer::fromHex('ABCDEF0102');
+        $this->assertSame(hex2bin('ABCDEF0102'), $buf->getBinaryString());
     }
 
     public function testGetBytes()
@@ -310,5 +313,11 @@ class ByteBufferTest extends TestCase
         $binaryString = "abc\x00\x01\x02\x03efg";
         $data = new ByteBuffer($binaryString);
         $this->assertSame($binaryString, $data->getBinaryString());
+    }
+
+    public function testGetHex()
+    {
+        $data = ByteBuffer::fromHex('12ab09cf');
+        $this->assertSame('12ab09cf', $data->getHex());
     }
 }

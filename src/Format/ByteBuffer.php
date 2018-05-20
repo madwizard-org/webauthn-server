@@ -7,6 +7,7 @@ use const INF;
 use const PHP_INT_SIZE;
 use InvalidArgumentException;
 use MadWizard\WebAuthn\Exception\ByteBufferException;
+use function bin2hex;
 use function hex2bin;
 
 class ByteBuffer
@@ -149,5 +150,13 @@ class ByteBuffer
     public function getBinaryString(): string
     {
         return $this->data;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHex(): string
+    {
+        return bin2hex($this->data);
     }
 }

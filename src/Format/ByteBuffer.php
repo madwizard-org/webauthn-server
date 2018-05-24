@@ -152,6 +152,11 @@ class ByteBuffer
         return $this->data;
     }
 
+    public function equals(ByteBuffer $buffer) : bool
+    {
+        return $this->data === $buffer->data;
+    }
+
     /**
      * @return string
      */

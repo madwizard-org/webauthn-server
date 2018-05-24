@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Tests\Dom;
 
 use MadWizard\WebAuthn\Dom\AbstractDictionary;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Json\JsonConverter;
 use PHPUnit\Framework\TestCase;
 
 class DictionaryTest extends TestCase
@@ -24,7 +25,7 @@ class DictionaryTest extends TestCase
     {
         $dict = $this->createDictionary($data);
 
-        $this->assertSame($check === null ? $data : $check, $dict->getJSONData());
+        $this->assertSame($check === null ? $data : $check, JsonConverter::encodeDictionary($dict));
     }
 
     public function testSimple()

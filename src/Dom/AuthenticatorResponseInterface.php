@@ -10,4 +10,6 @@ interface AuthenticatorResponseInterface
      * @return string
      */
     public function getClientDataJSON() : string;
+
+    public function getParsedClientData() : array;
 }

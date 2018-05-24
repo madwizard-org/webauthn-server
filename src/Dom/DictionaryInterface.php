@@ -5,5 +5,5 @@ namespace MadWizard\WebAuthn\Dom;
 
 interface DictionaryInterface
 {
-    public function getJSONData() : array;
+    public function getAsArray() : array;
 }

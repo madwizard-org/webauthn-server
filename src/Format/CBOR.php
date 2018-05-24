@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Format;
 
 use MadWizard\WebAuthn\Exception\ByteBufferException;
 use MadWizard\WebAuthn\Exception\CBORException;
+use function is_string;
 
 class CBOR
 {

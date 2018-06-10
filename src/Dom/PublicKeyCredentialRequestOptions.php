@@ -3,9 +3,11 @@
 
 namespace MadWizard\WebAuthn\Dom;
 
+use InvalidArgumentException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use Serializable;
 
-class PublicKeyCredentialRequestOptions extends AbstractDictionary
+class PublicKeyCredentialRequestOptions extends AbstractDictionary implements Serializable
 {
     /**
      * @var ByteBuffer
@@ -18,7 +20,7 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
     private $timeout;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $rpId;
 
@@ -80,9 +82,9 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRpId(): string
+    public function getRpId(): ?string
     {
         return $this->rpId;
     }
@@ -133,5 +135,37 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
     public function getUserVerification(): ?string
     {
         return $this->userVerification;
+    }
+
+    public function setUserVerification(?string $value) :void
+    {
+        if ($value !== null && !UserVerificationRequirement::isValidValue($value)) {
+            throw new InvalidArgumentException(sprintf('Value %s is not a valid UserVerificationRequirement', $value));
+        }
+
+        $this->userVerification = $value;
+    }
+
+    public function serialize()
+    {
+        return serialize([
+            'challenge' => $this->challenge,
+            'timeout' => $this->timeout,
+            'rpId' => $this->rpId,
+            'allowCredentials' => $this->allowCredentials,
+            'userVerification' => $this->userVerification,
+            'extensions' => $this->extensions,
+        ]);
+    }
+
+    public function unserialize($serialized)
+    {
+        $arr = \unserialize($serialized);
+        $this->challenge = $arr['challenge'];
+        $this->timeout = $arr['timeout'];
+        $this->rpId = $arr['rpId'];
+        $this->allowCredentials = $arr['allowCredentials'];
+        $this->userVerification = $arr['userVerification'];
+        $this->extensions = $arr['extensions'];
     }
 }

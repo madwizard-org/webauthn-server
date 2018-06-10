@@ -7,10 +7,11 @@ use const INF;
 use const PHP_INT_SIZE;
 use InvalidArgumentException;
 use MadWizard\WebAuthn\Exception\ByteBufferException;
+use Serializable;
 use function bin2hex;
 use function hex2bin;
 
-class ByteBuffer
+class ByteBuffer implements Serializable
 {
     /**
      * @var string
@@ -163,5 +164,16 @@ class ByteBuffer
     public function getHex(): string
     {
         return bin2hex($this->data);
+    }
+
+    public function serialize()
+    {
+        return \serialize($this->data);
+    }
+
+    public function unserialize($serialized)
+    {
+        $this->data = \unserialize($serialized);
+        $this->length = \strlen($this->data);
     }
 }

@@ -159,7 +159,11 @@ final class JsonConverter
 
     public static function encodeDictionary(DictionaryInterface $dictionary) : array
     {
-        $map = $dictionary->getAsArray();
+        return self::encodeArray($dictionary->getAsArray());
+    }
+
+    private static function encodeArray(array $map) : array
+    {
         $converted = [];
         foreach ($map as $key => $value) {
             if ($value instanceof ByteBuffer) {
@@ -168,8 +172,10 @@ final class JsonConverter
                 $converted['$buffer$' . $key] = Base64UrlEncoding::encode($value->getBinaryString());
             } elseif ($value instanceof DictionaryInterface) {
                 $converted[$key] = self::encodeDictionary($value);
-            } elseif (\is_scalar($key)) {
+            } elseif (\is_scalar($value)) {
                 $converted[$key] = $value;
+            } elseif (\is_array($value)) {
+                $converted[$key] = self::encodeArray($value);
             } else {
                 throw new WebAuthnException('Cannot convert this data to JSON format');
             }

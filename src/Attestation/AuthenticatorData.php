@@ -30,7 +30,7 @@ class AuthenticatorData
 
     /**
      * SHA-256 hash of the RP ID associated with the credential.
-     * @var string
+     * @var ByteBuffer
      */
     private $rpIdHash;
 
@@ -45,12 +45,12 @@ class AuthenticatorData
     private $signCount;
 
     /**
-     * @var COSEKey
+     * @var COSEKey|null
      */
     private $key;
 
     /**
-     * @var ByteBuffer
+     * @var ByteBuffer|null
      */
     private $credentialId;
 
@@ -61,7 +61,7 @@ class AuthenticatorData
     public function __construct(ByteBuffer $data)
     {
         $offset = 0;
-        $this->rpIdHash = $data->getBytes(0, self::LENGTH_RP_ID_HASH);
+        $this->rpIdHash = new ByteBuffer($data->getBytes(0, self::LENGTH_RP_ID_HASH));
         $offset += self::LENGTH_RP_ID_HASH;
 
         $this->flags = $data->getByteVal($offset);
@@ -85,7 +85,7 @@ class AuthenticatorData
         }
     }
 
-    public function getRpIdHash() : string
+    public function getRpIdHash() : ByteBuffer
     {
         return $this->rpIdHash;
     }
@@ -115,15 +115,15 @@ class AuthenticatorData
         return ($this->flags & self::FLAG_ED);
     }
 
-    public function getCredentialId(): ByteBuffer
+    public function getCredentialId(): ?ByteBuffer
     {
         return $this->credentialId;
     }
 
     /**
-     * @return COSEKey
+     * @return COSEKey|null
      */
-    public function getKey(): COSEKey
+    public function getKey(): ?COSEKey
     {
         return $this->key;
     }

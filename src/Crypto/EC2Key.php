@@ -3,12 +3,14 @@
 
 namespace MadWizard\WebAuthn\Crypto;
 
+use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use function base64_encode;
 use function chunk_split;
+use function openssl_pkey_get_public;
 
-class EC2Key extends COSEKey
+class EC2Key extends COSEKey // TODO exceptions
 {
     /**
      * @var ByteBuffer
@@ -41,7 +43,7 @@ class EC2Key extends COSEKey
 
     public function __construct(ByteBuffer $x, ByteBuffer $y, int $curve)
     {
-        parent::__construct(self::COSE_ALG_ES256); // TODO
+        parent::__construct(COSEAlgorithm::ES256);
 
         if ($curve !== self::CURVE_P256) {
             throw new WebAuthnException('Unsupported curve'); // TODO: exception type
@@ -131,5 +133,29 @@ class EC2Key extends COSEKey
         return '-----BEGIN PUBLIC KEY-----' . "\n" .
                 chunk_split(base64_encode($der), 64, "\n") .
                 '-----END PUBLIC KEY-----' . "\n";
+    }
+
+    public function verifySignature(string $data, string $signature) : bool
+    {
+        $publicKey = openssl_pkey_get_public($this->asPEM());
+        if ($publicKey === false) {
+            throw new WebAuthnException('Public key invalid');
+        }
+
+        if ($this->getAlgorithm() === COSEAlgorithm::ES256) {
+            $algorithm = OPENSSL_ALGO_SHA256;
+        } else {
+            throw new WebAuthnException('Unsupported algorithm');
+        }
+
+        $verify = openssl_verify($data, $signature, $publicKey, $algorithm);
+        if ($verify === 1) {
+            return true;
+        }
+        if ($verify === 0) {
+            return false;
+        }
+
+        throw new WebAuthnException('Failed to check signature');
     }
 }

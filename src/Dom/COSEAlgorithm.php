@@ -12,9 +12,9 @@ namespace MadWizard\WebAuthn\Dom;
 final class COSEAlgorithm
 {
     /**
-     * EdDSA (RFC8152)
+     * ECDSA w/ SHA-256 (RFC8152)
      */
-    public const ES256 = -1;
+    public const ES256 = -7;
 
     private function __construct()
     {

@@ -12,8 +12,6 @@ use function is_int;
 
 abstract class COSEKey
 {
-    public const COSE_ALG_ES256 = -7;    // ECDSA w/ SHA-256
-
     private const COSE_KTY_EC2 = 2;
 
     /**
@@ -93,4 +91,6 @@ abstract class COSEKey
     {
         return $this->algorithm;
     }
+
+    abstract public function verifySignature(string $data, string $signature) : bool;
 }

@@ -3,6 +3,7 @@
 
 namespace MadWizard\WebAuthn\Dom;
 
+use InvalidArgumentException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
 class PublicKeyCredentialCreationOptions extends AbstractDictionary
@@ -46,7 +47,9 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
     // TODO
     private $authenticatorSelection;
 
-    // TODO
+    /**
+     * @var string|null
+     */
     private $attestation;
 
     // TODO
@@ -94,5 +97,24 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
             $map['extensions'] = $this->extensions;
         }
         return $map;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getAttestation(): ?string
+    {
+        return $this->attestation;
+    }
+
+    /**
+     * @param null|string $attestation
+     */
+    public function setAttestation(?string $attestation): void
+    {
+        if ($attestation !== null && !AttestationConveyancePreference::isValidValue($attestation)) {
+            throw new InvalidArgumentException(sprintf("String '%s' is not a valid attestation preference.", $attestation));
+        }
+        $this->attestation = $attestation;
     }
 }

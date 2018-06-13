@@ -3,9 +3,11 @@
 namespace MadWizard\WebAuthn\Tests\Format;
 
 use const PHP_INT_SIZE;
+use InvalidArgumentException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use PHPUnit\Framework\TestCase;
 use function hex2bin;
+use function unserialize;
 
 class ByteBufferTest extends TestCase
 {
@@ -319,5 +321,36 @@ class ByteBufferTest extends TestCase
     {
         $data = ByteBuffer::fromHex('12ab09cf');
         $this->assertSame('12ab09cf', $data->getHex());
+    }
+
+    public function testEquals()
+    {
+        $this->assertTrue(ByteBuffer::fromHex('aabb00cc')->equals(ByteBuffer::fromHex('aabb00cc')));
+        $this->assertFalse(ByteBuffer::fromHex('aabb00cc')->equals(ByteBuffer::fromHex('aabb11cc')));
+    }
+
+    public function testSerialize()
+    {
+        $buffer = ByteBuffer::fromHex('00AABBCC00EEFF');
+        $serialized = serialize($buffer);
+
+        /**
+         * @var ByteBuffer $result
+         */
+        $result = unserialize($serialized);
+        $this->assertTrue($result->equals($buffer));
+        $this->assertSame($buffer->getLength(), $result->getLength());
+    }
+
+    public function testInvalidHex()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        ByteBuffer::fromHex('zz');
+    }
+
+    public function testInvalidHexLenth()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        ByteBuffer::fromHex('aab');
     }
 }

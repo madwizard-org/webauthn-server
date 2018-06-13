@@ -31,7 +31,7 @@ class ByteBuffer implements Serializable
 
     public static function fromHex(string $hex) : ByteBuffer
     {
-        $bin = hex2bin($hex);
+        $bin = @hex2bin($hex);
         if ($bin === false) {
             throw new InvalidArgumentException('Invalid hex string');
         }

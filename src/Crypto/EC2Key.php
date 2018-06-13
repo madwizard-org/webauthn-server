@@ -135,7 +135,7 @@ class EC2Key extends COSEKey // TODO exceptions
                 '-----END PUBLIC KEY-----' . "\n";
     }
 
-    public function verifySignature(string $data, string $signature) : bool
+    public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool
     {
         $publicKey = openssl_pkey_get_public($this->asPEM());
         if ($publicKey === false) {
@@ -148,7 +148,7 @@ class EC2Key extends COSEKey // TODO exceptions
             throw new WebAuthnException('Unsupported algorithm');
         }
 
-        $verify = openssl_verify($data, $signature, $publicKey, $algorithm);
+        $verify = openssl_verify($data->getBinaryString(), $signature->getBinaryString(), $publicKey, $algorithm);
         if ($verify === 1) {
             return true;
         }

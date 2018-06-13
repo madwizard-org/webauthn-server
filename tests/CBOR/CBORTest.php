@@ -76,4 +76,102 @@ class CBORTest extends TestCase
         $this->assertSame([1, 2, 3], $result);
         $this->assertEquals(8, $endOffset);
     }
+
+    public function testCorruptArray()
+    {
+        // Length 3 array but only 2 values
+        $buf = HexData::buf(
+            '83    # array(3)
+                01 # unsigned(1)
+                02 # unsigned(2)
+            '
+        );
+
+        $this->expectException(CBORException::class);
+        CBOR::decode($buf);
+    }
+
+    public function testCorruptArrayInPlace()
+    {
+        // Length 3 array but only 2 values
+        $buf = HexData::buf(
+            '83    # array(3)
+                01 # unsigned(1)
+                02 # unsigned(2)
+            '
+        );
+
+        $this->expectException(CBORException::class);
+        CBOR::decodeInPlace($buf, 0);
+    }
+
+    public function testUnsupportedMapKey()
+    {
+        // array as map key
+        $buf = HexData::buf(
+            'A1       # map(1)
+                80    # array(0)
+                61    # text(1)
+                   62 # "b"
+            '
+        );
+
+        $this->expectException(CBORException::class);
+        $this->expectExceptionMessageRegExp('~map key~i');
+        CBOR::decode($buf);
+    }
+
+    public function testUnsupportedIndefiniteLength()
+    {
+        // Valid indefinite array but not supported
+        $buf = HexData::buf(
+            '9F    # array(*)
+               01 # unsigned(1)
+               02 # unsigned(2)
+               FF # primitive(*)
+            '
+        );
+
+        $this->expectException(CBORException::class);
+        $this->expectExceptionMessageRegExp('~indefinite~i');
+        CBOR::decode($buf);
+    }
+
+    public function testReservedFloat()
+    {
+        $buf = HexData::buf('FE');
+
+        $this->expectException(CBORException::class);
+        $this->expectExceptionMessageRegExp('~reserved~i');
+        CBOR::decode($buf);
+    }
+
+    public function testBreakOutsideIndefinite()
+    {
+        // array as map key
+        $buf = HexData::buf('FF');
+
+        $this->expectException(CBORException::class);
+        $this->expectExceptionMessageRegExp('~indefinite~i');
+        CBOR::decode($buf);
+    }
+
+    public function testReserved()
+    {
+        // array as map key
+        $buf = HexData::buf('1E');
+        $this->expectException(CBORException::class);
+        $this->expectExceptionMessageRegExp('~reserved~i');
+
+        CBOR::decode($buf);
+    }
+
+    public function testAdditionalData()
+    {
+        // integer 15 followed by extra byte
+        $buf = HexData::buf('1020');
+        $this->expectException(CBORException::class);
+        $this->expectExceptionMessageRegExp('~unused bytes~i');
+        CBOR::decode($buf);
+    }
 }

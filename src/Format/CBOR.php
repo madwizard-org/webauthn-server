@@ -30,7 +30,11 @@ class CBOR
         try {
             // TODO: wrap exceptions from bytebuffer
             $offset = 0;
-            return self::parseItem($buf, $offset);
+            $result = self::parseItem($buf, $offset);
+            if ($offset !== $buf->getLength()) {
+                throw new CBORException('Unused bytes after data item.');
+            }
+            return $result;
         } catch (ByteBufferException $e) {
             throw new CBORException(sprintf('Error with byte buffer during parsing: %s.', $e->getMessage()), 0, $e);
         }

@@ -92,5 +92,5 @@ abstract class COSEKey
         return $this->algorithm;
     }
 
-    abstract public function verifySignature(string $data, string $signature) : bool;
+    abstract public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool;
 }

@@ -1,6 +1,6 @@
 {
     "name": "madwizard/webauthn",
-    "description": "Web Authentication API server",
+    "description": "Web Authentication API server for PHP",
     "type": "library",
     "autoload": {
         "psr-4": {
@@ -17,6 +17,12 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^7.1"
+    },
+    "archive": {
+        "exclude": [
+            "/tests",
+            "/phpunit.xml.dist"
+        ]
     },
     "license": "MIT",
     "authors": [

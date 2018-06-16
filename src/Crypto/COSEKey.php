@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Crypto;
 
 use Exception;
+use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CBOR;
 use function array_key_exists;
@@ -12,7 +13,15 @@ use function is_int;
 
 abstract class COSEKey
 {
+    /**
+     * EC2 key type
+     */
     private const COSE_KTY_EC2 = 2;
+
+    /**
+     * RSA key type
+     */
+    private const COSE_KTY_RSA = 3;
 
     /**
      * @var int
@@ -23,7 +32,7 @@ abstract class COSEKey
      * Identification of the key type
      * @see https://www.iana.org/assignments/cose/cose.xhtml#key-common-parameters
      */
-    private const COSE_KEY_PARAM_KTY = 1;
+    protected const COSE_KEY_PARAM_KTY = 1;
 
     /**
      * Key identification value
@@ -35,7 +44,7 @@ abstract class COSEKey
      * Key usage restriction to this algorithm
      * @see https://www.iana.org/assignments/cose/cose.xhtml#key-common-parameters
      */
-    private const COSE_KEY_PARAM_ALG = 3;
+    protected const COSE_KEY_PARAM_ALG = 3;
 
     /**
      * COSEKey constructor.
@@ -44,12 +53,16 @@ abstract class COSEKey
      */
     public function __construct(int $algorithm)
     {
+        if (!$this->algorithmSupported($algorithm)) {
+            throw new WebAuthnException('Algorithm not supported');
+        }
         $this->algorithm = $algorithm;
     }
 
     public static function parseCBOR(ByteBuffer $buffer, int $offset = 0, int &$endOffset = null) : COSEKey
     {
         $data = CBOR::decodeInPlace($buffer, $offset, $endOffset);
+
         if (!is_array($data)) {
             throw new Exception('Failed to decode CBOR encoded COSE key'); // TODO: change exceptions
         }
@@ -71,17 +84,10 @@ abstract class COSEKey
         if ($keyType === self::COSE_KTY_EC2) {
             return EC2Key::fromCBORData($data);
         }
-        throw new Exception(sprintf('Key type %d not supported', $keyType));
-    }
-
-    protected function addCommonParams(array $data)
-    {
-        $alg = $data[self::COSE_KEY_PARAM_ALG] ?? null  ;
-        if (!is_int($alg)) {
-            throw new \Exception('wrong type');
+        if ($keyType === self::COSE_KTY_RSA) {
+            return RSAKey::fromCBORData($data);
         }
-
-        $this->algorithm = $alg;
+        throw new Exception(sprintf('Key type %d not supported', $keyType));
     }
 
     /**
@@ -93,4 +99,6 @@ abstract class COSEKey
     }
 
     abstract public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool;
+
+    abstract protected function algorithmSupported(int $algorithm) : bool;
 }

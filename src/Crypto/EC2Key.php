@@ -41,9 +41,9 @@ class EC2Key extends COSEKey // TODO exceptions
      */
     private const KTP_Y = -3;
 
-    public function __construct(ByteBuffer $x, ByteBuffer $y, int $curve)
+    public function __construct(ByteBuffer $x, ByteBuffer $y, int $curve, int $algorithm)
     {
-        parent::__construct(COSEAlgorithm::ES256);
+        parent::__construct($algorithm);
 
         if ($curve !== self::CURVE_P256) {
             throw new WebAuthnException('Unsupported curve'); // TODO: exception type
@@ -67,11 +67,21 @@ class EC2Key extends COSEKey // TODO exceptions
         $curve = $data[self::KTP_CRV] ?? null;
         $x = $data[self::KTP_X] ?? null;
         $y = $data[self::KTP_Y] ?? null;
+        $alorithm = $data[self::COSE_KEY_PARAM_ALG] ?? null;
 
+        //$algorithm = $data[self:;]
+        // TODO: algorithm
+        // TODO: disallow other fields
 
-        if ($curve === null || $x === null || $y === null) {
+        if ($curve === null || $x === null || $y === null || $alorithm === null) {
             throw new WebAuthnException('Missing data');
         }
+
+        if (!\is_int($alorithm)) {
+            throw new WebAuthnException('Invalid algorithm type');
+        }
+
+        // TODO: disallow other fields
 
         if (!\is_int($curve)) {
             throw new WebAuthnException('Wrong type');
@@ -81,9 +91,7 @@ class EC2Key extends COSEKey // TODO exceptions
             throw new WebAuthnException('Wrong type');
         }
 
-        $key = new EC2Key($x, $y, $curve);
-        $key->addCommonParams($data);
-        return $key;
+        return new EC2Key($x, $y, $curve, $alorithm);
     }
 
     /**
@@ -117,18 +125,18 @@ class EC2Key extends COSEKey // TODO exceptions
         }
 
         // DER encoded P256 curve
-
         $der =
-            "\x30\x59" . // SEQUENCE 0x59 bytes
-            "\x30\x13" . // SEQUENCE 0x13 bytes
-            "\x06\x07\x2A\x86\x48\xCE\x3D\x02\x01" . // OID 1.2.840.10045.2.1 ecPublicKey
-            "\x06\x08\x2A\x86\x48\xCE\x3D\x03\x01\x07" . // 1.2.840.10045.3.1.7 prime256v1
-            "\x03\x42" . // BITSTREAM 0x42 bytes
-            "\x00" . // Unused bits in bitstream
-            "\x04" . // ECC uncompressed key format
-            $this->x->getBinaryString() .
-            $this->y->getBinaryString();
-
+            DER::sequence(
+                DER::sequence(
+                    DER::oid("\x2A\x86\x48\xCE\x3D\x02\x01") . // OID 1.2.840.10045.2.1 ecPublicKey
+                    DER::oid("\x2A\x86\x48\xCE\x3D\x03\x01\x07")  // 1.2.840.10045.3.1.7 prime256v1
+                ) .
+                DER::bitString(
+                    "\x04" . // ECC uncompressed key format
+                    $this->x->getBinaryString() .
+                    $this->y->getBinaryString()
+                )
+            );
 
         return '-----BEGIN PUBLIC KEY-----' . "\n" .
                 chunk_split(base64_encode($der), 64, "\n") .
@@ -157,5 +165,10 @@ class EC2Key extends COSEKey // TODO exceptions
         }
 
         throw new WebAuthnException('Failed to check signature');
+    }
+
+    protected function algorithmSupported(int $algorithm) : bool
+    {
+        return ($algorithm === COSEAlgorithm::ES256);
     }
 }

@@ -91,6 +91,6 @@ class EC2KeyTest extends TestCase
     {
         $x = ByteBuffer::fromHex(self::TEST_KEY_X);
         $y = ByteBuffer::fromHex(self::TEST_KEY_Y);
-        return new EC2Key($x, $y, EC2Key::CURVE_P256);
+        return new EC2Key($x, $y, EC2Key::CURVE_P256, COSEAlgorithm::ES256);
     }
 }

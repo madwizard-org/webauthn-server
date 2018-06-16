@@ -16,6 +16,11 @@ final class COSEAlgorithm
      */
     public const ES256 = -7;
 
+    /**
+     * RSASSA-PKCS1-v1_5 w/ SHA-256
+     */
+    public const RS256 = -257;
+
     private function __construct()
     {
     }

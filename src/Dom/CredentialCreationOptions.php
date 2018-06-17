@@ -21,6 +21,14 @@ class CredentialCreationOptions extends AbstractDictionary implements Serializab
         $this->publicKey = $options;
     }
 
+    /**
+     * @return PublicKeyCredentialCreationOptions|null
+     */
+    public function getPublicKeyOptions(): ?PublicKeyCredentialCreationOptions
+    {
+        return $this->publicKey;
+    }
+
     public function getAsArray(): array
     {
         $map = [];

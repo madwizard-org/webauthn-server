@@ -33,18 +33,14 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
      */
     private $excludedCredentials = [];
 
-    /*
-        AuthenticatorSelectionCriteria               authenticatorSelection;
-        AttestationConveyancePreference              attestation = "none";
-        AuthenticationExtensionsClientInputs         extensions;
-    */
-
     /**
      * @var PublicKeyCredentialParameters[]
      */
     private $pubKeyCredParams;
 
-    // TODO
+    /**
+     * @var AuthenticatorSelectionCriteria
+     */
     private $authenticatorSelection;
 
     /**
@@ -52,6 +48,7 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
      */
     private $attestation;
 
+    // AuthenticationExtensionsClientInputs
     // TODO
     private $extensions;
 
@@ -116,5 +113,34 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
             throw new InvalidArgumentException(sprintf("String '%s' is not a valid attestation preference.", $attestation));
         }
         $this->attestation = $attestation;
+    }
+
+    /**
+     * @return AuthenticatorSelectionCriteria
+     */
+    public function getAuthenticatorSelection(): ?AuthenticatorSelectionCriteria
+    {
+        return $this->authenticatorSelection;
+    }
+
+    /**
+     * @param AuthenticatorSelectionCriteria $authenticatorSelection
+     */
+    public function setAuthenticatorSelection(?AuthenticatorSelectionCriteria $authenticatorSelection): void
+    {
+        $this->authenticatorSelection = $authenticatorSelection;
+    }
+
+    public function getRpEntity() : PublicKeyCredentialRpEntity
+    {
+        return $this->rp;
+    }
+
+    /**
+     * @return ByteBuffer
+     */
+    public function getChallenge(): ByteBuffer
+    {
+        return $this->challenge;
     }
 }

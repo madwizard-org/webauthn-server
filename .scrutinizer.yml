@@ -1,2 +1,7 @@
 tools:
     external_code_coverage: true
+
+filter:
+    paths: ["src/*"]
+    dependency_paths:
+        - vendor/

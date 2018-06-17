@@ -12,7 +12,7 @@ install:
     - composer update --prefer-dist --no-interaction
 
 script:
-    - ./vendor/bin/phpunit --coverage-clover clover.xml
+    - ./vendor/bin/phpunit --coverage-clover coverage.xml
 
 after_success:
     - wget https://scrutinizer-ci.com/ocular.phar

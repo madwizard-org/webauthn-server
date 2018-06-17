@@ -142,7 +142,7 @@ class CBOR
             case self::MAJOR_UNSIGNED_INT: // uint
                 return $val;
             case self::MAJOR_NEGATIVE_INT:
-                return - 1 - $val;
+                return -1 - $val;
 
             case self::MAJOR_BYTE_STRING:
                 $data = $buf->getBytes($offset, $val);

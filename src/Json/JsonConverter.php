@@ -12,10 +12,21 @@ use MadWizard\WebAuthn\Dom\PublicKeyCredentialType;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use function base64_encode;
 use function is_string;
 
 final class JsonConverter
 {
+    /**
+     * Prefix keys of ByteBuffers with `#prefix#`
+     */
+    public const ENCODE_PREFIX = 1;
+
+    /**
+     * Encode ByteBuffers as base64 strings instead of base64url
+     */
+    public const ENCODE_BASE64 = 4;
+
     private function __construct()
     {
     }
@@ -157,25 +168,32 @@ final class JsonConverter
         throw new WebAuthnException(sprintf('Unknown or missing type %s', $responseType));
     }
 
-    public static function encodeDictionary(DictionaryInterface $dictionary) : array
+    public static function encodeDictionary(DictionaryInterface $dictionary, int $encodeFlags = self::ENCODE_PREFIX) : array
     {
-        return self::encodeArray($dictionary->getAsArray());
+        return self::encodeArray($dictionary->getAsArray(), $encodeFlags);
     }
 
-    private static function encodeArray(array $map) : array
+    private static function encodeArray(array $map, int $encodeFlags) : array
     {
         $converted = [];
         foreach ($map as $key => $value) {
             if ($value instanceof ByteBuffer) {
                 // There is no direct way to store a ByteBuffer in JSON string easily.
-                // Encode the data using base64
-                $converted['$buffer$' . $key] = Base64UrlEncoding::encode($value->getBinaryString());
+                // Encode using the flags specified
+                if (($encodeFlags & self::ENCODE_PREFIX) !== 0) {
+                    $key = '$buffer$' . $key;
+                }
+                if (($encodeFlags & self::ENCODE_BASE64) !== 0) {
+                    $converted[$key] = base64_encode($value->getBinaryString());
+                } else {
+                    $converted[$key] = Base64UrlEncoding::encode($value->getBinaryString());
+                }
             } elseif ($value instanceof DictionaryInterface) {
                 $converted[$key] = self::encodeDictionary($value);
             } elseif (\is_scalar($value)) {
                 $converted[$key] = $value;
             } elseif (\is_array($value)) {
-                $converted[$key] = self::encodeArray($value);
+                $converted[$key] = self::encodeArray($value, $encodeFlags);
             } else {
                 throw new WebAuthnException('Cannot convert this data to JSON format');
             }

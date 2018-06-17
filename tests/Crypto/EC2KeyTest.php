@@ -84,7 +84,7 @@ class EC2KeyTest extends TestCase
     public function testInvalidType()
     {
         $this->expectException(WebAuthnException::class);
-        EC2Key::fromCBORData(['curve' => 'a', 'x' => 1, 'y' => 2]);
+        EC2Key::fromCBORData([-1 => 'a', -2 => 1, -3 => 2]);
     }
 
     private function getKey(): EC2Key

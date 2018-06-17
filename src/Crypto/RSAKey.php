@@ -3,7 +3,6 @@
 
 namespace MadWizard\WebAuthn\Crypto;
 
-use Exception;
 use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -68,7 +67,26 @@ class RSAKey extends COSEKey
 
     public function verifySignature(ByteBuffer $data, ByteBuffer $signature): bool
     {
-        throw new Exception('todo');
+        $publicKey = openssl_pkey_get_public($this->asPEM());
+        if ($publicKey === false) {
+            throw new WebAuthnException('Public key invalid');
+        }
+
+        if ($this->getAlgorithm() === COSEAlgorithm::RS256) {
+            $algorithm = OPENSSL_ALGO_SHA256;
+        } else {
+            throw new WebAuthnException('Unsupported algorithm');
+        }
+
+        $verify = openssl_verify($data->getBinaryString(), $signature->getBinaryString(), $publicKey, $algorithm);
+        if ($verify === 1) {
+            return true;
+        }
+        if ($verify === 0) {
+            return false;
+        }
+
+        throw new WebAuthnException('Failed to check signature');
     }
 
     /**

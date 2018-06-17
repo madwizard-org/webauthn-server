@@ -8,6 +8,9 @@ final class PublicKeyCredentialType
     // Currently only one type in the spec
     public const PUBLIC_KEY = 'public-key';
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }

@@ -27,6 +27,9 @@ final class JsonConverter
      */
     public const ENCODE_BASE64 = 4;
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }

@@ -38,6 +38,9 @@ class Origin // TODO serializable
         $domain = null;
         $port = null;
         $elements = parse_url($origin);
+        if ($elements === false) {
+            throw new ParseException('Failed to parse origin.');
+        }
         foreach ($elements as $k => $v) {
             switch ($k) {
                 case 'scheme':
@@ -47,7 +50,7 @@ class Origin // TODO serializable
                     $domain = $v;
                     break;
                 case 'port':
-                    $port = (int) $port;
+                    $port = (int) $v;
                     break;
                 default:
                     throw new ParseException(sprintf("Unexpected component %s in origin string '%s'", $k, $origin));
@@ -109,5 +112,21 @@ class Origin // TODO serializable
     public function getDomain(): string
     {
         return $this->domain;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScheme(): string
+    {
+        return $this->scheme;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPort(): int
+    {
+        return $this->port;
     }
 }

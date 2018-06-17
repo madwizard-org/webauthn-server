@@ -3,9 +3,10 @@
 namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
+use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
-use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Json\JsonConverter;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
 use PHPUnit\Framework\TestCase;
@@ -101,8 +102,22 @@ class AttestationObjectTest extends TestCase
     {
         $json = FixtureHelper::getJsonFixture('fido2-helpers/attestation.json');
         $message = $json['challengeResponseAttestationU2fMsgB64Url'];
-        $b64 = $message['response']['attestationObject'];
-        $buffer = new ByteBuffer(Base64UrlEncoding::decode($b64));
+        $message['type'] = 'public-key';
+        $cred = JsonConverter::decodeAttestationCredential(json_encode($message));
+
+        $this->assertSame('Bo+VjHOkJZy8DjnCJnIc0Oxt9QAz5upMdSJxNbd+GyAo6MNIvPBb9YsUlE0ZJaaWXtWH5FQyPS6bT/e698IirQ==', $cred->getId());
+
+        $this->assertSame(
+            '{"challenge":"Vu8uDqnkwOjd83KLj6Scn2BgFNLFbGR7Kq_XJJwQnnatztUR7XIBL7K8uMPCIaQmKw1MCVQ5aazNJFk7NakgqA",' .
+            '"clientExtensions":{},"hashAlgorithm":"SHA-256","origin":"https://localhost:8443","type":"webauthn.create"}',
+            $cred->getResponse()->getClientDataJSON()
+        );
+
+        /**
+         * @var AuthenticatorAttestationResponseInterface $response
+         */
+        $response = $cred->getResponse();
+        $buffer = $response->getAttestationObject();
 
         $decoded = new AttestationObject($buffer);
 
@@ -120,7 +135,6 @@ class AttestationObjectTest extends TestCase
              dec0494fda9ec58f4f09cf68f21993
             '
         );
-
         $this->assertSame(bin2hex($authData), $decoded->getAuthenticatorData()->getHex());
         $statement = $decoded->getStatement();
         $this->assertArrayHasKey('x5c', $statement);

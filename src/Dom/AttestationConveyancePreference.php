@@ -21,6 +21,9 @@ final class AttestationConveyancePreference
      */
     public const DIRECT = 'direct';
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }

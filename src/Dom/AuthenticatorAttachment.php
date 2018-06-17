@@ -21,6 +21,9 @@ final class AuthenticatorAttachment
      */
     public const CROSS_PLATFORM = 'cross-platform';
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }

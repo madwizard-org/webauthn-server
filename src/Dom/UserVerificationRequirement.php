@@ -11,6 +11,9 @@ final class UserVerificationRequirement
 
     public const DISCOURAGED = 'discouraged';
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }

@@ -21,6 +21,9 @@ final class COSEAlgorithm
      */
     public const RS256 = -257;
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }

@@ -6,8 +6,6 @@ namespace MadWizard\WebAuthn\Crypto;
 use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use function base64_encode;
-use function chunk_split;
 use function openssl_pkey_get_public;
 
 class EC2Key extends COSEKey // TODO exceptions
@@ -54,7 +52,6 @@ class EC2Key extends COSEKey // TODO exceptions
         if ($x->getLength() !== $coordLength || $y->getLength() !== $coordLength) {
             throw new WebAuthnException(sprintf('Expecting length %d for x and y', $coordLength));
         }
-
 
 
         $this->x = $x;
@@ -138,9 +135,7 @@ class EC2Key extends COSEKey // TODO exceptions
                 )
             );
 
-        return '-----BEGIN PUBLIC KEY-----' . "\n" .
-                chunk_split(base64_encode($der), 64, "\n") .
-                '-----END PUBLIC KEY-----' . "\n";
+        return DER::pem('PUBLIC KEY', $der);
     }
 
     public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool
@@ -150,6 +145,7 @@ class EC2Key extends COSEKey // TODO exceptions
             throw new WebAuthnException('Public key invalid');
         }
 
+        // TODO free keys!!!
         if ($this->getAlgorithm() === COSEAlgorithm::ES256) {
             $algorithm = OPENSSL_ALGO_SHA256;
         } else {

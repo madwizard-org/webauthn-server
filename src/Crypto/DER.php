@@ -62,4 +62,11 @@ class DER
     {
         return "\x05\x00";
     }
+
+    public static function pem(string $type, string $der) : string
+    {
+        return sprintf("-----BEGIN %s-----\n", strtoupper($type)) .
+            chunk_split(base64_encode($der), 64, "\n") .
+            sprintf("-----END %s-----\n", strtoupper($type));
+    }
 }

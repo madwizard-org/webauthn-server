@@ -31,10 +31,10 @@ class CreationOptionsTest extends TestCase
                         ],
                         'user' => [
                             'name' => 'testuser',
-                            '$buffer$id' => 'EjQ',
+                            'id' => 'EjQ',
                             'displayName' => 'Test user',
                         ],
-                        '$buffer$challenge' => 'ASNFZ4mrze8',
+                        'challenge' => 'ASNFZ4mrze8',
                         'pubKeyCredParams' => [],
                     ],
             ],

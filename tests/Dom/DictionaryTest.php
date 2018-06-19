@@ -40,7 +40,7 @@ class DictionaryTest extends TestCase
     {
         $this->checkJson(
             ['binary' => ByteBuffer::fromHex('45464748')],
-            ['$buffer$binary' => 'RUZHSA']
+            ['binary' => 'RUZHSA']
 
         );
     }
@@ -58,7 +58,7 @@ class DictionaryTest extends TestCase
                     'number' => 123,
                     'inner' =>
                         [
-                            '$buffer$x' => 'wP_u'
+                            'x' => 'wP_u'
                         ]
                 ]
             ]

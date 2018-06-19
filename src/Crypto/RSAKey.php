@@ -144,9 +144,7 @@ class RSAKey extends COSEKey
                 )
             );
 
-        return '-----BEGIN PUBLIC KEY-----' . "\n" .
-            chunk_split(base64_encode($der), 64, "\n") .
-            '-----END PUBLIC KEY-----' . "\n";
+        return DER::pem('PUBLIC KEY', $der);
     }
 
     protected function algorithmSupported(int $algorithm) : bool

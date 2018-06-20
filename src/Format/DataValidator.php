@@ -69,7 +69,7 @@ final class DataValidator
 
         if ($type[0] === '?') {
             $optional = true;
-            return substr($type, 0);
+            return substr($type, 1);
         }
         return $type;
     }

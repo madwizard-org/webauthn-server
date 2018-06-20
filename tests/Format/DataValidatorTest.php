@@ -161,6 +161,28 @@ class DataValidatorTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testCheckTypesOptionalPresent()
+    {
+        DataValidator::checkTypes(
+            [
+                'a' => 4,
+                'b' => 'test',
+                'c' => [1, 2, 3],
+                'd' => new ByteBuffer('')
+            ],
+            [
+                'a' => 'integer',
+                'b' => '?string',
+                'c' => '?array',
+                'd' => '?' . ByteBuffer::class,
+            ]
+
+        );
+
+        // Assert when no exceptions thrown
+        $this->assertTrue(true);
+    }
+
     public function testCheckTypesWrongParameters()
     {
         $this->expectException(DataValidationException::class);

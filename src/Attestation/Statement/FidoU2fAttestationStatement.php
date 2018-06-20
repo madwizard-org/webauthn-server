@@ -4,7 +4,6 @@
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
-use MadWizard\WebAuthn\Crypto\DER;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -46,14 +45,7 @@ class FidoU2fAttestationStatement extends AbstractAttestationStatement
         $x5c = $statement['x5c'];
 
         $this->signature = $sig;
-        $this->certificates = [];
-
-        foreach ($x5c as $item) {
-            if (!($item instanceof ByteBuffer)) {
-                throw new ParseException('x5c should be array of binary data elements.');
-            }
-            $this->certificates[] = DER::pem('CERTIFICATE', $item->getBinaryString());
-        }
+        $this->certificates = $this->buildPEMCertificateArray($x5c);
     }
 
     /**

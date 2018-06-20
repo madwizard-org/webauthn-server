@@ -41,7 +41,6 @@ class AttestationObjectTest extends TestCase
                    6175746844617461 # "authData"
                 41                  # bytes(1)
                    AA               # "\xAA"
-
             '
         );
 
@@ -65,12 +64,11 @@ class AttestationObjectTest extends TestCase
                    6175746844617461 # "authData"
                 41                  # bytes(1)
                    AA               # "\xAA"
-
             '
         );
 
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~expecting.+attStmt.+map~i');
+        $this->expectExceptionMessageRegExp('~expecting.+attStmt.+array~i');
         new AttestationObject($buf);
     }
 
@@ -88,8 +86,6 @@ class AttestationObjectTest extends TestCase
                 68                  # text(8)
                    6175746844617461 # "authData"
                 10                  # unsigned(16)
-
-
             '
         );
 

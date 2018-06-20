@@ -7,8 +7,8 @@ use MadWizard\WebAuthn\Exception\CBORException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CBOR;
+use MadWizard\WebAuthn\Format\DataValidator;
 use function is_array;
-use function is_string;
 
 class AttestationObject
 {
@@ -40,25 +40,19 @@ class AttestationObject
                 throw new WebAuthnException('Expecting attestation object to be a CBOR map.');
             }
 
-            $format = $data['fmt'] ?? null;
+            DataValidator::checkTypes(
+                $data,
+                [
+                    'fmt' => 'string',
+                    'attStmt' => 'array',
+                    'authData' => ByteBuffer::class
+                ],
+                false
+            );
 
-            if (!is_string($format)) {
-                throw new WebAuthnException("Expecting 'fmt' key to be a string value.");
-            }
-
-            $this->format = $format;
-
-            $statement = $data['attStmt'] ?? null;
-            if (!is_array($statement)) {
-                throw new WebAuthnException("Expecting 'attStmt' key to be a CBOR map.");
-            }
-            $this->statement = $statement;
-
-            $authData = $data['authData'] ?? null;
-            if (!($authData instanceof ByteBuffer)) {
-                throw new WebAuthnException("Expecting 'authData' key to be a CBOR byte array.");
-            }
-            $this->authData = $authData;
+            $this->format = $data['fmt'];
+            $this->statement = $data['attStmt'];
+            $this->authData = $data['authData'];
 
             $this->data = $data;
         } catch (CBORException $e) {

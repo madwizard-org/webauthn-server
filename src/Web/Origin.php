@@ -32,11 +32,38 @@ class Origin // TODO serializable
         $this->port = $port;
     }
 
-    public static function parse(string $origin)
+    public static function parse(string $origin) : Origin
+    {
+        [$scheme, $domain, $port] = self::parseElements($origin);
+
+        if ($scheme === null) {
+            $scheme = 'http';
+        } else {
+            $scheme = mb_strtolower($scheme, 'UTF-8');
+        }
+
+        if ($port === null) {
+            if ($scheme === 'https') {
+                $port = 443;
+            } elseif ($scheme === 'http') {
+                $port = 80;
+            }
+        }
+
+        if ($scheme === null || $domain === null || $port === null) {
+            throw new ParseException(sprintf("Incomplete or unsupported origin '%s'.", $origin));
+        }
+
+        $domain = mb_strtolower($domain, 'UTF-8');
+        return new Origin($scheme, $domain, $port);
+    }
+
+    private static function parseElements($origin) : array
     {
         $scheme = null;
         $domain = null;
         $port = null;
+
         $elements = parse_url($origin);
         if ($elements === false) {
             throw new ParseException('Failed to parse origin.');
@@ -56,28 +83,7 @@ class Origin // TODO serializable
                     throw new ParseException(sprintf("Unexpected component %s in origin string '%s'", $k, $origin));
             }
         }
-
-        if ($scheme === null) {
-            $scheme = 'http';
-        } else {
-            $scheme = mb_strtolower($scheme, 'UTF-8');
-        }
-
-
-        if ($port === null) {
-            if ($scheme === 'https') {
-                $port = 443;
-            } elseif ($scheme === 'http') {
-                $port = 80;
-            }
-        }
-
-        if ($scheme === null || $domain === null || $port === null) {
-            throw new ParseException(sprintf("Incomplete or unsupported origin '%s'.", $origin));
-        }
-
-        $domain = mb_strtolower($domain, 'UTF-8');
-        return new Origin($scheme, $domain, $port);
+        return [$scheme, $domain, $port];
     }
 
     public function equals(Origin $origin) : bool

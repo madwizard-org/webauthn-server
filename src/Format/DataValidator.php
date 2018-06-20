@@ -32,28 +32,10 @@ final class DataValidator
     public static function checkTypes(array $data, array $types, bool $complete = true):void
     {
         foreach ($types as $key => $type) {
-            if ($type === '') {
-                throw new DataValidationException(sprintf('Invalid type "%s" for key "%s".', $type, $key));
-            }
-
-            $optional = false;
-            if ($type[0] === '?') {
-                $optional = true;
-                $type = substr($type, 0);
-            }
+            $type = self::parseType($type, $key, $optional);
 
             if (array_key_exists($key, $data)) {
-                $value = $data[$key];
-                $actualType = gettype($value);
-                if ($actualType === 'object') {
-                    $actualType = get_class($value);
-                }
-
-                if ($actualType !== $type) {
-                    throw new DataValidationException(sprintf('Expecting key "%s" to be of type "%s" but has type "%s".', $key, $type, $actualType));
-                }
-
-                unset($data[$key]);
+                self::validateDataKey($data, $key, $type);
             } elseif (!$optional) {
                 throw new DataValidationException(sprintf('Required key "%s" is missing in data.', $key));
             }
@@ -61,5 +43,34 @@ final class DataValidator
         if (count($data) != 0 && $complete) {
             throw new DataValidationException(sprintf('Unexpected fields in data (%s).', implode(', ', array_keys($data))));
         }
+    }
+
+    private static function validateDataKey(array &$data, $key, string $type)
+    {
+        $value = $data[$key];
+        $actualType = gettype($value);
+        if ($actualType === 'object') {
+            $actualType = get_class($value);
+        }
+
+        if ($actualType !== $type) {
+            throw new DataValidationException(sprintf('Expecting key "%s" to be of type "%s" but has type "%s".', $key, $type, $actualType));
+        }
+
+        unset($data[$key]);
+    }
+
+    private static function parseType(string $type, $key, bool &$optional = null)
+    {
+        $optional = false;
+        if ($type === '') {
+            throw new DataValidationException(sprintf('Invalid type "%s" for key "%s".', $type, (string) $key));
+        }
+
+        if ($type[0] === '?') {
+            $optional = true;
+            return substr($type, 0);
+        }
+        return $type;
     }
 }

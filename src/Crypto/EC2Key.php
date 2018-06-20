@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Crypto;
 use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Format\DataValidator;
 use function openssl_pkey_get_public;
 
 class EC2Key extends COSEKey // TODO exceptions
@@ -61,32 +62,21 @@ class EC2Key extends COSEKey // TODO exceptions
 
     public static function fromCBORData(array $data) : EC2Key
     {
-        $curve = $data[self::KTP_CRV] ?? null;
-        $x = $data[self::KTP_X] ?? null;
-        $y = $data[self::KTP_Y] ?? null;
-        $alorithm = $data[self::COSE_KEY_PARAM_ALG] ?? null;
+        DataValidator::checkTypes(
+            $data,
+            [
+                self::COSE_KEY_PARAM_KTY => 'integer',
+                self::KTP_CRV => 'integer',
+                self::COSE_KEY_PARAM_ALG => 'integer',
+                self::KTP_X => ByteBuffer::class,
+                self::KTP_Y => ByteBuffer::class,
+            ]
+        );
 
-        //$algorithm = $data[self:;]
-        // TODO: algorithm
-        // TODO: disallow other fields
-
-        if ($curve === null || $x === null || $y === null || $alorithm === null) {
-            throw new WebAuthnException('Missing data');
-        }
-
-        if (!\is_int($alorithm)) {
-            throw new WebAuthnException('Invalid algorithm type');
-        }
-
-        // TODO: disallow other fields
-
-        if (!\is_int($curve)) {
-            throw new WebAuthnException('Wrong type');
-        }
-
-        if (!($x instanceof ByteBuffer && $y instanceof ByteBuffer)) {
-            throw new WebAuthnException('Wrong type');
-        }
+        $curve = $data[self::KTP_CRV];
+        $x = $data[self::KTP_X];
+        $y = $data[self::KTP_Y];
+        $alorithm = $data[self::COSE_KEY_PARAM_ALG];
 
         return new EC2Key($x, $y, $curve, $alorithm);
     }

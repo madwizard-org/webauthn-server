@@ -3,6 +3,7 @@
 
 namespace MadWizard\WebAuthn\Dom;
 
+use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
 class PublicKeyCredentialDescriptor extends AbstractDictionary // TODO serializable
@@ -30,7 +31,7 @@ class PublicKeyCredentialDescriptor extends AbstractDictionary // TODO serializa
     public function __construct(ByteBuffer $credentialId, string $type = PublicKeyCredentialType::PUBLIC_KEY)
     {
         if ($type !== PublicKeyCredentialType::PUBLIC_KEY) {
-            throw new \DomainException('Only public key accepted');
+            throw new WebAuthnException('Only public key accepted');
         }
         $this->type = $type;
         $this->id = $credentialId;

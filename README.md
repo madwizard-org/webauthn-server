@@ -9,6 +9,6 @@ WebAuthn Relying Party server library for PHP
 
 **Work in progress - use for testing purposes only **
 
-This library aims to implement the relying party server of the WebAuthn in PHP. The library is currently being development and not yet ready to be used. APIs may change at any time until the first stable release.
+This library aims to implement the relying party server of the WebAuthn specificaiton in PHP. The library is currently being development and not yet ready to be used. APIs may change at any time until the first stable release.
 
 

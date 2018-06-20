@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Crypto;
 use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Format\DataValidator;
 
 class RSAKey extends COSEKey
 {
@@ -42,25 +43,20 @@ class RSAKey extends COSEKey
 
     public static function fromCBORData(array $data) : RSAKey
     {
-        $modulus = $data[self::KTP_N] ?? null;
-        $exponent = $data[self::KTP_E] ?? null;
-        $alorithm = $data[self::COSE_KEY_PARAM_ALG] ?? null;
+        DataValidator::checkTypes(
+            $data,
+            [
+                self::COSE_KEY_PARAM_KTY => 'integer',
+                self::COSE_KEY_PARAM_ALG => 'integer',
+                self::KTP_N => ByteBuffer::class,
+                self::KTP_E => ByteBuffer::class,
+            ]
+        );
 
-        //$algorithm = $data[self:;]
-        // TODO: algorithm
-        // TODO: disallow other fields
 
-        if ($modulus === null || $exponent === null || $alorithm === null) {
-            throw new WebAuthnException('Missing data');
-        }
-
-        if (!\is_int($alorithm)) {
-            throw new WebAuthnException('Invalid algorithm type');
-        }
-
-        if (!($modulus instanceof ByteBuffer && $exponent instanceof ByteBuffer)) {
-            throw new WebAuthnException('Wrong type');
-        }
+        $alorithm = $data[self::COSE_KEY_PARAM_ALG];
+        $modulus = $data[self::KTP_N];
+        $exponent = $data[self::KTP_E];
 
         return new RSAKey($modulus, $exponent, $alorithm);
     }

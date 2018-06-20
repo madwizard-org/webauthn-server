@@ -4,12 +4,12 @@
 namespace MadWizard\WebAuthn\Crypto;
 
 use Exception;
+use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CBOR;
-use function array_key_exists;
+use MadWizard\WebAuthn\Format\DataValidator;
 use function is_array;
-use function is_int;
 
 abstract class COSEKey
 {
@@ -38,7 +38,7 @@ abstract class COSEKey
      * Key identification value
      * @see https://www.iana.org/assignments/cose/cose.xhtml#key-common-parameters
      */
-    private const COSE_KEY_PARAM_KID = 2;
+    protected const COSE_KEY_PARAM_KID = 2;
 
     /**
      * Key usage restriction to this algorithm
@@ -64,18 +64,18 @@ abstract class COSEKey
         $data = CBOR::decodeInPlace($buffer, $offset, $endOffset);
 
         if (!is_array($data)) {
-            throw new Exception('Failed to decode CBOR encoded COSE key'); // TODO: change exceptions
+            throw new DataValidationException('Failed to decode CBOR encoded COSE key'); // TODO: change exceptions
         }
 
-        if (!array_key_exists(self::COSE_KEY_PARAM_KTY, $data)) {
-            throw new Exception('Missing key type.');
-        }
+        DataValidator::checkTypes(
+            $data,
+            [
+                self::COSE_KEY_PARAM_KTY => 'integer',
+            ],
+            false
+        );
 
         $keyType = $data[self::COSE_KEY_PARAM_KTY];
-        if (!is_int($keyType)) {
-            throw new Exception('Wrong data type for key type');
-        }
-
         return self::createKey($keyType, $data);
     }
 

@@ -15,7 +15,7 @@ class NoneAttestationStatement extends AbstractAttestationStatement
         parent::__construct($attestationObject, self::FORMAT_ID);
 
         $statement = $attestationObject->getStatement();
-        if (count($statement) !== 0) {
+        if (\count($statement) !== 0) {
             throw new ParseException("Expecting empty map for 'none' attestation statement.");
         }
     }

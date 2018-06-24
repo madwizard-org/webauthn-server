@@ -26,7 +26,7 @@ final class AttestationType
      * The authenticator is based on a Trusted Platform Module (TPM) and holds an authenticator-specific
      * "endorsement key" (EK).
      */
-    public const ATTCA = 'AttCA';
+    public const ATT_CA = 'AttCA';
 
     /**
      * The Authenticator receives direct anonymous attestation (DAA) credentials from a single DAA-Issuer.
@@ -38,5 +38,20 @@ final class AttestationType
      */
     private function __construct()
     {
+    }
+
+    public static function isValidType(string $type) : bool
+    {
+        return \in_array(
+            $type,
+            [
+                self::NONE,
+                self::BASIC,
+                self::SELF,
+                self::ATT_CA,
+                self::ECDAA,
+            ],
+            true
+        );
     }
 }

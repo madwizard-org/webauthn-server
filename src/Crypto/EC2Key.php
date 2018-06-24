@@ -134,23 +134,25 @@ class EC2Key extends COSEKey // TODO exceptions
         if ($publicKey === false) {
             throw new WebAuthnException('Public key invalid');
         }
+        try {
+            if ($this->getAlgorithm() === COSEAlgorithm::ES256) {
+                $algorithm = OPENSSL_ALGO_SHA256;
+            } else {
+                throw new WebAuthnException('Unsupported algorithm');
+            }
 
-        // TODO free keys!!!
-        if ($this->getAlgorithm() === COSEAlgorithm::ES256) {
-            $algorithm = OPENSSL_ALGO_SHA256;
-        } else {
-            throw new WebAuthnException('Unsupported algorithm');
-        }
+            $verify = openssl_verify($data->getBinaryString(), $signature->getBinaryString(), $publicKey, $algorithm);
+            if ($verify === 1) {
+                return true;
+            }
+            if ($verify === 0) {
+                return false;
+            }
 
-        $verify = openssl_verify($data->getBinaryString(), $signature->getBinaryString(), $publicKey, $algorithm);
-        if ($verify === 1) {
-            return true;
+            throw new WebAuthnException('Failed to check signature');
+        } finally {
+            openssl_free_key($publicKey);
         }
-        if ($verify === 0) {
-            return false;
-        }
-
-        throw new WebAuthnException('Failed to check signature');
     }
 
     protected function algorithmSupported(int $algorithm) : bool

@@ -5,7 +5,6 @@ namespace MadWizard\WebAuthn\Format;
 
 use MadWizard\WebAuthn\Exception\ByteBufferException;
 use MadWizard\WebAuthn\Exception\CBORException;
-use function is_string;
 
 class CBOR
 {
@@ -25,6 +24,11 @@ class CBOR
 
     private const MAJOR_FLOAT_SIMPLE = 7;
 
+    /**
+     * @param ByteBuffer $buf
+     * @return mixed
+     * @throws CBORException
+     */
     public static function decode(ByteBuffer $buf)
     {
         try {
@@ -73,7 +77,7 @@ class CBOR
             case 24:
                 $val = $buf->getByteVal($offset);
                 $offset++;
-                break;
+                return self::parseSimple($val);
             case 25:
                 $floatValue = $buf->getHalfFloatVal($offset);
                 $offset += 2;
@@ -94,6 +98,16 @@ class CBOR
                 throw new CBORException('Indefinite length is not supported.');
         }
 
+        return self::parseSimple($val);
+    }
+
+    /**
+     * @param $val
+     * @return mixed
+     * @throws CBORException
+     */
+    private static function parseSimple($val)
+    {
         if ($val === 20) {
             return false;
         }
@@ -143,7 +157,6 @@ class CBOR
                 return $val;
             case self::MAJOR_NEGATIVE_INT:
                 return -1 - $val;
-
             case self::MAJOR_BYTE_STRING:
                 $data = $buf->getBytes($offset, $val);
                 $offset += $val;
@@ -153,28 +166,38 @@ class CBOR
                 $offset += $val;
                 return $data; // UTF-8
             case self::MAJOR_ARRAY:
-                $arr = [];
-                for ($i = 0; $i < $val; $i++) {
-                    $arr[] = self::parseItem($buf, $offset);
-                }
-                return $arr;
+                return self::parseArray($buf, $offset, $val);
             case self::MAJOR_MAP:
-                $map = [];
-
-                for ($i = 0; $i < $val; $i++) {
-                    $mapKey = self::parseItem($buf, $offset);
-                    $mapVal = self::parseItem($buf, $offset);
-                    if (!is_int($mapKey) && !is_string($mapKey)) {
-                        throw new CBORException('Can only use strings or integers as map keys');
-                    }
-                    $map[$mapKey] = $mapVal; // todo dup
-                }
-                return $map;
+                return self::parseMap($buf, $offset, $val);
             case self::MAJOR_TAG:
                 return self::parseItem($buf, $offset); // 1 embedded data item
         }
 
         // This should never be reached
         throw new CBORException(sprintf('Unknown major type %d.', $type));
+    }
+
+    private static function parseMap(ByteBuffer $buf, int &$offset, int $count) : array
+    {
+        $map = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $mapKey = self::parseItem($buf, $offset);
+            $mapVal = self::parseItem($buf, $offset);
+            if (!\is_int($mapKey) && !\is_string($mapKey)) {
+                throw new CBORException('Can only use strings or integers as map keys');
+            }
+            $map[$mapKey] = $mapVal; // todo dup
+        }
+        return $map;
+    }
+
+    private static function parseArray(ByteBuffer $buf, int &$offset, int $count) : array
+    {
+        $arr = [];
+        for ($i = 0; $i < $count; $i++) {
+            $arr[] = self::parseItem($buf, $offset);
+        }
+        return $arr;
     }
 }

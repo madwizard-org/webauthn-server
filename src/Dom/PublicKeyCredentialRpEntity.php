@@ -15,7 +15,7 @@ class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
 
     /**
      * PublicKeyCredentialRpEntity constructor.
-     * @param null|string $id Relaying party ID (valid domain string)
+     * @param null|string $id Relying party ID (valid domain string)
      * @throws WebAuthnException
      */
     public function __construct(string $name, ?string $id = null)

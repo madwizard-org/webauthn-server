@@ -97,22 +97,22 @@ class AuthenticatorData
 
     public function isUserPresent(): bool
     {
-        return ($this->flags & self::FLAG_UP);
+        return ($this->flags & self::FLAG_UP) !== 0;
     }
 
     public function isUserVerified(): bool
     {
-        return ($this->flags & self::FLAG_UV);
+        return ($this->flags & self::FLAG_UV) !== 0;
     }
 
     public function hasAttestedCredentialData(): bool
     {
-        return ($this->flags & self::FLAG_AT);
+        return ($this->flags & self::FLAG_AT) !== 0;
     }
 
     public function hasExtensionData(): bool
     {
-        return ($this->flags & self::FLAG_ED);
+        return ($this->flags & self::FLAG_ED) !== 0;
     }
 
     public function getCredentialId(): ?ByteBuffer

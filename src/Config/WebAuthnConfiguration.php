@@ -77,9 +77,9 @@ class WebAuthnConfiguration
     public function setRelyingPartyId(?string $rpId): void
     {
         if ($rpId !== null) {
-            $rpId = filter_var($rpId, FILTER_VALIDATE_DOMAIN);
+            $rpId = filter_var($rpId, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME);
             if ($rpId === false) {
-                throw new ConfigurationException(sprintf("Relying party ID '%s'' is not a valid domain name.", $rpId));
+                throw new ConfigurationException(sprintf("Relying party ID '%s' is not a valid domain name.", $rpId));
             }
         }
         $this->rpId = $rpId;
@@ -97,6 +97,7 @@ class WebAuthnConfiguration
     {
         if ($origin === null) {
             $this->rpOrigin = null;
+            return;
         }
         try {
             $this->rpOrigin = Origin::parse($origin);

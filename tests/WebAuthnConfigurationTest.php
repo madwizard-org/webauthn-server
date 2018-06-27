@@ -24,14 +24,22 @@ class WebAuthnConfigurationTest extends TestCase
         $config->getEffectiveReyingPartyId();
     }
 
-    /*
-        public function testInvalidEffectiveReyingPartyId()
-        {
-            $this->expectException(ConfigurationException::class);
-            $config = new WebAuthnConfiguration();
-            $config->setRelyingPartyId('not a domain');
-        }
-    */
+    public function testRelyingPartyOrigin()
+    {
+        $config = new WebAuthnConfiguration();
+        $config->setRelyingPartyOrigin('https://www.example.com');
+        $this->assertSame('www.example.com', $config->getRelyingPartyOrigin()->getDomain());
+        $config->setRelyingPartyOrigin(null);
+        $this->assertNull($config->getRelyingPartyOrigin());
+    }
+
+    public function testInvalidEffectiveReyingPartyId()
+    {
+        $this->expectException(ConfigurationException::class);
+        $config = new WebAuthnConfiguration();
+        $config->setRelyingPartyId('not a domain');
+    }
+
     public function testEffectiveReyingPartyId()
     {
         $config = new WebAuthnConfiguration();

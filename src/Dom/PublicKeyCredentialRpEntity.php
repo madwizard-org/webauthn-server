@@ -22,7 +22,7 @@ class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
     {
         parent::__construct($name);
         if ($id !== null) {
-            $id = filter_var($id, FILTER_VALIDATE_DOMAIN);
+            $id = filter_var($id, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME);
             if ($id === false) {
                 throw new WebAuthnException('Invalid domain name');
             }

@@ -29,9 +29,9 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
     private $timeout;
 
     /**
-     * @var PublicKeyCredentialDescriptor[]
+     * @var PublicKeyCredentialDescriptor[]|null
      */
-    private $excludedCredentials = [];
+    private $excludedCredentials;
 
     /**
      * @var PublicKeyCredentialParameters[]
@@ -39,7 +39,7 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
     private $pubKeyCredParams;
 
     /**
-     * @var AuthenticatorSelectionCriteria
+     * @var AuthenticatorSelectionCriteria|null
      */
     private $authenticatorSelection;
 
@@ -80,10 +80,9 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
             $map['timeout'] = $this->timeout;
         }
 
-        if (\count($this->excludedCredentials) !== 0) {
+        if ($this->excludedCredentials !== null && \count($this->excludedCredentials) !== 0) {
             $map['excludedCredentials'] = $this->excludedCredentials;
         }
-
         if ($this->authenticatorSelection !== null) {
             $map['authenticatorSelection'] = $this->authenticatorSelection;
         }
@@ -134,6 +133,38 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
     public function getRpEntity() : PublicKeyCredentialRpEntity
     {
         return $this->rp;
+    }
+
+    /**
+     * @return PublicKeyCredentialUserEntity
+     */
+    public function getUserEntity(): PublicKeyCredentialUserEntity
+    {
+        return $this->user;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getTimeout(): ?int
+    {
+        return $this->timeout;
+    }
+
+    /**
+     * @return PublicKeyCredentialDescriptor[]
+     */
+    public function getExcludedCredentials(): ?array
+    {
+        return $this->excludedCredentials;
+    }
+
+    /**
+     * @return PublicKeyCredentialParameters[]
+     */
+    public function getCredentialParameters(): ?array
+    {
+        return $this->pubKeyCredParams;
     }
 
     /**

@@ -5,18 +5,17 @@ namespace MadWizard\WebAuthn\Tests\Dom;
 
 use MadWizard\WebAuthn\Dom\CredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
-use MadWizard\WebAuthn\Dom\PublicKeyCredentialRpEntity;
-use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
-use MadWizard\WebAuthn\Format\ByteBuffer;
 use PHPUnit\Framework\TestCase;
 
 class CreationOptionsTest extends TestCase
 {
+    use DomTestTrait;
+
     public function testMinimal()
     {
-        $rp = new PublicKeyCredentialRpEntity('RP');
-        $user = new PublicKeyCredentialUserEntity('testuser', ByteBuffer::fromHex('1234'), 'Test user');
-        $challenge = ByteBuffer::fromHex('0123456789abcdef');
+        $rp = $this->createRpEntity();
+        $user = $this->createUserEntity();
+        $challenge = $this->createChallenge();
         $pkOptions = new PublicKeyCredentialCreationOptions($rp, $user, $challenge, []);
         $options = new CredentialCreationOptions();
         $options->setPublicKeyOptions($pkOptions);

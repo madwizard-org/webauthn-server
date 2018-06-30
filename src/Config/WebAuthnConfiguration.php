@@ -3,6 +3,7 @@
 
 namespace MadWizard\WebAuthn\Config;
 
+use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRpEntity;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -13,6 +14,11 @@ class WebAuthnConfiguration
     public const DEFAULT_CHALLENGE_LENGTH = 64;
 
     private const MIN_CHALLENGE_LENGTH = 32;
+
+    private const SUPPORTED_ALGORITHMS = [
+        COSEAlgorithm::ES256,
+        COSEAlgorithm::RS256,
+    ];
 
     /**
      * @var string|null Relying party ID (domain string)
@@ -33,6 +39,11 @@ class WebAuthnConfiguration
      * @var int
      */
     private $challengeLength = self::DEFAULT_CHALLENGE_LENGTH;
+
+    /**
+     * @var int[]
+     */
+    private $algorithms = self::SUPPORTED_ALGORITHMS;
 
     public function __construct()
     {
@@ -125,5 +136,36 @@ class WebAuthnConfiguration
             throw new ConfigurationException(sprintf('Challenge should be at least of length %d.', self::MIN_CHALLENGE_LENGTH));
         }
         $this->challengeLength = $challengeLength;
+    }
+
+    /**
+     * Sets which algorithms are allowed for the credentials that are created. Array of constants from the COSEAlgorithm
+     * enumeration (e.g. COSEAlgorithm::ES256)
+     * @param int[] $algorithms
+     * @throws ConfigurationException
+     * @see COSEAlgorithm
+     */
+    public function setAllowedAlgorithms(array $algorithms) : void
+    {
+        $validList = [];
+        foreach ($algorithms as $algorithm) {
+            if (!\is_int($algorithm)) {
+                throw new ConfigurationException('Algorithms should be integer constants from the COSEAlgorithm enumeratons.');
+            }
+
+            if (!\in_array($algorithm, self::SUPPORTED_ALGORITHMS, true)) {
+                throw new ConfigurationException(sprintf('Unsupported algorithm "%d".', $algorithm));
+            }
+            $validList[] = $algorithm;
+        }
+        $this->algorithms = $validList;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getAllowedAlgorithms() : array
+    {
+        return $this->algorithms;
     }
 }

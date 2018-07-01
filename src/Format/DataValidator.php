@@ -40,7 +40,7 @@ final class DataValidator
                 throw new DataValidationException(sprintf('Required key "%s" is missing in data.', $key));
             }
         }
-        if (count($data) != 0 && $complete) {
+        if ($complete && \count($data) !== 0) {
             throw new DataValidationException(sprintf('Unexpected fields in data (%s).', implode(', ', array_keys($data))));
         }
     }

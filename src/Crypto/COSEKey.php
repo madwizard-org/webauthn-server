@@ -87,7 +87,7 @@ abstract class COSEKey
         if ($keyType === self::COSE_KTY_RSA) {
             return RSAKey::fromCBORData($data);
         }
-        throw new Exception(sprintf('Key type %d not supported', $keyType));
+        throw new WebAuthnException(sprintf('Key type %d not supported', $keyType));
     }
 
     /**

@@ -13,11 +13,6 @@ use function is_array;
 class AttestationObject
 {
     /**
-     * @var array
-     */
-    private $data;
-
-    /**
      * @var string
      */
     private $format;
@@ -47,14 +42,12 @@ class AttestationObject
                     'attStmt' => 'array',
                     'authData' => ByteBuffer::class
                 ],
-                false
+                false   // TODO: true?
             );
 
             $this->format = $data['fmt'];
             $this->statement = $data['attStmt'];
             $this->authData = $data['authData'];
-
-            $this->data = $data;
         } catch (CBORException $e) {
             throw new WebAuthnException('Failed to parse CBOR attestation object.', 0, $e);
         }

@@ -3,7 +3,6 @@
 
 namespace MadWizard\WebAuthn\Crypto;
 
-use Exception;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;

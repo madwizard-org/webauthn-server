@@ -30,20 +30,19 @@ class AttestationContext
     /**
      * @var bool
      */
-    private $userVerificationRequired;
+    private $userVerificationRequired = false;
 
-    private function __construct()
+    public function __construct(ByteBuffer $challenge, Origin $origin, string $rpId)
     {
+        $this->challenge = $challenge;
+        $this->origin = $origin;
+        $this->rpId = $rpId;
     }
 
     public static function create(PublicKeyCredentialCreationOptions $options, WebAuthnConfiguration $configuration) : AttestationContext
     {
-        $context = new self();
-
-        $context->challenge = $options->getChallenge();
-
-        $context->origin = $configuration->getRelyingPartyOrigin();
-        if ($context->origin === null) {
+        $origin = $configuration->getRelyingPartyOrigin();
+        if ($origin === null) {
             throw new ConfigurationException('Could not determine relying party origin.');
         }
 
@@ -52,12 +51,11 @@ class AttestationContext
             $rpId = $configuration->getEffectiveReyingPartyId();
         }
 
-        $context->rpId = $rpId;
+        $context = new self($options->getChallenge(), $origin, $rpId);
 
-        $context->userVerificationRequired = false;
         $authSel = $options->getAuthenticatorSelection();
         if ($authSel !== null && $authSel->getUserVerification() === UserVerificationRequirement::REQUIRED) {
-            $context->userVerificationRequired = true;
+            $context->setUserVerificationRequired(true);
         }
 
         return $context;
@@ -93,5 +91,10 @@ class AttestationContext
     public function isUserVerificationRequired(): bool
     {
         return $this->userVerificationRequired;
+    }
+
+    public function setUserVerificationRequired(bool $required): void
+    {
+        $this->userVerificationRequired = $required;
     }
 }

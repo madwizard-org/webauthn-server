@@ -176,7 +176,7 @@ class AttestationVerifier extends AbstractVerifier
 
         // TODO
 
-        return new AttestationResult($credential->getId(), $authData->getKey(), $verificationResult);
+        return new AttestationResult(Base64UrlEncoding::encode($credential->getRawId()->getBinaryString()), $authData->getKey(), $verificationResult);
     }
 
     private function verifyRpIdHash(AuthenticatorData $authData, AttestationContext $context)

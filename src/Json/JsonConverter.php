@@ -12,6 +12,7 @@ use MadWizard\WebAuthn\Dom\PublicKeyCredentialType;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Format\DataValidator;
 use function is_string;
 
 final class JsonConverter
@@ -128,46 +129,53 @@ final class JsonConverter
         $clientDataJson = Base64UrlEncoding::decode($clientDataJson);
 
         if ($responseType === 'assertion') {
-            $encAuthenticatorData = $response['authenticatorData'] ?? null;
-
-            if (!is_string($encAuthenticatorData)) {
-                throw new WebAuthnException('Epecting authenticator data');
-            }
-
-            $authenticatorData = new ByteBuffer(Base64UrlEncoding::decode($encAuthenticatorData));
-
-            $encSignature = $response['signature'] ?? null;
-            if (!is_string($encSignature)) {
-                throw new WebAuthnException('Missing signature');
-            }
-
-            $signature = new ByteBuffer(Base64UrlEncoding::decode($encSignature));
-
-            $userHandle = null;
-
-            $encUserHandle = $response['userHandle'] ?? null;
-            if ($encUserHandle !== null) {
-                if (!is_string($encUserHandle)) {
-                    throw new WebAuthnException('expectng string');
-                }
-
-                $userHandle = new ByteBuffer(Base64UrlEncoding::decode($encUserHandle));
-            }
-
-            return new AuthenticatorAssertionResponse($clientDataJson, $authenticatorData, $signature, $userHandle);
+            return self::decodeAssertionResponse($clientDataJson, $response);
         }
         if ($responseType === 'attestation') {
-            $attestationObject = $response['attestationObject'] ?? null;
-            if ($attestationObject === null) {
-                throw new WebAuthnException('Missing attestation object');
-            }
-
-            return new AuthenticatorAttestationResponse(
-                $clientDataJson,
-                new ByteBuffer(Base64UrlEncoding::decode($attestationObject))
-            );
+            return self::decodeAttestationResponse($clientDataJson, $response);
         }
         throw new WebAuthnException(sprintf('Unknown or missing type %s', $responseType));
+    }
+
+    private static function decodeAssertionResponse(string $clientDataJson, array $response) : AuthenticatorAssertionResponse
+    {
+        DataValidator::checkTypes(
+            $response,
+            [
+                'authenticatorData' => 'string',
+                'signature' => 'string',
+                'userHandle' => '?string',
+            ],
+            false
+        );
+
+        $authenticatorData = new ByteBuffer(Base64UrlEncoding::decode($response['authenticatorData']));
+        $signature = new ByteBuffer(Base64UrlEncoding::decode($response['signature']));
+
+        $userHandle = null;
+
+        $encUserHandle = $response['userHandle'] ?? null;
+        if ($encUserHandle !== null) {
+            $userHandle = new ByteBuffer(Base64UrlEncoding::decode($encUserHandle));
+        }
+
+        return new AuthenticatorAssertionResponse($clientDataJson, $authenticatorData, $signature, $userHandle);
+    }
+
+    private static function decodeAttestationResponse(string $clientDataJson, array $response) : AuthenticatorAttestationResponse
+    {
+        DataValidator::checkTypes(
+            $response,
+            [
+                'attestationObject' => 'string',
+            ],
+            false
+        );
+
+        return new AuthenticatorAttestationResponse(
+            $clientDataJson,
+            new ByteBuffer(Base64UrlEncoding::decode($response['attestationObject']))
+        );
     }
 
     public static function encodeDictionary(DictionaryInterface $dictionary) : array

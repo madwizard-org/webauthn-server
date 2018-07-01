@@ -44,6 +44,13 @@ class CBOR
         }
     }
 
+    /**
+     * @param ByteBuffer $buf
+     * @param int $startOffset
+     * @param int|null $endOffset
+     * @return mixed
+     * @throws CBORException
+     */
     public static function decodeInPlace(ByteBuffer $buf, int $startOffset, int &$endOffset = null)
     {
         try {

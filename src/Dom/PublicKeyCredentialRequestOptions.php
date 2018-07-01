@@ -5,9 +5,8 @@ namespace MadWizard\WebAuthn\Dom;
 
 use InvalidArgumentException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use Serializable;
 
-class PublicKeyCredentialRequestOptions extends AbstractDictionary implements Serializable
+class PublicKeyCredentialRequestOptions extends AbstractDictionary
 {
     /**
      * @var ByteBuffer
@@ -58,26 +57,17 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary implements Se
             'challenge' => $this->challenge,
         ];
 
-        if ($this->timeout !== null) {
-            $map['timeout'] = $this->timeout;
-        }
+        $map = array_merge(
+            $map,
+            self::removeNullValues([
+                'timeout' => $this->timeout,
+                'rpId' => $this->rpId,
+                'allowCredentials' => $this->allowCredentials,
+                'userVerification' => $this->userVerification,
+                'extensions' => $this->extensions,
+            ])
+        );
 
-        if ($this->rpId !== null) {
-            $map['rpId'] = $this->rpId;
-        }
-
-        if ($this->allowCredentials !== null) {
-            foreach ($this->allowCredentials as $credential) {
-                $map['allowCredentials'][] = $credential->getAsArray();
-            }
-        }
-        if ($this->userVerification !== null) {
-            $map['userVerification'] = $this->userVerification;
-        }
-
-        if ($this->extensions !== null) {
-            //$map['extensions'] = $this->extensions;
-        }
         return $map;
     }
 
@@ -144,28 +134,5 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary implements Se
         }
 
         $this->userVerification = $value;
-    }
-
-    public function serialize()
-    {
-        return serialize([
-            'challenge' => $this->challenge,
-            'timeout' => $this->timeout,
-            'rpId' => $this->rpId,
-            'allowCredentials' => $this->allowCredentials,
-            'userVerification' => $this->userVerification,
-            'extensions' => $this->extensions,
-        ]);
-    }
-
-    public function unserialize($serialized)
-    {
-        $arr = \unserialize($serialized);
-        $this->challenge = $arr['challenge'];
-        $this->timeout = $arr['timeout'];
-        $this->rpId = $arr['rpId'];
-        $this->allowCredentials = $arr['allowCredentials'];
-        $this->userVerification = $arr['userVerification'];
-        $this->extensions = $arr['extensions'];
     }
 }

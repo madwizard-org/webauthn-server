@@ -76,22 +76,19 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
             'pubKeyCredParams' => $this->pubKeyCredParams
         ];
 
-        if ($this->timeout !== null) {
-            $map['timeout'] = $this->timeout;
-        }
+        $map = array_merge(
+            $map,
+            self::removeNullValues(
+                [
+                    'timeout' => $this->timeout,
+                    'excludedCredentials' => $this->excludedCredentials,
+                    'authenticatorSelection' => $this->authenticatorSelection,
+                    'attestation' => $this->attestation,
+                    'extensions' => $this->extensions,
+                ]
+            )
+        );
 
-        if ($this->excludedCredentials !== null && \count($this->excludedCredentials) !== 0) {
-            $map['excludedCredentials'] = $this->excludedCredentials;
-        }
-        if ($this->authenticatorSelection !== null) {
-            $map['authenticatorSelection'] = $this->authenticatorSelection;
-        }
-        if ($this->attestation !== null) {
-            $map['attestation'] = $this->attestation;
-        }
-        if ($this->extensions !== null) {
-            $map['extensions'] = $this->extensions;
-        }
         return $map;
     }
 

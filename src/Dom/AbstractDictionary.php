@@ -13,4 +13,11 @@ abstract class AbstractDictionary implements DictionaryInterface
     {
         return JsonConverter::encodeDictionary($this);
     }
+
+    protected static function removeNullValues(array $map) : array
+    {
+        return array_filter($map, function ($value) {
+            return $value !== null;
+        });
+    }
 }

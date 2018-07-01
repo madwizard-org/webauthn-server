@@ -3,9 +3,7 @@
 
 namespace MadWizard\WebAuthn\Dom;
 
-use Serializable;
-
-class CredentialCreationOptions extends AbstractDictionary implements Serializable
+class CredentialCreationOptions extends AbstractDictionary
 {
     /**
      * @var PublicKeyCredentialCreationOptions|null
@@ -36,16 +34,5 @@ class CredentialCreationOptions extends AbstractDictionary implements Serializab
             $map['publicKey'] = $this->publicKey;
         }
         return $map;
-    }
-
-    public function serialize()
-    {
-        return \serialize(['publicKey' => $this->publicKey]);
-    }
-
-    public function unserialize($serialized)
-    {
-        $arr = \unserialize($serialized);
-        $this->publicKey = $arr['publicKey'];
     }
 }

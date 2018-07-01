@@ -67,7 +67,7 @@ class WebAuthnServer
     }
 
     /**
-     * @return PublicKeyCredentialParameters
+     * @return PublicKeyCredentialParameters[]
      */
     private function getCredentialParameters() : array
     {

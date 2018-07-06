@@ -36,9 +36,6 @@ abstract class AbstractAttestationStatement implements AttestationStatementInter
         return $certificates;
     }
 
-    /**
-     * @return string
-     */
     public function getFormatId(): string
     {
         return $this->formatId;

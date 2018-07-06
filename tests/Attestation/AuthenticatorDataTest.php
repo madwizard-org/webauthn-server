@@ -1,7 +1,7 @@
 <?php
 
 
-namespace MadWizard\WebAuthn\Tests\Dom;
+namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Crypto\EC2Key;

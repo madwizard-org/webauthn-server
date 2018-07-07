@@ -3,8 +3,8 @@
 
 namespace MadWizard\WebAuthn\Config;
 
-use Attestation\Registry\BuiltInFormats;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
+use MadWizard\WebAuthn\Attestation\Registry\BuiltInFormats;
 use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRpEntity;
 use MadWizard\WebAuthn\Exception\ConfigurationException;

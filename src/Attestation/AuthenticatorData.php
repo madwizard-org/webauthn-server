@@ -77,7 +77,7 @@ class AuthenticatorData
         $offset += 4;
 
         if ($this->hasAttestedCredentialData()) {
-            $this->aaguid = $data->getBytes($offset, self::LENGTH_AAGUID);
+            $this->aaguid = new ByteBuffer($data->getBytes($offset, self::LENGTH_AAGUID));
             $offset += self::LENGTH_AAGUID;
             $credentialIdLength = $data->getUint16Val($offset);
             $offset += 2;

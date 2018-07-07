@@ -63,6 +63,11 @@ class CBOR
         }
     }
 
+    /**
+     * @param ByteBuffer $buf
+     * @param int $offset
+     * @return mixed
+     */
     private static function parseItem(ByteBuffer $buf, int &$offset)
     {
         $first = $buf->getByteVal($offset++);

@@ -1,9 +1,8 @@
 <?php
 
 
-namespace Attestation\Registry;
+namespace MadWizard\WebAuthn\Attestation\Registry;
 
-use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Attestation\Statement\FidoU2fAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
 

@@ -4,7 +4,9 @@
 namespace MadWizard\WebAuthn\Attestation;
 
 use MadWizard\WebAuthn\Crypto\COSEKey;
+use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Format\CBOR;
 
 class AuthenticatorData
 {
@@ -54,6 +56,11 @@ class AuthenticatorData
      */
     private $credentialId;
 
+    /**
+     * @var ByteBuffer|null
+     */
+    private $aaguid;
+
     private const LENGTH_RP_ID_HASH = 32;
 
     private const LENGTH_AAGUID = 16;
@@ -70,7 +77,7 @@ class AuthenticatorData
         $offset += 4;
 
         if ($this->hasAttestedCredentialData()) {
-            $aaguid = $data->getBytes($offset, self::LENGTH_AAGUID);
+            $this->aaguid = $data->getBytes($offset, self::LENGTH_AAGUID);
             $offset += self::LENGTH_AAGUID;
             $credentialIdLength = $data->getUint16Val($offset);
             $offset += 2;
@@ -81,7 +88,14 @@ class AuthenticatorData
         }
 
         if ($this->hasExtensionData()) {
-            // TODO
+            $extensionData = CBOR::decodeInPlace($data, $offset, $endOffset);
+            $offset = $endOffset;
+            if (!is_array($extensionData)) {
+                throw new ParseException('Expected CBOR map for extension data in authenticator data.');
+            }
+        }
+        if ($offset !== $data->getLength()) {
+            throw new ParseException('Unexpected bytes at end of AuthenticatorData.');
         }
     }
 

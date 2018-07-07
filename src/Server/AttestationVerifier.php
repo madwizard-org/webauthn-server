@@ -5,19 +5,26 @@ namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
-use MadWizard\WebAuthn\Attestation\Statement\FidoU2fAttestationStatement;
-use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
-use MadWizard\WebAuthn\Attestation\Verifier\FidoU2FStatementVerifier;
-use MadWizard\WebAuthn\Attestation\Verifier\NoneAttestationVerifier;
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
+use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
-use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 
 class AttestationVerifier extends AbstractVerifier
 {
+    /**
+     * @var AttestationFormatRegistryInterface
+     */
+    private $registry;
+
+    public function __construct(AttestationFormatRegistryInterface $registry)
+    {
+        $this->registry = $registry;
+    }
+
     /**
      * @param PublicKeyCredentialInterface $credential
      * @param PublicKeyCredentialRequestOptions $context
@@ -33,30 +40,12 @@ class AttestationVerifier extends AbstractVerifier
             throw new VerificationException('Expecting authenticator attestation response.');
         }
 
+
         // 1. Let JSONtext be the result of running UTF-8 decode on the value of response.clientDataJSON.
         // 2. Let C, the client data claimed as collected during the credential creation, be the result of running an
         //    implementation-specific JSON parser on JSONtext.
-        $c = $response->getParsedClientData();
-
-        // 3. Verify that the value of C.type is webauthn.create.
-        if (($c['type'] ?? null) !== 'webauthn.create') {
-            throw new VerificationException('Expecting type in clientDataJSON to be webauthn.create.');
-        }
-
-        // 4. Verify that the value of C.challenge matches the challenge that was sent to the authenticator
-        //    in the create() call.
-        if (($c['challenge'] ?? null) !== Base64UrlEncoding::encode($context->getChallenge()->getBinaryString())) {
-            throw new VerificationException('Challenge in clientDataJSON does not match the challenge in the request.');
-        }
-
-        // 5. Verify that the value of C.origin matches the Relying Party's origin.
-        $origin = $c['origin'] ?? null;
-        if ($origin === null) {
-            throw new VerificationException('Origin missing in clientDataJSON');
-        }
-        if (!$this->verifyOrigin($origin, $context->getOrigin())) {
-            throw new VerificationException(sprintf("Origin '%s' does not match relying party origin.", $origin));
-        }
+        // 3 - 5
+        $this->checkClientData($response->getParsedClientData(), $context);
 
         // 6. Verify that the value of C.tokenBinding.status matches the state of Token Binding for the TLS connection
         //    over which the assertion was obtained. If Token Binding was used on that TLS connection, also verify that
@@ -107,26 +96,17 @@ class AttestationVerifier extends AbstractVerifier
         $attObject = new AttestationObject($attObjectBuffer);
         $format = $attObject->getFormat();
 
-        // TODO:Temporary test code
-        if ($format === 'fido-u2f') {
-            $statement = new FidoU2fAttestationStatement($attObject);
-            $verifier = new FidoU2FStatementVerifier();
-        } elseif ($format === 'none') {
-            $statement = new NoneAttestationStatement($attObject);
-            $verifier = new NoneAttestationVerifier();
-        } else {
-            throw new WebAuthnException('unsupported (todo)');
+        try {
+            $statement = $this->registry->createStatement($attObject);
+            $verifier = $this->registry->getVerifier($attObject->getFormat());
+        } catch (FormatNotSupportedException $e) {
+            throw new VerificationException(sprintf("Attestation format '%s' not supported", $format), 0, $e);
         }
-
-        $verificationResult = $verifier->verify($statement, $authData, $clientDataHash);
-
-        // TODO
 
         // 14. Verify that attStmt is a correct attestation statement, conveying a valid attestation signature, by
         //     using the attestation statement format fmt’s verification procedure given attStmt, authData and the hash
         //     of the serialized client data computed in step 7.
-
-        // TODO
+        $verificationResult = $verifier->verify($statement, $authData, $clientDataHash);
 
         // 15. If validation is successful, obtain a list of acceptable trust anchors (attestation root certificates or
         //     ECDAA-Issuer public keys) for that attestation type and attestation statement format fmt, from a trusted
@@ -177,6 +157,29 @@ class AttestationVerifier extends AbstractVerifier
         // TODO
 
         return new AttestationResult(Base64UrlEncoding::encode($credential->getRawId()->getBinaryString()), $authData->getKey(), $verificationResult);
+    }
+
+    private function checkClientData(array $cclientData, AttestationContext $context)
+    {
+        // 3. Verify that the value of C.type is webauthn.create.
+        if (($cclientData['type'] ?? null) !== 'webauthn.create') {
+            throw new VerificationException('Expecting type in clientDataJSON to be webauthn.create.');
+        }
+
+        // 4. Verify that the value of C.challenge matches the challenge that was sent to the authenticator
+        //    in the create() call.
+        if (($cclientData['challenge'] ?? null) !== Base64UrlEncoding::encode($context->getChallenge()->getBinaryString())) {
+            throw new VerificationException('Challenge in clientDataJSON does not match the challenge in the request.');
+        }
+
+        // 5. Verify that the value of C.origin matches the Relying Party's origin.
+        $origin = $cclientData['origin'] ?? null;
+        if ($origin === null) {
+            throw new VerificationException('Origin missing in clientDataJSON');
+        }
+        if (!$this->verifyOrigin($origin, $context->getOrigin())) {
+            throw new VerificationException(sprintf("Origin '%s' does not match relying party origin.", $origin));
+        }
     }
 
     private function verifyRpIdHash(AuthenticatorData $authData, AttestationContext $context)

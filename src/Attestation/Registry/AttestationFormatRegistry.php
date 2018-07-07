@@ -7,7 +7,7 @@ use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\StatementVerifierInterface;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
 
-class AttestationFormatRegistry
+class AttestationFormatRegistry implements AttestationFormatRegistryInterface
 {
     /**
      * @var AttestationFormatInterface[]

@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -96,4 +97,12 @@ class PackedAttestationStatement extends AbstractAttestationStatement
     {
         return $this->ecdaaKeyId;
     }
+
+//    public static function createFormat() : AttestationFormatInterface
+//    {
+//        return new BuiltInAttestationFormat(
+//            self::FORMAT_ID,
+//            self::class,
+//            PackedStatementVerifier::class);
+//    }
 }

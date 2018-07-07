@@ -3,6 +3,8 @@
 
 namespace MadWizard\WebAuthn\Server;
 
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
@@ -21,6 +23,11 @@ class WebAuthnServer
      * @var WebAuthnConfiguration
      */
     private $config;
+
+    /**
+     * @var AttestationFormatRegistryInterface|null
+     */
+    private $formatRegistry;
 
     public function __construct(WebAuthnConfiguration $config)
     {
@@ -52,7 +59,7 @@ class WebAuthnServer
     public function finishRegistration($credential, AttestationContext $context) : RegistrationResult
     {
         $credential = $this->convertAttestationCredential($credential);
-        $verifier = new AttestationVerifier();
+        $verifier = new AttestationVerifier($this->getFormatRegistry());
         $attestationResult = $verifier->verify($credential, $context);
         return new RegistrationResult($attestationResult);
     }
@@ -95,5 +102,24 @@ class WebAuthnServer
         }
 
         throw new WebAuthnException('Parameter credential should be of type string or PublicKeyCredentialInterface.');
+    }
+
+    public function getFormatRegistry() : AttestationFormatRegistryInterface
+    {
+        if ($this->formatRegistry === null) {
+            $this->formatRegistry = $this->createDefaultFormatRegistry();
+        }
+
+        return $this->formatRegistry;
+    }
+
+    private function createDefaultFormatRegistry() : AttestationFormatRegistry
+    {
+        $registry = new AttestationFormatRegistry();
+        $formats = $this->config->getAttestationFormats();
+        foreach ($formats as $format) {
+            $registry->addFormat($format);
+        }
+        return $registry;
     }
 }

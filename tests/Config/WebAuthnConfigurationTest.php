@@ -2,6 +2,7 @@
 
 namespace MadWizard\WebAuthn\Tests\Config;
 
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
@@ -101,12 +102,34 @@ class WebAuthnConfigurationTest extends TestCase
         $this->assertSame(128, $config->getChallengeLength());
     }
 
+    public function testShortChallenge()
+    {
+        $this->expectException(ConfigurationException::class);
+        $config = new WebAuthnConfiguration();
+        $config->setChallengeLength(2);
+    }
+
     public function testDefaultAlgorithms()
     {
         $config = new WebAuthnConfiguration();
         $default = $config->getAllowedAlgorithms();
         $this->assertContains(COSEAlgorithm::ES256, $default);
         $this->assertContains(COSEAlgorithm::RS256, $default);
+    }
+
+    public function testDefaultFormats()
+    {
+        $config = new WebAuthnConfiguration();
+        $formats = $config->getAttestationFormats();
+        $formatIds = array_map(
+            function (AttestationFormatInterface $f) {
+                return $f->getFormatId();
+            },
+            $formats
+        );
+
+        $this->assertContains('none', $formatIds);
+        $this->assertContains('fido-u2f', $formatIds);
     }
 
     public function testSetAlgorithms()

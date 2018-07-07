@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Crypto;
 use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Format\CBOR;
 use MadWizard\WebAuthn\Format\DataValidator;
 use function openssl_pkey_get_public;
 
@@ -126,6 +127,18 @@ class EC2Key extends COSEKey // TODO exceptions
             );
 
         return DER::pem('PUBLIC KEY', $der);
+    }
+
+    public function getCBOR() : ByteBuffer
+    {
+        $map = [
+            self::COSE_KEY_PARAM_KTY => self::COSE_KTY_EC2,
+            self::COSE_KEY_PARAM_ALG => $this->getAlgorithm(),
+            self::KTP_CRV => $this->curve,
+            self::KTP_X => $this->x,
+            self::KTP_Y => $this->y,
+        ];
+        return new ByteBuffer(CBOR::encodeMap($map));
     }
 
     public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool

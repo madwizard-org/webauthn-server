@@ -2,6 +2,7 @@
 
 namespace MadWizard\WebAuthn\Tests\Crypto;
 
+use MadWizard\WebAuthn\Crypto\COSEKey;
 use MadWizard\WebAuthn\Crypto\EC2Key;
 use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
@@ -85,6 +86,33 @@ class EC2KeyTest extends TestCase
     {
         $this->expectException(WebAuthnException::class);
         EC2Key::fromCBORData([-1 => 'a', -2 => 1, -3 => 2]);
+    }
+
+    public function testCBOR()
+    {
+        // Example key from webauthn spec
+        $cbor = HexData::buf(
+            'A5        
+             01  02  #   1:   2,  ; kty: EC2 key type
+             03  26  #   3:  -7,  ; alg: ES256 signature algorithm
+             20  01  #  -1:   1,  ; crv: P-256 curve
+             21  58 20   65eda5a12577c2bae829437fe338701a10aaa375e1bb5b5de108de439c08551d # -2:   x,  ; x-coordinate
+             22  58 20   1e52ed75701163f7f9e40ddf9f341b3dc9ba860af7e0ca7ca7e9eecd0084d19c # -3:   y,  ; y-coordinate'
+        );
+
+        $key = COSEKey::parseCBOR($cbor);
+        $this->assertInstanceOf(EC2Key::class, $key);
+        /** @var $key EC2Key */
+
+        $this->assertSame(EC2Key::CURVE_P256, $key->getCurve());
+        $this->assertSame(COSEAlgorithm::ES256, $key->getAlgorithm());
+        $this->assertSame('65eda5a12577c2bae829437fe338701a10aaa375e1bb5b5de108de439c08551d', $key->getX()->getHex());
+        $this->assertSame('1e52ed75701163f7f9e40ddf9f341b3dc9ba860af7e0ca7ca7e9eecd0084d19c', $key->getY()->getHex());
+
+        // Transform back
+        $output = $key->getCBOR();
+
+        $this->assertSame($cbor->getHex(), $output->getHex());
     }
 
     private function getKey(): EC2Key

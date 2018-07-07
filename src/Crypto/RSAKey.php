@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Crypto;
 use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Format\CBOR;
 use MadWizard\WebAuthn\Format\DataValidator;
 
 class RSAKey extends COSEKey
@@ -144,6 +145,17 @@ class RSAKey extends COSEKey
             );
 
         return DER::pem('PUBLIC KEY', $der);
+    }
+
+    public function getCBOR() : ByteBuffer
+    {
+        $map = [
+            self::COSE_KEY_PARAM_KTY => self::COSE_KTY_RSA,
+            self::COSE_KEY_PARAM_ALG => $this->getAlgorithm(),
+            self::KTP_N => $this->modulus,
+            self::KTP_E => $this->exponent,
+        ];
+        return new ByteBuffer(CBOR::encodeMap($map));
     }
 
     protected function algorithmSupported(int $algorithm) : bool

@@ -3,6 +3,7 @@
 
 namespace MadWizard\WebAuthn\Tests\Crypto;
 
+use MadWizard\WebAuthn\Crypto\COSEKey;
 use MadWizard\WebAuthn\Crypto\RSAKey;
 use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
@@ -99,6 +100,35 @@ class RSAKeyTest extends TestCase
 
         $this->assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());
         $this->assertSame(self::TEST_KEY_EXPONENT, $key->getExponent()->getHex());
+    }
+
+    public function testCBOR()
+    {
+        // Example key from webauthn spec
+        $cbor = HexData::buf(
+            sprintf(
+            'A4        
+             01  03          #   1:   3,    ; kty: RSA   key type
+             03  39 0100     #   3:  -257,  ; alg: RS256 signature algorithm
+             20  59 0100 %s  #  -1:   m,    ; modulus
+             21  43 %s       #  -2:   e,    ; exponent',
+            self::TEST_KEY_MODULUS,
+            self::TEST_KEY_EXPONENT
+        )
+        );
+
+        $key = COSEKey::parseCBOR($cbor);
+        $this->assertInstanceOf(RSAKey::class, $key);
+        /** @var $key RSAKey */
+
+        $this->assertSame(COSEAlgorithm::RS256, $key->getAlgorithm());
+        $this->assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());
+        $this->assertSame(self::TEST_KEY_EXPONENT, $key->getExponent()->getHex());
+
+        // Transform back
+        $output = $key->getCBOR();
+
+        $this->assertSame($cbor->getHex(), $output->getHex());
     }
 
     private function getKey(): RSAKey

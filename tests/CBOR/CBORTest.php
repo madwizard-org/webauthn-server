@@ -3,13 +3,17 @@
 
 namespace MadWizard\WebAuthn\Tests\CBOR;
 
+use const PHP_INT_SIZE;
 use MadWizard\WebAuthn\Exception\CBORException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CBOR;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
 use PHPUnit\Framework\TestCase;
+use function bin2hex;
+use function hex2bin;
 use function json_decode;
+use function var_dump;
 
 class CBORTest extends TestCase
 {
@@ -173,5 +177,92 @@ class CBORTest extends TestCase
         $this->expectException(CBORException::class);
         $this->expectExceptionMessageRegExp('~unused bytes~i');
         CBOR::decode($buf);
+    }
+
+    public function testEncodeInteger()
+    {
+        $this->assertSame('00', bin2hex(CBOR::encodeInteger(0)));
+
+        $this->assertSame('01', bin2hex(CBOR::encodeInteger(1)));
+        $this->assertSame('17', bin2hex(CBOR::encodeInteger(23)));
+        $this->assertSame('1818', bin2hex(CBOR::encodeInteger(24)));
+        $this->assertSame('18ff', bin2hex(CBOR::encodeInteger(255)));
+        $this->assertSame('190100', bin2hex(CBOR::encodeInteger(256)));
+        $this->assertSame('19ffff', bin2hex(CBOR::encodeInteger(65535)));
+        $this->assertSame('1a00010000', bin2hex(CBOR::encodeInteger(65536)));
+        if (PHP_INT_SIZE > 4) {
+            $this->assertSame('1affffffff', bin2hex(CBOR::encodeInteger(4294967295)));
+            $this->assertSame('1b0000000100000000', bin2hex(CBOR::encodeInteger(4294967296)));
+        }
+
+        $this->assertSame('20', bin2hex(CBOR::encodeInteger(-1)));
+        $this->assertSame('37', bin2hex(CBOR::encodeInteger(-24)));
+        $this->assertSame('3818', bin2hex(CBOR::encodeInteger(-25)));
+        $this->assertSame('38ff', bin2hex(CBOR::encodeInteger(-256)));
+        $this->assertSame('390100', bin2hex(CBOR::encodeInteger(-257)));
+        $this->assertSame('39ffff', bin2hex(CBOR::encodeInteger(-65536)));
+        if (PHP_INT_SIZE > 4) {
+            $this->assertSame('3affffffff', bin2hex(CBOR::encodeInteger(-4294967296)));
+            $this->assertSame('3b0000000100000000', bin2hex(CBOR::encodeInteger(-4294967297)));
+        }
+    }
+
+    public function testEncodeText()
+    {
+        $this->assertSame('60', bin2hex(CBOR::encodeTextString('')));
+        $this->assertSame('6174', bin2hex(CBOR::encodeTextString('t')));
+        $this->assertSame('6a74657374737472696e67', bin2hex(CBOR::encodeTextString('teststring')));
+    }
+
+    public function testEncodeBytes()
+    {
+        $this->assertSame('40', bin2hex(CBOR::encodeByteString(new ByteBuffer(''))));
+        $this->assertSame('421234', bin2hex(CBOR::encodeByteString(ByteBuffer::fromHex('1234'))));
+        $this->assertSame('481234567890123456', bin2hex(CBOR::encodeByteString(ByteBuffer::fromHex('1234567890123456'))));
+    }
+
+    public function testEncodeMapValues()
+    {
+        $vals = [];
+
+        $vals[hex2bin('63616161')] = hex2bin('617A');  // "aaa" : "z"
+        $vals[hex2bin('626462')] = hex2bin('6179');    // "db" : "y"
+        $vals[hex2bin('05')] = hex2bin('F4');          //  5   : false
+        $vals[hex2bin('626461')] = hex2bin('6178');    // "da" : "x"
+        $vals[hex2bin('21')] = hex2bin('F6');          // -2 : null
+
+        // Should be sorted according to canonical CBOR
+
+        $validCBOR =
+            HexData::bin('
+                A5              # map(5)
+                05              # 5 
+                    F4          #       false
+                21              # -2
+                    F6          #       null
+                62 64 61        # da
+                    61 78       #       x
+                62 64 62        # db
+                    61 79       #       y
+                63 61 61 61     # aaa
+                    617A        #       z
+
+            ');
+
+        $this->assertSame(bin2hex($validCBOR), bin2hex(CBOR::encodeMapValues($vals)));
+    }
+
+    public function testEncodeMap()
+    {
+        $map =
+        [
+            'cc' => 'dd',
+             25 => 1,
+             'd' => ByteBuffer::fromHex('1234'),
+             23 => 2,
+             'a' => 'b',
+        ];
+
+        $this->assertSame('a51702181901616161626164421234626363626464', bin2hex(CBOR::encodeMap($map)));
     }
 }

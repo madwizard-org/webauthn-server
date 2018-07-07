@@ -15,12 +15,12 @@ abstract class COSEKey
     /**
      * EC2 key type
      */
-    private const COSE_KTY_EC2 = 2;
+    protected const COSE_KTY_EC2 = 2;
 
     /**
      * RSA key type
      */
-    private const COSE_KTY_RSA = 3;
+    protected const COSE_KTY_RSA = 3;
 
     /**
      * @var int
@@ -88,6 +88,8 @@ abstract class COSEKey
         }
         throw new WebAuthnException(sprintf('Key type %d not supported', $keyType));
     }
+
+    abstract public function getCBOR() : ByteBuffer;
 
     /**
      * @return int

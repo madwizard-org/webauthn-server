@@ -6,7 +6,7 @@ namespace MadWizard\WebAuthn\Attestation;
 use MadWizard\WebAuthn\Crypto\COSEKey;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Format\CBOR;
+use MadWizard\WebAuthn\Format\CBORDecoder;
 
 class AuthenticatorData
 {
@@ -88,7 +88,7 @@ class AuthenticatorData
         }
 
         if ($this->hasExtensionData()) {
-            $extensionData = CBOR::decodeInPlace($data, $offset, $endOffset);
+            $extensionData = CBORDecoder::decodeInPlace($data, $offset, $endOffset);
             $offset = $endOffset;
             if (!is_array($extensionData)) {
                 throw new ParseException('Expected CBOR map for extension data in authenticator data.');

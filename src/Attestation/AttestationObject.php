@@ -6,7 +6,7 @@ namespace MadWizard\WebAuthn\Attestation;
 use MadWizard\WebAuthn\Exception\CBORException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Format\CBOR;
+use MadWizard\WebAuthn\Format\CBORDecoder;
 use MadWizard\WebAuthn\Format\DataValidator;
 use function is_array;
 
@@ -30,7 +30,7 @@ class AttestationObject
     public function __construct(ByteBuffer $buffer)
     {
         try {
-            $data = CBOR::decode($buffer);
+            $data = CBORDecoder::decode($buffer);
             if (!is_array($data)) {
                 throw new WebAuthnException('Expecting attestation object to be a CBOR map.');
             }

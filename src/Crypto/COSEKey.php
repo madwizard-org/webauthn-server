@@ -6,7 +6,7 @@ namespace MadWizard\WebAuthn\Crypto;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Format\CBOR;
+use MadWizard\WebAuthn\Format\CBORDecoder;
 use MadWizard\WebAuthn\Format\DataValidator;
 use function is_array;
 
@@ -60,7 +60,7 @@ abstract class COSEKey
 
     public static function parseCBOR(ByteBuffer $buffer, int $offset = 0, int &$endOffset = null) : COSEKey
     {
-        $data = CBOR::decodeInPlace($buffer, $offset, $endOffset);
+        $data = CBORDecoder::decodeInPlace($buffer, $offset, $endOffset);
 
         if (!is_array($data)) {
             throw new DataValidationException('Failed to decode CBOR encoded COSE key'); // TODO: change exceptions

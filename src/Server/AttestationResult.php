@@ -6,7 +6,7 @@ namespace MadWizard\WebAuthn\Server;
 use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
 use MadWizard\WebAuthn\Crypto\COSEKey;
 
-class AttestationResult
+class AttestationResult  // TODO: merge registration and attestation result?
 {
     /**
      * @var string

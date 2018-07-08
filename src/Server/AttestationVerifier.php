@@ -22,6 +22,7 @@ class AttestationVerifier extends AbstractVerifier
 
     public function __construct(AttestationFormatRegistryInterface $registry)
     {
+        parent::__construct();
         $this->registry = $registry;
     }
 

@@ -16,14 +16,14 @@ class WebAuthnConfigurationTest extends TestCase
         $this->assertNull($config->getRelyingPartyId());
         $config->setRelyingPartyId('example.com');
         $this->assertSame('example.com', $config->getRelyingPartyId());
-        $this->assertSame('example.com', $config->getEffectiveReyingPartyId());
+        $this->assertSame('example.com', $config->getEffectiveRelyingPartyId());
     }
 
-    public function testNoEffectiveReyingPartyId()
+    public function testNoEffectiveRelyingPartyId()
     {
         $this->expectException(ConfigurationException::class);
         $config = new WebAuthnConfiguration();
-        $config->getEffectiveReyingPartyId();
+        $config->getEffectiveRelyingPartyId();
     }
 
     public function testRelyingPartyOrigin()
@@ -35,24 +35,24 @@ class WebAuthnConfigurationTest extends TestCase
         $this->assertNull($config->getRelyingPartyOrigin());
     }
 
-    public function testInvalidEffectiveReyingPartyId()
+    public function testInvalidEffectiveRelyingPartyId()
     {
         $this->expectException(ConfigurationException::class);
         $config = new WebAuthnConfiguration();
         $config->setRelyingPartyId('not a domain');
     }
 
-    public function testEffectiveReyingPartyId()
+    public function testEffectiveRelyingPartyId()
     {
         $config = new WebAuthnConfiguration();
         $config->setRelyingPartyOrigin('https://www.example.com');
-        $config->getEffectiveReyingPartyId();
-        $this->assertSame('www.example.com', $config->getEffectiveReyingPartyId());
+        $config->getEffectiveRelyingPartyId();
+        $this->assertSame('www.example.com', $config->getEffectiveRelyingPartyId());
         $config->setRelyingPartyId('test.example');
-        $this->assertSame('test.example', $config->getEffectiveReyingPartyId());
+        $this->assertSame('test.example', $config->getEffectiveRelyingPartyId());
         $config->setRelyingPartyId(null);
         $this->assertNull($config->getRelyingPartyId());
-        $this->assertSame('www.example.com', $config->getEffectiveReyingPartyId());
+        $this->assertSame('www.example.com', $config->getEffectiveRelyingPartyId());
     }
 
     public function testFailGetRelyingPartyEntity()

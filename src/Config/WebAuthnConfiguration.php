@@ -60,7 +60,7 @@ class WebAuthnConfiguration
         return $this->rpId;
     }
 
-    public function getEffectiveReyingPartyId() : string
+    public function getEffectiveRelyingPartyId() : string
     {
         if ($this->rpId !== null) {
             return $this->rpId;

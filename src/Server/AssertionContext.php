@@ -4,38 +4,46 @@
 namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
-use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
-use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
+use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Web\Origin;
 
-class AttestationContext extends AbstractContext
+class AssertionContext extends AbstractContext
 {
+    /**
+     * @var ByteBuffer[]
+     */
+    private $allowCredentialIds = [];
+
     public function __construct(ByteBuffer $challenge, Origin $origin, string $rpId)
     {
         parent::__construct($challenge, $origin, $rpId);
     }
 
-    public static function create(PublicKeyCredentialCreationOptions $options, WebAuthnConfiguration $configuration) : self
+    public function addAllowCredentialId(ByteBuffer $buffer)
+    {
+        $this->allowCredentialIds[] = $buffer;
+    }
+
+    public static function create(PublicKeyCredentialRequestOptions $options, WebAuthnConfiguration $configuration) : self
     {
         $origin = $configuration->getRelyingPartyOrigin();
         if ($origin === null) {
             throw new ConfigurationException('Could not determine relying party origin.');
         }
 
-        $rpId = $options->getRpEntity()->getId();
+        $rpId = $options->getRpId();
         if ($rpId === null) {
             $rpId = $configuration->getEffectiveRelyingPartyId();
         }
 
         $context = new self($options->getChallenge(), $origin, $rpId);
 
-        $authSel = $options->getAuthenticatorSelection();
-        if ($authSel !== null && $authSel->getUserVerification() === UserVerificationRequirement::REQUIRED) {
-            $context->setUserVerificationRequired(true);
+        $allowCredentials = $options->getAllowCredentials();
+        foreach ($allowCredentials as $credential) {
+            $context->addAllowCredentialId($credential->getId());
         }
-
         return $context;
     }
 

@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Exception\WebAuthnException;
+use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
 class PublicKeyCredential implements PublicKeyCredentialInterface
@@ -41,6 +42,11 @@ class PublicKeyCredential implements PublicKeyCredentialInterface
     public function getId(): string
     {
         return \base64_encode($this->rawId->getBinaryString());
+    }
+
+    public function getBase64UrlId() : string
+    {
+        return Base64UrlEncoding::encode($this->rawId->getBinaryString());
     }
 
     public function getResponse(): AuthenticatorResponseInterface

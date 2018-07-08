@@ -22,8 +22,8 @@ class WebAuthnServerTest extends TestCase
         $server = $this->createServer();
 
         $user = new UserIdentity(ByteBuffer::fromHex('123456'), 'demo', 'Demo user');
-        $options = new RegistrationOptions();
-        $request = $server->startRegistration($user, $options);
+        $options = new RegistrationOptions($user);
+        $request = $server->startRegistration($options);
 
         $clientOptions = $request->getClientOptions();
         $this->assertSame('123456', $clientOptions->getUserEntity()->getId()->getHex());

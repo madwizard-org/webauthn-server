@@ -6,13 +6,19 @@ namespace MadWizard\WebAuthn\Server;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
+use MadWizard\WebAuthn\Dom\AuthenticatorTransport;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
+use MadWizard\WebAuthn\Dom\PublicKeyCredentialDescriptor;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialParameters;
+use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
+use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Json\JsonConverter;
+use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
+use MadWizard\WebAuthn\Server\Authentication\AuthenticationRequest;
 use MadWizard\WebAuthn\Server\Registration\RegistrationOptions;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResult;
 use MadWizard\WebAuthn\Server\Registration\UserIdentity;
@@ -34,21 +40,21 @@ class WebAuthnServer
         $this->config = $config;
     }
 
-    public function startRegistration(UserIdentity $user, RegistrationOptions $options) : RegistrationRequest
+    public function startRegistration(RegistrationOptions $options) : RegistrationRequest
     {
         $challenge = $this->createChallenge();
 
-        $publicKey = new PublicKeyCredentialCreationOptions(
+        $creationOptions = new PublicKeyCredentialCreationOptions(
             $this->config->getRelyingPartyEntity(),
-            $this->createUserEntity($user),
+            $this->createUserEntity($options->getUser()),
             $challenge,
             $this->getCredentialParameters()
         );
 
-        $publicKey->setAttestation($options->getAttestation());
+        $creationOptions->setAttestation($options->getAttestation());
 
-        $context = AttestationContext::create($publicKey, $this->config);
-        return new RegistrationRequest($publicKey, $context);
+        $context = AttestationContext::create($creationOptions, $this->config);
+        return new RegistrationRequest($creationOptions, $context);
     }
 
     /**
@@ -62,6 +68,41 @@ class WebAuthnServer
         $verifier = new AttestationVerifier($this->getFormatRegistry());
         $attestationResult = $verifier->verify($credential, $context);
         return new RegistrationResult($attestationResult);
+    }
+
+    public function startAuthentication(AuthenticationOptions $options) : AuthenticationRequest
+    {
+        $challenge = $this->createChallenge();
+
+        $requestOptions = new PublicKeyCredentialRequestOptions($challenge);
+        $requestOptions->setRpId($this->config->getRelyingPartyId());
+
+        $this->addAllowCredentials($options, $requestOptions);
+
+
+        $context = AssertionContext::create($requestOptions, $this->config);
+        return new AuthenticationRequest($options, $context);
+    }
+
+    /**
+     * @param AuthenticationOptions $options
+     * @param PublicKeyCredentialRequestOptions $requestOptions
+     * @throws WebAuthnException
+     */
+    private function addAllowCredentials(AuthenticationOptions $options, PublicKeyCredentialRequestOptions $requestOptions): void
+    {
+        $credentials = $options->getAllowCredentials();
+        $transports = AuthenticatorTransport::allKnownTransports(); // TODO: from config
+        if (count($credentials) > 0) {
+            foreach ($credentials as $credential) {
+                $credentialId = new ByteBuffer(Base64UrlEncoding::decode($credential->getCredentialId()));
+                $descriptor = new PublicKeyCredentialDescriptor($credentialId);
+                foreach ($transports as $transport) {
+                    $descriptor->addTransport($transport);
+                }
+                $requestOptions->addAllowedCredential($descriptor);
+            }
+        }
     }
 
     private function createUserEntity(UserIdentity $user) : PublicKeyCredentialUserEntity

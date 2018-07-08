@@ -13,6 +13,7 @@ class AbstractVerifier
     {
     }
 
+    // TODO: move?
     protected function verifyOrigin(string $origin, Origin $rpOrigin) : bool
     {
         try {

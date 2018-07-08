@@ -13,8 +13,22 @@ class RegistrationOptions
      */
     private $attestation;
 
-    public function __construct()
+    /**
+     * @var UserIdentity
+     */
+    private $user;
+
+    public function __construct(UserIdentity $user)
     {
+        $this->user = $user;
+    }
+
+    /**
+     * @return UserIdentity
+     */
+    public function getUser(): UserIdentity
+    {
+        return $this->user;
     }
 
     /**

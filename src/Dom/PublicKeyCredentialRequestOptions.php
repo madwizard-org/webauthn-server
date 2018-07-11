@@ -80,9 +80,9 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
     }
 
     /**
-     * @param string $rpId
+     * @param string|null $rpId
      */
-    public function setRpId(string $rpId): void
+    public function setRpId(?string $rpId): void
     {
         $this->rpId = $rpId;
     }

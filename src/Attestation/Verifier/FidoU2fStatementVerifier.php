@@ -15,7 +15,7 @@ use function openssl_free_key;
 use function openssl_pkey_get_details;
 use function openssl_verify;
 
-class FidoU2FStatementVerifier implements StatementVerifierInterface
+class FidoU2fStatementVerifier implements StatementVerifierInterface
 {
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
     {
@@ -38,11 +38,11 @@ class FidoU2FStatementVerifier implements StatementVerifierInterface
             }
 
             // 4
-            $publicKeyU2F = $this->getPublicKeyU2F($authenticatorData);
+            $publicKeyU2f = $this->getPublicKeyU2f($authenticatorData);
 
 
-            // 5. Let verificationData be the concatenation of (0x00 || rpIdHash || clientDataHash || credentialId || publicKeyU2F) (see Section 4.3 of [FIDO-U2F-Message-Formats]).
-            $verificationData = "\x00" . $rpIdHash->getBinaryString() . $clientDataHash . $credentialId->getBinaryString() . $publicKeyU2F;
+            // 5. Let verificationData be the concatenation of (0x00 || rpIdHash || clientDataHash || credentialId || publicKeyU2f) (see Section 4.3 of [FIDO-U2F-Message-Formats]).
+            $verificationData = "\x00" . $rpIdHash->getBinaryString() . $clientDataHash . $credentialId->getBinaryString() . $publicKeyU2f;
 
             // 6. Verify the sig using verificationData and certificate public key per [SEC1].
             $result = openssl_verify(
@@ -93,7 +93,7 @@ class FidoU2FStatementVerifier implements StatementVerifierInterface
         return $x509;
     }
 
-    private function getPublicKeyU2F(AuthenticatorData $authData) : string
+    private function getPublicKeyU2f(AuthenticatorData $authData) : string
     {
         // 4. Convert the COSE_KEY formatted credentialPublicKey (see Section 7 of [RFC8152]) to CTAP1/U2F public Key format [FIDO-CTAP].
         //      Let publicKeyU2F represent the result of the conversion operation and set its first byte to 0x04. Note: This signifies uncompressed ECC key format.

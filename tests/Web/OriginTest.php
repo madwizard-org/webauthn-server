@@ -13,7 +13,7 @@ class OriginTest extends TestCase
     {
         $localhost = Origin::parse('http://localhost');
 
-        $this->assertSame('localhost', $localhost->getDomain());
+        $this->assertSame('localhost', $localhost->getHost());
         $this->assertSame('http://localhost', $localhost->toString());
         $this->assertSame('http', $localhost->getScheme());
         $this->assertSame(80, $localhost->getPort());
@@ -23,7 +23,7 @@ class OriginTest extends TestCase
     {
         $localhost = Origin::parse('http://localhost:8080');
 
-        $this->assertSame('localhost', $localhost->getDomain());
+        $this->assertSame('localhost', $localhost->getHost());
         $this->assertSame('http://localhost:8080', $localhost->toString());
     }
 
@@ -37,7 +37,7 @@ class OriginTest extends TestCase
     {
         $origin = Origin::parse('HTTP://EXAMPLE.com');
         $this->assertSame('http', $origin->getScheme());
-        $this->assertSame('example.com', $origin->getDomain());
+        $this->assertSame('example.com', $origin->getHost());
     }
 
     public function testUnexpectedPath()
@@ -55,14 +55,32 @@ class OriginTest extends TestCase
 
     public function testMissingScheme()
     {
-        $origin = Origin::parse('//example.com');
-        $this->assertSame('http://example.com', $origin->toString());
+        $this->expectException(ParseException::class);
+        Origin::parse('//example.com');
+    }
+
+    public function testUnknownDefaultPort()
+    {
+        $this->expectException(ParseException::class);
+        Origin::parse('abcd://example.com');
+    }
+
+    public function testIPV4()
+    {
+        $origin = Origin::parse('https://127.0.0.1');
+        $this->assertSame('127.0.0.1', $origin->getHost());
     }
 
     public function testEmpty()
     {
         $this->expectException(ParseException::class);
         Origin::parse('');
+    }
+
+    public function testInvalidDomain()
+    {
+        $this->expectException(ParseException::class);
+        Origin::parse('https://a...b');
     }
 
     public function testInvalid()

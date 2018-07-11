@@ -16,79 +16,86 @@ class Origin // TODO serializable
     /**
      * @var string
      */
-    private $domain;
+    private $host;
 
     /**
      * @var int
      */
     private $port;
 
-    // TODO: add proper host/domain distinction according to spec
-    //
-    private function __construct(string $scheme, string $domain, int $port)
+    private const PARSE_REGEXP = '#^(?<scheme>[A-Za-z][-._~0-9A-Za-z]*)://(?<host>([^:]+))(:(?<port>[0-9]{1,5}))?$#';
+
+    private function __construct(string $scheme, string $host, int $port)
     {
         $this->scheme = $scheme;
-        $this->domain = $domain;
+        $this->host = $host;
         $this->port = $port;
     }
 
+    // TODO: stricter parsing/canonalization according to spec
     public static function parse(string $origin) : Origin
     {
-        [$scheme, $domain, $port] = self::parseElements($origin);
+        [$scheme, $host, $port] = self::parseElements($origin);
 
-        if ($scheme === null) {
-            $scheme = 'http';
-        } else {
-            $scheme = mb_strtolower($scheme, 'UTF-8');
+        if (!self::isValidHost($host)) {
+            throw new ParseException(sprintf("Invalid host name '%s'.", $host));
         }
-
         if ($port === null) {
-            if ($scheme === 'https') {
-                $port = 443;
-            } elseif ($scheme === 'http') {
-                $port = 80;
-            }
+            $port = self::defaultPort($scheme);
         }
 
-        if ($scheme === null || $domain === null || $port === null) {
-            throw new ParseException(sprintf("Incomplete or unsupported origin '%s'.", $origin));
+        if ($port === 0 || $port >= 2 ** 16) {
+            throw new ParseException(sprintf('Invalid port number %d.', $port));
+        }
+        return new Origin($scheme, $host, $port);
+    }
+
+    private static function defaultPort(string $scheme) : int
+    {
+        if ($scheme === 'https') {
+            return 443;
+        }
+        if ($scheme === 'http') {
+            return 80;
+        }
+        throw new ParseException(sprintf("No default port number for scheme '%s'.", $scheme));
+    }
+
+    private static function isValidHost(string $host) : bool
+    {
+        if ($host === '') {
+            return false;
         }
 
-        $domain = mb_strtolower($domain, 'UTF-8');
-        return new Origin($scheme, $domain, $port);
+        if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            return true;
+        }
+
+        // TODO ipv6 - needs adjustment in regexp
+//      if ($host[0] === '[' && $host[-1] === ']' && filter_var(substr($host, 1, -1), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+//          return true;
+//      }
+        if (filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+            return true;
+        }
+        return false;
     }
 
     private static function parseElements($origin) : array
     {
-        $scheme = null;
-        $domain = null;
-        $port = null;
+        if (!preg_match(self::PARSE_REGEXP, $origin, $matches)) {
+            throw new ParseException(sprintf("Could not parse origin '%s'.", $origin));
+        }
+        $scheme = strtolower($matches['scheme']);
+        $host = mb_strtolower($matches['host'], 'UTF-8');
 
-        $elements = parse_url($origin);
-        if ($elements === false) {
-            throw new ParseException('Failed to parse origin.');
-        }
-        foreach ($elements as $k => $v) {
-            switch ($k) {
-                case 'scheme':
-                    $scheme = $v;
-                    break;
-                case 'host':
-                    $domain = $v;
-                    break;
-                case 'port':
-                    $port = (int) $v;
-                    break;
-                default:
-                    throw new ParseException(sprintf("Unexpected component %s in origin string '%s'", $k, $origin));
-            }
-        }
-        return [$scheme, $domain, $port];
+        $port = isset($matches['port']) ? (int) $matches['port'] : null;
+        return [$scheme, $host, $port];
     }
 
     public function equals(Origin $origin) : bool
     {
-        return $this->domain === $origin->domain &&
+        return $this->host === $origin->host &&
             $this->port === $origin->port &&
             $this->scheme === $origin->scheme;
     }
@@ -96,9 +103,9 @@ class Origin // TODO serializable
     public function toString()
     {
         if ($this->usesDefaultPort()) {
-            return sprintf('%s://%s', $this->scheme, $this->domain);
+            return sprintf('%s://%s', $this->scheme, $this->host);
         }
-        return sprintf('%s://%s:%d', $this->scheme, $this->domain, $this->port);
+        return sprintf('%s://%s:%d', $this->scheme, $this->host, $this->port);
     }
 
     private function usesDefaultPort() : bool
@@ -115,9 +122,9 @@ class Origin // TODO serializable
     /**
      * @return string
      */
-    public function getDomain(): string
+    public function getHost(): string
     {
-        return $this->domain;
+        return $this->host;
     }
 
     /**

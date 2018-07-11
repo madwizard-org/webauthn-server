@@ -14,7 +14,6 @@ use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
-use function hash_equals;
 use function var_dump;
 
 class AssertionVerifier extends AbstractVerifier
@@ -148,15 +147,6 @@ class AssertionVerifier extends AbstractVerifier
             }
         }
         return false;
-    }
-
-    private function verifyRpIdHash(AuthenticatorData $authData, PublicKeyCredentialRequestOptions $request)
-    {
-        // TODO: lowercase? spec?
-
-        $validHash = hash('sha256', $request->getRpId() ?? $this->rpId, true);
-
-        return hash_equals($validHash, $authData->getRpIdHash()->getBinaryString());
     }
 
     private function verifySignature(AuthenticatorAssertionResponseInterface $response, COSEKey $publicKey) : bool

@@ -67,7 +67,7 @@ class WebAuthnConfiguration
         }
 
         if ($this->rpOrigin !== null) {
-            return $this->rpOrigin->getDomain();
+            return $this->rpOrigin->getHost();
         }
 
         throw new ConfigurationException('Relying party id could not be determined from configuration.');

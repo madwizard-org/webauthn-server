@@ -30,7 +30,7 @@ class WebAuthnConfigurationTest extends TestCase
     {
         $config = new WebAuthnConfiguration();
         $config->setRelyingPartyOrigin('https://www.example.com');
-        $this->assertSame('www.example.com', $config->getRelyingPartyOrigin()->getDomain());
+        $this->assertSame('www.example.com', $config->getRelyingPartyOrigin()->getHost());
         $config->setRelyingPartyOrigin(null);
         $this->assertNull($config->getRelyingPartyOrigin());
     }

@@ -29,7 +29,7 @@ class RegistrationRequest
         return $this->creationOptions;
     }
 
-    public function getCreationOptionsJson(): array
+    public function getClientOptionsJson(): array
     {
         return JsonConverter::encodeDictionary($this->creationOptions);
     }

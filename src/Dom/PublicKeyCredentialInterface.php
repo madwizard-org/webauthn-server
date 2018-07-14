@@ -17,6 +17,12 @@ interface PublicKeyCredentialInterface extends CredentialInterface
     public function getRawId() : ByteBuffer;
 
     /**
+     * Returns the credential ID as base64url encoded string
+     * @return string
+     */
+    public function getBase64UrlId() : string;
+
+    /**
      * This attribute contains the authenticator's response to the client’s request to either create a public key credential, or generate an authentication assertion.
      * @return AuthenticatorResponseInterface
      */

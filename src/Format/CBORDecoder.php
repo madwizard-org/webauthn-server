@@ -98,11 +98,11 @@ class CBORDecoder
     }
 
     /**
-     * @param $val
+     * @param int $val
      * @return mixed
      * @throws CBORException
      */
-    private static function parseSimple($val)
+    private static function parseSimple(int $val)
     {
         if ($val === 20) {
             return false;

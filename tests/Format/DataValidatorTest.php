@@ -183,6 +183,82 @@ class DataValidatorTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testCheckTypesNullable()
+    {
+        DataValidator::checkTypes(
+            [
+                'a' => 4,
+                'c' => null,
+                'd' => 'text',
+            ],
+            [
+                'a' => 'integer',
+                'c' => ':string',
+                'd' => ':string',
+            ]
+
+        );
+
+        // Assert when no exceptions thrown
+        $this->assertTrue(true);
+    }
+
+    public function testCheckTypesNullableInvalid()
+    {
+        $this->expectException(DataValidationException::class);
+        $this->expectExceptionMessageRegExp('~string~i');
+
+        DataValidator::checkTypes(
+            [
+                'a' => 4,
+                'c' => 5,
+            ],
+            [
+                'a' => 'integer',
+                'c' => ':string',
+            ]
+
+        );
+    }
+
+    public function testCheckTypesNullableMissing()
+    {
+        $this->expectException(DataValidationException::class);
+        $this->expectExceptionMessageRegExp('~required key "c"~i');
+        DataValidator::checkTypes(
+            [
+                'a' => 4,
+            ],
+            [
+                'a' => 'integer',
+                'c' => ':string',
+            ]
+
+        );
+    }
+
+    public function testCheckTypesNullableOptional()
+    {
+        DataValidator::checkTypes(
+            [
+                'a' => 4,
+                // b missing
+                'c' => null,
+                'd' => 'text',
+            ],
+            [
+                'a' => 'integer',
+                'b' => '?:string',
+                'c' => '?:string',
+                'd' => '?:string',
+            ]
+
+        );
+
+        // Assert when no exceptions thrown
+        $this->assertTrue(true);
+    }
+
     public function testCheckTypesWrongParameters()
     {
         $this->expectException(DataValidationException::class);

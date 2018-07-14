@@ -1,12 +1,12 @@
 <?php
 
 
-namespace MadWizard\WebAuthn\Server;
+namespace MadWizard\WebAuthn\Credential;
 
-use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
 use MadWizard\WebAuthn\Crypto\COSEKey;
+use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class AttestationResult  // TODO: merge registration and attestation result?
+class CredentialRegistration
 {
     /**
      * @var string
@@ -19,15 +19,15 @@ class AttestationResult  // TODO: merge registration and attestation result?
     private $publicKey;
 
     /**
-     * @var VerificationResult
+     * @var ByteBuffer
      */
-    private $attestation;
+    private $userHandle;
 
-    public function __construct(string $credentialId, COSEKey $publicKey, VerificationResult $attestation)
+    public function __construct(string $credentialId, COSEKey $publicKey, ByteBuffer $userHandle)
     {
         $this->credentialId = $credentialId;
         $this->publicKey = $publicKey;
-        $this->attestation = $attestation;
+        $this->userHandle = $userHandle;
     }
 
     /**
@@ -47,10 +47,10 @@ class AttestationResult  // TODO: merge registration and attestation result?
     }
 
     /**
-     * @return VerificationResult
+     * @return ByteBuffer
      */
-    public function getVerificationResult(): VerificationResult
+    public function getUserHandle(): ByteBuffer
     {
-        return $this->attestation;
+        return $this->userHandle;
     }
 }

@@ -8,7 +8,6 @@ use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
-use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
@@ -28,9 +27,11 @@ class AttestationVerifier extends AbstractVerifier
 
     /**
      * @param PublicKeyCredentialInterface $credential
-     * @param PublicKeyCredentialRequestOptions $context
-     * @see https://www.w3.org/TR/webauthn/#registering-a-new-credential
+     * @param AttestationContext $context
      * @return AttestationResult
+     * @throws VerificationException
+     * @throws \MadWizard\WebAuthn\Exception\ParseException
+     * @throws \MadWizard\WebAuthn\Exception\WebAuthnException
      */
     public function verify(PublicKeyCredentialInterface $credential, AttestationContext $context) : AttestationResult
     {
@@ -181,30 +182,5 @@ class AttestationVerifier extends AbstractVerifier
         if (!$this->verifyOrigin($origin, $context->getOrigin())) {
             throw new VerificationException(sprintf("Origin '%s' does not match relying party origin.", $origin));
         }
-    }
-
-    private function verifyRpIdHash(AuthenticatorData $authData, AttestationContext $context)
-    {
-        // TODO: lowercase? spec?
-        $validHash = hash('sha256', $context->getRpId(), true);
-        return hash_equals($validHash, $authData->getRpIdHash()->getBinaryString());
-    }
-
-    private function verifyUser(AuthenticatorData $authData, AttestationContext $context)
-    {
-        if ($context->isUserVerificationRequired()) {
-            // 10. If user verification is required for this registration, verify that the User Verified bit of the
-            //     flags in authData is set.
-            return $authData->isUserVerified();
-        }
-
-        // 11. If user verification is not required for this registration, verify that the User Present bit of the
-        // flags in authData is set.
-        return $authData->isUserPresent();
-    }
-
-    private function getClientDataHash(AuthenticatorAttestationResponseInterface $response)
-    {
-        return hash('sha256', $response->getClientDataJSON(), true);
     }
 }

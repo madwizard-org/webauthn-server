@@ -4,6 +4,11 @@
 namespace MadWizard\WebAuthn\Tests\Server;
 
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
+use MadWizard\WebAuthn\Credential\CredentialRegistration;
+use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
+use MadWizard\WebAuthn\Credential\UserCredentialInterface;
+use MadWizard\WebAuthn\Crypto\EC2Key;
+use MadWizard\WebAuthn\Dom\COSEAlgorithm;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Server\AttestationContext;
@@ -12,18 +17,34 @@ use MadWizard\WebAuthn\Server\Registration\UserIdentity;
 use MadWizard\WebAuthn\Server\WebAuthnServer;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use MadWizard\WebAuthn\Web\Origin;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use function json_encode;
 
 class WebAuthnServerTest extends TestCase
 {
+    /**
+     * @var WebAuthnConfiguration|MockObject
+     */
+    private $config;
+
+    /**
+     * @var CredentialStoreInterface|MockObject
+     */
+    private $store;
+
+    /**
+     * @var WebAuthnServer|MockObject
+     */
+    private $server;
+
+    private const CREDENTIAL_ID = 'Bo-VjHOkJZy8DjnCJnIc0Oxt9QAz5upMdSJxNbd-GyAo6MNIvPBb9YsUlE0ZJaaWXtWH5FQyPS6bT_e698IirQ';
+
     public function testStartRegistration()
     {
-        $server = $this->createServer();
-
         $user = new UserIdentity(ByteBuffer::fromHex('123456'), 'demo', 'Demo user');
         $options = new RegistrationOptions($user);
-        $request = $server->startRegistration($options);
+        $request = $this->server->startRegistration($options);
 
         $clientOptions = $request->getClientOptions();
         $this->assertSame('123456', $clientOptions->getUserEntity()->getId()->getHex());
@@ -41,26 +62,63 @@ class WebAuthnServerTest extends TestCase
         $credential = $json['challengeResponseAttestationU2fMsgB64Url'];
         $credentialJson = json_encode($credential);
 
-        $server = $this->createServer($config);
 
-        $config = new WebAuthnConfiguration();
-        $config->setRelyingPartyName('Example');
-        $config->setRelyingPartyOrigin('https://example.com');
+
+        $this->store
+            ->expects($this->once())
+            ->method('registerCredential')
+            ->with(
+                $this->callback(
+                function (CredentialRegistration $reg) {
+                    return $reg->getCredentialId() === self::CREDENTIAL_ID &&
+                            $reg->getUserHandle()->equals(new ByteBuffer('00112233')) &&
+                            $reg->getPublicKey() instanceof EC2Key;
+                }
+            )
+            );
 
         $challenge = new ByteBuffer(Base64UrlEncoding::decode('Vu8uDqnkwOjd83KLj6Scn2BgFNLFbGR7Kq_XJJwQnnatztUR7XIBL7K8uMPCIaQmKw1MCVQ5aazNJFk7NakgqA'));
-        $context = new AttestationContext($challenge, Origin::parse('https://localhost:8443'), 'localhost');
-        $result = $server->finishRegistration($credentialJson, $context);
+        $context = new AttestationContext($challenge, Origin::parse('https://localhost:8443'), 'localhost', new ByteBuffer('00112233'));
+        $result = $this->server->finishRegistration($credentialJson, $context);
 
-        $this->assertSame('Bo-VjHOkJZy8DjnCJnIc0Oxt9QAz5upMdSJxNbd-GyAo6MNIvPBb9YsUlE0ZJaaWXtWH5FQyPS6bT_e698IirQ', $result->getCredentialId());
-        $this->assertSame('Basic', $result->getAttestation()->getAttestation()->getAttestationType());  // TODO:ugly
+        $this->assertSame(self::CREDENTIAL_ID, $result->getCredentialId());
+        $this->assertSame('Basic', $result->getVerificationResult()->getAttestationType());  // TODO:ugly
     }
 
-    private function createServer(&$config = null) : WebAuthnServer
+    protected function setUp()
     {
-        $config = new WebAuthnConfiguration();
-        $config->setRelyingPartyName('Example');
-        $config->setRelyingPartyOrigin('https://example.com');
+        $this->config = new WebAuthnConfiguration();
+        $this->config->setRelyingPartyName('Example');
+        $this->config->setRelyingPartyOrigin('https://example.com');
+        $this->store = $this->createMock(CredentialStoreInterface::class);
+        $this->server = new WebAuthnServer($this->config, $this->store);
+    }
 
-        return new WebAuthnServer($config);
+    private function createCredential() : UserCredentialInterface
+    {
+        /**
+         * @var $cred UserCredentialInterface|MockObject
+         */
+        $cred = $this->createMock(UserCredentialInterface::class);
+
+        $cred->expects($this->any())
+            ->method('getCredentialId')
+            ->willReturn('AAhH7cnPRBkcukjnc2G2GM1H5dkVs9P1q2VErhD57pkzKVjBbixdsufjXhUOfiD27D0VA-fPKUVYNGE2XYcjhihtYODQv-xEarplsa7Ix6hK13FA6uyRxMgHC3PhTbx-rbq_RMUbaJ-HoGVt-c820ifdoagkFR02Van8Vr9q67Bn6zHNDT_DNrQbtpIUqqX_Rg2p5o6F7bVO3uOJG9hUNgUb');
+
+        $cred->expects($this->any())
+            ->method('getPublicKey')
+            ->willReturn(
+                new EC2Key(
+                    ByteBuffer::fromHex('3573d008787e6c37ac7543edaa47bbf6e79b647866d6b34102083c37e6424604'),
+                    ByteBuffer::fromHex('18d3531aee69d8c514c9d6951e6b3c9af6dec0494fda9ec58f4f09cf68f21993'),
+                    EC2Key::CURVE_P256,
+                    COSEAlgorithm::ES256
+                )
+            );
+        $cred->expects($this->any())
+            ->method('getSignatureCounter')
+            ->willReturn(9999999);
+
+        return $cred;
     }
 }

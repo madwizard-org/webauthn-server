@@ -9,12 +9,10 @@ use MadWizard\WebAuthn\Credential\UserCredentialInterface;
 use MadWizard\WebAuthn\Crypto\COSEKey;
 use MadWizard\WebAuthn\Dom\AuthenticatorAssertionResponseInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredential;
-use MadWizard\WebAuthn\Dom\PublicKeyCredentialDescriptor;
-use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
-use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
+use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
-use function var_dump;
+use MadWizard\WebAuthn\Format\ByteBuffer;
 
 class AssertionVerifier extends AbstractVerifier
 {
@@ -35,7 +33,7 @@ class AssertionVerifier extends AbstractVerifier
         $this->credentialCollection = $credentialCollection;
     }
 
-    public function verifyAuthenticatonAssertion(PublicKeyCredential $credential, AssertionContext $context) : UserCredentialInterface
+    public function verifyAuthenticatonAssertion(PublicKeyCredentialInterface $credential, AssertionContext $context) : UserCredentialInterface
     {
         // SPEC 7.2 Verifying an authentication assertion
 
@@ -47,7 +45,7 @@ class AssertionVerifier extends AbstractVerifier
 
         // 1. If the allowCredentials option was given when this authentication ceremony was initiated, verify that
         //    credential.id identifies one of the public key credentials that were listed in allowCredentials.
-        if (!$this->checkAllowCredentials($credential, $request->getAllowCredentials())) {
+        if (!$this->checkAllowCredentials($credential, $context->getAllowCredentialIds())) {
             throw new VerificationException('Credential not in list of allowed credentials.');
         }
 
@@ -57,7 +55,7 @@ class AssertionVerifier extends AbstractVerifier
 
         // 3. Using credential’s id attribute (or the corresponding rawId, if base64url encoding is inappropriate for
         // your use case), look up the corresponding credential public key.
-        $accountCredential = $this->credentialCollection->findAccountCredential($credential->getBase64UrlId());
+        $accountCredential = $this->credentialCollection->findCredential($credential->getBase64UrlId());
         if ($accountCredential === null) {
             throw new VerificationException('Account was not found');
         }
@@ -79,7 +77,7 @@ class AssertionVerifier extends AbstractVerifier
 
         // 8. Verify that the value of C.challenge matches the challenge that was sent to the authenticator in the
         //    PublicKeyCredentialRequestOptions passed to the get() call.
-        if (($c['challenge'] ?? null) !== Base64UrlEncoding::encode($request->getChallenge()->getBinaryString())) {
+        if (($c['challenge'] ?? null) !== Base64UrlEncoding::encode($context->getChallenge()->getBinaryString())) {
             throw new VerificationException('Challenge in clientDataJSON does not match the challenge in the request.');
         }
 
@@ -100,12 +98,12 @@ class AssertionVerifier extends AbstractVerifier
         // TODO!!
 
         // 11. Verify that the rpIdHash in aData is the SHA-256 hash of the RP ID expected by the Relying Party.
-        if (!$this->verifyRpIdHash($authData, $request)) {
+        if (!$this->verifyRpIdHash($authData, $context)) {
             throw new VerificationException('rpIdHash was not correct.');
         }
 
         // 12 and 13
-        if (!$this->verifyUser($authData, $request)) {
+        if (!$this->verifyUser($authData, $context)) {
             throw new VerificationException('User verification failed');
         }
 
@@ -131,18 +129,18 @@ class AssertionVerifier extends AbstractVerifier
 
     /**
      * @param PublicKeyCredential $credential
-     * @param PublicKeyCredentialDescriptor[]|null $allowCredentials
+     * @param ByteBuffer[]|null $allowCredentialIds
      * @return bool
      */
-    private function checkAllowCredentials(PublicKeyCredential $credential, ?array $allowCredentials) : bool
+    private function checkAllowCredentials(PublicKeyCredentialInterface $credential, ?array $allowCredentialIds) : bool
     {
-        if ($allowCredentials === null) {
+        if ($allowCredentialIds === null || \count($allowCredentialIds) === 0) {
             return true;
         }
 
         $rawId = $credential->getRawId();
-        foreach ($allowCredentials as $allowCredential) {
-            if ($allowCredential->getId()->equals($rawId) && $allowCredential->getType() === $credential->getType()) {
+        foreach ($allowCredentialIds as $allowCredentialId) {
+            if ($allowCredentialId->equals($rawId)) {
                 return true;
             }
         }
@@ -160,22 +158,7 @@ class AssertionVerifier extends AbstractVerifier
 
         $signData = $aData . $clientDataHash;
 
-        return $publicKey->verifySignature($signData, $response->getSignature()->getBinaryString());
-    }
-
-    private function verifyUser(AuthenticatorData $authData, PublicKeyCredentialRequestOptions $request) : bool
-    {
-        $requestedVerification = $request->getUserVerification() ?? UserVerificationRequirement::PREFERRED;
-
-        if ($requestedVerification === UserVerificationRequirement::REQUIRED) {
-            // 12. If user verification is required for this assertion, verify that the User Verified bit of the flags
-            //     in aData is set.
-
-            return $authData->isUserVerified();
-        }
-
-        // 13. If user verification is not required for this assertion, verify that the User Present bit of the flags in aData is set.
-        return $authData->isUserPresent();
+        return $publicKey->verifySignature(new ByteBuffer($signData), $response->getSignature());
     }
 
     private function verifySignatureCounter(AuthenticatorData $authData, UserCredentialInterface $accountCredential)
@@ -186,10 +169,18 @@ class AssertionVerifier extends AbstractVerifier
         if ($counter === 0) {
             return true;
         }
-        var_dump("Counter is $counter");
 
 
         $lastCounter = $accountCredential->getSignatureCounter();
+        if ($lastCounter === null) {
+            // counter not known
+            // TODO policy
+            return false;
+        }
+
+        if ($lastCounter === 0) {
+            return true;
+        }
         if ($counter > $lastCounter) {
             // 18. If the signature counter value adata.signCount is
             // -> greater than the signature counter value stored in conjunction with credential’s id attribute.

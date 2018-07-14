@@ -30,7 +30,7 @@ class AuthenticationRequest
         return $this->requestOptions;
     }
 
-    public function getCreationOptionsJson(): array
+    public function getClientOptionsJson(): array
     {
         return JsonConverter::encodeDictionary($this->requestOptions);
     }

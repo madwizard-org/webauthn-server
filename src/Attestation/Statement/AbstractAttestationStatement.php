@@ -24,6 +24,11 @@ abstract class AbstractAttestationStatement implements AttestationStatementInter
         $this->formatId = $formatId;
     }
 
+    /**
+     * @param array $x5c
+     * @return string[]
+     * @throws ParseException
+     */
     protected function buildPEMCertificateArray(array $x5c) : array
     {
         $certificates = [];

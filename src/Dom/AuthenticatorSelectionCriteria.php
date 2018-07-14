@@ -34,7 +34,7 @@ class AuthenticatorSelectionCriteria extends AbstractDictionary
     }
 
     /**
-     * @param null|string $authenticatorAttachment
+     * @param null|string $value
      */
     public function setAuthenticatorAttachment(?string $value): void
     {
@@ -53,7 +53,7 @@ class AuthenticatorSelectionCriteria extends AbstractDictionary
     }
 
     /**
-     * @param bool|null $requireResidentKey
+     * @param bool|null $value
      */
     public function setRequireResidentKey(?bool $value): void
     {
@@ -69,7 +69,7 @@ class AuthenticatorSelectionCriteria extends AbstractDictionary
     }
 
     /**
-     * @param null|string $userVerification
+     * @param null|string $value
      */
     public function setUserVerification(?string $value): void
     {

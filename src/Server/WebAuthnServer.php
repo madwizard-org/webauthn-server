@@ -6,6 +6,9 @@ namespace MadWizard\WebAuthn\Server;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
+use MadWizard\WebAuthn\Credential\CredentialRegistration;
+use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
+use MadWizard\WebAuthn\Credential\UserCredentialInterface;
 use MadWizard\WebAuthn\Dom\AuthenticatorTransport;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialDescriptor;
@@ -35,9 +38,15 @@ class WebAuthnServer
      */
     private $formatRegistry;
 
-    public function __construct(WebAuthnConfiguration $config)
+    /**
+     * @var CredentialStoreInterface
+     */
+    private $credentialStore;
+
+    public function __construct(WebAuthnConfiguration $config, CredentialStoreInterface $credentialStore)
     {
         $this->config = $config;
+        $this->credentialStore = $credentialStore;
     }
 
     public function startRegistration(RegistrationOptions $options) : RegistrationRequest
@@ -67,6 +76,9 @@ class WebAuthnServer
         $credential = $this->convertAttestationCredential($credential);
         $verifier = new AttestationVerifier($this->getFormatRegistry());
         $attestationResult = $verifier->verify($credential, $context);
+
+        $registration = new CredentialRegistration($attestationResult->getCredentialId(), $attestationResult->getPublicKey(), $context->getUserHandle());
+        $this->credentialStore->registerCredential($registration);
         return new RegistrationResult($attestationResult);
     }
 
@@ -81,7 +93,23 @@ class WebAuthnServer
 
 
         $context = AssertionContext::create($requestOptions, $this->config);
-        return new AuthenticationRequest($options, $context);
+        return new AuthenticationRequest($requestOptions, $context);
+    }
+
+    /**
+     * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
+     * @param AssertionContext $context
+     * @return UserCredentialInterface
+     */
+    public function finishAuthentication($credential, AssertionContext $context) : UserCredentialInterface
+    {
+        $credential = $this->convertAssertionCredential($credential);
+
+        $verifier = new AssertionVerifier($this->credentialStore);
+
+        $userCredential = $verifier->verifyAuthenticatonAssertion($credential, $context);
+
+        return $userCredential;
     }
 
     /**
@@ -136,6 +164,19 @@ class WebAuthnServer
     {
         if (\is_string($credential)) {
             return JsonConverter::decodeAttestationCredential($credential);
+        }
+
+        if ($credential instanceof PublicKeyCredentialInterface) {
+            return $credential;
+        }
+
+        throw new WebAuthnException('Parameter credential should be of type string or PublicKeyCredentialInterface.');
+    }
+
+    private function convertAssertionCredential($credential) : PublicKeyCredentialInterface
+    {
+        if (\is_string($credential)) {
+            return JsonConverter::decodeAssertionCredential($credential);
         }
 
         if ($credential instanceof PublicKeyCredentialInterface) {

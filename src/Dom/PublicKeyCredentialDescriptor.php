@@ -23,11 +23,6 @@ class PublicKeyCredentialDescriptor extends AbstractDictionary // TODO serializa
      */
     private $transports = [];
 
-    /**
-     * PublicKeyCredentialDescriptor constructor.
-     * @param ByteBuffer $id
-     * @param string $type
-     */
     public function __construct(ByteBuffer $credentialId, string $type = PublicKeyCredentialType::PUBLIC_KEY)
     {
         if ($type !== PublicKeyCredentialType::PUBLIC_KEY) {

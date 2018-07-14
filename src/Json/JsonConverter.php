@@ -144,7 +144,7 @@ final class JsonConverter
             [
                 'authenticatorData' => 'string',
                 'signature' => 'string',
-                'userHandle' => '?string',
+                'userHandle' => '?:string',
             ],
             false
         );

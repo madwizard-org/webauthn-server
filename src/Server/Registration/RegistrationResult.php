@@ -3,6 +3,7 @@
 
 namespace MadWizard\WebAuthn\Server\Registration;
 
+use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
 use MadWizard\WebAuthn\Crypto\COSEKey;
 use MadWizard\WebAuthn\Server\AttestationResult;
 
@@ -19,11 +20,11 @@ class RegistrationResult
     }
 
     /**
-     * @return AttestationResult
+     * @return VerificationResult
      */
-    public function getAttestation(): AttestationResult
+    public function getVerificationResult(): VerificationResult
     {
-        return $this->attestation;
+        return $this->attestation->getVerificationResult();
     }
 
     public function getCredentialId() : string

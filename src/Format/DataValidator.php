@@ -32,10 +32,10 @@ final class DataValidator
     public static function checkTypes(array $data, array $types, bool $complete = true):void
     {
         foreach ($types as $key => $type) {
-            $type = self::parseType($type, $key, $optional);
+            $type = self::parseType($type, $key, $optional, $nullable);
 
             if (array_key_exists($key, $data)) {
-                self::validateDataKey($data, $key, $type);
+                self::validateDataKey($data, $key, $type, $nullable);
             } elseif (!$optional) {
                 throw new DataValidationException(sprintf('Required key "%s" is missing in data.', $key));
             }
@@ -45,9 +45,14 @@ final class DataValidator
         }
     }
 
-    private static function validateDataKey(array &$data, $key, string $type)
+    private static function validateDataKey(array &$data, $key, string $type, bool $nullable)
     {
         $value = $data[$key];
+        if ($nullable && $value === null) {
+            unset($data[$key]);
+            return;
+        }
+
         $actualType = gettype($value);
         if ($actualType === 'object') {
             $actualType = get_class($value);
@@ -60,16 +65,21 @@ final class DataValidator
         unset($data[$key]);
     }
 
-    private static function parseType(string $type, $key, bool &$optional = null)
+    private static function parseType(string $type, $key, bool &$optional = null, bool &$nullable = null)
     {
         $optional = false;
+        $nullable = false;
         if ($type === '') {
             throw new DataValidationException(sprintf('Invalid type "%s" for key "%s".', $type, (string) $key));
         }
 
         if ($type[0] === '?') {
             $optional = true;
-            return substr($type, 1);
+            $type = substr($type, 1);
+        }
+        if ($type[0] === ':') {  // TODO tests
+            $nullable = true;
+            $type = substr($type, 1);
         }
         return $type;
     }

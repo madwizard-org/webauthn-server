@@ -41,10 +41,20 @@ class AssertionContext extends AbstractContext
         $context = new self($options->getChallenge(), $origin, $rpId);
 
         $allowCredentials = $options->getAllowCredentials();
-        foreach ($allowCredentials as $credential) {
-            $context->addAllowCredentialId($credential->getId());
+        if ($allowCredentials !== null) {
+            foreach ($allowCredentials as $credential) {
+                $context->addAllowCredentialId($credential->getId());
+            }
         }
         return $context;
+    }
+
+    /**
+     * @return ByteBuffer[]
+     */
+    public function getAllowCredentialIds() : array
+    {
+        return $this->allowCredentialIds;
     }
 
     // TODO: serialization

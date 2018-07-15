@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use function json_encode;
 
-class WebAuthnServerTest extends TestCase
+class RegistrationTest extends TestCase
 {
     /**
      * @var WebAuthnConfiguration|MockObject
@@ -109,8 +109,8 @@ class WebAuthnServerTest extends TestCase
             ->method('getPublicKey')
             ->willReturn(
                 new EC2Key(
-                    ByteBuffer::fromHex('3573d008787e6c37ac7543edaa47bbf6e79b647866d6b34102083c37e6424604'),
-                    ByteBuffer::fromHex('18d3531aee69d8c514c9d6951e6b3c9af6dec0494fda9ec58f4f09cf68f21993'),
+                    ByteBuffer::fromHex('8d617e65c9508e64bcc5673ac82a6799da3c1446682c258c463fffdf58dfd2fa'),
+                    ByteBuffer::fromHex('3e6c378b53d795c4a4dffb4199edd7862f23abaf0203b4b8911ba0569994e101'),
                     EC2Key::CURVE_P256,
                     COSEAlgorithm::ES256
                 )

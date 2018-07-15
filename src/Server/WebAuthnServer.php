@@ -16,6 +16,8 @@ use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialParameters;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
+use MadWizard\WebAuthn\Exception\ParseException;
+use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -176,7 +178,11 @@ class WebAuthnServer
     private function convertAssertionCredential($credential) : PublicKeyCredentialInterface
     {
         if (\is_string($credential)) {
-            return JsonConverter::decodeAssertionCredential($credential);
+            try {
+                return JsonConverter::decodeAssertionCredential($credential);
+            } catch (ParseException $e) {
+                throw new VerificationException('Failed to parse JSON client data', 0, $e);
+            }
         }
 
         if ($credential instanceof PublicKeyCredentialInterface) {

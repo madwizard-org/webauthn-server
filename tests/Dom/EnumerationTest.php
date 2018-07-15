@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Tests\Dom;
 
 use MadWizard\WebAuthn\Dom\AttestationConveyancePreference;
+use MadWizard\WebAuthn\Dom\AuthenticatorAttachment;
 use MadWizard\WebAuthn\Dom\AuthenticatorTransport;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialType;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
@@ -41,5 +42,11 @@ class EnumerationTest extends TestCase
         $this->assertContains(AuthenticatorTransport::USB, $known);
         $this->assertContains(AuthenticatorTransport::NFC, $known);
         $this->assertContains(AuthenticatorTransport::BLE, $known);
+    }
+
+    public function testAttachment()
+    {
+        $this->assertTrue(AuthenticatorAttachment::isValidValue(AuthenticatorAttachment::PLATFORM));
+        $this->assertTrue(AuthenticatorAttachment::isValidValue(AuthenticatorAttachment::CROSS_PLATFORM));
     }
 }

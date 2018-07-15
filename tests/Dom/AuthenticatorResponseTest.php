@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Tests\Dom;
 
 use MadWizard\WebAuthn\Dom\AuthenticatorAssertionResponse;
 use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponse;
-use MadWizard\WebAuthn\Exception\WebAuthnException;
+use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use PHPUnit\Framework\TestCase;
 
@@ -45,7 +45,7 @@ class AuthenticatorResponseTest extends TestCase
     {
         $buf = ByteBuffer::fromHex('12');
 
-        $this->expectException(WebAuthnException::class);
+        $this->expectException(ParseException::class);
         $this->expectExceptionMessageRegExp('~Unparseable~i');
 
         new AuthenticatorAssertionResponse('{{123', $buf, $buf, null);
@@ -64,7 +64,7 @@ class AuthenticatorResponseTest extends TestCase
 
     public function testAttestationUnparseableJson()
     {
-        $this->expectException(WebAuthnException::class);
+        $this->expectException(ParseException::class);
         $this->expectExceptionMessageRegExp('~Unparseable~i');
 
         new AuthenticatorAttestationResponse('{{123', ByteBuffer::fromHex('123456'));

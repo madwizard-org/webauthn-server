@@ -21,11 +21,6 @@ class AssertionVerifier extends AbstractVerifier
      */
     private $credentialCollection;
 
-    /**
-     * @var string
-     */
-    private $rpId;
-
     // add policy
     public function __construct(CredentialStoreInterface $credentialCollection)
     {
@@ -172,6 +167,7 @@ class AssertionVerifier extends AbstractVerifier
 
 
         $lastCounter = $accountCredential->getSignatureCounter();
+
         if ($lastCounter === null) {
             // counter not known
             // TODO policy

@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Dom;
 
-use MadWizard\WebAuthn\Exception\WebAuthnException;
+use MadWizard\WebAuthn\Exception\ParseException;
 use function json_last_error;
 
 abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInterface
@@ -19,10 +19,10 @@ abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInt
     {
         $data = \json_decode($clientDataJSON, true, 10);
         if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-            throw new WebAuthnException('Unparseable client data JSON');
+            throw new ParseException('Unparseable client data JSON');
         }
         if (!\is_array($data)) {
-            throw new WebAuthnException('Expected object for client data');
+            throw new ParseException('Expected object for client data');
         }
         $this->parsedJson = $data;
         $this->clientDataJSON = $clientDataJSON;

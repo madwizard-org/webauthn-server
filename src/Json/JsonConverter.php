@@ -9,6 +9,7 @@ use MadWizard\WebAuthn\Dom\AuthenticatorResponseInterface;
 use MadWizard\WebAuthn\Dom\DictionaryInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredential;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialType;
+use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -72,33 +73,33 @@ final class JsonConverter
      * @param string $expectedResponseType Expected type of response in the public key's response field.
      * Either 'attestation' for attestation responses or 'assertion' for assertion responses.
      * @return PublicKeyCredential
-     * @throws WebAuthnException
+     * @throws ParseException
      * @see https://www.w3.org/TR/webauthn/#publickeycredential
      */
     public static function decodeCredential(string $json, string $responseType) : PublicKeyCredential
     {
         $decoded = json_decode($json, true, 10);
         if ($decoded === false) {
-            throw new WebAuthnException('Failed to decode PublicKeyCredential Json');
+            throw new ParseException('Failed to decode PublicKeyCredential Json');
         }
 
         if (($decoded['type'] ?? PublicKeyCredentialType::PUBLIC_KEY) !== PublicKeyCredentialType::PUBLIC_KEY) {
-            throw new WebAuthnException("Expecting type 'public-key'");
+            throw new ParseException("Expecting type 'public-key'");
         }
 
         if (empty($decoded['id'])) {
-            throw new WebAuthnException('Missing id in json data');
+            throw new ParseException('Missing id in json data');
         }
         $id = $decoded['id'];
         if (!is_string($id)) {
-            throw new WebAuthnException('Id in json data should be string');
+            throw new ParseException('Id in json data should be string');
         }
 
         $rawId = Base64UrlEncoding::decode($id);
 
         $responseData = $decoded['response'] ?? null;
         if (!is_array($responseData)) {
-            throw new WebAuthnException('Expecting array data for response');
+            throw new ParseException('Expecting array data for response');
         }
 
         $response = self::decodeResponse($responseData, $responseType);
@@ -124,7 +125,7 @@ final class JsonConverter
         $clientDataJson = $response['clientDataJSON'] ?? null;
 
         if (!is_string($clientDataJson)) {
-            throw new WebAuthnException('Expecting client data json');
+            throw new ParseException('Expecting client data json');
         }
         $clientDataJson = Base64UrlEncoding::decode($clientDataJson);
 

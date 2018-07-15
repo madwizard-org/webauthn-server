@@ -6,6 +6,7 @@ use const PHP_INT_SIZE;
 use InvalidArgumentException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use PHPUnit\Framework\TestCase;
+use function bin2hex;
 use function hex2bin;
 use function unserialize;
 
@@ -352,5 +353,17 @@ class ByteBufferTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         ByteBuffer::fromHex('aab');
+    }
+
+    public function testFromBase64Url()
+    {
+        $this->assertSame(bin2hex('abcd'), ByteBuffer::fromBase64Url('YWJjZA')->getHex());
+        $this->assertSame('', ByteBuffer::fromBase64Url('')->getHex());
+    }
+
+    public function testGetBase64Url()
+    {
+        $this->assertSame('YWJjZA', (new ByteBuffer('abcd'))->getBase64Url());
+        $this->assertSame('', (new ByteBuffer(''))->getBase64Url());
     }
 }

@@ -38,6 +38,11 @@ class ByteBuffer implements Serializable
         return new ByteBuffer($bin);
     }
 
+    public static function fromBase64Url(string $base64url) : ByteBuffer
+    {
+        return new ByteBuffer(Base64UrlEncoding::decode($base64url));
+    }
+
     public function isEmpty() : bool
     {
         return $this->length === 0;
@@ -164,6 +169,11 @@ class ByteBuffer implements Serializable
     public function getHex(): string
     {
         return bin2hex($this->data);
+    }
+
+    public function getBase64Url() : string
+    {
+        return Base64UrlEncoding::encode($this->data);
     }
 
     public function serialize()

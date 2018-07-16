@@ -53,6 +53,8 @@ class AssertionDataHelper
                 'makeWrongSignature' => false,
                 'makeWrongClientJson' => false,
                 'userHandle' => null,
+                'tokenBinding' => null,
+                'includeJsonBom' => false,
                 'type' => 'webauthn.get',
             ];
 
@@ -79,18 +81,26 @@ class AssertionDataHelper
     {
         $client = $this->clientOptions;
 
+        $data = [
+            'challenge' => $client['challenge'],
+            'clientExtensions' => new stdClass(),
+            'hashAlgorithm' => 'SHA-256',
+            'origin' => $client['origin'],
+            'type' => $client['type'],
+        ];
+
+        if ($client['tokenBinding']) {
+            $data['tokenBinding']['status'] = $client['tokenBinding'];
+        }
         $clientDataJson = json_encode(
-            [
-                'challenge' => $client['challenge'],
-                'clientExtensions' => new stdClass(),
-                'hashAlgorithm' => 'SHA-256',
-                'origin' => $client['origin'],
-                'type' => $client['type'],
-                ]
+            $data
         );
 
         if ($client['makeWrongClientJson']) {
             $clientDataJson = '{}{}';
+        }
+        if ($client['includeJsonBom']) {
+            $clientDataJson = "\xEF\xBB\xBF" . $clientDataJson;
         }
 
         $authData = hash('sha256', $client['rpId'], true) . \chr($client['flags']) . \pack('N', $client['signCount']);

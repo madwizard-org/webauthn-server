@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Dom;
 
-use InvalidArgumentException;
+use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
 class PublicKeyCredentialRequestOptions extends AbstractDictionary
@@ -130,7 +130,7 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
     public function setUserVerification(?string $value) :void
     {
         if ($value !== null && !UserVerificationRequirement::isValidValue($value)) {
-            throw new InvalidArgumentException(sprintf('Value %s is not a valid UserVerificationRequirement', $value));
+            throw new WebAuthnException(sprintf('Value %s is not a valid UserVerificationRequirement', $value));
         }
 
         $this->userVerification = $value;

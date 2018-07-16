@@ -7,6 +7,7 @@ use MadWizard\WebAuthn\Dom\AttestationConveyancePreference;
 use MadWizard\WebAuthn\Dom\AuthenticatorAttachment;
 use MadWizard\WebAuthn\Dom\AuthenticatorTransport;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialType;
+use MadWizard\WebAuthn\Dom\TokenBindingStatus;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use PHPUnit\Framework\TestCase;
 
@@ -48,5 +49,14 @@ class EnumerationTest extends TestCase
     {
         $this->assertTrue(AuthenticatorAttachment::isValidValue(AuthenticatorAttachment::PLATFORM));
         $this->assertTrue(AuthenticatorAttachment::isValidValue(AuthenticatorAttachment::CROSS_PLATFORM));
+        $this->assertFalse(AuthenticatorAttachment::isValidValue('xyz'));
+    }
+
+    public function testTokenBindingStatus()
+    {
+        $this->assertTrue(TokenBindingStatus::isValidValue(TokenBindingStatus::SUPPORTED));
+        $this->assertTrue(TokenBindingStatus::isValidValue(TokenBindingStatus::NOT_SUPPORTED));
+        $this->assertTrue(TokenBindingStatus::isValidValue(TokenBindingStatus::PRESENT));
+        $this->assertFalse(TokenBindingStatus::isValidValue('xyz'));
     }
 }

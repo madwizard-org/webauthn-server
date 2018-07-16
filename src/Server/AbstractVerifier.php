@@ -43,6 +43,7 @@ class AbstractVerifier
             return $authData->isUserVerified();
         }
 
+        // TODO: this changes in work in progress webauthn SPEC!
         // If user verification is not required for this registration, verify that the User Present bit of the
         // flags in authData is set.
         return $authData->isUserPresent();

@@ -17,6 +17,7 @@ use MadWizard\WebAuthn\Server\WebAuthnServer;
 use MadWizard\WebAuthn\Tests\Helper\AssertionDataHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use function hex2bin;
 
 class AuthenticationTest extends TestCase
 {
@@ -107,18 +108,33 @@ class AuthenticationTest extends TestCase
         $this->runAuth($helper);
     }
 
-//    public function testUserHandleOwner()
-//    {
-//        // SPEC 7.2.2 If credential.response.userHandle is present, verify that the user identified by this value is
-//        // the owner of the public key credential identified by credential.id.
-//        $helper = new AssertionDataHelper();
-//
-//        $userHandle = Base64UrlEncoding::encode('handle');
-//
-//        $helper->setContextOptions(['allowedCredentials' => [Base64UrlEncoding::encode('different credential id')]]);
-//        $userCred = $this->runAuth($helper);
-//        $this->assertSame($userHandle->getHex(), )
-//    }
+    public function testUserHandleOwner()
+    {
+        // SPEC 7.2.2 If credential.response.userHandle is present, verify that the user identified by this value is
+        // the owner of the public key credential identified by credential.id.
+        $helper = new AssertionDataHelper();
+
+        $userHandle = Base64UrlEncoding::encode(hex2bin('123456'));
+
+        $helper->setClientOptions(['userHandle' => $userHandle]);
+        $userCred = $this->runAuth($helper);
+        $this->assertSame('123456', $userCred->getUserHandle()->getHex());
+    }
+
+    public function testUserHandleNotOwner()
+    {
+        // SPEC 7.2.2 If credential.response.userHandle is present, verify that the user identified by this value is
+        // the owner of the public key credential identified by credential.id.
+        $helper = new AssertionDataHelper();
+
+        $userHandle = Base64UrlEncoding::encode(hex2bin('667788'));
+
+        $this->expectException(VerificationException::class);
+        $this->expectExceptionMessageRegExp('~does not belong to the user~i');
+
+        $helper->setClientOptions(['userHandle' => $userHandle]);
+        $this->runAuth($helper);
+    }
 
     public function testInvalidClientDataJSON()
     {
@@ -131,6 +147,19 @@ class AuthenticationTest extends TestCase
         $this->expectExceptionMessageRegExp('~failed to parse json~i');
 
         $this->runAuth($helper);
+    }
+
+    public function testBOMClientDataJSON()
+    {
+        // SPEC 7.2.5 JSON parse
+        $helper = new AssertionDataHelper();
+
+        $helper->setClientOptions(['includeJsonBom' => true]);
+
+        $this->runAuth($helper);
+
+        // Check no exceptions
+        $this->assertTrue(true);
     }
 
     public function testCredentialType()
@@ -219,6 +248,10 @@ class AuthenticationTest extends TestCase
         $cred->expects($this->any())
             ->method('getSignatureCounter')
             ->willReturn(8);
+
+        $cred->expects($this->any())
+            ->method('getUserHandle')
+            ->willReturn(ByteBuffer::fromHex('123456'));
 
         return $cred;
     }

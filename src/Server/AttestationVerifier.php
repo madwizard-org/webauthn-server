@@ -161,21 +161,21 @@ class AttestationVerifier extends AbstractVerifier
         return new AttestationResult(Base64UrlEncoding::encode($credential->getRawId()->getBinaryString()), $authData->getKey(), $verificationResult);
     }
 
-    private function checkClientData(array $cclientData, AttestationContext $context)
+    private function checkClientData(array $clientData, AttestationContext $context)
     {
         // 3. Verify that the value of C.type is webauthn.create.
-        if (($cclientData['type'] ?? null) !== 'webauthn.create') {
+        if (($clientData['type'] ?? null) !== 'webauthn.create') {
             throw new VerificationException('Expecting type in clientDataJSON to be webauthn.create.');
         }
 
         // 4. Verify that the value of C.challenge matches the challenge that was sent to the authenticator
         //    in the create() call.
-        if (($cclientData['challenge'] ?? null) !== Base64UrlEncoding::encode($context->getChallenge()->getBinaryString())) {
+        if (($clientData['challenge'] ?? null) !== Base64UrlEncoding::encode($context->getChallenge()->getBinaryString())) {
             throw new VerificationException('Challenge in clientDataJSON does not match the challenge in the request.');
         }
 
         // 5. Verify that the value of C.origin matches the Relying Party's origin.
-        $origin = $cclientData['origin'] ?? null;
+        $origin = $clientData['origin'] ?? null;
         if ($origin === null) {
             throw new VerificationException('Origin missing in clientDataJSON');
         }

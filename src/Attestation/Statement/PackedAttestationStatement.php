@@ -5,6 +5,8 @@ namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
+use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
+use MadWizard\WebAuthn\Attestation\Verifier\PackedStatementVerifier;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -57,7 +59,7 @@ class PackedAttestationStatement extends AbstractAttestationStatement
         $this->algorithm = $statement['alg'];
         $this->signature = $statement['sig'];
 
-        $this->ecdaaKeyId = $statement['eecdaKeyId'] ?? null;
+        $this->ecdaaKeyId = $statement['ecdaaKeyId'] ?? null;
         $x5c = $statement['x5c'] ?? null;
 
         if ($this->ecdaaKeyId !== null && $x5c !== null) {
@@ -98,11 +100,12 @@ class PackedAttestationStatement extends AbstractAttestationStatement
         return $this->ecdaaKeyId;
     }
 
-//    public static function createFormat() : AttestationFormatInterface
-//    {
-//        return new BuiltInAttestationFormat(
-//            self::FORMAT_ID,
-//            self::class,
-//            PackedStatementVerifier::class);
-//    }
+    public static function createFormat() : AttestationFormatInterface
+    {
+        return new BuiltInAttestationFormat(
+            self::FORMAT_ID,
+            self::class,
+            PackedStatementVerifier::class
+        );
+    }
 }

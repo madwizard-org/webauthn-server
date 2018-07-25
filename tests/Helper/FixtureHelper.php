@@ -5,6 +5,8 @@ namespace MadWizard\WebAuthn\Tests\Helper;
 
 use const JSON_ERROR_NONE;
 use Exception;
+use MadWizard\WebAuthn\Attestation\AttestationObject;
+use MadWizard\WebAuthn\Format\ByteBuffer;
 use function file_exists;
 use function file_get_contents;
 use function json_last_error;
@@ -38,5 +40,24 @@ class FixtureHelper
             throw new Exception(sprintf('Failed to JSON parse file contents from %s.', $path));
         }
         return $data;
+    }
+
+    public static function getTestObject(string $key): AttestationObject
+    {
+        $statements = self::getJsonFixture('Statement/statements.json');
+        return new AttestationObject(ByteBuffer::fromBase64Url($statements[$key]));
+    }
+
+    public static function getFidoTestObject(string $key): AttestationObject
+    {
+        $data = self::getJsonFixture('fido2-helpers/attestation.json');
+        $attestationObject = $data[$key]['response']['attestationObject'];
+        return new AttestationObject(ByteBuffer::fromBase64Url($attestationObject));
+    }
+
+    public static function getFidoTestPlain(string $key)
+    {
+        $data = self::getJsonFixture('fido2-helpers/attestation.json');
+        return $data[$key];
     }
 }

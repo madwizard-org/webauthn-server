@@ -120,13 +120,15 @@ class PackedStatementVerifier implements StatementVerifierInterface
             $verificationData = $authenticatorData->getRaw()->getBinaryString() . $clientDataHash;
             $valid = $key->verifySignature(new ByteBuffer($verificationData), $signature);
         } catch (WebAuthnException $e) {
-            throw new VerificationException('Failed to verify signature for self attestation', 0, $e);
+            throw new VerificationException('Error while verifying signature for self attestation', 0, $e);
         }
 
         // If successful, return attestation type Self and empty attestation trust path.
         if ($valid) {
             return new VerificationResult(AttestationType::SELF, new EmptyTrustPath());
         }
+
+        throw new VerificationException('Signature for self attestation could not be verified.');
     }
 
     private function checkCertRequirements(CertificateDetails $cert)

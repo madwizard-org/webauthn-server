@@ -213,11 +213,11 @@ class AssertionVerifier extends AbstractVerifier
         //     that C.tokenBinding.id matches the base64url encoding of the Token Binding ID for the connection.
         $tokenBinding = $clientData['tokenBinding'] ?? null;
         if ($tokenBinding !== null) {
-            $this->checkTokenBinding($tokenBinding, $context);
+            $this->checkTokenBinding($tokenBinding);
         }
     }
 
-    private function checkTokenBinding(array $tokenBinding, AssertionContext $context)
+    private function checkTokenBinding(array $tokenBinding)
     {
         try {
             DataValidator::checkTypes(

@@ -25,7 +25,7 @@ abstract class AbstractAttestationStatement implements AttestationStatementInter
     }
 
     /**
-     * @param array $x5c
+     * @param ByteBuffer[] $x5c
      * @return string[]
      * @throws ParseException
      */

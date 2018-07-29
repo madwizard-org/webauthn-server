@@ -61,12 +61,18 @@ class AuthenticatorData
      */
     private $aaguid;
 
+    /**
+     * @var ByteBuffer
+     */
+    private $raw;
+
     private const LENGTH_RP_ID_HASH = 32;
 
     private const LENGTH_AAGUID = 16;
 
     public function __construct(ByteBuffer $data)
     {
+        $this->raw = $data;
         $offset = 0;
         $this->rpIdHash = new ByteBuffer($data->getBytes(0, self::LENGTH_RP_ID_HASH));
         $offset += self::LENGTH_RP_ID_HASH;
@@ -140,5 +146,18 @@ class AuthenticatorData
     public function getKey(): ?COSEKey
     {
         return $this->key;
+    }
+
+    public function getAaguid() : ?ByteBuffer
+    {
+        return $this->aaguid;
+    }
+
+    /**
+     * @return ByteBuffer
+     */
+    public function getRaw(): ByteBuffer
+    {
+        return $this->raw;
     }
 }

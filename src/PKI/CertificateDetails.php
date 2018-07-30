@@ -21,6 +21,12 @@ use X509\Certificate\TBSCertificate;
 
 class CertificateDetails
 {
+    public const VERSION_1 = TBSCertificate::VERSION_1;
+
+    public const VERSION_2 = TBSCertificate::VERSION_2;
+
+    public const VERSION_3 = TBSCertificate::VERSION_3;
+
     /**
      * @var TBSCertificate
      */
@@ -92,19 +98,18 @@ class CertificateDetails
 
     public function getCertificateVersion() : ?int
     {
-        try {
-            return $this->cert->version();
-        } catch (LogicException $e) {
-            return null;
-        }
+        // NOTE: version() can throw a LogicException if no version is set, however this is never the case
+        // when reading certificates. Even version 1 x509 certificates without the (optional) tagged version
+        // will always default to version 1.
+        return $this->cert->version();
     }
 
-    public function getOrganizationalUnit()
+    public function getOrganizationalUnit() : string
     {
         try {
             return $this->cert->subject()->firstValueOf('OU')->stringValue();
         } catch (Exception $e) {
-            throw new ParseException('Failed to retrieve the oganizational unit', 0, $e);
+            throw new ParseException('Failed to retrieve the organizational unit', 0, $e);
         }
     }
 

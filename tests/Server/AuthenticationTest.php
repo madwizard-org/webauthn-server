@@ -149,6 +149,18 @@ class AuthenticationTest extends TestCase
         $this->runAuth($helper);
     }
 
+    public function testIncompleteClientDataJSON()
+    {
+        $helper = new AssertionDataHelper();
+
+        $helper->setClientOptions(['removeChallenge' => true]);
+
+        $this->expectException(VerificationException::class);
+        $this->expectExceptionMessageRegExp('~missing data .+ clientData~i');
+
+        $this->runAuth($helper);
+    }
+
     public function testBOMClientDataJSON()
     {
         // SPEC 7.2.5 JSON parse
@@ -213,6 +225,54 @@ class AuthenticationTest extends TestCase
         $this->expectExceptionMessageRegExp('~rpIdHash was not correct~i');
 
         $this->runAuth($helper);
+    }
+
+    public function testTokenBinding()
+    {
+        $helper = new AssertionDataHelper();
+
+        $helper->setClientOptions(['tokenBinding' => ['status' => 'present', 'id' => '123456']]);
+
+        $this->expectException(VerificationException::class);
+        $this->expectExceptionMessageRegExp('~token binding is not supported~i');
+
+        $this->runAuth($helper);
+    }
+
+    public function testInvalidTokenBindingData()
+    {
+        $helper = new AssertionDataHelper();
+
+        $helper->setClientOptions(['tokenBinding' => [true, false]]);
+
+        $this->expectException(VerificationException::class);
+        $this->expectExceptionMessageRegExp('~unexpected .+ tokenBinding~i');
+
+        $this->runAuth($helper);
+    }
+
+    public function testInvalidTokenBindingStatus()
+    {
+        $helper = new AssertionDataHelper();
+
+        $helper->setClientOptions(['tokenBinding' => ['status' => 'invalidstatus']]);
+
+        $this->expectException(VerificationException::class);
+        $this->expectExceptionMessageRegExp('~status.+invalid~i');
+
+        $this->runAuth($helper);
+    }
+
+    public function testNeutralTokenBindingStatus()
+    {
+        $helper = new AssertionDataHelper();
+
+        $helper->setClientOptions(['tokenBinding' => ['status' => 'supported']]);
+
+        $this->runAuth($helper);
+
+        // Check no exceptions
+        $this->assertTrue(true);
     }
 
     protected function setUp()

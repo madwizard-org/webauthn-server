@@ -52,6 +52,7 @@ class AssertionDataHelper
                 'origin' => 'http://localhost',
                 'makeWrongSignature' => false,
                 'makeWrongClientJson' => false,
+                'removeChallenge' => false,
                 'userHandle' => null,
                 'tokenBinding' => null,
                 'includeJsonBom' => false,
@@ -90,8 +91,13 @@ class AssertionDataHelper
         ];
 
         if ($client['tokenBinding']) {
-            $data['tokenBinding']['status'] = $client['tokenBinding'];
+            $data['tokenBinding'] = $client['tokenBinding'];
         }
+
+        if ($client['removeChallenge']) {
+            unset($data['challenge']);
+        }
+
         $clientDataJson = json_encode(
             $data
         );

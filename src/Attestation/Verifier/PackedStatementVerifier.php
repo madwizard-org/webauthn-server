@@ -138,8 +138,8 @@ class PackedStatementVerifier implements StatementVerifierInterface
 
         // Version MUST be set to 3 (which is indicated by an ASN.1 INTEGER with value 2).
         $version = $cert->getCertificateVersion();
-        if ($version !== 2) { // NOTE: Version 3 has value 2
-            throw new VerificationException(sprintf('Attestation certificate version is %s but should be 3.', ($version === null ? 'null' : ($version + 1))));
+        if ($version !== CertificateDetails::VERSION_3) {
+            throw new VerificationException(sprintf('Attestation certificate version value is %s but should be 2 (version 3).', $version ?? 'null'));
         }
 
         // Subject field MUST be set to:

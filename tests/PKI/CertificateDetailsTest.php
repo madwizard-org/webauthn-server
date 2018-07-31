@@ -99,6 +99,26 @@ class CertificateDetailsTest extends TestCase
         $this->assertSame('Authenticator Attestation', $cert->getOrganizationalUnit());
     }
 
+    public function testWrongFidoExtensionType()
+    {
+        $pem = $this->getData('wrongFidoExtType');
+        $cert = CertificateDetails::fromPEM($pem);
+
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessageRegExp('~failed to parse AAGUID extension~i');
+        $cert->getFidoAaguidExtensionValue();
+    }
+
+    public function testFidoExtensionNonCritical()
+    {
+        $pem = $this->getData('fidoCritical');
+        $cert = CertificateDetails::fromPEM($pem);
+
+        $this->expectException(WebAuthnException::class);
+        $this->expectExceptionMessageRegExp('~must not be critical~i');
+        $cert->getFidoAaguidExtensionValue();
+    }
+
     public function testInvalidPEM()
     {
         $this->expectException(ParseException::class);

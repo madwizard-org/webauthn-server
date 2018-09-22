@@ -16,11 +16,6 @@ class TokenBindingStatus
     public const SUPPORTED = 'supported';
 
     /**
-     * The client does not support token binding.
-     */
-    public const NOT_SUPPORTED = 'not-supported';
-
-    /**
      * @codeCoverageIgnore
      */
     private function __construct()
@@ -29,6 +24,6 @@ class TokenBindingStatus
 
     public static function isValidValue(string $value) : bool
     {
-        return ($value === self::PRESENT || $value === self::SUPPORTED || $value === self::NOT_SUPPORTED);
+        return ($value === self::PRESENT || $value === self::SUPPORTED);
     }
 }

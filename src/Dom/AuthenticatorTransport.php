@@ -21,6 +21,11 @@ final class AuthenticatorTransport
     public const BLE = 'ble';
 
     /**
+     * Client device-specific transport. These authenticators are not removable from the client device.
+     */
+    public const INTERNAL = 'internal';
+
+    /**
      * @codeCoverageIgnore
      */
     private function __construct()
@@ -29,6 +34,6 @@ final class AuthenticatorTransport
 
     public static function allKnownTransports() : array
     {
-        return [self::USB, self::NFC, self::BLE];
+        return [self::USB, self::NFC, self::BLE, self::INTERNAL];
     }
 }

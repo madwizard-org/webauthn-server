@@ -23,14 +23,16 @@ class FidoU2fStatementVerifier implements StatementVerifierInterface
             throw new VerificationException('Expecting FidoU2fAttestationStatement');
         }
 
-        // 1. Verify that attStmt is valid CBOR conforming to the syntax defined above and perform CBOR decoding on it
-        // to extract the contained fields.
+        // 1. Verify that attStmt is valid CBOR conforming to the syntax defined above and perform CBOR decoding
+        //    on it to extract the contained fields.
         // -> This is done in FidoU2fAttestationStatement
 
+        // 2
         $key = $this->checkAttCertKey($attStmt);
 
         try {
-            // 3. Extract the claimed rpIdHash from authenticatorData, and the claimed credentialId and credentialPublicKey from authenticatorData.attestedCredentialData.
+            // 3. Extract the claimed rpIdHash from authenticatorData, and the claimed credentialId and credentialPublicKey
+            //    from authenticatorData.attestedCredentialData.
             $rpIdHash = $authenticatorData->getRpIdHash();
             $credentialId = $authenticatorData->getCredentialId();
             if ($credentialId === null) {
@@ -40,8 +42,7 @@ class FidoU2fStatementVerifier implements StatementVerifierInterface
             // 4
             $publicKeyU2f = $this->getPublicKeyU2f($authenticatorData);
 
-
-            // 5. Let verificationData be the concatenation of (0x00 || rpIdHash || clientDataHash || credentialId || publicKeyU2f) (see Section 4.3 of [FIDO-U2F-Message-Formats]).
+            // 5. Let verificationData be the concatenation of (0x00 || rpIdHash || clientDataHash || credentialId || publicKeyU2F)
             $verificationData = "\x00" . $rpIdHash->getBinaryString() . $clientDataHash . $credentialId->getBinaryString() . $publicKeyU2f;
 
             // 6. Verify the sig using verificationData and certificate public key per [SEC1].
@@ -69,23 +70,22 @@ class FidoU2fStatementVerifier implements StatementVerifierInterface
 
     private function checkAttCertKey(FidoU2fAttestationStatement $attStmt)
     {
+        // 2. Check that x5c has exactly one element and let attCert be that element. Let certificate public key
+        //    be the public key conveyed by attCert. If certificate public key is not an Elliptic Curve (EC) public
+        //    key over the P-256 curve, terminate this algorithm and return an appropriate error.
         $certificates = $attStmt->getCertificates();
         if (count($certificates) === 0) {
-            throw new VerificationException('No certificates present in the attestation statement.');
+            throw new VerificationException('FIDO-U2F statements should contain exactly one certificate.');
         }
 
-        // 2. Let attCert be the value of the first element of x5c. Let certificate public key be the public key
-        // conveyed by attCert. If certificate public key is not an Elliptic Curve (EC) public key over the P-256 curve,
-        // terminate this algorithm and return an appropriate error.
-        $first = $certificates[0];
+        $attCert = $certificates[0];
 
-        $x509 = openssl_pkey_get_public($first);
+        $x509 = openssl_pkey_get_public($attCert);
         if ($x509 === false) {
             throw new VerificationException('Failed to parse x509 public key.');
         }
 
         $details = openssl_pkey_get_details($x509);
-
 
         if ($details === false || ($details['ec']['curve_name'] ?? null) !== 'prime256v1') {
             throw new VerificationException('Expecting first certificate to have P-256 EC key.');
@@ -95,12 +95,17 @@ class FidoU2fStatementVerifier implements StatementVerifierInterface
 
     private function getPublicKeyU2f(AuthenticatorData $authData) : string
     {
-        // 4. Convert the COSE_KEY formatted credentialPublicKey (see Section 7 of [RFC8152]) to CTAP1/U2F public Key format [FIDO-CTAP].
-        //      Let publicKeyU2F represent the result of the conversion operation and set its first byte to 0x04. Note: This signifies uncompressed ECC key format.
-        //      Extract the value corresponding to the "-2" key (representing x coordinate) from credentialPublicKey, confirm its size to be of 32 bytes and concatenate it with publicKeyU2F.
-        //      If size differs or "-2" key is not found, terminate this algorithm and return an appropriate error.
-        //      Extract the value corresponding to the "-3" key (representing y coordinate) from credentialPublicKey, confirm its size to be of 32 bytes and concatenate it with publicKeyU2F.
-        //      If size differs or "-3" key is not found, terminate this algorithm and return an appropriate error.
+        // 4. Convert the COSE_KEY formatted credentialPublicKey (see Section 7 of [RFC8152]) to Raw ANSI X9.62 public
+        //    key format (see ALG_KEY_ECC_X962_RAW in Section 3.6.2 Public Key Representation Formats of [FIDO-Registry]).
+        //
+        //      Let x be the value corresponding to the "-2" key (representing x coordinate) in credentialPublicKey,
+        //      and confirm its size to be of 32 bytes. If size differs or "-2" key is not found, terminate this algorithm
+        //
+        //      Let y be the value corresponding to the "-3" key (representing y coordinate) in credentialPublicKey,
+        //      and confirm its size to be of 32 bytes. If size differs or "-3" key is not found, terminate this algorithm
+        //      and return an appropriate error.
+        //
+
         $credentialPublicKey = $authData->getKey();
 
         if (!($credentialPublicKey instanceof EC2Key)) {
@@ -113,6 +118,8 @@ class FidoU2fStatementVerifier implements StatementVerifierInterface
         if ($x->getLength() !== 32 || $y->getLength() !== 32) {
             throw new VerificationException('Unexpected key size.');
         }
+
+        // Let publicKeyU2F be the concatenation 0x04 || x || y. This signifies uncompressed ECC key format.
         return "\x04" . $x->getBinaryString() . $y->getBinaryString();
     }
 }

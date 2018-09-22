@@ -62,6 +62,7 @@ class AuthenticationTest extends TestCase
                                     0 => 'usb',
                                     1 => 'nfc',
                                     2 => 'ble',
+                                    3 => 'internal',
                                 ],
                         ],
                     ],

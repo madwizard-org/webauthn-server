@@ -43,6 +43,7 @@ class EnumerationTest extends TestCase
         $this->assertContains(AuthenticatorTransport::USB, $known);
         $this->assertContains(AuthenticatorTransport::NFC, $known);
         $this->assertContains(AuthenticatorTransport::BLE, $known);
+        $this->assertContains(AuthenticatorTransport::INTERNAL, $known);
     }
 
     public function testAttachment()
@@ -55,7 +56,6 @@ class EnumerationTest extends TestCase
     public function testTokenBindingStatus()
     {
         $this->assertTrue(TokenBindingStatus::isValidValue(TokenBindingStatus::SUPPORTED));
-        $this->assertTrue(TokenBindingStatus::isValidValue(TokenBindingStatus::NOT_SUPPORTED));
         $this->assertTrue(TokenBindingStatus::isValidValue(TokenBindingStatus::PRESENT));
         $this->assertFalse(TokenBindingStatus::isValidValue('xyz'));
     }

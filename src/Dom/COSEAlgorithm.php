@@ -22,6 +22,11 @@ final class COSEAlgorithm
     public const RS256 = -257;
 
     /**
+     * RSASSA-PKCS1-v1_5 w/ SHA-1
+     */
+    public const RS1 = -65535;
+
+    /**
      * @codeCoverageIgnore
      */
     private function __construct()

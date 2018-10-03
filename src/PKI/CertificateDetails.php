@@ -71,6 +71,10 @@ class CertificateDetails
             return new SHA256WithRSAEncryptionAlgorithmIdentifier();
         }
 
+        if ($coseAlgorithm === COSEAlgorithm::RS1) {
+            return new SHA1WithRSAEncryptionAlgorithmIdentifier();
+        }
+
         throw new WebAuthnException(sprintf('Signature format %d not supported.', $coseAlgorithm));
     }
 

@@ -101,7 +101,7 @@ class WebAuthnConfiguration
     public function getRelyingPartyEntity() : PublicKeyCredentialRpEntity
     {
         if ($this->rpName === null) {
-            throw new ConfigurationException('Relying party name should be set with setRelyingPartyId.');
+            throw new ConfigurationException('Relying party name should be set with setRelyingPartyName.');
         }
         return new PublicKeyCredentialRpEntity($this->rpName, $this->rpId);
     }

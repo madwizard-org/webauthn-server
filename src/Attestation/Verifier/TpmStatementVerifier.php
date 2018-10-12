@@ -10,7 +10,7 @@ use MadWizard\WebAuthn\Attestation\Statement\TpmAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\EmptyTrustPath;
 use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
-use MadWizard\WebAuthn\PKI\CertificateDetails;
+use MadWizard\WebAuthn\Pki\CertificateDetails;
 
 class TpmStatementVerifier implements StatementVerifierInterface
 {

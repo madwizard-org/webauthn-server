@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Tests\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\Statement\TpmAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Tpm\TpmPublic;
-use MadWizard\WebAuthn\Dom\COSEAlgorithm;
+use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
@@ -40,7 +40,7 @@ class TpmAttestationStatementTest extends TestCase
         $statement = new TpmAttestationStatement($attObj);
 
         $this->assertSame('tpm', $statement->getFormatId());
-        $this->assertSame(COSEAlgorithm::RS1, $statement->getAlgorithm());
+        $this->assertSame(CoseAlgorithm::RS1, $statement->getAlgorithm());
         $this->assertSame(HexData::hex(self::RAW_CERTINFO), $statement->getRawCertInfo()->getHex());
         $this->assertSame(HexData::hex(self::RAW_SIG), $statement->getSignature()->getHex());
         $this->assertNull($statement->getEcdaaKeyId());

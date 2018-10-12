@@ -3,14 +3,14 @@
 
 namespace MadWizard\WebAuthn\Credential;
 
-use MadWizard\WebAuthn\Crypto\COSEKey;
+use MadWizard\WebAuthn\Crypto\CoseKey;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
 interface UserCredentialInterface
 {
     public function getCredentialId() : string;
 
-    public function getPublicKey() : COSEKey;
+    public function getPublicKey() : CoseKey;
 
     public function getSignatureCounter() : ?int; // todo separate via storage?
 

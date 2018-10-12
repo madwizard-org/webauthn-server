@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Tests\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\Statement\FidoU2fAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
-use MadWizard\WebAuthn\Dom\COSEAlgorithm;
+use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +32,7 @@ class PackedAttestationStatementTest extends TestCase
             $statement->getSignature()->getHex()
         );
 
-        $this->assertSame(COSEAlgorithm::ES256, $statement->getAlgorithm());
+        $this->assertSame(CoseAlgorithm::ES256, $statement->getAlgorithm());
     }
 
     public function testEcdaaKey()

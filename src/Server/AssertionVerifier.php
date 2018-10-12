@@ -6,9 +6,8 @@ namespace MadWizard\WebAuthn\Server;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
-use MadWizard\WebAuthn\Crypto\COSEKey;
+use MadWizard\WebAuthn\Crypto\CoseKey;
 use MadWizard\WebAuthn\Dom\AuthenticatorAssertionResponseInterface;
-use MadWizard\WebAuthn\Dom\PublicKeyCredential;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Dom\TokenBindingStatus;
 use MadWizard\WebAuthn\Exception\DataValidationException;
@@ -106,7 +105,7 @@ class AssertionVerifier extends AbstractVerifier
     }
 
     /**
-     * @param PublicKeyCredential $credential
+     * @param PublicKeyCredentialInterface $credential
      * @param ByteBuffer[]|null $allowCredentialIds
      * @return bool
      */
@@ -125,10 +124,10 @@ class AssertionVerifier extends AbstractVerifier
         return false;
     }
 
-    private function verifySignature(AuthenticatorAssertionResponseInterface $response, COSEKey $publicKey) : bool
+    private function verifySignature(AuthenticatorAssertionResponseInterface $response, CoseKey $publicKey) : bool
     {
         // 15. Let hash be the result of computing a hash over the cData using SHA-256.
-        $clientData = $response->getClientDataJSON();
+        $clientData = $response->getClientDataJson();
         $clientDataHash = hash('sha256', $clientData, true);
 
         // 16. Using the credential public key looked up in step 3, verify that sig is a valid signature over the binary concatenation of aData and hash.

@@ -3,15 +3,15 @@
 
 namespace MadWizard\WebAuthn\Tests\Crypto;
 
-use MadWizard\WebAuthn\Crypto\COSEKey;
-use MadWizard\WebAuthn\Crypto\RSAKey;
-use MadWizard\WebAuthn\Dom\COSEAlgorithm;
+use MadWizard\WebAuthn\Crypto\CoseKey;
+use MadWizard\WebAuthn\Crypto\RsaKey;
+use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
 use PHPUnit\Framework\TestCase;
 
-class RSAKeyTest extends TestCase
+class RsaKeyTest extends TestCase
 {
     private const TEST_KEY_MODULUS =
         'aad13a1fa831fabdd755669ebcbf743e2e1f7221c88a136d607eac5ea76ad431' .
@@ -83,26 +83,26 @@ class RSAKeyTest extends TestCase
         $this->assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());
         $this->assertSame(self::TEST_KEY_EXPONENT, $key->getExponent()->getHex());
 
-        $this->assertSame(COSEAlgorithm::RS256, $key->getAlgorithm());
+        $this->assertSame(CoseAlgorithm::RS256, $key->getAlgorithm());
     }
 
-    public function testInvalidCBOR()
+    public function testInvalidCbor()
     {
         $this->expectException(WebAuthnException::class);
-        RSAKey::fromCBORData([]);
+        RsaKey::fromCborData([]);
     }
 
     public function testRemoveLeadingZeroes()
     {
         $mod = ByteBuffer::fromHex('000000000000' . self::TEST_KEY_MODULUS);
         $exp = ByteBuffer::fromHex('000000000000' . self::TEST_KEY_EXPONENT);
-        $key = new RSAKey($mod, $exp, COSEAlgorithm::RS256);
+        $key = new RsaKey($mod, $exp, CoseAlgorithm::RS256);
 
         $this->assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());
         $this->assertSame(self::TEST_KEY_EXPONENT, $key->getExponent()->getHex());
     }
 
-    public function testCBOR()
+    public function testCbor()
     {
         // Example key from webauthn spec
         $cbor = HexData::buf(
@@ -117,24 +117,24 @@ class RSAKeyTest extends TestCase
         )
         );
 
-        $key = COSEKey::parseCBOR($cbor);
-        $this->assertInstanceOf(RSAKey::class, $key);
-        /** @var $key RSAKey */
+        $key = CoseKey::parseCbor($cbor);
+        $this->assertInstanceOf(RsaKey::class, $key);
+        /** @var $key RsaKey */
 
-        $this->assertSame(COSEAlgorithm::RS256, $key->getAlgorithm());
+        $this->assertSame(CoseAlgorithm::RS256, $key->getAlgorithm());
         $this->assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());
         $this->assertSame(self::TEST_KEY_EXPONENT, $key->getExponent()->getHex());
 
         // Transform back
-        $output = $key->getCBOR();
+        $output = $key->getCbor();
 
         $this->assertSame($cbor->getHex(), $output->getHex());
     }
 
-    private function getKey(): RSAKey
+    private function getKey(): RsaKey
     {
         $mod = ByteBuffer::fromHex(self::TEST_KEY_MODULUS);
         $exp = ByteBuffer::fromHex(self::TEST_KEY_EXPONENT);
-        return new RSAKey($mod, $exp, COSEAlgorithm::RS256);
+        return new RsaKey($mod, $exp, CoseAlgorithm::RS256);
     }
 }

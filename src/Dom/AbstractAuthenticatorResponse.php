@@ -13,20 +13,20 @@ abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInt
     /**
      * @var string
      */
-    private $clientDataJSON;
+    private $clientDataJson;
 
     private $parsedJson;
 
-    public function __construct(string $clientDataJSON)
+    public function __construct(string $clientDataJson)
     {
-        $this->clientDataJSON = $clientDataJSON;
+        $this->clientDataJson = $clientDataJson;
 
         // Specification says to remove the UTF-8 byte order mark, if any
         // TODO: should hash include BOM or not?
-        if (\substr($clientDataJSON, 0, 3) === self::UTF8_BOM) {
-            $clientDataJSON = substr($clientDataJSON, 3);
+        if (\substr($clientDataJson, 0, 3) === self::UTF8_BOM) {
+            $clientDataJson = substr($clientDataJson, 3);
         }
-        $data = \json_decode($clientDataJSON, true, 10);
+        $data = \json_decode($clientDataJson, true, 10);
         if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
             throw new ParseException('Unparseable client data JSON');
         }
@@ -36,9 +36,9 @@ abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInt
         $this->parsedJson = $data;
     }
 
-    public function getClientDataJSON(): string
+    public function getClientDataJson(): string
     {
-        return $this->clientDataJSON;
+        return $this->clientDataJson;
     }
 
     public function getParsedClientData() : array

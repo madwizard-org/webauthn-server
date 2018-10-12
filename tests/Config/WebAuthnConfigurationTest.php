@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Tests\Config;
 
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
-use MadWizard\WebAuthn\Dom\COSEAlgorithm;
+use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 use PHPUnit\Framework\TestCase;
 
@@ -113,8 +113,8 @@ class WebAuthnConfigurationTest extends TestCase
     {
         $config = new WebAuthnConfiguration();
         $default = $config->getAllowedAlgorithms();
-        $this->assertContains(COSEAlgorithm::ES256, $default);
-        $this->assertContains(COSEAlgorithm::RS256, $default);
+        $this->assertContains(CoseAlgorithm::ES256, $default);
+        $this->assertContains(CoseAlgorithm::RS256, $default);
     }
 
     public function testDefaultFormats()
@@ -135,7 +135,7 @@ class WebAuthnConfigurationTest extends TestCase
     public function testSetAlgorithms()
     {
         $config = new WebAuthnConfiguration();
-        $algorithms = [COSEAlgorithm::ES256];
+        $algorithms = [CoseAlgorithm::ES256];
         $config->setAllowedAlgorithms($algorithms);
         $this->assertSame($algorithms, $config->getAllowedAlgorithms());
     }
@@ -152,7 +152,7 @@ class WebAuthnConfigurationTest extends TestCase
     {
         $this->expectException(ConfigurationException::class);
         $config = new WebAuthnConfiguration();
-        $algorithms = [COSEAlgorithm::ES256, 'not valid'];
+        $algorithms = [CoseAlgorithm::ES256, 'not valid'];
         $config->setAllowedAlgorithms($algorithms);
     }
 }

@@ -3,17 +3,17 @@
 
 namespace MadWizard\WebAuthn\Format;
 
-use MadWizard\WebAuthn\Exception\CBORException;
+use MadWizard\WebAuthn\Exception\CborException;
 
-class CBOREncoder
+class CborEncoder
 {
     public static function encodeInteger(int $i): string
     {
         if ($i < 0) {
             $i = -($i + 1);
-            $major = CBOR::MAJOR_NEGATIVE_INT;
+            $major = Cbor::MAJOR_NEGATIVE_INT;
         } else {
-            $major = CBOR::MAJOR_UNSIGNED_INT;
+            $major = Cbor::MAJOR_UNSIGNED_INT;
         }
 
         $bytes = self::integerBytes($i, $minorVal);
@@ -24,13 +24,13 @@ class CBOREncoder
     public static function encodeTextString(string $text): string
     {
         $lengthBytes = self::integerBytes(\strlen($text), $minorVal);
-        return chr((CBOR::MAJOR_TEXT_STRING << 5) | $minorVal) . $lengthBytes . $text;
+        return chr((Cbor::MAJOR_TEXT_STRING << 5) | $minorVal) . $lengthBytes . $text;
     }
 
     public static function encodeByteString(ByteBuffer $bytes): string
     {
         $lengthBytes = self::integerBytes($bytes->getLength(), $minorVal);
-        return chr((CBOR::MAJOR_BYTE_STRING << 5) | $minorVal) . $lengthBytes . $bytes->getBinaryString();
+        return chr((Cbor::MAJOR_BYTE_STRING << 5) | $minorVal) . $lengthBytes . $bytes->getBinaryString();
     }
 
     public static function encodeMapValues(array $map): string
@@ -47,7 +47,7 @@ class CBOREncoder
             $mapContent .= $k . $v;
         }
         $lengthBytes = self::integerBytes(count($map), $minorVal);
-        return chr((CBOR::MAJOR_MAP << 5) | $minorVal) . $lengthBytes . $mapContent;
+        return chr((Cbor::MAJOR_MAP << 5) | $minorVal) . $lengthBytes . $mapContent;
     }
 
     public static function encodeMap(array $map): string
@@ -98,6 +98,6 @@ class CBOREncoder
         if ($k instanceof ByteBuffer) {
             return self::encodeByteString($k);
         }
-        throw new CBORException('Unsupported type for encodeSingleValue');
+        throw new CborException('Unsupported type for encodeSingleValue');
     }
 }

@@ -4,14 +4,14 @@
 namespace MadWizard\WebAuthn\Format;
 
 use MadWizard\WebAuthn\Exception\ByteBufferException;
-use MadWizard\WebAuthn\Exception\CBORException;
+use MadWizard\WebAuthn\Exception\CborException;
 
-class CBORDecoder
+class CborDecoder
 {
     /**
      * @param ByteBuffer $buf
      * @return mixed
-     * @throws CBORException
+     * @throws CborException
      */
     public static function decode(ByteBuffer $buf)
     {
@@ -20,11 +20,11 @@ class CBORDecoder
             $offset = 0;
             $result = self::parseItem($buf, $offset);
             if ($offset !== $buf->getLength()) {
-                throw new CBORException('Unused bytes after data item.');
+                throw new CborException('Unused bytes after data item.');
             }
             return $result;
         } catch (ByteBufferException $e) {
-            throw new CBORException(sprintf('Error with byte buffer during parsing: %s.', $e->getMessage()), 0, $e);
+            throw new CborException(sprintf('Error with byte buffer during parsing: %s.', $e->getMessage()), 0, $e);
         }
     }
 
@@ -33,7 +33,7 @@ class CBORDecoder
      * @param int $startOffset
      * @param int|null $endOffset
      * @return mixed
-     * @throws CBORException
+     * @throws CborException
      */
     public static function decodeInPlace(ByteBuffer $buf, int $startOffset, int &$endOffset = null)
     {
@@ -43,7 +43,7 @@ class CBORDecoder
             $endOffset = $offset;
             return $data;
         } catch (ByteBufferException $e) {
-            throw new CBORException(sprintf('Error with byte buffer during parsing: %s.', $e->getMessage()), 0, $e);
+            throw new CborException(sprintf('Error with byte buffer during parsing: %s.', $e->getMessage()), 0, $e);
         }
     }
 
@@ -58,7 +58,7 @@ class CBORDecoder
         $type = $first >> 5;
         $val = $first & 0b11111;
 
-        if ($type === CBOR::MAJOR_FLOAT_SIMPLE) {
+        if ($type === Cbor::MAJOR_FLOAT_SIMPLE) {
             return self::parseFloatSimple($val, $buf, $offset);
         }
 
@@ -89,9 +89,9 @@ class CBORDecoder
             case 28:
             case 29:
             case 30:
-                throw new CBORException('Reserved value used.');
+                throw new CborException('Reserved value used.');
             case 31:
-                throw new CBORException('Indefinite length is not supported.');
+                throw new CborException('Indefinite length is not supported.');
         }
 
         return self::parseSimple($val);
@@ -100,7 +100,7 @@ class CBORDecoder
     /**
      * @param int $val
      * @return mixed
-     * @throws CBORException
+     * @throws CborException
      */
     private static function parseSimple(int $val)
     {
@@ -113,7 +113,7 @@ class CBORDecoder
         if ($val === 22) {
             return null;
         }
-        throw new CBORException(sprintf('Unsupported simple value %d.', $val));
+        throw new CborException(sprintf('Unsupported simple value %d.', $val));
     }
 
     private static function parseExtraLength(int $val, ByteBuffer $buf, int &$offset) : int
@@ -138,9 +138,9 @@ class CBORDecoder
             case 28:
             case 29:
             case 30:
-                throw new CBORException('Reserved value used.');
+                throw new CborException('Reserved value used.');
             case 31:
-                throw new CBORException('Indefinite length is not supported.');
+                throw new CborException('Indefinite length is not supported.');
         }
 
         return $val;
@@ -149,28 +149,28 @@ class CBORDecoder
     private static function parseItemData(int $type, int $val, ByteBuffer $buf, int &$offset)
     {
         switch ($type) {
-            case CBOR::MAJOR_UNSIGNED_INT: // uint
+            case Cbor::MAJOR_UNSIGNED_INT: // uint
                 return $val;
-            case CBOR::MAJOR_NEGATIVE_INT:
+            case Cbor::MAJOR_NEGATIVE_INT:
                 return -1 - $val;
-            case CBOR::MAJOR_BYTE_STRING:
+            case Cbor::MAJOR_BYTE_STRING:
                 $data = $buf->getBytes($offset, $val);
                 $offset += $val;
                 return new ByteBuffer($data); // bytes
-            case CBOR::MAJOR_TEXT_STRING:
+            case Cbor::MAJOR_TEXT_STRING:
                 $data = $buf->getBytes($offset, $val);
                 $offset += $val;
                 return $data; // UTF-8
-            case CBOR::MAJOR_ARRAY:
+            case Cbor::MAJOR_ARRAY:
                 return self::parseArray($buf, $offset, $val);
-            case CBOR::MAJOR_MAP:
+            case Cbor::MAJOR_MAP:
                 return self::parseMap($buf, $offset, $val);
-            case CBOR::MAJOR_TAG:
+            case Cbor::MAJOR_TAG:
                 return self::parseItem($buf, $offset); // 1 embedded data item
         }
 
         // This should never be reached
-        throw new CBORException(sprintf('Unknown major type %d.', $type));
+        throw new CborException(sprintf('Unknown major type %d.', $type));
     }
 
     private static function parseMap(ByteBuffer $buf, int &$offset, int $count) : array
@@ -181,7 +181,7 @@ class CBORDecoder
             $mapKey = self::parseItem($buf, $offset);
             $mapVal = self::parseItem($buf, $offset);
             if (!\is_int($mapKey) && !\is_string($mapKey)) {
-                throw new CBORException('Can only use strings or integers as map keys');
+                throw new CborException('Can only use strings or integers as map keys');
             }
             $map[$mapKey] = $mapVal; // todo dup
         }

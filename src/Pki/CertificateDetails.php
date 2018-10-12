@@ -1,12 +1,12 @@
 <?php
 
 
-namespace MadWizard\WebAuthn\PKI;
+namespace MadWizard\WebAuthn\Pki;
 
 use ASN1\Type\UnspecifiedType;
 use Exception;
 use LogicException;
-use MadWizard\WebAuthn\Dom\COSEAlgorithm;
+use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -40,7 +40,7 @@ class CertificateDetails
         $this->cert = $certificate;
     }
 
-    public static function fromPEM(string $pem) : CertificateDetails
+    public static function fromPem(string $pem) : CertificateDetails
     {
         try {
             return new self(Certificate::fromPEM(PEM::fromString($pem))->tbsCertificate());
@@ -64,15 +64,15 @@ class CertificateDetails
 
     private function convertCoseAlgorthm(int $coseAlgorithm) : SignatureAlgorithmIdentifier
     {
-        if ($coseAlgorithm === COSEAlgorithm::ES256) {
+        if ($coseAlgorithm === CoseAlgorithm::ES256) {
             return new ECDSAWithSHA256AlgorithmIdentifier();
         }
 
-        if ($coseAlgorithm === COSEAlgorithm::RS256) {
+        if ($coseAlgorithm === CoseAlgorithm::RS256) {
             return new SHA256WithRSAEncryptionAlgorithmIdentifier();
         }
 
-        if ($coseAlgorithm === COSEAlgorithm::RS1) {
+        if ($coseAlgorithm === CoseAlgorithm::RS1) {
             return new SHA1WithRSAEncryptionAlgorithmIdentifier();
         }
 

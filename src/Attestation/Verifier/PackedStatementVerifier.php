@@ -14,7 +14,7 @@ use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\PKI\CertificateDetails;
+use MadWizard\WebAuthn\Pki\CertificateDetails;
 
 class PackedStatementVerifier implements StatementVerifierInterface
 {
@@ -56,7 +56,7 @@ class PackedStatementVerifier implements StatementVerifierInterface
             throw new VerificationException('Empty X5C in attestation.');
         }
         try {
-            $cert = CertificateDetails::fromPEM($x5c[0]);
+            $cert = CertificateDetails::fromPem($x5c[0]);
             $verificationData = $authenticatorData->getRaw()->getBinaryString() . $clientDataHash;
             $valid = $cert->verifySignature($verificationData, $signature->getBinaryString(), $signatureAlgorithm);
         } catch (WebAuthnException $e) {

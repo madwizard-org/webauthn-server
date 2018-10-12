@@ -9,7 +9,7 @@ use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Statement\FidoU2fAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
-use MadWizard\WebAuthn\Crypto\EC2Key;
+use MadWizard\WebAuthn\Crypto\Ec2Key;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use function openssl_free_key;
 use function openssl_pkey_get_details;
@@ -108,7 +108,7 @@ class FidoU2fStatementVerifier implements StatementVerifierInterface
 
         $credentialPublicKey = $authData->getKey();
 
-        if (!($credentialPublicKey instanceof EC2Key)) {
+        if (!($credentialPublicKey instanceof Ec2Key)) {
             throw new VerificationException('Public key is not EC2 key.');
         }
 

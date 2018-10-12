@@ -70,7 +70,7 @@ final class JsonConverter
      * ```
      *
      * @param string $json
-     * @param string $expectedResponseType Expected type of response in the public key's response field.
+     * @param string $responseType Expected type of response in the public key's response field.
      * Either 'attestation' for attestation responses or 'assertion' for assertion responses.
      * @return PublicKeyCredential
      * @throws ParseException

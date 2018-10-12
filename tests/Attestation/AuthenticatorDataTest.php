@@ -4,8 +4,8 @@
 namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
-use MadWizard\WebAuthn\Crypto\EC2Key;
-use MadWizard\WebAuthn\Dom\COSEAlgorithm;
+use MadWizard\WebAuthn\Crypto\Ec2Key;
+use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
 use PHPUnit\Framework\TestCase;
@@ -41,12 +41,12 @@ class AuthenticatorDataTest extends TestCase
         $this->assertTrue($data->getCredentialId()->equals(ByteBuffer::fromHex('3ebd89bf77ec509755ee9c2635efaaac7b2b9c5cef1736c3717da48534c8c6b654d7ff945f50b5cc4e78055bdd396b64f78da2c5f96200ccd415cd08fe420038')));
 
         $key = $data->getKey();
-        $this->assertInstanceOf(EC2Key::class, $key);
+        $this->assertInstanceOf(Ec2Key::class, $key);
         /**
-         * @var EC2Key $key
+         * @var Ec2Key $key
          */
-        $this->assertEquals(COSEAlgorithm::ES256, $key->getAlgorithm());
-        $this->assertEquals(EC2Key::CURVE_P256, $key->getCurve());
+        $this->assertEquals(CoseAlgorithm::ES256, $key->getAlgorithm());
+        $this->assertEquals(Ec2Key::CURVE_P256, $key->getCurve());
         $this->assertSame('e87625896ee4e46dc032766e8087962f36df9dfe8b567f3763015b1990a60e14', $key->getX()->getHex());
         $this->assertSame('27de612d66418bda1950581ebc5c8c1dad710cb14c22f8c97045f4612fb20c91', $key->getY()->getHex());
     }

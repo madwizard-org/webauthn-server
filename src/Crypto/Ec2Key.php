@@ -3,14 +3,14 @@
 
 namespace MadWizard\WebAuthn\Crypto;
 
-use MadWizard\WebAuthn\Dom\COSEAlgorithm;
+use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Format\CBOREncoder;
+use MadWizard\WebAuthn\Format\CborEncoder;
 use MadWizard\WebAuthn\Format\DataValidator;
 use function openssl_pkey_get_public;
 
-class EC2Key extends COSEKey // TODO exceptions
+class Ec2Key extends CoseKey // TODO exceptions
 {
     /**
      * @var ByteBuffer
@@ -61,7 +61,7 @@ class EC2Key extends COSEKey // TODO exceptions
         $this->curve = $curve;
     }
 
-    public static function fromCBORData(array $data) : EC2Key
+    public static function fromCborData(array $data) : Ec2Key
     {
         DataValidator::checkTypes(
             $data,
@@ -79,7 +79,7 @@ class EC2Key extends COSEKey // TODO exceptions
         $y = $data[self::KTP_Y];
         $alorithm = $data[self::COSE_KEY_PARAM_ALG];
 
-        return new EC2Key($x, $y, $curve, $alorithm);
+        return new Ec2Key($x, $y, $curve, $alorithm);
     }
 
     /**
@@ -114,22 +114,22 @@ class EC2Key extends COSEKey // TODO exceptions
 
         // DER encoded P256 curve
         $der =
-            DER::sequence(
-                DER::sequence(
-                    DER::oid("\x2A\x86\x48\xCE\x3D\x02\x01") . // OID 1.2.840.10045.2.1 ecPublicKey
-                    DER::oid("\x2A\x86\x48\xCE\x3D\x03\x01\x07")  // 1.2.840.10045.3.1.7 prime256v1
+            Der::sequence(
+                Der::sequence(
+                    Der::oid("\x2A\x86\x48\xCE\x3D\x02\x01") . // OID 1.2.840.10045.2.1 ecPublicKey
+                    Der::oid("\x2A\x86\x48\xCE\x3D\x03\x01\x07")  // 1.2.840.10045.3.1.7 prime256v1
                 ) .
-                DER::bitString(
+                Der::bitString(
                     "\x04" . // ECC uncompressed key format
                     $this->x->getBinaryString() .
                     $this->y->getBinaryString()
                 )
             );
 
-        return DER::pem('PUBLIC KEY', $der);
+        return Der::pem('PUBLIC KEY', $der);
     }
 
-    public function getCBOR() : ByteBuffer
+    public function getCbor() : ByteBuffer
     {
         $map = [
             self::COSE_KEY_PARAM_KTY => self::COSE_KTY_EC2,
@@ -138,7 +138,7 @@ class EC2Key extends COSEKey // TODO exceptions
             self::KTP_X => $this->x,
             self::KTP_Y => $this->y,
         ];
-        return new ByteBuffer(CBOREncoder::encodeMap($map));
+        return new ByteBuffer(CborEncoder::encodeMap($map));
     }
 
     public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool
@@ -148,7 +148,7 @@ class EC2Key extends COSEKey // TODO exceptions
             throw new WebAuthnException('Public key invalid');
         }
         try {
-            if ($this->getAlgorithm() === COSEAlgorithm::ES256) {
+            if ($this->getAlgorithm() === CoseAlgorithm::ES256) {
                 $algorithm = OPENSSL_ALGO_SHA256;
             } else {
                 throw new WebAuthnException('Unsupported algorithm');
@@ -170,6 +170,6 @@ class EC2Key extends COSEKey // TODO exceptions
 
     protected function algorithmSupported(int $algorithm) : bool
     {
-        return ($algorithm === COSEAlgorithm::ES256);
+        return ($algorithm === CoseAlgorithm::ES256);
     }
 }

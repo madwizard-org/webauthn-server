@@ -23,7 +23,7 @@ class AttestationObjectTest extends TestCase
     public function testInvalidType()
     {
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~expecting.+CBOR map~i');
+        $this->expectExceptionMessageRegExp('~expecting.+Cbor map~i');
         new AttestationObject(ByteBuffer::fromHex('10'));
     }
 
@@ -106,7 +106,7 @@ class AttestationObjectTest extends TestCase
         $this->assertSame(
             '{"challenge":"Vu8uDqnkwOjd83KLj6Scn2BgFNLFbGR7Kq_XJJwQnnatztUR7XIBL7K8uMPCIaQmKw1MCVQ5aazNJFk7NakgqA",' .
             '"clientExtensions":{},"hashAlgorithm":"SHA-256","origin":"https://localhost:8443","type":"webauthn.create"}',
-            $cred->getResponse()->getClientDataJSON()
+            $cred->getResponse()->getClientDataJson()
         );
 
         /**

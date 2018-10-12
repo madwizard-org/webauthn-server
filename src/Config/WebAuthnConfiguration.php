@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Config;
 
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInFormats;
-use MadWizard\WebAuthn\Dom\COSEAlgorithm;
+use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRpEntity;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -18,8 +18,8 @@ class WebAuthnConfiguration
     private const MIN_CHALLENGE_LENGTH = 32;
 
     private const SUPPORTED_ALGORITHMS = [
-        COSEAlgorithm::ES256,
-        COSEAlgorithm::RS256,
+        CoseAlgorithm::ES256,
+        CoseAlgorithm::RS256,
     ];
 
     /**
@@ -145,7 +145,7 @@ class WebAuthnConfiguration
      * enumeration (e.g. COSEAlgorithm::ES256)
      * @param int[] $algorithms
      * @throws ConfigurationException
-     * @see COSEAlgorithm
+     * @see CoseAlgorithm
      */
     public function setAllowedAlgorithms(array $algorithms) : void
     {

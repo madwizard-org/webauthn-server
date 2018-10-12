@@ -3,13 +3,13 @@
 
 namespace MadWizard\WebAuthn\Crypto;
 
-use MadWizard\WebAuthn\Dom\COSEAlgorithm;
+use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Format\CBOREncoder;
+use MadWizard\WebAuthn\Format\CborEncoder;
 use MadWizard\WebAuthn\Format\DataValidator;
 
-class RSAKey extends COSEKey
+class RsaKey extends CoseKey
 {
     /**
      * RSA modulus n key type parameter (key type 3, RSA)
@@ -42,7 +42,7 @@ class RSAKey extends COSEKey
         $this->exponent = $this->compactIntegerBuffer($exponent);
     }
 
-    public static function fromCBORData(array $data) : RSAKey
+    public static function fromCborData(array $data) : RsaKey
     {
         DataValidator::checkTypes(
             $data,
@@ -59,7 +59,7 @@ class RSAKey extends COSEKey
         $modulus = $data[self::KTP_N];
         $exponent = $data[self::KTP_E];
 
-        return new RSAKey($modulus, $exponent, $alorithm);
+        return new RsaKey($modulus, $exponent, $alorithm);
     }
 
     public function verifySignature(ByteBuffer $data, ByteBuffer $signature): bool
@@ -69,7 +69,7 @@ class RSAKey extends COSEKey
             throw new WebAuthnException('Public key invalid');
         }
         try {
-            if ($this->getAlgorithm() === COSEAlgorithm::RS256) {
+            if ($this->getAlgorithm() === CoseAlgorithm::RS256) {
                 $algorithm = OPENSSL_ALGO_SHA256;
             } else {
                 throw new WebAuthnException('Unsupported algorithm');
@@ -131,23 +131,23 @@ class RSAKey extends COSEKey
     {
         // DER encoded RSA key
         $der =
-            DER::sequence(
-                DER::sequence(
-                    DER::oid("\x2A\x86\x48\x86\xF7\x0D\x01\x01\x01") . // OID 1.2.840.113549.1.1.1 rsaEncryption
-                    DER::nullValue()
+            Der::sequence(
+                Der::sequence(
+                    Der::oid("\x2A\x86\x48\x86\xF7\x0D\x01\x01\x01") . // OID 1.2.840.113549.1.1.1 rsaEncryption
+                    Der::nullValue()
                 ) .
-                DER::bitString(
-                    DER::sequence(
-                        DER::unsignedInteger($this->modulus->getBinaryString()) .
-                        DER::unsignedInteger($this->exponent->getBinaryString())
+                Der::bitString(
+                    Der::sequence(
+                        Der::unsignedInteger($this->modulus->getBinaryString()) .
+                        Der::unsignedInteger($this->exponent->getBinaryString())
                     )
                 )
             );
 
-        return DER::pem('PUBLIC KEY', $der);
+        return Der::pem('PUBLIC KEY', $der);
     }
 
-    public function getCBOR() : ByteBuffer
+    public function getCbor() : ByteBuffer
     {
         $map = [
             self::COSE_KEY_PARAM_KTY => self::COSE_KTY_RSA,
@@ -155,11 +155,11 @@ class RSAKey extends COSEKey
             self::KTP_N => $this->modulus,
             self::KTP_E => $this->exponent,
         ];
-        return new ByteBuffer(CBOREncoder::encodeMap($map));
+        return new ByteBuffer(CborEncoder::encodeMap($map));
     }
 
     protected function algorithmSupported(int $algorithm) : bool
     {
-        return ($algorithm === COSEAlgorithm::RS256);
+        return ($algorithm === CoseAlgorithm::RS256);
     }
 }

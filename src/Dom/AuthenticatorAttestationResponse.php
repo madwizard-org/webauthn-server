@@ -12,9 +12,9 @@ class AuthenticatorAttestationResponse extends AbstractAuthenticatorResponse imp
      */
     private $attestationObject;
 
-    public function __construct(string $clientDataJSON, ByteBuffer $attestationObject)
+    public function __construct(string $clientDataJson, ByteBuffer $attestationObject)
     {
-        parent::__construct($clientDataJSON);
+        parent::__construct($clientDataJson);
         $this->attestationObject = $attestationObject;
     }
 

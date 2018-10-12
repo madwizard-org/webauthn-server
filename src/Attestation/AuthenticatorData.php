@@ -3,10 +3,10 @@
 
 namespace MadWizard\WebAuthn\Attestation;
 
-use MadWizard\WebAuthn\Crypto\COSEKey;
+use MadWizard\WebAuthn\Crypto\CoseKey;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Format\CBORDecoder;
+use MadWizard\WebAuthn\Format\CborDecoder;
 
 class AuthenticatorData
 {
@@ -47,7 +47,7 @@ class AuthenticatorData
     private $signCount;
 
     /**
-     * @var COSEKey|null
+     * @var CoseKey|null
      */
     private $key;
 
@@ -89,12 +89,12 @@ class AuthenticatorData
             $offset += 2;
             $this->credentialId = new ByteBuffer($data->getBytes($offset, $credentialIdLength));
             $offset += $credentialIdLength;
-            $this->key = COSEKey::parseCBOR($data, $offset, $endOffset);
+            $this->key = CoseKey::parseCbor($data, $offset, $endOffset);
             $offset = $endOffset;
         }
 
         if ($this->hasExtensionData()) {
-            $extensionData = CBORDecoder::decodeInPlace($data, $offset, $endOffset);
+            $extensionData = CborDecoder::decodeInPlace($data, $offset, $endOffset);
             $offset = $endOffset;
             if (!is_array($extensionData)) {
                 throw new ParseException('Expected CBOR map for extension data in authenticator data.');
@@ -141,9 +141,9 @@ class AuthenticatorData
     }
 
     /**
-     * @return COSEKey|null
+     * @return CoseKey|null
      */
-    public function getKey(): ?COSEKey
+    public function getKey(): ?CoseKey
     {
         return $this->key;
     }

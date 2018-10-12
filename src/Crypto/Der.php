@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Crypto;
 
-class DER
+class Der
 {
     private static function length(int $len) : string
     {

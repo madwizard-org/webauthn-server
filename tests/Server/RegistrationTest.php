@@ -7,8 +7,8 @@ use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
-use MadWizard\WebAuthn\Crypto\EC2Key;
-use MadWizard\WebAuthn\Dom\COSEAlgorithm;
+use MadWizard\WebAuthn\Crypto\Ec2Key;
+use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Server\AttestationContext;
@@ -72,7 +72,7 @@ class RegistrationTest extends TestCase
                 function (CredentialRegistration $reg) {
                     return $reg->getCredentialId() === self::CREDENTIAL_ID &&
                             $reg->getUserHandle()->equals(new ByteBuffer('00112233')) &&
-                            $reg->getPublicKey() instanceof EC2Key;
+                            $reg->getPublicKey() instanceof Ec2Key;
                 }
             )
             );
@@ -108,11 +108,11 @@ class RegistrationTest extends TestCase
         $cred->expects($this->any())
             ->method('getPublicKey')
             ->willReturn(
-                new EC2Key(
+                new Ec2Key(
                     ByteBuffer::fromHex('8d617e65c9508e64bcc5673ac82a6799da3c1446682c258c463fffdf58dfd2fa'),
                     ByteBuffer::fromHex('3e6c378b53d795c4a4dffb4199edd7862f23abaf0203b4b8911ba0569994e101'),
-                    EC2Key::CURVE_P256,
-                    COSEAlgorithm::ES256
+                    Ec2Key::CURVE_P256,
+                    CoseAlgorithm::ES256
                 )
             );
         $cred->expects($this->any())

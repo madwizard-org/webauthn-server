@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Format;
 
-final class CBOR
+final class Cbor
 {
     public const MAJOR_UNSIGNED_INT = 0;
 

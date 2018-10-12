@@ -51,6 +51,6 @@ class AbstractVerifier
 
     protected function getClientDataHash(AuthenticatorResponseInterface $response)
     {
-        return hash('sha256', $response->getClientDataJSON(), true);
+        return hash('sha256', $response->getClientDataJson(), true);
     }
 }

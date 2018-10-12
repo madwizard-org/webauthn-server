@@ -4,7 +4,7 @@
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
-use MadWizard\WebAuthn\Crypto\DER;
+use MadWizard\WebAuthn\Crypto\Der;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
@@ -36,7 +36,7 @@ abstract class AbstractAttestationStatement implements AttestationStatementInter
             if (!($item instanceof ByteBuffer)) {
                 throw new ParseException('x5c should be array of binary data elements.');
             }
-            $certificates[] = DER::pem('CERTIFICATE', $item->getBinaryString());
+            $certificates[] = Der::pem('CERTIFICATE', $item->getBinaryString());
         }
         return $certificates;
     }

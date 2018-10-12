@@ -29,7 +29,6 @@ class TpmPublic extends AbstractTpmStructure
     public const TPM_ALG_SHA512 = 0x000D; // ISO/IEC 10118-3 the SHA 512 algorithm
 
     private const PHP_HASH_ALG_MAP = [
-        self::TPM_ALG_SHA => 'sha1',
         self::TPM_ALG_SHA1 => 'sha1',
         self::TPM_ALG_SHA256 => 'sha256',
         self::TPM_ALG_SHA384 => 'sha384',

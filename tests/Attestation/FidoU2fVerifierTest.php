@@ -26,7 +26,7 @@ class FidoU2fVerifierTest extends VerifierTest
         $result = $verifier->verify(
             $statement,
             new AuthenticatorData($att->getAuthenticatorData()),
-            hash('sha256', $response->getClientDataJSON(), true)
+            hash('sha256', $response->getClientDataJson(), true)
         );
 
         $this->assertSame(AttestationType::BASIC, $result->getAttestationType());
@@ -51,7 +51,7 @@ class FidoU2fVerifierTest extends VerifierTest
         $result = $verifier->verify(
             $statement,
             new AuthenticatorData($att->getAuthenticatorData()),
-            hash('sha256', $response->getClientDataJSON(), true)
+            hash('sha256', $response->getClientDataJson(), true)
         );
 
         $this->assertSame(AttestationType::BASIC, $result->getAttestationType());

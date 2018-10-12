@@ -19,7 +19,7 @@ class AuthenticatorResponseTest extends TestCase
             null
         );
 
-        $this->assertSame('{"a": 123}', $assertion->getClientDataJSON());
+        $this->assertSame('{"a": 123}', $assertion->getClientDataJson());
         $this->assertSame('123456', $assertion->getAuthenticatorData()->getHex());
         $this->assertSame('789abc', $assertion->getSignature()->getHex());
         $this->assertNull($assertion->getUserHandle());
@@ -35,7 +35,7 @@ class AuthenticatorResponseTest extends TestCase
         );
 
 
-        $this->assertSame('{"a": 123}', $assertion->getClientDataJSON());
+        $this->assertSame('{"a": 123}', $assertion->getClientDataJson());
         $this->assertSame('123456', $assertion->getAuthenticatorData()->getHex());
         $this->assertSame('789abc', $assertion->getSignature()->getHex());
         $this->assertSame('0099aabbcc', $assertion->getUserHandle()->getHex());
@@ -58,7 +58,7 @@ class AuthenticatorResponseTest extends TestCase
             ByteBuffer::fromHex('123456')
         );
 
-        $this->assertSame('{"a": 123}', $assertion->getClientDataJSON());
+        $this->assertSame('{"a": 123}', $assertion->getClientDataJson());
         $this->assertSame('123456', $assertion->getAttestationObject()->getHex());
     }
 

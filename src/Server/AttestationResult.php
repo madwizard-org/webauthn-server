@@ -4,7 +4,7 @@
 namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
-use MadWizard\WebAuthn\Crypto\COSEKey;
+use MadWizard\WebAuthn\Crypto\CoseKey;
 
 class AttestationResult  // TODO: merge registration and attestation result?
 {
@@ -14,7 +14,7 @@ class AttestationResult  // TODO: merge registration and attestation result?
     private $credentialId;
 
     /**
-     * @var COSEKey
+     * @var CoseKey
      */
     private $publicKey;
 
@@ -23,7 +23,7 @@ class AttestationResult  // TODO: merge registration and attestation result?
      */
     private $attestation;
 
-    public function __construct(string $credentialId, COSEKey $publicKey, VerificationResult $attestation)
+    public function __construct(string $credentialId, CoseKey $publicKey, VerificationResult $attestation)
     {
         $this->credentialId = $credentialId;
         $this->publicKey = $publicKey;
@@ -39,9 +39,9 @@ class AttestationResult  // TODO: merge registration and attestation result?
     }
 
     /**
-     * @return COSEKey
+     * @return CoseKey
      */
-    public function getPublicKey(): COSEKey
+    public function getPublicKey(): CoseKey
     {
         return $this->publicKey;
     }

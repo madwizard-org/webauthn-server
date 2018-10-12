@@ -4,7 +4,7 @@
 namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
-use MadWizard\WebAuthn\Crypto\COSEKey;
+use MadWizard\WebAuthn\Crypto\CoseKey;
 use MadWizard\WebAuthn\Server\AttestationResult;
 
 class RegistrationResult
@@ -32,7 +32,7 @@ class RegistrationResult
         return $this->attestation->getCredentialId();
     }
 
-    public function getPublicKey() : COSEKey
+    public function getPublicKey() : CoseKey
     {
         return $this->attestation->getPublicKey();
     }

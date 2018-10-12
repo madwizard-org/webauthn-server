@@ -6,11 +6,11 @@ namespace MadWizard\WebAuthn\Crypto;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Format\CBORDecoder;
+use MadWizard\WebAuthn\Format\CborDecoder;
 use MadWizard\WebAuthn\Format\DataValidator;
 use function is_array;
 
-abstract class COSEKey
+abstract class CoseKey
 {
     /**
      * EC2 key type
@@ -46,7 +46,7 @@ abstract class COSEKey
     protected const COSE_KEY_PARAM_ALG = 3;
 
     /**
-     * COSEKey constructor.
+     * CoseKey constructor.
      * @param int $algorithm IANA COSE Algorithm
      * @see https://www.iana.org/assignments/cose/cose.xhtml#algorithms
      */
@@ -58,9 +58,9 @@ abstract class COSEKey
         $this->algorithm = $algorithm;
     }
 
-    public static function parseCBOR(ByteBuffer $buffer, int $offset = 0, int &$endOffset = null) : COSEKey
+    public static function parseCbor(ByteBuffer $buffer, int $offset = 0, int &$endOffset = null) : CoseKey
     {
-        $data = CBORDecoder::decodeInPlace($buffer, $offset, $endOffset);
+        $data = CborDecoder::decodeInPlace($buffer, $offset, $endOffset);
 
         if (!is_array($data)) {
             throw new DataValidationException('Failed to decode CBOR encoded COSE key'); // TODO: change exceptions
@@ -78,18 +78,18 @@ abstract class COSEKey
         return self::createKey($keyType, $data);
     }
 
-    private static function createKey(int $keyType, array $data) : COSEKey
+    private static function createKey(int $keyType, array $data) : CoseKey
     {
         if ($keyType === self::COSE_KTY_EC2) {
-            return EC2Key::fromCBORData($data);
+            return Ec2Key::fromCborData($data);
         }
         if ($keyType === self::COSE_KTY_RSA) {
-            return RSAKey::fromCBORData($data);
+            return RsaKey::fromCborData($data);
         }
         throw new WebAuthnException(sprintf('Key type %d not supported', $keyType));
     }
 
-    abstract public function getCBOR() : ByteBuffer;
+    abstract public function getCbor() : ByteBuffer;
 
     /**
      * @return int

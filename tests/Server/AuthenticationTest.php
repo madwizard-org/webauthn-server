@@ -6,9 +6,9 @@ namespace MadWizard\WebAuthn\Tests\Server;
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
-use MadWizard\WebAuthn\Crypto\EC2Key;
+use MadWizard\WebAuthn\Crypto\Ec2Key;
 use MadWizard\WebAuthn\Dom\AuthenticatorTransport;
-use MadWizard\WebAuthn\Dom\COSEAlgorithm;
+use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -89,7 +89,7 @@ class AuthenticationTest extends TestCase
 
         $userCred = $this->runAuth($helper);
         $this->assertSame(AssertionDataHelper::DEFAULT_CREDENTIAL_ID, $userCred->getCredentialId());
-        /** @var EC2Key $pubKey */
+        /** @var Ec2Key $pubKey */
         $pubKey = $userCred->getPublicKey();
 
         $this->assertSame(AssertionDataHelper::KEY_A_X, $pubKey->getX()->getHex());
@@ -137,7 +137,7 @@ class AuthenticationTest extends TestCase
         $this->runAuth($helper);
     }
 
-    public function testInvalidClientDataJSON()
+    public function testInvalidClientDataJson()
     {
         // SPEC 7.2.5 JSON parse
         $helper = new AssertionDataHelper();
@@ -150,7 +150,7 @@ class AuthenticationTest extends TestCase
         $this->runAuth($helper);
     }
 
-    public function testIncompleteClientDataJSON()
+    public function testIncompleteClientDataJson()
     {
         $helper = new AssertionDataHelper();
 
@@ -162,7 +162,7 @@ class AuthenticationTest extends TestCase
         $this->runAuth($helper);
     }
 
-    public function testBOMClientDataJSON()
+    public function testBOMClientDataJson()
     {
         // SPEC 7.2.5 JSON parse
         $helper = new AssertionDataHelper();
@@ -299,11 +299,11 @@ class AuthenticationTest extends TestCase
         $cred->expects($this->any())
             ->method('getPublicKey')
             ->willReturn(
-                new EC2Key(
+                new Ec2Key(
                     ByteBuffer::fromHex(AssertionDataHelper::KEY_A_X),
                     ByteBuffer::fromHex(AssertionDataHelper::KEY_A_Y),
-                    EC2Key::CURVE_P256,
-                    COSEAlgorithm::ES256
+                    Ec2Key::CURVE_P256,
+                    CoseAlgorithm::ES256
                 )
             );
         $cred->expects($this->any())

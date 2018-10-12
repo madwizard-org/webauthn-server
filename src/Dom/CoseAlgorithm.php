@@ -9,7 +9,7 @@ namespace MadWizard\WebAuthn\Dom;
  * are included.
  * @see https://www.iana.org/assignments/cose/cose.xhtml#algorithms
  */
-final class COSEAlgorithm
+final class CoseAlgorithm
 {
     /**
      * ECDSA w/ SHA-256 (RFC8152)

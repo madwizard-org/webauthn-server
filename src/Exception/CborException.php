@@ -5,6 +5,6 @@ namespace MadWizard\WebAuthn\Exception;
 
 use Exception;
 
-class CBORException extends Exception
+class CborException extends Exception
 {
 }

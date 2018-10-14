@@ -15,9 +15,20 @@ use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Pki\CertificateDetails;
+use MadWizard\WebAuthn\Pki\CertificateParserInterface;
 
 class PackedStatementVerifier implements StatementVerifierInterface
 {
+    /**
+     * @var CertificateParserInterface
+     */
+    private $certificateParser;
+
+    public function __construct(CertificateParserInterface $certificateParser)
+    {
+        $this->certificateParser = $certificateParser;
+    }
+
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
     {
         // Verification procedure from https://www.w3.org/TR/webauthn/#packed-attestation
@@ -56,13 +67,12 @@ class PackedStatementVerifier implements StatementVerifierInterface
             throw new VerificationException('Empty X5C in attestation.');
         }
         try {
-            $cert = CertificateDetails::fromPem($x5c[0]);
+            $cert = $this->certificateParser->parsePem($x5c[0]);
             $verificationData = $authenticatorData->getRaw()->getBinaryString() . $clientDataHash;
             $valid = $cert->verifySignature($verificationData, $signature->getBinaryString(), $signatureAlgorithm);
         } catch (WebAuthnException $e) {
             throw new VerificationException('Failed to process attestation certificate.', 0, $e);
         }
-
 
         if (!$valid) {
             throw new VerificationException('Attestation signature is invalid.');

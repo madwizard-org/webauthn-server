@@ -4,24 +4,28 @@ namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
-use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
-use MadWizard\WebAuthn\Attestation\Verifier\PackedStatementVerifier;
+use MadWizard\WebAuthn\Attestation\Statement\TpmAttestationStatement;
+use MadWizard\WebAuthn\Attestation\Verifier\TpmStatementVerifier;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Pki\CertificateParser;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use PHPUnit\Framework\TestCase;
 
-class PackedStatementVerifierTest extends TestCase
+class TpmStatementVerifierTest extends TestCase
 {
-    public function testPacked()
+    public function testTpm()
     {
-        $plain = FixtureHelper::getFidoTestPlain('challengeResponseAttestationPackedB64UrlMsg');
-        $attObj = FixtureHelper::getFidoTestObject('challengeResponseAttestationPackedB64UrlMsg');
+        $this->markTestIncomplete(
+            'not complete yet'
+        );
+
+        $plain = FixtureHelper::getFidoTestPlain('challengeResponseAttestationTpmB64UrlMsg');
+        $attObj = FixtureHelper::getFidoTestObject('challengeResponseAttestationTpmB64UrlMsg');
 
         $hash = hash('sha256', Base64UrlEncoding::decode($plain['response']['clientDataJSON']), true);
-        $statement = new PackedAttestationStatement($attObj);
+        $statement = new TpmAttestationStatement($attObj);
 
-        $verifier = new PackedStatementVerifier(new CertificateParser());
+        $verifier = new TpmStatementVerifier(new CertificateParser());
         $result = $verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
         $this->assertSame(AttestationType::BASIC, $result->getAttestationType());

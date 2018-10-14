@@ -83,4 +83,18 @@ class TpmRsaParameters implements KeyParametersInterface
     {
         return $this->exponent;
     }
+
+    /**
+     * @return ByteBuffer
+     */
+    public function getExponentAsBuffer(): ByteBuffer
+    {
+        $raw = '';
+        $e = $this->exponent;
+        while ($e > 0) {
+            $raw = chr($e & 0xFF) . $raw;
+            $e >>= 8;
+        }
+        return new ByteBuffer($raw);
+    }
 }

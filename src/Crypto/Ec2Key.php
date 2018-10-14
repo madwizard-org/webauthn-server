@@ -120,9 +120,7 @@ class Ec2Key extends CoseKey // TODO exceptions
                     Der::oid("\x2A\x86\x48\xCE\x3D\x03\x01\x07")  // 1.2.840.10045.3.1.7 prime256v1
                 ) .
                 Der::bitString(
-                    "\x04" . // ECC uncompressed key format
-                    $this->x->getBinaryString() .
-                    $this->y->getBinaryString()
+                    $this->getUncompressedCoordinates()->getBinaryString()
                 )
             );
 
@@ -139,6 +137,14 @@ class Ec2Key extends CoseKey // TODO exceptions
             self::KTP_Y => $this->y,
         ];
         return new ByteBuffer(CborEncoder::encodeMap($map));
+    }
+
+    public function getUncompressedCoordinates() : ByteBuffer
+    {
+        $data = "\x04" . // ECC uncompressed key format
+            $this->x->getBinaryString() .
+            $this->y->getBinaryString();
+        return new ByteBuffer($data);
     }
 
     public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool

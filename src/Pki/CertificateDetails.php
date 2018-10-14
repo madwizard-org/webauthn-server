@@ -20,7 +20,7 @@ use Sop\CryptoTypes\Signature\Signature;
 use X509\Certificate\Certificate;
 use X509\Certificate\TBSCertificate;
 
-class CertificateDetails
+class CertificateDetails implements CertificateDetailsInterface
 {
     public const VERSION_1 = TBSCertificate::VERSION_1;
 

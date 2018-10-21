@@ -147,8 +147,7 @@ class AssertionVerifier extends AbstractVerifier
             return true;
         }
 
-
-        $lastCounter = $accountCredential->getSignatureCounter();
+        $lastCounter = $this->credentialCollection->getSignatureCounter($accountCredential->getCredentialId());
 
         if ($lastCounter === null) {
             // counter not known

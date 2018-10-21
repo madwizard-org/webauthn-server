@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Server;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
+use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
@@ -45,7 +46,7 @@ class WebAuthnServer
      */
     private $credentialStore;
 
-    public function __construct(WebAuthnConfiguration $config, CredentialStoreInterface $credentialStore)
+    public function __construct(WebAuthnConfigurationInterface $config, CredentialStoreInterface $credentialStore)
     {
         $this->config = $config;
         $this->credentialStore = $credentialStore;
@@ -63,6 +64,7 @@ class WebAuthnServer
         );
 
         $creationOptions->setAttestation($options->getAttestation());
+        $creationOptions->setAuthenticatorSelection($options->getAuthenticatorSelection());
 
         $context = AttestationContext::create($creationOptions, $this->config);
         return new RegistrationRequest($creationOptions, $context);

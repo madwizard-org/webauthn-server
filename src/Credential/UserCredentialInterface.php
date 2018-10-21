@@ -12,7 +12,5 @@ interface UserCredentialInterface
 
     public function getPublicKey() : CoseKey;
 
-    public function getSignatureCounter() : ?int; // todo separate via storage?
-
     public function getUserHandle() : ByteBuffer;
 }

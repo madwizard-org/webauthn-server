@@ -11,7 +11,7 @@ use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Web\Origin;
 
-class WebAuthnConfiguration
+class WebAuthnConfiguration implements WebAuthnConfigurationInterface
 {
     public const DEFAULT_CHALLENGE_LENGTH = 64;
 
@@ -33,6 +33,11 @@ class WebAuthnConfiguration
     private $rpName;
 
     /**
+     * @var string|null Relying party icon
+     */
+    private $rpIconUrl;
+
+    /**
      * @var Origin|null Relying party's origin, e.g. https://example.com
      */
     private $rpOrigin;
@@ -52,7 +57,7 @@ class WebAuthnConfiguration
     }
 
     /**
-     * Returns the configurated RelyingParty
+     * Returns the configured RelyingParty
      * @return null|string
      */
     public function getRelyingPartyId(): ?string
@@ -103,7 +108,11 @@ class WebAuthnConfiguration
         if ($this->rpName === null) {
             throw new ConfigurationException('Relying party name should be set with setRelyingPartyName.');
         }
-        return new PublicKeyCredentialRpEntity($this->rpName, $this->rpId);
+        $rpEntity = new PublicKeyCredentialRpEntity($this->rpName, $this->rpId);
+        if ($this->rpIconUrl !== null) {
+            $rpEntity->setIcon($this->rpIconUrl);
+        }
+        return $rpEntity;
     }
 
     public function setRelyingPartyOrigin(?string $origin)
@@ -178,5 +187,19 @@ class WebAuthnConfiguration
     {
         // Default formats, TODO: customization
         return BuiltInFormats::getSupportedFormats();
+    }
+
+    public function setRelyingPartyIconUrl(?string $url) : void
+    {
+        // TODO: FILTER_VALIDATE_URL does not allow data urls
+//        if ($url !== null && filter_var($url, FILTER_VALIDATE_URL) === false) {
+//            throw new ConfigurationException("Invalid relying party icon url.");
+//        }
+        $this->rpIconUrl = $url;
+    }
+
+    public function getRelyingPartyIconUrl(): string
+    {
+        return $this->rpIconUrl;
     }
 }

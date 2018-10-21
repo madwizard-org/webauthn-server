@@ -115,9 +115,6 @@ class RegistrationTest extends TestCase
                     CoseAlgorithm::ES256
                 )
             );
-        $cred->expects($this->any())
-            ->method('getSignatureCounter')
-            ->willReturn(9999999);
 
         return $cred;
     }

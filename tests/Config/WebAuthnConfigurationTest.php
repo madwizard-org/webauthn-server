@@ -91,6 +91,14 @@ class WebAuthnConfigurationTest extends TestCase
         $rpEntity = $config->getRelyingPartyEntity();
         $this->assertSame('example.com', $rpEntity->getId());
         $this->assertSame('Relying party', $rpEntity->getName());
+        $this->assertNull($rpEntity->getIcon());
+
+        $config->setRelyingPartyIconUrl('https://example.com/favicon.ico');
+
+        $rpEntity = $config->getRelyingPartyEntity();
+        $this->assertSame('example.com', $rpEntity->getId());
+        $this->assertSame('Relying party', $rpEntity->getName());
+        $this->assertSame('https://example.com/favicon.ico', $rpEntity->getIcon());
     }
 
     public function testChallengeLength()

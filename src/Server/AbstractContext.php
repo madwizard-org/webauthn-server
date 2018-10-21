@@ -71,4 +71,19 @@ abstract class AbstractContext
     {
         return $this->origin;
     }
+
+    public function serialize()
+    {
+        return \serialize([$this->challenge, $this->rpId, $this->userVerificationRequired, $this->origin]);
+    }
+
+    public function unserialize($serialized)
+    {
+        [
+            $this->challenge,
+            $this->rpId,
+            $this->userVerificationRequired,
+            $this->origin
+        ] = \unserialize((string) $serialized);
+    }
 }

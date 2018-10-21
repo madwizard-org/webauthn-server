@@ -10,7 +10,7 @@ use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Web\Origin;
 
-class AttestationContext extends AbstractContext
+class AttestationContext extends AbstractContext implements RequestContext
 {
     /**
      * @var ByteBuffer
@@ -50,5 +50,14 @@ class AttestationContext extends AbstractContext
         return $this->userHandle;
     }
 
-    // TODO: serialization
+    public function serialize()
+    {
+        return \serialize([$this->userHandle, parent::serialize()]);
+    }
+
+    public function unserialize($serialized)
+    {
+        [$this->userHandle, $parentStr] = \unserialize((string) $serialized);
+        parent::unserialize($parentStr);
+    }
 }

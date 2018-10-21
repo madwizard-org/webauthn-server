@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Dom\AttestationConveyancePreference;
+use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 
 class RegistrationOptions
@@ -17,6 +18,11 @@ class RegistrationOptions
      * @var UserIdentity
      */
     private $user;
+
+    /**
+     * @var AuthenticatorSelectionCriteria|null
+     */
+    private $authenticatorSelection;
 
     public function __construct(UserIdentity $user)
     {
@@ -48,5 +54,18 @@ class RegistrationOptions
             throw new ConfigurationException(sprintf('Value "%s" is not a valid attestation conveyance preference.', $attestation));
         }
         $this->attestation = $attestation;
+    }
+
+    public function setAuthenticatorSelection(?AuthenticatorSelectionCriteria $criteria)
+    {
+        $this->authenticatorSelection = $criteria;
+    }
+
+    /**
+     * @return AuthenticatorSelectionCriteria|null
+     */
+    public function getAuthenticatorSelection(): ?AuthenticatorSelectionCriteria
+    {
+        return $this->authenticatorSelection;
     }
 }

@@ -62,7 +62,7 @@ class AuthenticationTest extends TestCase
                                     0 => 'usb',
                                     1 => 'nfc',
                                     2 => 'ble',
-                                    3 => 'internal',
+                                    // 3 => 'internal',
                                 ],
                         ],
                     ],
@@ -282,6 +282,10 @@ class AuthenticationTest extends TestCase
         $this->config->setRelyingPartyName('Example');
         $this->config->setRelyingPartyOrigin('https://example.com');
         $this->store = $this->createMock(CredentialStoreInterface::class);
+
+        $this->store->expects($this->any())
+            ->method('getSignatureCounter')
+            ->willReturn(8);
         $this->server = new WebAuthnServer($this->config, $this->store);
     }
 
@@ -306,9 +310,6 @@ class AuthenticationTest extends TestCase
                     CoseAlgorithm::ES256
                 )
             );
-        $cred->expects($this->any())
-            ->method('getSignatureCounter')
-            ->willReturn(8);
 
         $cred->expects($this->any())
             ->method('getUserHandle')

@@ -9,7 +9,7 @@ use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Web\Origin;
 
-class AssertionContext extends AbstractContext
+class AssertionContext extends AbstractContext implements RequestContext
 {
     /**
      * @var ByteBuffer[]
@@ -57,5 +57,14 @@ class AssertionContext extends AbstractContext
         return $this->allowCredentialIds;
     }
 
-    // TODO: serialization
+    public function serialize()
+    {
+        return \serialize([$this->allowCredentialIds, parent::serialize()]);
+    }
+
+    public function unserialize($serialized)
+    {
+        [$this->allowCredentialIds, $parentStr] = \unserialize((string) $serialized);
+        parent::unserialize($parentStr);
+    }
 }

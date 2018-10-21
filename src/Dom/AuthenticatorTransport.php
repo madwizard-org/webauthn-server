@@ -34,6 +34,7 @@ final class AuthenticatorTransport
 
     public static function allKnownTransports() : array
     {
-        return [self::USB, self::NFC, self::BLE, self::INTERNAL];
+        // TODO: self::INTERNAL left out for now, not supported yet by Firefox
+        return [self::USB, self::NFC, self::BLE];
     }
 }

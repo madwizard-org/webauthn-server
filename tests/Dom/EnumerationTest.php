@@ -43,7 +43,7 @@ class EnumerationTest extends TestCase
         $this->assertContains(AuthenticatorTransport::USB, $known);
         $this->assertContains(AuthenticatorTransport::NFC, $known);
         $this->assertContains(AuthenticatorTransport::BLE, $known);
-        $this->assertContains(AuthenticatorTransport::INTERNAL, $known);
+        // $this->assertContains(AuthenticatorTransport::INTERNAL, $known);
     }
 
     public function testAttachment()

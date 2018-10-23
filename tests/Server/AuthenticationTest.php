@@ -80,7 +80,7 @@ class AuthenticationTest extends TestCase
             ->with($credential->getCredentialId())
             ->willReturn($credential);
 
-        return $this->server->finishAuthentication($helper->getCredentialJson(), $helper->getContext());
+        return $this->server->finishAuthentication($helper->getCredentialJson(), $helper->getContext())->getUserCredential();
     }
 
     public function testValidAssertion()

@@ -5,7 +5,6 @@ namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Json\JsonConverter;
-use MadWizard\WebAuthn\Server\AssertionContext;
 
 class AuthenticationRequest
 {

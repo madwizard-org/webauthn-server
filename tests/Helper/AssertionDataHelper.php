@@ -6,7 +6,7 @@ namespace MadWizard\WebAuthn\Tests\Helper;
 use const OPENSSL_ALGO_SHA256;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Server\AssertionContext;
+use MadWizard\WebAuthn\Server\Authentication\AssertionContext;
 use MadWizard\WebAuthn\Web\Origin;
 use RuntimeException;
 use stdClass;

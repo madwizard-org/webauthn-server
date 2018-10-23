@@ -1,7 +1,7 @@
 <?php
 
 
-namespace MadWizard\WebAuthn\Server;
+namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Json\JsonConverter;

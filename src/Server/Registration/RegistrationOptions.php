@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Server\Registration;
 use MadWizard\WebAuthn\Dom\AttestationConveyancePreference;
 use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
+use MadWizard\WebAuthn\Server\UserIdentity;
 
 class RegistrationOptions
 {

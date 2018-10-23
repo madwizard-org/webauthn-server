@@ -1,7 +1,7 @@
 <?php
 
 
-namespace MadWizard\WebAuthn\Server;
+namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
@@ -14,6 +14,7 @@ use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\DataValidator;
+use MadWizard\WebAuthn\Server\AbstractVerifier;
 
 class AssertionVerifier extends AbstractVerifier
 {

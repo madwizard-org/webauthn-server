@@ -1,13 +1,15 @@
 <?php
 
 
-namespace MadWizard\WebAuthn\Server;
+namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Server\AbstractContext;
+use MadWizard\WebAuthn\Server\RequestContext;
 use MadWizard\WebAuthn\Web\Origin;
 
 class AttestationContext extends AbstractContext implements RequestContext

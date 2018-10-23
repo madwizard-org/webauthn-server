@@ -10,6 +10,13 @@ WebAuthn Relying Party server library for PHP
 
 This library aims to implement the relying party server of the WebAuthn specification in PHP. The library is currently being development and not yet ready to be used. APIs may change at any time until the first stable release.
 
+Installation
+------------
+Installation via composer:
+```bash
+composer require madwizard/webauthn dev-master
+```
+
 Resources
 ---------
 [WebAuthn specification](https://www.w3.org/TR/webauthn/)

@@ -1,12 +1,12 @@
 <?php
 
 
-namespace MadWizard\WebAuthn\Server;
+namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
 use MadWizard\WebAuthn\Crypto\CoseKey;
 
-class AttestationResult  // TODO: merge registration and attestation result?
+class AttestationResult
 {
     /**
      * @var string

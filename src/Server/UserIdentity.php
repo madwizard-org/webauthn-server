@@ -1,7 +1,7 @@
 <?php
 
 
-namespace MadWizard\WebAuthn\Server\Registration;
+namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
 use MadWizard\WebAuthn\Exception\WebAuthnException;

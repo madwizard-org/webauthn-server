@@ -16,6 +16,7 @@ use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Pki\CertificateDetails;
 use MadWizard\WebAuthn\Pki\CertificateDetailsInterface;
+use MadWizard\WebAuthn\Pki\CertificateParser;
 use MadWizard\WebAuthn\Pki\CertificateParserInterface;
 
 class PackedAttestationVerifier extends AbstractAttestationVerifier
@@ -30,6 +31,7 @@ class PackedAttestationVerifier extends AbstractAttestationVerifier
         if ($certificateParser === null) {
             $certificateParser = new CertificateParser();
         }
+        $this->certificateParser = $certificateParser;
     }
 
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult

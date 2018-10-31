@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Attestation\Registry;
 
 use MadWizard\WebAuthn\Attestation\Statement\FidoU2fAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
+use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\TpmAttestationStatement;
 
 final class BuiltInFormats
@@ -23,7 +24,7 @@ final class BuiltInFormats
     {
         return [
             FidoU2fAttestationStatement::createFormat(),
-            // PackedAttestationStatement::createFormat(),
+            PackedAttestationStatement::createFormat(),
             NoneAttestationStatement::createFormat(),
             TpmAttestationStatement::createFormat(),
             ];

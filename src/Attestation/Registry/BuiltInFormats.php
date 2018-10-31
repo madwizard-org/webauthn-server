@@ -25,7 +25,7 @@ final class BuiltInFormats
             FidoU2fAttestationStatement::createFormat(),
             // PackedAttestationStatement::createFormat(),
             NoneAttestationStatement::createFormat(),
-            // TpmAttestationStatement::createFormat(),
+            TpmAttestationStatement::createFormat(),
             ];
     }
 }

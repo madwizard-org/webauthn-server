@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Attestation\Registry;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
-use MadWizard\WebAuthn\Attestation\Verifier\StatementVerifierInterface;
+use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
 
 class BuiltInAttestationFormat implements AttestationFormatInterface
 {
@@ -25,7 +25,7 @@ class BuiltInAttestationFormat implements AttestationFormatInterface
     private $verifierClass;
 
     /**
-     * @var StatementVerifierInterface|null
+     * @var AttestationVerifierInterface|null
      */
     private $verifier;
 
@@ -47,7 +47,7 @@ class BuiltInAttestationFormat implements AttestationFormatInterface
         return new $class($attestationObject);
     }
 
-    public function getVerifier(): StatementVerifierInterface
+    public function getVerifier(): AttestationVerifierInterface
     {
         $verifierClass = $this->verifierClass;
         if ($this->verifier === null) {

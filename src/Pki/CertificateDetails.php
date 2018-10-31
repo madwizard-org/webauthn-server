@@ -118,6 +118,25 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
+    public function getSubject() : string
+    {
+        try {
+            return $this->cert->subject()->toString();
+        } catch (Exception $e) {
+            throw new ParseException('Failed to retrieve subject unit', 0, $e);
+        }
+    }
+
+    public function getSubjectAlternateNameDN(string $oid) : string
+    {
+        try {
+            $attrValue = $this->cert->extensions()->subjectAlternativeName()->names()->firstDN()->firstValueOf($oid);
+            return $attrValue->toASN1()->asUnspecified()->asUTF8String()->string();
+        } catch (Exception $e) {
+            throw new ParseException(sprintf('Failed to retrieve %s entry in directoryName in alternate name.', $oid), 0, $e);
+        }
+    }
+
     public function isCA() : ?bool
     {
         $extensions = $this->cert->extensions();
@@ -127,5 +146,18 @@ class CertificateDetails implements CertificateDetailsInterface
         }
 
         return $extensions->basicConstraints()->isCA();
+    }
+
+    public function extendedKeyUsageContains(string $oid): bool
+    {
+        try {
+            $extensions = $this->cert->extensions();
+            if (!$extensions->hasExtendedKeyUsage()) {
+                return false;
+            }
+            return $extensions->extendedKeyUsage()->has($oid);
+        } catch (Exception $e) {
+            throw new ParseException('Failed to retrieve subject unit', 0, $e);
+        }
     }
 }

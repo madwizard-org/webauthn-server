@@ -153,7 +153,7 @@ class AssertionVerifier extends AbstractVerifier
         if ($lastCounter === null) {
             // counter not known
             // TODO policy
-            return false;
+            return true;
         }
 
         if ($lastCounter === 0) {

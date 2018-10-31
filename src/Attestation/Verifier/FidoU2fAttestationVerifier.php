@@ -15,7 +15,7 @@ use function openssl_free_key;
 use function openssl_pkey_get_details;
 use function openssl_verify;
 
-class FidoU2fStatementVerifier implements StatementVerifierInterface
+class FidoU2fAttestationVerifier extends AbstractAttestationVerifier
 {
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
     {

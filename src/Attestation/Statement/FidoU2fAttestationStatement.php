@@ -6,7 +6,7 @@ namespace MadWizard\WebAuthn\Attestation\Statement;
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
-use MadWizard\WebAuthn\Attestation\Verifier\FidoU2fStatementVerifier;
+use MadWizard\WebAuthn\Attestation\Verifier\FidoU2fAttestationVerifier;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -72,7 +72,7 @@ class FidoU2fAttestationStatement extends AbstractAttestationStatement
         return new BuiltInAttestationFormat(
             FidoU2fAttestationStatement::FORMAT_ID,
             FidoU2fAttestationStatement::class,
-            FidoU2fStatementVerifier::class
+            FidoU2fAttestationVerifier::class
         );
     }
 }

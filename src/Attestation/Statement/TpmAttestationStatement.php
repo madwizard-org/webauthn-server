@@ -8,7 +8,7 @@ use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Tpm\TpmAttest;
 use MadWizard\WebAuthn\Attestation\Tpm\TpmPublic;
-use MadWizard\WebAuthn\Attestation\Verifier\TpmStatementVerifier;
+use MadWizard\WebAuthn\Attestation\Verifier\TpmAttestationVerifier;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -79,9 +79,16 @@ class TpmAttestationStatement extends AbstractAttestationStatement
         $this->algorithm = $statement['alg'];
         $this->signature = $statement['sig'];
 
+        if ($statement['ver'] !== '2.0') {
+            throw new ParseException('Only TPM version 2.0 is supported.');
+        }
+
         $this->ecdaaKeyId = $statement['ecdaaKeyId'] ?? null;
         $x5c = $statement['x5c'] ?? null;
 
+        if ($this->ecdaaKeyId === null && $x5c === null) {
+            throw new ParseException('Either ecdaaKeyId or x5c must be set.');
+        }
         if ($this->ecdaaKeyId !== null && $x5c !== null) {
             throw new ParseException('ecdaaKeyId and x5c cannot both be set.');
         }
@@ -132,7 +139,7 @@ class TpmAttestationStatement extends AbstractAttestationStatement
     /**
      * @return TpmAttest
      */
-    public function getTpmAttest(): TpmAttest
+    public function getCertInfo(): TpmAttest
     {
         return $this->attest;
     }
@@ -140,7 +147,7 @@ class TpmAttestationStatement extends AbstractAttestationStatement
     /**
      * @return TpmPublic
      */
-    public function getTpmPublic(): TpmPublic
+    public function getPubArea(): TpmPublic
     {
         return $this->public;
     }
@@ -150,7 +157,7 @@ class TpmAttestationStatement extends AbstractAttestationStatement
         return new BuiltInAttestationFormat(
             self::FORMAT_ID,
             self::class,
-            TpmStatementVerifier::class
+            TpmAttestationVerifier::class
         );
     }
 }

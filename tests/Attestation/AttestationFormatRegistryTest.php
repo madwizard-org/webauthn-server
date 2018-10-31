@@ -6,7 +6,7 @@ use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
-use MadWizard\WebAuthn\Attestation\Verifier\StatementVerifierInterface;
+use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
 use PHPUnit\Framework\TestCase;
 
@@ -19,14 +19,14 @@ class AttestationFormatRegistryTest extends TestCase
         $format1 = new BuiltInAttestationFormat(
             'format1',
             $this->getMockClass(AttestationStatementInterface::class, [], [], 'TestFormat1Statement'),
-            $this->getMockClass(StatementVerifierInterface::class, [], [], 'TestFormat1Verifier')
+            $this->getMockClass(AttestationVerifierInterface::class, [], [], 'TestFormat1Verifier')
         );
         $registry->addFormat($format1);
 
         $format2 = new BuiltInAttestationFormat(
             'format2',
             $this->getMockClass(AttestationStatementInterface::class, [], [], 'TestFormat2Statement'),
-            $this->getMockClass(StatementVerifierInterface::class, [], [], 'TestFormat2Verifier')
+            $this->getMockClass(AttestationVerifierInterface::class, [], [], 'TestFormat2Verifier')
         );
         $registry->addFormat($format2);
 

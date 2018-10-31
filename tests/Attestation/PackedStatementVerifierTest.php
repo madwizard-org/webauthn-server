@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Tests\Attestation;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
-use MadWizard\WebAuthn\Attestation\Verifier\PackedStatementVerifier;
+use MadWizard\WebAuthn\Attestation\Verifier\PackedAttestationVerifier;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Pki\CertificateParser;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
@@ -21,7 +21,7 @@ class PackedStatementVerifierTest extends TestCase
         $hash = hash('sha256', Base64UrlEncoding::decode($plain['response']['clientDataJSON']), true);
         $statement = new PackedAttestationStatement($attObj);
 
-        $verifier = new PackedStatementVerifier(new CertificateParser());
+        $verifier = new PackedAttestationVerifier(new CertificateParser());
         $result = $verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
         $this->assertSame(AttestationType::BASIC, $result->getAttestationType());

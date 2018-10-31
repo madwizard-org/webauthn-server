@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Attestation\Registry;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
-use MadWizard\WebAuthn\Attestation\Verifier\StatementVerifierInterface;
+use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 
 interface AttestationFormatInterface
@@ -27,7 +27,7 @@ interface AttestationFormatInterface
 
     /**
      * Gets a reference to a verifier that verifies attestation statements of the format supported by this class.
-     * @return StatementVerifierInterface
+     * @return AttestationVerifierInterface
      */
-    public function getVerifier() : StatementVerifierInterface;
+    public function getVerifier() : AttestationVerifierInterface;
 }

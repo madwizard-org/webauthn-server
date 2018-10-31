@@ -15,4 +15,10 @@ interface CertificateDetailsInterface
     public function getOrganizationalUnit(): string;
 
     public function isCA(): ?bool;
+
+    public function getSubjectAlternateNameDN(string $oid) : string;
+
+    public function extendedKeyUsageContains(string $oid): bool;
+
+    public function getSubject() : string;
 }

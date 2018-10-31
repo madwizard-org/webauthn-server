@@ -17,6 +17,11 @@ class TpmAttest extends AbstractTpmStructure
      */
     private $attName;
 
+    /**
+     * @var ByteBuffer
+     */
+    private $extraData;
+
     public function __construct(ByteBuffer $data)
     {
         // Read magic
@@ -38,7 +43,7 @@ class TpmAttest extends AbstractTpmStructure
         $this->readLengthPrefixed($data, $offset);
 
         // Extra data
-        $this->readLengthPrefixed($data, $offset);
+        $this->extraData = $this->readLengthPrefixed($data, $offset);
 
         // Clock info
         $this->readFixed($data, $offset, 17);
@@ -63,5 +68,10 @@ class TpmAttest extends AbstractTpmStructure
     public function getAttName(): ByteBuffer
     {
         return $this->attName;
+    }
+
+    public function getExtraData(): ByteBuffer
+    {
+        return $this->extraData;
     }
 }

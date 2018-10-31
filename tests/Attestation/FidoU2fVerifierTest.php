@@ -9,7 +9,7 @@ use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Statement\FidoU2fAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
-use MadWizard\WebAuthn\Attestation\Verifier\FidoU2fStatementVerifier;
+use MadWizard\WebAuthn\Attestation\Verifier\FidoU2fAttestationVerifier;
 use MadWizard\WebAuthn\Exception\VerificationException;
 
 class FidoU2fVerifierTest extends VerifierTest
@@ -21,7 +21,7 @@ class FidoU2fVerifierTest extends VerifierTest
 
         $att = new AttestationObject($buffer);
         $statement = new FidoU2fAttestationStatement($att);
-        $verifier = new FidoU2fStatementVerifier();
+        $verifier = new FidoU2fAttestationVerifier();
 
         $result = $verifier->verify(
             $statement,
@@ -46,7 +46,7 @@ class FidoU2fVerifierTest extends VerifierTest
 
         $att = new AttestationObject($buffer);
         $statement = new FidoU2fAttestationStatement($att);
-        $verifier = new FidoU2fStatementVerifier();
+        $verifier = new FidoU2fAttestationVerifier();
 
         $result = $verifier->verify(
             $statement,
@@ -71,7 +71,7 @@ class FidoU2fVerifierTest extends VerifierTest
 
         $att = new AttestationObject($buffer);
         $statement = new FidoU2fAttestationStatement($att);
-        $verifier = new FidoU2fStatementVerifier();
+        $verifier = new FidoU2fAttestationVerifier();
 
         $this->expectException(VerificationException::class);
         $this->expectExceptionMessageRegExp('~signature~i');
@@ -80,7 +80,7 @@ class FidoU2fVerifierTest extends VerifierTest
 
     public function testFidoWrongType()
     {
-        $verifier = new FidoU2fStatementVerifier();
+        $verifier = new FidoU2fAttestationVerifier();
 
         $this->expectException(VerificationException::class);
         $this->expectExceptionMessageRegExp('~expecting.+fido~i');

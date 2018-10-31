@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Attestation\Registry;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
-use MadWizard\WebAuthn\Attestation\Verifier\StatementVerifierInterface;
+use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
 
 interface AttestationFormatRegistryInterface
@@ -13,8 +13,8 @@ interface AttestationFormatRegistryInterface
 
     /**
      * @param string $formatId
-     * @return StatementVerifierInterface
+     * @return AttestationVerifierInterface
      * @throws FormatNotSupportedException
      */
-    public function getVerifier(string $formatId): StatementVerifierInterface;
+    public function getVerifier(string $formatId): AttestationVerifierInterface;
 }

@@ -10,7 +10,7 @@ use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\EmptyTrustPath;
 use MadWizard\WebAuthn\Exception\VerificationException;
 
-class NoneAttestationVerifier implements StatementVerifierInterface // TODO:normalize verifier classnames
+class NoneAttestationVerifier extends AbstractAttestationVerifier // TODO:normalize verifier classnames
 {
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
     {

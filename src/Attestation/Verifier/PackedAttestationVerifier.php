@@ -15,18 +15,21 @@ use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Pki\CertificateDetails;
+use MadWizard\WebAuthn\Pki\CertificateDetailsInterface;
 use MadWizard\WebAuthn\Pki\CertificateParserInterface;
 
-class PackedStatementVerifier implements StatementVerifierInterface
+class PackedAttestationVerifier extends AbstractAttestationVerifier
 {
     /**
      * @var CertificateParserInterface
      */
     private $certificateParser;
 
-    public function __construct(CertificateParserInterface $certificateParser)
+    public function __construct(?CertificateParserInterface $certificateParser = null)
     {
-        $this->certificateParser = $certificateParser;
+        if ($certificateParser === null) {
+            $certificateParser = new CertificateParser();
+        }
     }
 
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
@@ -88,23 +91,6 @@ class PackedStatementVerifier implements StatementVerifierInterface
         return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath($x5c));
     }
 
-    private function checkAaguidExtension(CertificateDetails $cert, ?ByteBuffer $validAaguid)
-    {
-        try {
-            $aaguid = $cert->getFidoAaguidExtensionValue();
-        } catch (WebAuthnException $e) {
-            throw new VerificationException('Failed to read fido aaguid extension.', 0, $e);
-        }
-
-        if ($aaguid === null) {
-            return;
-        }
-
-        if ($validAaguid === null || !$validAaguid->equals($aaguid)) {
-            throw new VerificationException('AAGUID in certificate extension does not match the AAGUID in the authenticator data.');
-        }
-    }
-
 //    private function verifyEcdaa(ByteBuffer $ecdaaKeyId, AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
 //    {
 //        // Verify that sig is a valid signature over the concatenation of authenticatorData and clientDataHash using ECDAA-Verify with ECDAA-Issuer public key identified by ecdaaKeyId (see [FIDOEcdaaAlgorithm]).
@@ -141,7 +127,7 @@ class PackedStatementVerifier implements StatementVerifierInterface
         throw new VerificationException('Signature for self attestation could not be verified.');
     }
 
-    private function checkCertRequirements(CertificateDetails $cert)
+    private function checkCertRequirements(CertificateDetailsInterface $cert)
     {
         // 8.2.1. Packed attestation statement certificate requirements
         //  The attestation certificate MUST have the following fields/extensions:
@@ -149,7 +135,7 @@ class PackedStatementVerifier implements StatementVerifierInterface
         // Version MUST be set to 3 (which is indicated by an ASN.1 INTEGER with value 2).
         $version = $cert->getCertificateVersion();
         if ($version !== CertificateDetails::VERSION_3) {
-            throw new VerificationException(sprintf('Attestation certificate version value is %s but should be 2 (version 3).', $version ?? 'null'));
+            throw new VerificationException(sprintf('Attestation certificate version value is %s but should be %s (version 3).', $version ?? 'null', CertificateDetails::VERSION_3));
         }
 
         // Subject field MUST be set to:

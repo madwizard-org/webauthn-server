@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Attestation;
 
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
-use MadWizard\WebAuthn\Attestation\Verifier\StatementVerifierInterface;
+use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
 use PHPUnit\Framework\TestCase;
 
 class BuiltInAttestationFormatTest extends TestCase
@@ -14,7 +14,7 @@ class BuiltInAttestationFormatTest extends TestCase
         $this->getMockBuilder(AttestationStatementInterface::class)
             ->setMockClassName('TestStatement')
             ->getMock();
-        $this->getMockBuilder(StatementVerifierInterface::class)
+        $this->getMockBuilder(AttestationVerifierInterface::class)
             ->setMockClassName('TestVerifier')
             ->getMock();
 

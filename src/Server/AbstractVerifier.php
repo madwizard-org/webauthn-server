@@ -5,8 +5,11 @@ namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Dom\AuthenticatorResponseInterface;
+use MadWizard\WebAuthn\Dom\TokenBindingStatus;
+use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\VerificationException;
+use MadWizard\WebAuthn\Format\DataValidator;
 use MadWizard\WebAuthn\Web\Origin;
 
 class AbstractVerifier
@@ -47,6 +50,51 @@ class AbstractVerifier
         // If user verification is not required for this registration, verify that the User Present bit of the
         // flags in authData is set.
         return $authData->isUserPresent();
+    }
+
+    protected function validateClientData(array $clientData)
+    {
+        try {
+            DataValidator::checkTypes(
+                $clientData,
+                [
+                    'type' => 'string',
+                    'challenge' => 'string',
+                    'origin' => 'string',
+                    'tokenBinding' => '?array'
+                ],
+                false
+            );
+        } catch (DataValidationException $e) {
+            throw new VerificationException('Missing data or unexpected type in clientDataJSON', 0, $e);
+        }
+    }
+
+    protected function checkTokenBinding(array $tokenBinding)
+    {
+        try {
+            DataValidator::checkTypes(
+                $tokenBinding,
+                [
+                    'status' => 'string',
+                    'id' => '?string',
+                ],
+                false
+            );
+        } catch (DataValidationException $e) {
+            throw new VerificationException('Missing data or unexpected type in tokenBinding', 0, $e);
+        }
+
+        $status = $tokenBinding['status'];
+        // $id = $tokenBinding['id'] ?? null;
+
+        if (!TokenBindingStatus::isValidValue($status)) {
+            throw new VerificationException(sprintf("Token binding status '%s' is invalid", $status));
+        }
+        // NOTE: token binding is currently not supported by this library
+        if ($status === TokenBindingStatus::PRESENT) {
+            throw new VerificationException('Token binding is not supported by the relying party.');
+        }
     }
 
     protected function getClientDataHash(AuthenticatorResponseInterface $response)

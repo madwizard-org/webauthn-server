@@ -9,11 +9,8 @@ use MadWizard\WebAuthn\Credential\UserCredentialInterface;
 use MadWizard\WebAuthn\Crypto\CoseKey;
 use MadWizard\WebAuthn\Dom\AuthenticatorAssertionResponseInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
-use MadWizard\WebAuthn\Dom\TokenBindingStatus;
-use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Format\DataValidator;
 use MadWizard\WebAuthn\Server\AbstractVerifier;
 
 class AssertionVerifier extends AbstractVerifier
@@ -176,20 +173,7 @@ class AssertionVerifier extends AbstractVerifier
 
     private function checkClientData(array $clientData, AssertionContext $context)
     {
-        try {
-            DataValidator::checkTypes(
-                $clientData,
-                [
-                    'type' => 'string',
-                    'challenge' => 'string',
-                    'origin' => 'string',
-                    'tokenBinding' => '?array'
-                ],
-                false
-            );
-        } catch (DataValidationException $e) {
-            throw new VerificationException('Missing data or unexpected type in clientDataJSON', 0, $e);
-        }
+        $this->validateClientData($clientData);
 
         // 7. Verify that the value of C.type is the string webauthn.get.
         if ($clientData['type'] !== 'webauthn.get') {
@@ -198,7 +182,7 @@ class AssertionVerifier extends AbstractVerifier
 
         // 8. Verify that the value of C.challenge matches the challenge that was sent to the authenticator in the
         //    PublicKeyCredentialRequestOptions passed to the get() call.
-        if ($clientData['challenge'] !== $context->getChallenge()->getBase64Url()) {
+        if (!\hash_equals($context->getChallenge()->getBase64Url(), $clientData['challenge'])) {
             throw new VerificationException('Challenge in clientDataJSON does not match the challenge in the request.');
         }
 
@@ -213,33 +197,6 @@ class AssertionVerifier extends AbstractVerifier
         $tokenBinding = $clientData['tokenBinding'] ?? null;
         if ($tokenBinding !== null) {
             $this->checkTokenBinding($tokenBinding);
-        }
-    }
-
-    private function checkTokenBinding(array $tokenBinding)
-    {
-        try {
-            DataValidator::checkTypes(
-                $tokenBinding,
-                [
-                    'status' => 'string',
-                    'id' => '?string',
-                ],
-                false
-            );
-        } catch (DataValidationException $e) {
-            throw new VerificationException('Missing data or unexpected type in tokenBinding', 0, $e);
-        }
-
-        $status = $tokenBinding['status'];
-        // $id = $tokenBinding['id'] ?? null;
-
-        if (!TokenBindingStatus::isValidValue($status)) {
-            throw new VerificationException(sprintf("Token binding status '%s' is invalid", $status));
-        }
-        // NOTE: token binding is currently not supported by this library
-        if ($status === TokenBindingStatus::PRESENT) {
-            throw new VerificationException('Token binding is not supported by the relying party.');
         }
     }
 }

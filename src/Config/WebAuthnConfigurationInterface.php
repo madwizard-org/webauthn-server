@@ -35,5 +35,5 @@ interface WebAuthnConfigurationInterface
 
     public function getAttestationFormats() : array;
 
-    public function getRelyingPartyIconUrl() : string;
+    public function getRelyingPartyIconUrl() : ?string;
 }

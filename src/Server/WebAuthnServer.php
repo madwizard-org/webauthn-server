@@ -5,7 +5,6 @@ namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
-use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
@@ -36,7 +35,7 @@ use MadWizard\WebAuthn\Server\Registration\RegistrationRequest;
 class WebAuthnServer
 {
     /**
-     * @var WebAuthnConfiguration
+     * @var WebAuthnConfigurationInterface
      */
     private $config;
 

@@ -62,6 +62,10 @@ class AttestationVerifier extends AbstractVerifier
         $authDataBuff = $attestation->getAuthenticatorData();
         $authData = new AuthenticatorData($authDataBuff);
 
+        if (!$authData->hasAttestedCredentialData()) {
+            throw new VerificationException('Authenticator data does not contain attested credential.');
+        }
+
 
         // 9. Verify that the RP ID hash in authData is indeed the SHA-256 hash of the RP ID expected by the RP.
         if (!$this->verifyRpIdHash($authData, $context)) {

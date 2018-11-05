@@ -82,7 +82,7 @@ class TpmAttestationVerifier extends AbstractAttestationVerifier
         throw new UnsupportedException('ECDAA is not supported by this library.');
     }
 
-    private function verifyX5c(array $x5c, ByteBuffer $signature, int $signatureAlgorithm, ByteBuffer $rawCertInfo, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
+    private function verifyX5c(array $x5c, ByteBuffer $signature, int $signatureAlgorithm, ByteBuffer $rawCertInfo, AuthenticatorData $authenticatorData) : VerificationResult
     {
         // Verify the sig is a valid signature over certInfo using the attestation public key in aikCert with the
         // algorithm specified in alg.

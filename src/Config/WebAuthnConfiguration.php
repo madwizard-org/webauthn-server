@@ -198,7 +198,7 @@ class WebAuthnConfiguration implements WebAuthnConfigurationInterface
         $this->rpIconUrl = $url;
     }
 
-    public function getRelyingPartyIconUrl(): string
+    public function getRelyingPartyIconUrl(): ?string
     {
         return $this->rpIconUrl;
     }

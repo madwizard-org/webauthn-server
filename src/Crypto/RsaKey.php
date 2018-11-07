@@ -35,6 +35,11 @@ class RsaKey extends CoseKey
      */
     private $exponent;
 
+    private const SUPPORTED_ALGORITHMS = [
+        CoseAlgorithm::RS256,
+        CoseAlgorithm::RS1,
+    ];
+
     public function __construct(ByteBuffer $modulus, ByteBuffer $exponent, int $algorithm)
     {
         parent::__construct($algorithm);
@@ -69,11 +74,7 @@ class RsaKey extends CoseKey
             throw new WebAuthnException('Public key invalid');
         }
         try {
-            if ($this->getAlgorithm() === CoseAlgorithm::RS256) {
-                $algorithm = OPENSSL_ALGO_SHA256;
-            } else {
-                throw new WebAuthnException('Unsupported algorithm');
-            }
+            $algorithm = $this->getOpenSslAlgorithm();
 
             $verify = openssl_verify($data->getBinaryString(), $signature->getBinaryString(), $publicKey, $algorithm);
             if ($verify === 1) {
@@ -160,6 +161,22 @@ class RsaKey extends CoseKey
 
     protected function algorithmSupported(int $algorithm) : bool
     {
-        return ($algorithm === CoseAlgorithm::RS256);
+        return in_array($algorithm, self::SUPPORTED_ALGORITHMS, true);
+    }
+
+    private function getOpenSslAlgorithm() : int
+    {
+        $map = [
+            CoseAlgorithm::RS256 => OPENSSL_ALGO_SHA256,
+            CoseAlgorithm::RS1 => OPENSSL_ALGO_SHA1,
+        ];
+
+        $algorithm = $map[$this->getAlgorithm()] ?? null;
+
+        if ($algorithm === null) {
+            throw new WebAuthnException('Unsupported algorithm');
+        }
+
+        return $algorithm;
     }
 }

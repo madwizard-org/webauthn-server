@@ -83,7 +83,7 @@ final class JsonConverter
             throw new ParseException('Failed to decode PublicKeyCredential Json');
         }
 
-        if (($decoded['type'] ?? PublicKeyCredentialType::PUBLIC_KEY) !== PublicKeyCredentialType::PUBLIC_KEY) {
+        if (($decoded['type'] ?? null) !== PublicKeyCredentialType::PUBLIC_KEY) {
             throw new ParseException("Expecting type 'public-key'");
         }
 

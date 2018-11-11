@@ -37,6 +37,8 @@ class RsaKey extends CoseKey
 
     private const SUPPORTED_ALGORITHMS = [
         CoseAlgorithm::RS256,
+        CoseAlgorithm::RS384,
+        CoseAlgorithm::RS512,
         CoseAlgorithm::RS1,
     ];
 
@@ -168,6 +170,8 @@ class RsaKey extends CoseKey
     {
         $map = [
             CoseAlgorithm::RS256 => OPENSSL_ALGO_SHA256,
+            CoseAlgorithm::RS384 => OPENSSL_ALGO_SHA384,
+            CoseAlgorithm::RS512 => OPENSSL_ALGO_SHA512,
             CoseAlgorithm::RS1 => OPENSSL_ALGO_SHA1,
         ];
 

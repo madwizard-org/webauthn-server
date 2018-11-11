@@ -64,16 +64,21 @@ class CertificateDetails implements CertificateDetailsInterface
 
     private function convertCoseAlgorthm(int $coseAlgorithm) : SignatureAlgorithmIdentifier
     {
-        if ($coseAlgorithm === CoseAlgorithm::ES256) {
-            return new ECDSAWithSHA256AlgorithmIdentifier();
-        }
-
-        if ($coseAlgorithm === CoseAlgorithm::RS256) {
-            return new SHA256WithRSAEncryptionAlgorithmIdentifier();
-        }
-
-        if ($coseAlgorithm === CoseAlgorithm::RS1) {
-            return new SHA1WithRSAEncryptionAlgorithmIdentifier();
+        switch ($coseAlgorithm) {
+            case CoseAlgorithm::ES256:
+                return new ECDSAWithSHA256AlgorithmIdentifier();
+            case CoseAlgorithm::ES384:
+                return new ECDSAWithSHA256AlgorithmIdentifier();
+            case CoseAlgorithm::ES512:
+                return new ECDSAWithSHA256AlgorithmIdentifier();
+            case CoseAlgorithm::RS256:
+                return new SHA256WithRSAEncryptionAlgorithmIdentifier();
+            case CoseAlgorithm::RS384:
+                return new SHA256WithRSAEncryptionAlgorithmIdentifier();
+            case CoseAlgorithm::RS512:
+                return new SHA256WithRSAEncryptionAlgorithmIdentifier();
+            case CoseAlgorithm::RS1:
+                return new SHA1WithRSAEncryptionAlgorithmIdentifier();
         }
 
         throw new WebAuthnException(sprintf('Signature format %d not supported.', $coseAlgorithm));

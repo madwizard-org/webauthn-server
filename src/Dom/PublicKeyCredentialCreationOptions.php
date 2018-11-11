@@ -31,7 +31,7 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
     /**
      * @var PublicKeyCredentialDescriptor[]|null
      */
-    private $excludedCredentials;
+    private $excludeCredentials;
 
     /**
      * @var PublicKeyCredentialParameters[]
@@ -81,7 +81,7 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
             self::removeNullValues(
                 [
                     'timeout' => $this->timeout,
-                    'excludedCredentials' => $this->excludedCredentials,
+                    'excludeCredentials' => $this->excludeCredentials,
                     'authenticatorSelection' => $this->authenticatorSelection,
                     'attestation' => $this->attestation,
                     'extensions' => $this->extensions,
@@ -151,9 +151,18 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
     /**
      * @return PublicKeyCredentialDescriptor[]
      */
-    public function getExcludedCredentials(): ?array
+    public function getExcludeCredentials(): ?array
     {
-        return $this->excludedCredentials;
+        return $this->excludeCredentials;
+    }
+
+    public function addExcludeCredential(PublicKeyCredentialDescriptor $descriptor)
+    {
+        if ($this->excludeCredentials === null) {
+            $this->excludeCredentials = [];
+        }
+
+        $this->excludeCredentials[] = $descriptor;
     }
 
     /**

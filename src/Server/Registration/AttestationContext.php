@@ -54,12 +54,12 @@ class AttestationContext extends AbstractContext implements RequestContext
 
     public function serialize()
     {
-        return \serialize([$this->userHandle, parent::serialize()]);
+        return \serialize([parent::serialize(), clone $this->userHandle]);
     }
 
     public function unserialize($serialized)
     {
-        [$this->userHandle, $parentStr] = \unserialize((string) $serialized);
+        [ $parentStr,$this->userHandle] = \unserialize((string) $serialized);
         parent::unserialize($parentStr);
     }
 }

@@ -13,7 +13,11 @@ class CoseHash
     private const MAP = [
         CoseAlgorithm::RS1 => 'sha1',
         CoseAlgorithm::ES256 => 'sha256',
+        CoseAlgorithm::ES384 => 'sha384',
+        CoseAlgorithm::ES512 => 'sha512',
         CoseAlgorithm::RS256 => 'sha256',
+        CoseAlgorithm::RS384 => 'sha384',
+        CoseAlgorithm::RS512 => 'sha512',
     ];
 
     /**

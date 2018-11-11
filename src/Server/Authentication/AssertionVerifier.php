@@ -149,6 +149,8 @@ class AssertionVerifier extends AbstractVerifier
 
         if ($lastCounter === null) {
             // counter not known
+            $this->credentialCollection->updateSignatureCounter($accountCredential->getCredentialId(), $counter);
+
             // TODO policy
             return true;
         }
@@ -160,6 +162,7 @@ class AssertionVerifier extends AbstractVerifier
             // 18. If the signature counter value adata.signCount is
             // -> greater than the signature counter value stored in conjunction with credential’s id attribute.
             //    Update the stored signature counter value, associated with credential’s id attribute, to be the value of adata.signCount.
+            $this->credentialCollection->updateSignatureCounter($accountCredential->getCredentialId(), $counter);
             return true;
         } else {
             // -> less than or equal to the signature counter value stored in conjunction with credential’s id attribute.

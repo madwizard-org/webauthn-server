@@ -19,7 +19,11 @@ class WebAuthnConfiguration implements WebAuthnConfigurationInterface
 
     private const SUPPORTED_ALGORITHMS = [
         CoseAlgorithm::ES256,
+        CoseAlgorithm::ES384,
+        CoseAlgorithm::ES512,
         CoseAlgorithm::RS256,
+        CoseAlgorithm::RS384,
+        CoseAlgorithm::RS512,
     ];
 
     /**

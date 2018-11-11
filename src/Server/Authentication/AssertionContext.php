@@ -61,12 +61,12 @@ class AssertionContext extends AbstractContext implements RequestContext
 
     public function serialize()
     {
-        return \serialize([$this->allowCredentialIds, parent::serialize()]);
+        return \serialize([ parent::serialize(), $this->allowCredentialIds]);
     }
 
     public function unserialize($serialized)
     {
-        [$this->allowCredentialIds, $parentStr] = \unserialize((string) $serialized);
+        [$parentStr, $this->allowCredentialIds] = \unserialize((string) $serialized);
         parent::unserialize($parentStr);
     }
 }

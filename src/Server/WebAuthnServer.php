@@ -132,6 +132,7 @@ class WebAuthnServer
 
         $registration = new CredentialRegistration($attestationResult->getCredentialId(), $attestationResult->getPublicKey(), $context->getUserHandle());
         $this->credentialStore->registerCredential($registration);
+        // TODO set signature counter
         return $attestationResult;
     }
 
@@ -141,6 +142,8 @@ class WebAuthnServer
 
         $requestOptions = new PublicKeyCredentialRequestOptions($challenge);
         $requestOptions->setRpId($this->config->getRelyingPartyId());
+        $requestOptions->setUserVerification($options->getUserVerification());
+        $requestOptions->setTimeout($options->getTimeout());
 
         $this->addAllowCredentials($options, $requestOptions);
 

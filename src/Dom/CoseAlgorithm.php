@@ -17,9 +17,29 @@ final class CoseAlgorithm
     public const ES256 = -7;
 
     /**
+     * ECDSA w/ SHA-384 (RFC8152)
+     */
+    public const ES384 = -35;
+
+    /**
+     * ECDSA w/ SHA-512 (RFC8152)
+     */
+    public const ES512 = -36;
+
+    /**
      * RSASSA-PKCS1-v1_5 w/ SHA-256
      */
     public const RS256 = -257;
+
+    /**
+     * RSASSA-PKCS1-v1_5 w/ SHA-384
+     */
+    public const RS384 = -258;
+
+    /**
+     * RSASSA-PKCS1-v1_5 w/ SHA-512
+     */
+    public const RS512 = -259;
 
     /**
      * RSASSA-PKCS1-v1_5 w/ SHA-1

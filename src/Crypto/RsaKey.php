@@ -4,7 +4,6 @@
 namespace MadWizard\WebAuthn\Crypto;
 
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
-use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborEncoder;
 use MadWizard\WebAuthn\Format\DataValidator;
@@ -69,27 +68,10 @@ class RsaKey extends CoseKey
         return new RsaKey($modulus, $exponent, $alorithm);
     }
 
-    public function verifySignature(ByteBuffer $data, ByteBuffer $signature): bool
+    public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool
     {
-        $publicKey = openssl_pkey_get_public($this->asPEM());
-        if ($publicKey === false) {
-            throw new WebAuthnException('Public key invalid');
-        }
-        try {
-            $algorithm = $this->getOpenSslAlgorithm();
-
-            $verify = openssl_verify($data->getBinaryString(), $signature->getBinaryString(), $publicKey, $algorithm);
-            if ($verify === 1) {
-                return true;
-            }
-            if ($verify === 0) {
-                return false;
-            }
-
-            throw new WebAuthnException('Failed to check signature');
-        } finally {
-            openssl_free_key($publicKey);
-        }
+        $verifier = new OpenSslVerifier($this->getAlgorithm());
+        return $verifier->verify($data->getBinaryString(), $signature->getBinaryString(), $this->asPem());
     }
 
     /**
@@ -130,7 +112,7 @@ class RsaKey extends CoseKey
         return $this->exponent;
     }
 
-    public function asPEM() : string
+    public function asPem() : string
     {
         // DER encoded RSA key
         $der =
@@ -164,23 +146,5 @@ class RsaKey extends CoseKey
     protected function algorithmSupported(int $algorithm) : bool
     {
         return in_array($algorithm, self::SUPPORTED_ALGORITHMS, true);
-    }
-
-    private function getOpenSslAlgorithm() : int
-    {
-        $map = [
-            CoseAlgorithm::RS256 => OPENSSL_ALGO_SHA256,
-            CoseAlgorithm::RS384 => OPENSSL_ALGO_SHA384,
-            CoseAlgorithm::RS512 => OPENSSL_ALGO_SHA512,
-            CoseAlgorithm::RS1 => OPENSSL_ALGO_SHA1,
-        ];
-
-        $algorithm = $map[$this->getAlgorithm()] ?? null;
-
-        if ($algorithm === null) {
-            throw new WebAuthnException('Unsupported algorithm');
-        }
-
-        return $algorithm;
     }
 }

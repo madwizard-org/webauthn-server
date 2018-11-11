@@ -9,7 +9,6 @@ use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborEncoder;
 use MadWizard\WebAuthn\Format\DataValidator;
-use function openssl_pkey_get_public;
 
 class Ec2Key extends CoseKey // TODO exceptions
 {
@@ -198,43 +197,8 @@ class Ec2Key extends CoseKey // TODO exceptions
 
     public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool
     {
-        $publicKey = openssl_pkey_get_public($this->asPEM());
-        if ($publicKey === false) {
-            throw new WebAuthnException('Public key invalid');
-        }
-        try {
-            $algorithm = $this->getOpenSslAlgorithm();
-            while ($m = openssl_error_string()) {
-            }
-            $verify = openssl_verify($data->getBinaryString(), $signature->getBinaryString(), $publicKey, $algorithm);
-            if ($verify === 1) {
-                return true;
-            }
-            if ($verify === 0) {
-                return false;
-            }
-
-            throw new WebAuthnException('Failed to check signature');
-        } finally {
-            openssl_free_key($publicKey);
-        }
-    }
-
-    private function getOpenSslAlgorithm() : int
-    {
-        $map = [
-            CoseAlgorithm::ES256 => OPENSSL_ALGO_SHA256,
-            CoseAlgorithm::ES384 => OPENSSL_ALGO_SHA384,
-            CoseAlgorithm::ES512 => OPENSSL_ALGO_SHA512,
-        ];
-
-        $algorithm = $map[$this->getAlgorithm()] ?? null;
-
-        if ($algorithm === null) {
-            throw new WebAuthnException('Unsupported algorithm');
-        }
-
-        return $algorithm;
+        $verifier = new OpenSslVerifier($this->getAlgorithm());
+        return $verifier->verify($data->getBinaryString(), $signature->getBinaryString(), $this->asPEM());
     }
 
     protected function algorithmSupported(int $algorithm) : bool

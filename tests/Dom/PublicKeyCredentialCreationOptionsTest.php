@@ -25,7 +25,7 @@ class PublicKeyCredentialCreationOptionsTest extends TestCase
         $this->assertEmpty($options->getCredentialParameters());
 
         $this->assertNull($options->getTimeout());
-        $this->assertNull($options->getExcludedCredentials());
+        $this->assertNull($options->getExcludeCredentials());
         $this->assertNull($options->getAuthenticatorSelection());
         $this->assertNull($options->getAttestation());
 

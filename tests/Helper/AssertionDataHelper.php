@@ -125,6 +125,7 @@ class AssertionDataHelper
             [
                 'rawId' => $client['credentialId'],
                 'id' => $client['credentialId'],
+                'type' => 'public-key',
                 'response' => [
                     'clientDataJSON' => Base64UrlEncoding::encode($clientDataJson),
                     'authenticatorData' => Base64UrlEncoding::encode($authData),

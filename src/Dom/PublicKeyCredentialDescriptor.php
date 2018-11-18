@@ -19,7 +19,7 @@ class PublicKeyCredentialDescriptor extends AbstractDictionary // TODO serializa
     private $id;
 
     /**
-     * @var string[]
+     * @var string[]|null
      */
     private $transports = [];
 
@@ -34,17 +34,22 @@ class PublicKeyCredentialDescriptor extends AbstractDictionary // TODO serializa
 
     public function addTransport(string $transport)
     {
-        // TODO:validate
+        if (!AuthenticatorTransport::isValidValue($transport)) {
+            throw new WebAuthnException(sprintf("Transport '%s' is not a valid transport value.", $transport));
+        }
+        if ($this->transports === null) {
+            $this->transports = [];
+        }
         $this->transports[] = $transport;
     }
 
     public function getAsArray(): array
     {
-        return [
+        return self::removeNullValues([
             'type' => $this->type,
             'id' => $this->id,
             'transports' => $this->transports,
-        ];
+        ]);
     }
 
     /**
@@ -64,9 +69,9 @@ class PublicKeyCredentialDescriptor extends AbstractDictionary // TODO serializa
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
-    public function getTransports(): array
+    public function getTransports(): ?array
     {
         return $this->transports;
     }

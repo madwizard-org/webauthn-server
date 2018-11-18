@@ -24,7 +24,7 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
     private $rpId;
 
     /**
-     * @var null|PublicKeyCredentialDescriptor[]
+     * @var PublicKeyCredentialDescriptor[]|null
      */
     private $allowCredentials;
 
@@ -34,7 +34,7 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
     private $userVerification;
 
     /**
-     * @var AuthenticationExtensionsClientInputs[]
+     * @var AuthenticationExtensionsClientInputs|null
      */
     private $extensions;
 

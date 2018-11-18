@@ -266,4 +266,26 @@ class CborTest extends TestCase
 
         $this->assertSame('a51702181901616161626164421234626363626464', bin2hex(CborEncoder::encodeMap($map)));
     }
+
+    public function testDuplicateMapKey()
+    {
+        // array as map key
+        $buf = HexData::buf(
+                'A3       # map(3)
+                   01    # unsigned(1)
+                   61    # text(1)
+                      62 # "b"
+                   02    # unsigned(2)
+                   61    # text(1)
+                      64 # "d"
+                   01    # unsigned(1)
+                   61    # text(1)
+                      65 # "e"
+                '
+        );
+
+        $this->expectException(CborException::class);
+        $this->expectExceptionMessageRegExp('~duplicate key~i');
+        CborDecoder::decode($buf);
+    }
 }

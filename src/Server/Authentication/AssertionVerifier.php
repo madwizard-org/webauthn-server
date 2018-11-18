@@ -46,7 +46,7 @@ class AssertionVerifier extends AbstractVerifier
         // Note: step 2 done after 3 because credential is available then.
         // 3. Using credential’s id attribute (or the corresponding rawId, if base64url encoding is inappropriate for
         // your use case), look up the corresponding credential public key.
-        $accountCredential = $this->credentialCollection->findCredential($credential->getBase64UrlId());
+        $accountCredential = $this->credentialCollection->findCredential($credential->getId());
         if ($accountCredential === null) {
             throw new VerificationException('Account was not found');
         }

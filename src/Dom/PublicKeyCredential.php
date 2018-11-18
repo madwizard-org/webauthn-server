@@ -3,8 +3,7 @@
 
 namespace MadWizard\WebAuthn\Dom;
 
-use MadWizard\WebAuthn\Exception\WebAuthnException;
-use MadWizard\WebAuthn\Format\Base64UrlEncoding;
+use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
 class PublicKeyCredential implements PublicKeyCredentialInterface
@@ -36,17 +35,12 @@ class PublicKeyCredential implements PublicKeyCredentialInterface
     }
 
     /**
-     * The credential's identifier. For public key credentials this is a base64 encoded version of the raw credential ID.
+     * The credential's identifier. For public key credentials this is a base64url encoded version of the raw credential ID.
      * @return string
      */
     public function getId(): string
     {
-        return \base64_encode($this->rawId->getBinaryString());
-    }
-
-    public function getBase64UrlId() : string
-    {
-        return Base64UrlEncoding::encode($this->rawId->getBinaryString());
+        return $this->rawId->getBase64Url();
     }
 
     public function getResponse(): AuthenticatorResponseInterface
@@ -57,6 +51,6 @@ class PublicKeyCredential implements PublicKeyCredentialInterface
     // TODO
     public function getClientExtensionResults(): array
     {
-        throw new WebAuthnException('TODO: Client extensions nor supported yet');
+        throw new UnsupportedException('Client extensions are not supported yet');
     }
 }

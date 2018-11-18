@@ -101,7 +101,7 @@ class AttestationObjectTest extends TestCase
         $message['type'] = 'public-key';
         $cred = JsonConverter::decodeAttestationCredential(json_encode($message));
 
-        $this->assertSame('Bo+VjHOkJZy8DjnCJnIc0Oxt9QAz5upMdSJxNbd+GyAo6MNIvPBb9YsUlE0ZJaaWXtWH5FQyPS6bT/e698IirQ==', $cred->getId());
+        $this->assertSame('Bo-VjHOkJZy8DjnCJnIc0Oxt9QAz5upMdSJxNbd-GyAo6MNIvPBb9YsUlE0ZJaaWXtWH5FQyPS6bT_e698IirQ', $cred->getId());
 
         $this->assertSame(
             '{"challenge":"Vu8uDqnkwOjd83KLj6Scn2BgFNLFbGR7Kq_XJJwQnnatztUR7XIBL7K8uMPCIaQmKw1MCVQ5aazNJFk7NakgqA",' .

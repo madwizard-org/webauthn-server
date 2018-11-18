@@ -17,8 +17,6 @@ class PublicKeyCredentialEntity extends AbstractDictionary
      */
     protected $icon;
 
-    // TODO: NOTE: icon member not implemented
-
     public function __construct(string $name)
     {
         $this->name = $name;

@@ -32,9 +32,13 @@ final class AuthenticatorTransport
     {
     }
 
+    public static function isValidValue($value) : bool
+    {
+        return in_array($value, self::allKnownTransports(), true);
+    }
+
     public static function allKnownTransports() : array
     {
-        // TODO: self::INTERNAL left out for now, not supported yet by Firefox
-        return [self::USB, self::NFC, self::BLE];
+        return [self::USB, self::NFC, self::BLE, self::INTERNAL];
     }
 }

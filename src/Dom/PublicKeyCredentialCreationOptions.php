@@ -24,6 +24,11 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
     private $challenge;
 
     /**
+     * @var PublicKeyCredentialParameters[]
+     */
+    private $pubKeyCredParams;
+
+    /**
      * @var int|null
      */
     private $timeout;
@@ -32,11 +37,6 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
      * @var PublicKeyCredentialDescriptor[]|null
      */
     private $excludeCredentials;
-
-    /**
-     * @var PublicKeyCredentialParameters[]
-     */
-    private $pubKeyCredParams;
 
     /**
      * @var AuthenticatorSelectionCriteria|null

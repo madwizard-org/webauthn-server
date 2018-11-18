@@ -183,7 +183,10 @@ class CborDecoder
             if (!\is_int($mapKey) && !\is_string($mapKey)) {
                 throw new CborException('Can only use strings or integers as map keys');
             }
-            $map[$mapKey] = $mapVal; // todo dup
+            if (isset($map[$mapKey])) {
+                throw new CborException('Maps cannot contain duplicate keys');
+            }
+            $map[$mapKey] = $mapVal;
         }
         return $map;
     }

@@ -176,14 +176,14 @@ class WebAuthnServer
     private function addAllowCredentials(AuthenticationOptions $options, PublicKeyCredentialRequestOptions $requestOptions): void
     {
         $credentials = $options->getAllowCredentials();
-        $transports = AuthenticatorTransport::allKnownTransports(); // TODO: from config
+//        $transports = AuthenticatorTransport::allKnownTransports(); // TODO: from config
         if (count($credentials) > 0) {
             foreach ($credentials as $credential) {
                 $credentialId = new ByteBuffer(Base64UrlEncoding::decode($credential->getCredentialId()));
                 $descriptor = new PublicKeyCredentialDescriptor($credentialId);
-                foreach ($transports as $transport) {
-                    $descriptor->addTransport($transport);
-                }
+//                foreach ($transports as $transport) {
+//                    $descriptor->addTransport($transport);
+//                }
                 $requestOptions->addAllowedCredential($descriptor);
             }
         }

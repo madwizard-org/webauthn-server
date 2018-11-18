@@ -7,7 +7,6 @@ use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
 use MadWizard\WebAuthn\Crypto\Ec2Key;
-use MadWizard\WebAuthn\Dom\AuthenticatorTransport;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
@@ -46,7 +45,7 @@ class AuthenticationTest extends TestCase
         $allowCredentials = $clientOptions->getAllowCredentials();
         $this->assertCount(1, $allowCredentials);
         $this->assertSame($userCredential->getCredentialId(), Base64UrlEncoding::encode($allowCredentials[0]->getId()->getBinaryString()));
-        $this->assertContains(AuthenticatorTransport::USB, $allowCredentials[0]->getTransports());
+        $this->assertNull($allowCredentials[0]->getTransports());
         $this->assertNull($clientOptions->getRpId());
 
         $this->assertSame(
@@ -57,13 +56,6 @@ class AuthenticationTest extends TestCase
                         [
                             'type' => 'public-key',
                             'id' => $userCredential->getCredentialId(),
-                            'transports' =>
-                                [
-                                    0 => 'usb',
-                                    1 => 'nfc',
-                                    2 => 'ble',
-                                    // 3 => 'internal',
-                                ],
                         ],
                     ],
             ],

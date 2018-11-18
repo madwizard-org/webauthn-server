@@ -59,4 +59,10 @@ class EnumerationTest extends TestCase
         $this->assertTrue(TokenBindingStatus::isValidValue(TokenBindingStatus::PRESENT));
         $this->assertFalse(TokenBindingStatus::isValidValue('xyz'));
     }
+
+    public function testAuthenticatorTransport()
+    {
+        $this->assertTrue(AuthenticatorTransport::isValidValue(AuthenticatorTransport::USB));
+        $this->assertFalse(AuthenticatorTransport::isValidValue('xyz'));
+    }
 }

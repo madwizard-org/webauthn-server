@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Server\Registration;
 
-use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
+use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
@@ -25,7 +25,7 @@ class AttestationContext extends AbstractContext implements RequestContext
         $this->userHandle = $userHandle;
     }
 
-    public static function create(PublicKeyCredentialCreationOptions $options, WebAuthnConfiguration $configuration) : self
+    public static function create(PublicKeyCredentialCreationOptions $options, WebAuthnConfigurationInterface $configuration) : self
     {
         $origin = $configuration->getRelyingPartyOrigin();
         if ($origin === null) {

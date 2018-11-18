@@ -14,9 +14,38 @@ Installation
 ------------
 Installation via composer:
 ```bash
-composer require madwizard/webauthn dev-master
+composer require madwizard/webauthn:^0.0.1
 ```
 
+Symfony bundle
+--------------
+
+If you want to integrate this library in a symfony project, have a look at the [webuathn-server-bundle](https://github.com/madwizard-thomas/webauthn-server-bundle) package.
+
+Support
+-------
+
+This library is still in development! Currently supported features are:
+
+Attestation types:
+- FIDO U2F
+- Packed
+- TPM
+- None
+
+Attestation is not yet verified with trusted anchors or the metadata service but the attestation itself is validated for correctness and consistency.
+
+Usage
+-----
+
+The library is still in development so documentation is limited. The general pattern to follow is:
+
+1. Write a class implementing `UserCredentialInterface`.
+2. Implement `CredentialStoreInterface`.
+3. Create an instance of `WebAuthnServer` with a `WebAuthnConfiguration` object and the credential store.
+4. Use `startRegistration`/`finishRegistration` to register credentials. Be sure to store the temporary `AttestationContext` server side! 
+5. and `startAuthentication`/`finishAuthentication` to authenticate. . Be sure to store the temporary `AssertionContext` server side! 
+    
 Resources
 ---------
 [WebAuthn specification](https://www.w3.org/TR/webauthn/)

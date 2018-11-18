@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Server\Authentication;
 
-use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
+use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -28,7 +28,7 @@ class AssertionContext extends AbstractContext implements RequestContext
         $this->allowCredentialIds[] = $buffer;
     }
 
-    public static function create(PublicKeyCredentialRequestOptions $options, WebAuthnConfiguration $configuration) : self
+    public static function create(PublicKeyCredentialRequestOptions $options, WebAuthnConfigurationInterface $configuration) : self
     {
         $origin = $configuration->getRelyingPartyOrigin();
         if ($origin === null) {

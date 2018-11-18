@@ -21,7 +21,7 @@ class PublicKeyCredentialDescriptor extends AbstractDictionary // TODO serializa
     /**
      * @var string[]|null
      */
-    private $transports = [];
+    private $transports;
 
     public function __construct(ByteBuffer $credentialId, string $type = PublicKeyCredentialType::PUBLIC_KEY)
     {

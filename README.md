@@ -17,6 +17,11 @@ Installation via composer:
 composer require madwizard/webauthn:^0.0.1
 ```
 
+Library reference
+-----------------
+Automatically built reference documentation (for both this library and the separate Symfony bundle): \
+https://madwizard-thomas.github.io/webauthn/
+
 Symfony bundle
 --------------
 

@@ -39,17 +39,20 @@ class AbstractVerifier
 
     protected function verifyUser(AuthenticatorData $authData, AbstractContext $context)
     {
-        // Reg 10/12, Auth 12/13
+        // Reg 10/11, Auth 12/13
+
+        // Reg 7.1 #10 Verify that the User Present bit of the flags in authData is set.
+        if (!$authData->isUserPresent()) {
+            return false;
+        }
+
         if ($context->isUserVerificationRequired()) {
-            // If user verification is required for this registration, verify that the User Verified bit of the
-            //     flags in authData is set.
+            // Reg 7.1 #11 If user verification is required for this registration, verify that the User Verified bit of the
+            // flags in authData is set.
             return $authData->isUserVerified();
         }
 
-        // TODO: this changes in work in progress webauthn SPEC!
-        // If user verification is not required for this registration, verify that the User Present bit of the
-        // flags in authData is set.
-        return $authData->isUserPresent();
+        return true;
     }
 
     protected function validateClientData(array $clientData)

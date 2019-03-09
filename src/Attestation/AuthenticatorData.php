@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Attestation;
 
 use MadWizard\WebAuthn\Crypto\CoseKey;
 use MadWizard\WebAuthn\Exception\ParseException;
+use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborDecoder;
 
@@ -141,11 +142,21 @@ class AuthenticatorData
     }
 
     /**
-     * @return CoseKey|null
+     * @return CoseKey
+     * @throws WebAuthnException when authenticator data does not contain a key.
+     * @see hasKey
      */
-    public function getKey(): ?CoseKey
+    public function getKey(): CoseKey
     {
+        if ($this->key === null) {
+            throw new WebAuthnException('AuthenticatorData does not contain a key.');
+        }
         return $this->key;
+    }
+
+    public function hasKey(): bool
+    {
+        return $this->key !== null;
     }
 
     public function getAaguid() : ?ByteBuffer

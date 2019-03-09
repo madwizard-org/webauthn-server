@@ -55,7 +55,7 @@ class Ec2KeyTest extends TestCase
 
     public function testPEM()
     {
-        $pem = $this->getKey()->asPEM();
+        $pem = $this->getKey()->asPem();
 
         $this->assertSame(
             "-----BEGIN PUBLIC KEY-----\n" .

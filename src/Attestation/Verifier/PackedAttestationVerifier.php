@@ -103,10 +103,10 @@ class PackedAttestationVerifier extends AbstractAttestationVerifier
     private function verifySelf(ByteBuffer $signature, int $algorithm, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
     {
         // Validate that alg matches the algorithm of the credentialPublicKey in authenticatorData.
-        $key = $authenticatorData->getKey();
-        if ($key === null) {
+        if (!$authenticatorData->hasKey()) {
             throw new VerificationException('No key in authenticator data.');
         }
+        $key = $authenticatorData->getKey();
         if ($key->getAlgorithm() !== $algorithm) {
             throw new VerificationException(sprintf('Algorithm in packed attestation statement (%d) should match public key algorithm (%d)', $algorithm, $key->getAlgorithm()));
         }

@@ -102,4 +102,8 @@ abstract class CoseKey
     abstract public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool;
 
     abstract protected function algorithmSupported(int $algorithm) : bool;
+
+    abstract public function asDer() : string;
+
+    abstract public function asPem() : string;
 }

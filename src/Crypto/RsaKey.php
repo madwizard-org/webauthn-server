@@ -112,7 +112,7 @@ class RsaKey extends CoseKey
         return $this->exponent;
     }
 
-    public function asPem() : string
+    public function asDer() : string
     {
         // DER encoded RSA key
         $der =
@@ -129,7 +129,12 @@ class RsaKey extends CoseKey
                 )
             );
 
-        return Der::pem('PUBLIC KEY', $der);
+        return $der;
+    }
+
+    public function asPem() : string
+    {
+        return Der::pem('PUBLIC KEY', $this->asDer());
     }
 
     public function getCbor() : ByteBuffer

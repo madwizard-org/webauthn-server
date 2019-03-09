@@ -153,7 +153,7 @@ class Ec2Key extends CoseKey // TODO exceptions
         return $this->curve;
     }
 
-    public function asPEM() : string
+    public function asDer() : string
     {
         // DER encoded P256 curve
         $der =
@@ -167,7 +167,12 @@ class Ec2Key extends CoseKey // TODO exceptions
                 )
             );
 
-        return Der::pem('PUBLIC KEY', $der);
+        return $der;
+    }
+
+    public function asPem() : string
+    {
+        return Der::pem('PUBLIC KEY', $this->asDER());
     }
 
     private function getCurveOid() : string
@@ -198,7 +203,7 @@ class Ec2Key extends CoseKey // TODO exceptions
     public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool
     {
         $verifier = new OpenSslVerifier($this->getAlgorithm());
-        return $verifier->verify($data->getBinaryString(), $signature->getBinaryString(), $this->asPEM());
+        return $verifier->verify($data->getBinaryString(), $signature->getBinaryString(), $this->asPem());
     }
 
     protected function algorithmSupported(int $algorithm) : bool

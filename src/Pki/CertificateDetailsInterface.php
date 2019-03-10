@@ -21,4 +21,8 @@ interface CertificateDetailsInterface
     public function extendedKeyUsageContains(string $oid): bool;
 
     public function getSubject() : string;
+
+    public function getPublicKeyDer(): string;
+
+    public function getExtensionData(string $oid) : ?ByteBuffer;
 }

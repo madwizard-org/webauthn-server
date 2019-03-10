@@ -3,7 +3,6 @@
 
 namespace MadWizard\WebAuthn\Tests\Attestation\Statement;
 
-use MadWizard\WebAuthn\Attestation\Statement\FidoU2fAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -64,16 +63,6 @@ class PackedAttestationStatementTest extends TestCase
         $this->expectExceptionMessageRegExp('~ecdaaKeyId and x5c cannot both be set~i');
 
         new PackedAttestationStatement($attObj);
-    }
-
-    public function testWrongFormat()
-    {
-        $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~not expecting format~i');
-
-        $attObj = FixtureHelper::getTestObject('none');
-
-        new FidoU2fAttestationStatement($attObj);
     }
 
     public function testInvalidStatementMap()

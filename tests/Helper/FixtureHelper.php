@@ -48,6 +48,12 @@ class FixtureHelper
         return new AttestationObject(ByteBuffer::fromBase64Url($statements[$key]));
     }
 
+    public static function getTestPlain(string $key)
+    {
+        $data = self::getJsonFixture('Statement/statements.json');
+        return $data[$key];
+    }
+
     public static function getFidoTestObject(string $key): AttestationObject
     {
         $data = self::getJsonFixture('fido2-helpers/attestation.json');

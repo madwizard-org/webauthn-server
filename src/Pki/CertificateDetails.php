@@ -33,7 +33,7 @@ class CertificateDetails implements CertificateDetailsInterface
      */
     private $cert;
 
-    private const OID_FIDO_GEN_CE_AAGUID = '1.3.6.1.4.1.45724.1.1.4';
+    private const OID_FIDO_GEN_CE_AAGUID = '1.3.6.1.4.1.45724.1.1.4';   // TODO move outside?
 
     private function __construct(TBSCertificate $certificate)
     {
@@ -62,6 +62,11 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
+    public function getPublicKeyDer(): string
+    {
+        return $this->cert->subjectPublicKeyInfo()->toDER();
+    }
+
     private function convertCoseAlgorthm(int $coseAlgorithm) : SignatureAlgorithmIdentifier
     {
         switch ($coseAlgorithm) {
@@ -84,7 +89,7 @@ class CertificateDetails implements CertificateDetailsInterface
         throw new WebAuthnException(sprintf('Signature format %d not supported.', $coseAlgorithm));
     }
 
-    public function getFidoAaguidExtensionValue() : ?ByteBuffer
+    public function getFidoAaguidExtensionValue() : ?ByteBuffer // TODO move outside class
     {
         try {
             $extension = $this->cert->extensions()->get(self::OID_FIDO_GEN_CE_AAGUID);
@@ -103,6 +108,22 @@ class CertificateDetails implements CertificateDetailsInterface
             return new ByteBuffer($rawAaguid);
         } catch (Exception $e) {
             throw new ParseException('Failed to parse AAGUID extension', 0, $e);
+        }
+    }
+
+    public function getExtensionData(string $oid) : ?ByteBuffer
+    {
+        try {
+            $extension = $this->cert->extensions()->get($oid);
+        } catch (LogicException $e) {
+            // No extension present
+            return null;
+        }
+        try {
+            $der = $extension->toASN1()->at(1)->asOctetString()->string();
+            return new ByteBuffer($der);
+        } catch (Exception $e) {
+            throw new ParseException(sprintf('Failed to parse extension %s.', $oid), 0, $e);
         }
     }
 

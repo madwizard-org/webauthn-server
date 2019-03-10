@@ -40,6 +40,7 @@ class AuthenticatorDataTest extends TestCase
         $this->assertSame(0, $data->getSignCount());
         $this->assertTrue($data->getCredentialId()->equals(ByteBuffer::fromHex('3ebd89bf77ec509755ee9c2635efaaac7b2b9c5cef1736c3717da48534c8c6b654d7ff945f50b5cc4e78055bdd396b64f78da2c5f96200ccd415cd08fe420038')));
 
+        $this->assertTrue($data->hasKey());
         $key = $data->getKey();
         $this->assertInstanceOf(Ec2Key::class, $key);
         /**

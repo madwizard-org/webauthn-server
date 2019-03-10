@@ -168,7 +168,7 @@ class TpmAttestationVerifier extends AbstractAttestationVerifier
         // Verify that attested contains a TPMS_CERTIFY_INFO structure as specified in [TPMv2-Part2] section 10.12.3,
         // whose name field contains a valid Name for pubArea, as computed using the algorithm in the nameAlg field of
         // pubArea using the procedure specified in [TPMv2-Part1] section 16.
-        if (!\hash_equals($pubArea->generatePubInfoHash()->getBinaryString(), $certInfo->getAttName()->getBinaryString())) {
+        if (!$pubArea->isValidPubInfoName($certInfo->getAttName())) {
             return false;
         }
 

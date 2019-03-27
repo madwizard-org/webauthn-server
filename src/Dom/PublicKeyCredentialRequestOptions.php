@@ -30,6 +30,7 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
 
     /**
      * @var string|null
+     * @see UserVerificationRequirement
      */
     private $userVerification;
 

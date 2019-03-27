@@ -22,7 +22,6 @@ abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInt
         $this->clientDataJson = $clientDataJson;
 
         // Specification says to remove the UTF-8 byte order mark, if any
-        // TODO: should hash include BOM or not?
         if (\substr($clientDataJson, 0, 3) === self::UTF8_BOM) {
             $clientDataJson = substr($clientDataJson, 3);
         }

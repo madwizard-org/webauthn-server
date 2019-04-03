@@ -50,7 +50,8 @@ class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterfac
         $response = $this->responseParser->parse($attStmt->getResponse());
 
         // Verify that the nonce in the response is identical to the Base64 encoding of the SHA-256 hash of the concatenation of authenticatorData and clientDataHash.
-        $expectedNonce = base64_encode($authenticatorData->getRaw()->getBinaryString() . $clientDataHash);
+        $expectedNonce = base64_encode(hash('sha256', $authenticatorData->getRaw()->getBinaryString() . $clientDataHash, true));
+
         if (!hash_equals($expectedNonce, $response->getNonce())) {
             throw new VerificationException('Nonce is invalid.');
         }

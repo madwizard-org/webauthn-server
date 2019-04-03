@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Attestation\Registry;
 
 use MadWizard\WebAuthn\Attestation\Statement\AndroidKeyAttestationStatement;
+use MadWizard\WebAuthn\Attestation\Statement\AndroidSafetyNetAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\FidoU2fAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
@@ -29,6 +30,7 @@ final class BuiltInFormats
             NoneAttestationStatement::createFormat(),
             TpmAttestationStatement::createFormat(),
             AndroidKeyAttestationStatement::createFormat(),
+            AndroidSafetyNetAttestationStatement::createFormat(),
             ];
     }
 }

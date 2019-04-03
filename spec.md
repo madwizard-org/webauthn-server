@@ -239,6 +239,10 @@ Implemented
 ### 8.4 Android Key Attestation Statement Format
 #### 8.4.1 Android Key Attestation Statement Certificate Requirements
 ### 8.5 Android SafetyNet Attestation Statement Format
+
+Supported \
+TODO: All verifcation steps from the WebAuthn specifications are implemented, but the [SafetyNet documentation](https://developer.android.com/training/safetynet/attestation#verify-compat-check) mentions additional verification steps (e.g. timestampMs).
+
 ### 8.6 FIDO U2F Attestation Statement Format
 ### 8.7 None Attestation Statement Format
 ## 9 WebAuthn Extensions

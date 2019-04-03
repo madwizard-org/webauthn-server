@@ -15,6 +15,7 @@
     "require": {
         "php": "^7.1.3",
         "sop/x509": "^0.6.1",
+        "sop/jwx": "^0.10.1",
         "ext-openssl": "*",
         "ext-json": "*"
     },

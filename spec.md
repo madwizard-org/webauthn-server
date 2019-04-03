@@ -179,12 +179,10 @@ Not implemented yet
 
 Informative
 
-
 #### 5.10.1 Client Data Used in WebAuthn Signatures (dictionary CollectedClientData)
 
-Implemented internally, exceptions:
+Implemented internally with exceptions:
 - Token binding fields are parsed and validated but actual token binding is not yet supported.  
-
 
 #### 5.10.2 Credential Type Enumeration (enum PublicKeyCredentialType)
 
@@ -208,23 +206,78 @@ Work in progress: verify list of supported algorithms
 Implemented
 
 ## 6 WebAuthn Authenticator Model
+
+Informative
+
 ### 6.1 Authenticator Data
+
+Implemented with exceptions:
+- Extension data is parsed but not actually supported yet 
+
 #### 6.1.1 Signature Counter Considerations
+
+Implemented
+
 #### 6.1.2 FIDO U2F Signature Format Compatibility
+
+Informative
+
 ### 6.2 Authenticator Taxonomy
+
+Informative
+
 #### 6.2.1 Authenticator Attachment Modality
+
+Informative
+
 #### 6.2.2 Credential Storage Modality
+
+Informative
+
 #### 6.2.3 Authentication Factor Capability
+
+Informative
+
 ### 6.3 Authenticator Operations
+
+N/A (client side)
+
 #### 6.3.1 Lookup Credential Source by Credential ID Algorithm
+
+N/A (client side)
+
 #### 6.3.2 The authenticatorMakeCredential Operation
+
+N/A (client side)
+
 #### 6.3.3 The authenticatorGetAssertion Operation
+
+N/A (client side)
+
 #### 6.3.4 The authenticatorCancel Operation
+
+N/A (client side)
+
 ### 6.4 Attestation
+
+Informative
+
 #### 6.4.1 Attested Credential Data
+
+Implemented
+
 ##### 6.4.1.1 Examples of credentialPublicKey Values Encoded in COSE_Key Format
+
+Informative 
+
 #### 6.4.2 Attestation Statement Formats
+
+Informative
+
 #### 6.4.3 Attestation Types
+
+TODO
+
 #### 6.4.4 Generating an Attestation Object
 #### 6.4.5 Signature Formats for Packed Attestation, FIDO U2F Attestation, and Assertion Signatures
 ## 7 WebAuthn Relying Party Operations

@@ -54,9 +54,9 @@ class AndroidSafetyNetAttestationStatement extends AbstractAttestationStatement
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getVersion(): int
+    public function getVersion(): string
     {
         return $this->version;
     }

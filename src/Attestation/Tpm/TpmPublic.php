@@ -144,15 +144,18 @@ class TpmPublic extends AbstractTpmStructure
         return $this->unique;
     }
 
-    public function generatePubInfoHash() : ByteBuffer
+    public function isValidPubInfoName(ByteBuffer $name): bool
     {
-        // pubInfoHash is the concatenation of nameAlg (16-bit uint) and a hash of this whole structure.
+        // TPM names are prefixed by a 16-bit integer representing the hashing algorithm
+        $algo = $name->getUint16Val(0);
 
-        $algo = self::PHP_HASH_ALG_MAP[$this->nameAlg] ?? null;
-        if ($algo === null) {
-            throw new UnsupportedException(sprintf('TPMT_PUBLIC nameAlg 0x%04X not supported for hashing.', $this->nameAlg));
+        // The name itself is a concatenation of the algorithm and a hash of this whole structure.
+        $phpAlgo = self::PHP_HASH_ALG_MAP[$algo] ?? null;
+        if ($phpAlgo === null) {
+            throw new UnsupportedException(sprintf('Algorithm 0x%04X is not allowed for names for TPMT_PUBLIC.', $algo));
         }
 
-        return new ByteBuffer(pack('n', $this->nameAlg) . hash($algo, $this->rawData, true));
+        $validName = pack('n', $algo) . hash($phpAlgo, $this->rawData, true);
+        return \hash_equals($validName, $name->getBinaryString());
     }
 }

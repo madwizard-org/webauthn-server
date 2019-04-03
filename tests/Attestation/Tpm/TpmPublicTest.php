@@ -50,9 +50,10 @@ class TpmPublicTest extends TestCase
         $this->assertSame(TpmPublic::TPM_ALG_RSA, $public->getType());
         $this->assertSame(TpmPublic::TPM_ALG_SHA256, $public->getNameAlg());
         $this->assertSame(0x00060472, $public->getObjectAttributes());
-        $this->assertSame(
-            '000b7121aebfa6b9afd07032f42f0925e0ec67408dd599a57bfa0f80c7f15601084f',
-             $public->generatePubInfoHash()->getHex()
+        $this->assertTrue(
+            $public->isValidPubInfoName(
+                ByteBuffer::fromHex('000b7121aebfa6b9afd07032f42f0925e0ec67408dd599a57bfa0f80c7f15601084f')
+            )
         );
 
         $this->assertSame(HexData::buf(self::RSA_KEY_BITS)->getHex(), $public->getUnique()->getHex());
@@ -75,17 +76,12 @@ class TpmPublicTest extends TestCase
         new TpmPublic($raw);
     }
 
-    public function testNameAlg()
+    public function testInvalidNameAlg()
     {
-        $data = HexData::bin(self::TPMT_PUBLIC_EXAMPLE);
-        // Modify type
-        $data[2] = \chr(0xFA);
-        $data[3] = \chr(0xFB);
-
-        $raw = new ByteBuffer($data);
+        $raw = HexData::buf(self::TPMT_PUBLIC_EXAMPLE);
         $public = new TpmPublic($raw);
         $this->expectException(UnsupportedException::class);
         $this->expectExceptionMessageRegExp('~0xFAFB~i');
-        $public->generatePubInfoHash();
+        $public->isValidPubInfoName(ByteBuffer::fromHex('FAFB00112233'));
     }
 }

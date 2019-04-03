@@ -153,6 +153,15 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
+    public function getSubjectCommonName() : string
+    {
+        try {
+            return $this->cert->subject()->firstValueOf('CN')->stringValue();
+        } catch (Exception $e) {
+            throw new ParseException('Failed to retrieve subject CN value', 0, $e);
+        }
+    }
+
     public function getSubjectAlternateNameDN(string $oid) : string
     {
         try {

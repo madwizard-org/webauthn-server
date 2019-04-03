@@ -22,6 +22,8 @@ interface CertificateDetailsInterface
 
     public function getSubject() : string;
 
+    public function getSubjectCommonName() : string;
+
     public function getPublicKeyDer(): string;
 
     public function getExtensionData(string $oid) : ?ByteBuffer;

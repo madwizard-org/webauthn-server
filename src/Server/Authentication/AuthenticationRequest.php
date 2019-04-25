@@ -14,11 +14,11 @@ class AuthenticationRequest
     private $requestOptions;
 
     /**
-     * @var AssertionContext
+     * @var AuthenticationContext
      */
     private $context;
 
-    public function __construct(PublicKeyCredentialRequestOptions $requestOptions, AssertionContext $context)
+    public function __construct(PublicKeyCredentialRequestOptions $requestOptions, AuthenticationContext $context)
     {
         $this->requestOptions = $requestOptions;
         $this->context = $context;
@@ -34,7 +34,7 @@ class AuthenticationRequest
         return JsonConverter::encodeDictionary($this->requestOptions);
     }
 
-    public function getContext() : AssertionContext
+    public function getContext() : AuthenticationContext
     {
         return $this->context;
     }

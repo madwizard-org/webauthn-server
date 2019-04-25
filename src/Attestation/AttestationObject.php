@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Attestation;
 
 use MadWizard\WebAuthn\Exception\CborException;
+use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborDecoder;
@@ -49,7 +50,7 @@ class AttestationObject
             $this->statement = $data['attStmt'];
             $this->authData = $data['authData'];
         } catch (CborException $e) {
-            throw new WebAuthnException('Failed to parse CBOR attestation object.', 0, $e);
+            throw new ParseException('Failed to parse CBOR attestation object.', 0, $e);
         }
     }
 

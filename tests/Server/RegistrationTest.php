@@ -11,7 +11,7 @@ use MadWizard\WebAuthn\Crypto\Ec2Key;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Server\Registration\AttestationContext;
+use MadWizard\WebAuthn\Server\Registration\RegistrationContext;
 use MadWizard\WebAuthn\Server\Registration\RegistrationOptions;
 use MadWizard\WebAuthn\Server\UserIdentity;
 use MadWizard\WebAuthn\Server\WebAuthnServer;
@@ -78,7 +78,7 @@ class RegistrationTest extends TestCase
             );
 
         $challenge = new ByteBuffer(Base64UrlEncoding::decode('Vu8uDqnkwOjd83KLj6Scn2BgFNLFbGR7Kq_XJJwQnnatztUR7XIBL7K8uMPCIaQmKw1MCVQ5aazNJFk7NakgqA'));
-        $context = new AttestationContext($challenge, Origin::parse('https://localhost:8443'), 'localhost', new ByteBuffer('00112233'));
+        $context = new RegistrationContext($challenge, Origin::parse('https://localhost:8443'), 'localhost', new ByteBuffer('00112233'));
         $result = $this->server->finishRegistration($credentialJson, $context);
 
         $this->assertSame(self::CREDENTIAL_ID, $result->getCredentialId());

@@ -14,10 +14,6 @@ use MadWizard\WebAuthn\Web\Origin;
 
 class AbstractVerifier
 {
-    public function __construct()
-    {
-    }
-
     // TODO: move?
     protected function verifyOrigin(string $origin, Origin $rpOrigin) : bool
     {

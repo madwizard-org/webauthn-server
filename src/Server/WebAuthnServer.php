@@ -21,16 +21,16 @@ use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Json\JsonConverter;
-use MadWizard\WebAuthn\Server\Authentication\AssertionContext;
-use MadWizard\WebAuthn\Server\Authentication\AssertionVerifier;
+use MadWizard\WebAuthn\Server\Authentication\AuthenticationContext;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationRequest;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationResult;
-use MadWizard\WebAuthn\Server\Registration\AttestationContext;
-use MadWizard\WebAuthn\Server\Registration\AttestationResult;
-use MadWizard\WebAuthn\Server\Registration\AttestationVerifier;
+use MadWizard\WebAuthn\Server\Authentication\AuthenticationVerifier;
+use MadWizard\WebAuthn\Server\Registration\RegistrationContext;
 use MadWizard\WebAuthn\Server\Registration\RegistrationOptions;
 use MadWizard\WebAuthn\Server\Registration\RegistrationRequest;
+use MadWizard\WebAuthn\Server\Registration\RegistrationResult;
+use MadWizard\WebAuthn\Server\Registration\RegistrationVerifier;
 
 class WebAuthnServer
 {
@@ -69,19 +69,19 @@ class WebAuthnServer
         $creationOptions->setAttestation($options->getAttestation());
         $creationOptions->setAuthenticatorSelection($options->getAuthenticatorSelection());
 
-        $context = AttestationContext::create($creationOptions, $this->config);
+        $context = RegistrationContext::create($creationOptions, $this->config);
         return new RegistrationRequest($creationOptions, $context);
     }
 
     /**
      * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
-     * @param AttestationContext $context
-     * @return AttestationResult
+     * @param RegistrationContext $context
+     * @return RegistrationResult
      */
-    public function finishRegistration($credential, AttestationContext $context) : AttestationResult
+    public function finishRegistration($credential, RegistrationContext $context) : RegistrationResult
     {
         $credential = $this->convertAttestationCredential($credential);
-        $verifier = new AttestationVerifier($this->getFormatRegistry());
+        $verifier = new RegistrationVerifier($this->getFormatRegistry());
         $attestationResult = $verifier->verify($credential, $context);
 
         // 15. If validation is successful, obtain a list of acceptable trust anchors (attestation root certificates or
@@ -148,20 +148,20 @@ class WebAuthnServer
         $this->addAllowCredentials($options, $requestOptions);
 
 
-        $context = AssertionContext::create($requestOptions, $this->config);
+        $context = AuthenticationContext::create($requestOptions, $this->config);
         return new AuthenticationRequest($requestOptions, $context);
     }
 
     /**
      * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
-     * @param AssertionContext $context
+     * @param AuthenticationContext $context
      * @return AuthenticationResult
      */
-    public function finishAuthentication($credential, AssertionContext $context) : AuthenticationResult
+    public function finishAuthentication($credential, AuthenticationContext $context) : AuthenticationResult
     {
         $credential = $this->convertAssertionCredential($credential);
 
-        $verifier = new AssertionVerifier($this->credentialStore);
+        $verifier = new AuthenticationVerifier($this->credentialStore);
 
         $userCredential = $verifier->verifyAuthenticatonAssertion($credential, $context);
 

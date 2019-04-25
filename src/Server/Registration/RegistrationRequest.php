@@ -14,11 +14,11 @@ class RegistrationRequest
     private $creationOptions;
 
     /**
-     * @var AttestationContext
+     * @var RegistrationContext
      */
     private $context;
 
-    public function __construct(PublicKeyCredentialCreationOptions $creationOptions, AttestationContext $context)
+    public function __construct(PublicKeyCredentialCreationOptions $creationOptions, RegistrationContext $context)
     {
         $this->creationOptions = $creationOptions;
         $this->context = $context;
@@ -34,7 +34,7 @@ class RegistrationRequest
         return JsonConverter::encodeDictionary($this->creationOptions);
     }
 
-    public function getContext() : AttestationContext
+    public function getContext() : RegistrationContext
     {
         return $this->context;
     }

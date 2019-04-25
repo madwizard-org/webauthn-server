@@ -10,10 +10,9 @@ use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
-use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Server\AbstractVerifier;
 
-class AttestationVerifier extends AbstractVerifier
+class RegistrationVerifier extends AbstractVerifier
 {
     /**
      * @var AttestationFormatRegistryInterface
@@ -22,19 +21,18 @@ class AttestationVerifier extends AbstractVerifier
 
     public function __construct(AttestationFormatRegistryInterface $registry)
     {
-        parent::__construct();
         $this->registry = $registry;
     }
 
     /**
      * @param PublicKeyCredentialInterface $credential
-     * @param AttestationContext $context
-     * @return AttestationResult
+     * @param RegistrationContext $context
+     * @return RegistrationResult
      * @throws VerificationException
      * @throws \MadWizard\WebAuthn\Exception\ParseException
      * @throws \MadWizard\WebAuthn\Exception\WebAuthnException
      */
-    public function verify(PublicKeyCredentialInterface $credential, AttestationContext $context) : AttestationResult
+    public function verify(PublicKeyCredentialInterface $credential, RegistrationContext $context) : RegistrationResult
     {
         // SPEC 7.1 Registering a new credential
 
@@ -42,7 +40,6 @@ class AttestationVerifier extends AbstractVerifier
         if (!($response instanceof AuthenticatorAttestationResponseInterface)) {
             throw new VerificationException('Expecting authenticator attestation response.');
         }
-
 
         // 1. Let JSONtext be the result of running UTF-8 decode on the value of response.clientDataJSON.
         // 2. Let C, the client data claimed as collected during the credential creation, be the result of running an
@@ -57,25 +54,13 @@ class AttestationVerifier extends AbstractVerifier
         //    obtain the attestation statement format fmt, the authenticator data authData, and the attestation
         //    statement attStmt.
 
-        $attObjectBuffer = $response->getAttestationObject();
-        $attestation = new AttestationObject($attObjectBuffer); // TODO exceptions
-        $authDataBuff = $attestation->getAuthenticatorData();
-        $authData = new AuthenticatorData($authDataBuff);
+        $attestation = new AttestationObject($response->getAttestationObject());
+        $authData = new AuthenticatorData($attestation->getAuthenticatorData());
 
-        if (!$authData->hasAttestedCredentialData()) {
-            throw new VerificationException('Authenticator data does not contain attested credential.');
-        }
+        // 9 - 11
+        $this->checkAuthenticatorData($authData, $context);
 
 
-        // 9. Verify that the RP ID hash in authData is indeed the SHA-256 hash of the RP ID expected by the RP.
-        if (!$this->verifyRpIdHash($authData, $context)) {
-            throw new VerificationException('RP ID hash in authData does not match.');
-        }
-
-        // 10 and 11
-        if (!$this->verifyUser($authData, $context)) {
-            throw new VerificationException('User verification failed');
-        }
 
         // 12. Verify that the values of the client extension outputs in clientExtensionResults and the authenticator
         //     extension outputs in the extensions in authData are as expected, considering the client extension input
@@ -89,16 +74,12 @@ class AttestationVerifier extends AbstractVerifier
         // TODO:not supported yet.
 
         // 13. Determine the attestation statement format by performing a USASCII case-sensitive match on fmt against
-        //     the set of supported WebAuthn Attestation Statement Format Identifier values. The up-to-date list of
-        //     registered WebAuthn Attestation Statement Format Identifier values is maintained in the in the IANA
-        //     registry of the same name [WebAuthn-Registries].
-
-        $attObject = new AttestationObject($attObjectBuffer);
-        $format = $attObject->getFormat();
+        //     the set of supported WebAuthn Attestation Statement Format Identifier values.
+        $format = $attestation->getFormat();
 
         try {
-            $statement = $this->registry->createStatement($attObject);
-            $verifier = $this->registry->getVerifier($attObject->getFormat());
+            $statement = $this->registry->createStatement($attestation);
+            $verifier = $this->registry->getVerifier($attestation->getFormat());
         } catch (FormatNotSupportedException $e) {
             throw new VerificationException(sprintf("Attestation format '%s' not supported", $format), 0, $e);
         }
@@ -108,10 +89,10 @@ class AttestationVerifier extends AbstractVerifier
         //     of the serialized client data computed in step 7.
         $verificationResult = $verifier->verify($statement, $authData, $clientDataHash);
 
-        return new AttestationResult(Base64UrlEncoding::encode($credential->getRawId()->getBinaryString()), $authData->getKey(), $verificationResult);
+        return new RegistrationResult($credential->getRawId()->getBase64Url(), $authData->getKey(), $verificationResult);
     }
 
-    private function checkClientData(array $clientData, AttestationContext $context)
+    private function checkClientData(array $clientData, RegistrationContext $context)
     {
         $this->validateClientData($clientData);
 
@@ -137,6 +118,24 @@ class AttestationVerifier extends AbstractVerifier
         $tokenBinding = $clientData['tokenBinding'] ?? null;
         if ($tokenBinding !== null) {
             $this->checkTokenBinding($tokenBinding);
+        }
+    }
+
+    private function checkAuthenticatorData(AuthenticatorData $authData, RegistrationContext $context)
+    {
+        if (!$authData->hasAttestedCredentialData()) {
+            throw new VerificationException('Authenticator data does not contain attested credential.');
+        }
+
+
+        // 9. Verify that the RP ID hash in authData is indeed the SHA-256 hash of the RP ID expected by the RP.
+        if (!$this->verifyRpIdHash($authData, $context)) {
+            throw new VerificationException('RP ID hash in authData does not match.');
+        }
+
+        // 10 and 11
+        if (!$this->verifyUser($authData, $context)) {
+            throw new VerificationException('User verification failed');
         }
     }
 }

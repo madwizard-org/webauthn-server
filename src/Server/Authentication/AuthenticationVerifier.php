@@ -13,7 +13,7 @@ use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Server\AbstractVerifier;
 
-class AssertionVerifier extends AbstractVerifier
+class AuthenticationVerifier extends AbstractVerifier
 {
     /**
      * @var CredentialStoreInterface
@@ -23,11 +23,10 @@ class AssertionVerifier extends AbstractVerifier
     // add policy
     public function __construct(CredentialStoreInterface $credentialCollection)
     {
-        parent::__construct();
         $this->credentialCollection = $credentialCollection;
     }
 
-    public function verifyAuthenticatonAssertion(PublicKeyCredentialInterface $credential, AssertionContext $context) : UserCredentialInterface
+    public function verifyAuthenticatonAssertion(PublicKeyCredentialInterface $credential, AuthenticationContext $context) : UserCredentialInterface
     {
         // SPEC 7.2 Verifying an authentication assertion
 
@@ -174,7 +173,7 @@ class AssertionVerifier extends AbstractVerifier
         }
     }
 
-    private function checkClientData(array $clientData, AssertionContext $context)
+    private function checkClientData(array $clientData, AuthenticationContext $context)
     {
         $this->validateClientData($clientData);
 

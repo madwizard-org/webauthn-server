@@ -12,7 +12,7 @@ use MadWizard\WebAuthn\Server\AbstractContext;
 use MadWizard\WebAuthn\Server\RequestContext;
 use MadWizard\WebAuthn\Web\Origin;
 
-class AttestationContext extends AbstractContext implements RequestContext
+class RegistrationContext extends AbstractContext implements RequestContext
 {
     /**
      * @var ByteBuffer

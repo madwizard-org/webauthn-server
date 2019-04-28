@@ -41,7 +41,7 @@ class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
         return $this->id;
     }
 
-    public function setId(ByteBuffer $id): void
+    private function setId(ByteBuffer $id): void
     {
         if ($id->isEmpty()) {
             throw new WebAuthnException('User handle cannot be empty.');
@@ -59,11 +59,6 @@ class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
     public function getDisplayName(): string
     {
         return $this->displayName;
-    }
-
-    public function setDisplayName(string $displayName): void
-    {
-        $this->displayName = $displayName;
     }
 
     public function getAsArray(): array

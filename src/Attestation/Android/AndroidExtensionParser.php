@@ -64,7 +64,7 @@ class AndroidExtensionParser implements AndroidExtensionParserInterface
             $software = $this->parseAuthorizationList($seq->at(self::IDX_SOFTWARE_ENFORCED)->asSequence());
             $tee = $this->parseAuthorizationList($seq->at(self::IDX_TEE_INFORCED)->asSequence());
         } catch (\Exception $e) {
-            throw new ParseException('Faield to parse Android attestation extension.', 0, $e);
+            throw new ParseException('Failed to parse Android attestation extension.', 0, $e);
         }
 
         return new AndroidAttestationExtension(new ByteBuffer($challenge), $software, $tee);

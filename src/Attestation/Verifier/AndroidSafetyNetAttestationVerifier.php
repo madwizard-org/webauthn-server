@@ -22,12 +22,12 @@ class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterfac
     private const ATTEST_HOSTNAME = 'attest.android.com';
 
     /**
-     * @var CertificateParserInterface|null
+     * @var CertificateParserInterface
      */
     private $certificateParser;
 
     /**
-     * @var SafetyNetResponseParserInterface|null
+     * @var SafetyNetResponseParserInterface
      */
     private $responseParser;
 

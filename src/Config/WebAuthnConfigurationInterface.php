@@ -33,7 +33,5 @@ interface WebAuthnConfigurationInterface
 
     public function getAllowedAlgorithms() : array;
 
-    public function getAttestationFormats() : array;
-
     public function getRelyingPartyIconUrl() : ?string;
 }

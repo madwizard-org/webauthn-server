@@ -30,7 +30,6 @@ class PublicKeyCredentialCreationOptionsTest extends TestCase
         $this->assertNull($options->getAttestation());
 
         $this->assertSame(
-
             [
                 'rp' => [
                     'name' => 'RP',
@@ -43,7 +42,6 @@ class PublicKeyCredentialCreationOptionsTest extends TestCase
                 'challenge' => 'ASNFZ4mrze8',
                 'pubKeyCredParams' => [],
             ],
-
             $options->getJsonData()
         );
     }
@@ -82,7 +80,6 @@ class PublicKeyCredentialCreationOptionsTest extends TestCase
                     ],
                 'attestation' => 'direct',
             ],
-
             $options->getJsonData()
         );
     }

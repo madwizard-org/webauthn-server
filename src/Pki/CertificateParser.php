@@ -40,9 +40,10 @@ class CertificateParser implements CertificateParserInterface
         $path = new CertificationPath(...$certificates);
         $config = new PathValidationConfig($this->getReferenceDate(), self::MAX_VALIDATION_LENGTH);
         try {
-            $result = $path->validate($config);
+            $path->validate($config);
+            return true;
         } catch (\Exception $e) {
-            throw new ParseException('Failed to validate certificate chain.', 0, $e);
+            return false;
         }
     }
 }

@@ -135,10 +135,13 @@ class WebAuthnServer
         //    also be able to build the attestation certificate chain if the client did not provide this chain in the
         //    attestation information.
 
-        $registration = new CredentialRegistration($attestationResult->getCredentialId(), $attestationResult->getPublicKey(), $context->getUserHandle());
+
+        // TODO:check timeout
+
+        $registration = new CredentialRegistration($registrationResult->getCredentialId(), $registrationResult->getPublicKey(), $context->getUserHandle());
         $this->credentialStore->registerCredential($registration);
         // TODO set signature counter
-        return $attestationResult;
+        return $registrationResult;
     }
 
     public function startAuthentication(AuthenticationOptions $options) : AuthenticationRequest

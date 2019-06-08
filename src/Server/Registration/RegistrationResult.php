@@ -6,7 +6,7 @@ namespace MadWizard\WebAuthn\Server\Registration;
 use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
 use MadWizard\WebAuthn\Crypto\CoseKey;
 
-class RegistrationResult     // TODO: move to RegistrationResult
+class RegistrationResult
 {
     /**
      * @var string
@@ -23,11 +23,17 @@ class RegistrationResult     // TODO: move to RegistrationResult
      */
     private $attestation;
 
-    public function __construct(string $credentialId, CoseKey $publicKey, VerificationResult $attestation)
+    /**
+     * @var int
+     */
+    private $signCounter;
+
+    public function __construct(string $credentialId, CoseKey $publicKey, VerificationResult $attestation, int $signCounter)
     {
         $this->credentialId = $credentialId;
         $this->publicKey = $publicKey;
         $this->attestation = $attestation;
+        $this->signCounter = $signCounter;
     }
 
     /**
@@ -52,5 +58,13 @@ class RegistrationResult     // TODO: move to RegistrationResult
     public function getVerificationResult(): VerificationResult
     {
         return $this->attestation;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSignatureCounter(): int
+    {
+        return $this->signCounter;
     }
 }

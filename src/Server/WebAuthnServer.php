@@ -3,7 +3,6 @@
 
 namespace MadWizard\WebAuthn\Server;
 
-use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
@@ -13,12 +12,14 @@ use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialParameters;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
+use MadWizard\WebAuthn\Exception\CredentialIdExistsException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Json\JsonConverter;
+use MadWizard\WebAuthn\Policy\WebAuthnConfigPolicy;
 use MadWizard\WebAuthn\Policy\WebAuthnPolicyInterface;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationContext;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
@@ -31,7 +32,7 @@ use MadWizard\WebAuthn\Server\Registration\RegistrationRequest;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResult;
 use MadWizard\WebAuthn\Server\Registration\RegistrationVerifier;
 
-class WebAuthnServer
+class WebAuthnServer // TODO interface?
 {
     /**
      * @var WebAuthnConfigurationInterface
@@ -39,25 +40,27 @@ class WebAuthnServer
     private $config;
 
     /**
-     * @var AttestationFormatRegistryInterface|null
-     */
-    private $formatRegistry;
-
-    /**
      * @var CredentialStoreInterface
      */
     private $credentialStore;
 
     /**
-     * @var WebAuthnPolicyInterface
+     * @var WebAuthnPolicyInterface|null
      */
     private $policy;
 
-    public function __construct(WebAuthnConfigurationInterface $config, WebAuthnPolicyInterface $policy, CredentialStoreInterface $credentialStore)
+    public function __construct(WebAuthnConfigurationInterface $config, CredentialStoreInterface $credentialStore)
     {
         $this->config = $config;
         $this->credentialStore = $credentialStore;
-        $this->policy = $policy;
+    }
+
+    public function getPolicy() : WebAuthnPolicyInterface
+    {
+        if ($this->policy === null) {
+            $this->policy = new WebAuthnConfigPolicy($this->config);
+        }
+        return $this->policy;
     }
 
     public function startRegistration(RegistrationOptions $options) : RegistrationRequest
@@ -82,17 +85,18 @@ class WebAuthnServer
      * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
      * @param RegistrationContext $context
      * @return RegistrationResult
+     * @throws CredentialIdExistsException
      */
     public function finishRegistration($credential, RegistrationContext $context) : RegistrationResult
     {
         $credential = $this->convertAttestationCredential($credential);
-        $verifier = new RegistrationVerifier($this->policy->getAttestationFormatRegistry());
+        $verifier = new RegistrationVerifier($this->getPolicy()->getAttestationFormatRegistry());
         $registrationResult = $verifier->verify($credential, $context);
 
         // 15. If validation is successful, obtain a list of acceptable trust anchors (attestation root certificates or
         //     ECDAA-Issuer public keys) for that attestation type and attestation statement format fmt, from a trusted
         //     source or from policy.
-        $trustAnchorSet = $this->policy->getTrustAnchorSet();
+        $trustAnchorSet = $this->getPolicy()->getTrustAnchorSet();
 
         // TODO
 
@@ -140,7 +144,7 @@ class WebAuthnServer
 
         $registration = new CredentialRegistration($registrationResult->getCredentialId(), $registrationResult->getPublicKey(), $context->getUserHandle());
         $this->credentialStore->registerCredential($registration);
-        // TODO set signature counter
+        $this->credentialStore->updateSignatureCounter($registrationResult->getCredentialId(), $registrationResult->getSignatureCounter());
         return $registrationResult;
     }
 

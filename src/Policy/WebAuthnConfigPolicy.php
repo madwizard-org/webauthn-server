@@ -7,11 +7,8 @@ use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInFormats;
-use MadWizard\WebAuthn\Attestation\TrustAnchor\NoneTrustAnchor;
-use MadWizard\WebAuthn\Attestation\TrustAnchor\SelfTrustAnchor;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\TrustAnchorSet;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\TrustAnchorSetInterface;
-use MadWizard\WebAuthn\Attestation\TrustAnchor\U2FMetadataAnchor;
 use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
 
 class WebAuthnConfigPolicy implements WebAuthnPolicyInterface

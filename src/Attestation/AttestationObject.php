@@ -42,8 +42,7 @@ class AttestationObject
                     'fmt' => 'string',
                     'attStmt' => 'array',
                     'authData' => ByteBuffer::class
-                ],
-                false   // TODO: true?
+                ]
             );
 
             $this->format = $data['fmt'];

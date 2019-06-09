@@ -16,6 +16,7 @@ use MadWizard\WebAuthn\Pki\CertificateParserInterface;
 use X509\Certificate\Certificate;
 use function base64_encode;
 use function hash_equals;
+use function microtime;
 
 class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterface
 {
@@ -35,6 +36,11 @@ class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterfac
     {
         $this->certificateParser = $certificateParser ?? new CertificateParser();
         $this->responseParser = $responseParser ?? new SafetyNetResponseParser();
+    }
+
+    protected function getMsTimestamp() : float
+    {
+        return microtime(true) * 1000;
     }
 
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
@@ -74,6 +80,12 @@ class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterfac
         // Verify that the ctsProfileMatch attribute in the payload of response is true.
         if (!$response->isCtsProfileMatch()) {
             throw new VerificationException('Attestation should have ctsProfileMatch set to true.');
+        }
+
+        $diff = $this->getMsTimestamp() - $response->getTimestampMs();
+
+        if ($diff < -60e3 || $diff > 60e3) {
+            throw new VerificationException('Timestamp is not within margin of one minute');
         }
 
         // If successful, return implementation-specific values representing attestation type Basic and attestation trust path attestationCert.

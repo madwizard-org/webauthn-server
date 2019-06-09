@@ -25,7 +25,12 @@ class AndroidSafetyNetStatementVerifierTest extends TestCase
         $hash = hash('sha256', Base64UrlEncoding::decode($clientResponse['response']['clientDataJSON']), true);
         $statement = new AndroidSafetyNetAttestationStatement($attObj);
 
-        $verifier = new AndroidSafetyNetAttestationVerifier();
+        $verifier = new class extends AndroidSafetyNetAttestationVerifier {
+            protected function getMsTimestamp(): float
+            {
+                return 1541336750000; // Overide current time to pass validation
+            }
+        };
         $result = $verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
         $this->assertSame(AttestationType::BASIC, $result->getAttestationType());
@@ -47,7 +52,12 @@ class AndroidSafetyNetStatementVerifierTest extends TestCase
         $hash = hash('sha256', Base64UrlEncoding::decode($plain['response']['clientDataJSON']), true);
         $statement = new AndroidSafetyNetAttestationStatement($attObj);
 
-        $verifier = new AndroidSafetyNetAttestationVerifier();
+        $verifier = new class extends AndroidSafetyNetAttestationVerifier {
+            protected function getMsTimestamp(): float
+            {
+                return 1532716642000; // Overide current time to pass validation
+            }
+        };
 
         $this->expectException(VerificationException::class);
         $this->expectExceptionMessageRegExp('~Attestation should have ctsProfileMatch set to true~i');

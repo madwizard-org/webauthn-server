@@ -10,6 +10,7 @@ use MadWizard\WebAuthn\Crypto\Der;
 use MadWizard\WebAuthn\Exception\ParseException;
 use Sop\CryptoEncoding\PEM;
 use X509\Certificate\Certificate;
+use function is_float;
 
 class SafetyNetResponseParser implements SafetyNetResponseParserInterface
 {
@@ -21,6 +22,9 @@ class SafetyNetResponseParser implements SafetyNetResponseParserInterface
                 throw new ParseException('SafetyNet response does not include x5c certificates.');
             }
             $x5c = $jwt->header()->X509CertificateChain()->value();
+            if (count($x5c) === 0) {
+                throw new ParseException('SafetyNet response has empty x5c certificate chain.');
+            }
             $x5c = array_map(function ($x) {
                 $x = base64_decode($x);
                 if ($x === false) {
@@ -46,7 +50,12 @@ class SafetyNetResponseParser implements SafetyNetResponseParserInterface
                 throw new ParseException('Expecting ctsProfileMatch to be a boolean.');
             }
 
-            return new SafetyNetResponse($nonce, $x5c, $ctsProfileMatch);
+            $timetampMs = $claims->get('timestampMs')->value();
+            if (!is_int($timetampMs) && !is_float($timetampMs)) {
+                throw new ParseException('Expecting timeStampMs to be a number.');
+            }
+
+            return new SafetyNetResponse($nonce, $x5c, $ctsProfileMatch, $timetampMs);
         } catch (\Exception $e) {
             throw new ParseException('Failed to parse SafetyNet response.', 0, $e);
         }

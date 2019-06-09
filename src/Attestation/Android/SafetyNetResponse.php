@@ -20,11 +20,17 @@ class SafetyNetResponse implements SafetyNetResponseInterface
      */
     private $ctsProfileMatch;
 
-    public function __construct(string $nonce, array $x5c, bool $ctsProfileMatch)
+    /**
+     * @var int|float
+     */
+    private $timestampMs;
+
+    public function __construct(string $nonce, array $x5c, bool $ctsProfileMatch, $timestampMs)
     {
         $this->nonce = $nonce;
         $this->x5c = $x5c;
         $this->ctsProfileMatch = $ctsProfileMatch;
+        $this->timestampMs = $timestampMs;
     }
 
     /**
@@ -49,5 +55,10 @@ class SafetyNetResponse implements SafetyNetResponseInterface
     public function isCtsProfileMatch(): bool
     {
         return $this->ctsProfileMatch;
+    }
+
+    public function getTimestampMs()
+    {
+        return $this->timestampMs;
     }
 }

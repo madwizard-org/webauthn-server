@@ -8,6 +8,11 @@ interface SafetyNetResponseInterface
     public function getNonce() : string;
 
     /**
+     * @return int|float
+     */
+    public function getTimestampMs();
+
+    /**
      * @return string[]
      */
     public function getCertificateChain(): array;

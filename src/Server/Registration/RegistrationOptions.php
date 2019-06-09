@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Server\Registration;
 use MadWizard\WebAuthn\Dom\AttestationConveyancePreference;
 use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
+use MadWizard\WebAuthn\Extension\ExtensionInputInterface;
 use MadWizard\WebAuthn\Server\UserIdentity;
 
 class RegistrationOptions
@@ -24,6 +25,11 @@ class RegistrationOptions
      * @var AuthenticatorSelectionCriteria|null
      */
     private $authenticatorSelection;
+
+    /**
+     * @var ExtensionInputInterface[]|null
+     */
+    private $extensions;
 
     public function __construct(UserIdentity $user)
     {
@@ -68,5 +74,18 @@ class RegistrationOptions
     public function getAuthenticatorSelection(): ?AuthenticatorSelectionCriteria
     {
         return $this->authenticatorSelection;
+    }
+
+    public function addExtensionInput(ExtensionInputInterface $input)
+    {
+        $this->extensions[] = $input;
+    }
+
+    /**
+     * @return ExtensionInputInterface[]|null
+     */
+    public function getExtensionInputs():?array
+    {
+        return $this->extensions;
     }
 }

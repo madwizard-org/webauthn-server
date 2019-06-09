@@ -45,6 +45,9 @@ class AndroidSafetyNetAttestationStatement extends AbstractAttestationStatement
         }
 
         $this->version = $statement['ver'];
+        if ($this->version === '') {
+            throw new ParseException('Android SafetyNet version is empty.');
+        }
 
         /**
          * @var ByteBuffer $res

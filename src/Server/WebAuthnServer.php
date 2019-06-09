@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Server;
 use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
+use MadWizard\WebAuthn\Dom\AuthenticationExtensionsClientInputs;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialDescriptor;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
@@ -76,6 +77,12 @@ class WebAuthnServer // TODO interface?
 
         $creationOptions->setAttestation($options->getAttestation());
         $creationOptions->setAuthenticatorSelection($options->getAuthenticatorSelection());
+        $extensions = $options->getExtensionInputs();
+        if ($extensions !== null) {
+            $creationOptions->setExtensions(
+                AuthenticationExtensionsClientInputs::fromArray($extensions)
+            );
+        }
 
         $context = RegistrationContext::create($creationOptions, $this->config);
         return new RegistrationRequest($creationOptions, $context);

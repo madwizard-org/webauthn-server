@@ -48,8 +48,9 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
      */
     private $attestation;
 
-    // AuthenticationExtensionsClientInputs
-    // TODO
+    /**
+     * @var AuthenticationExtensionsClientInputs|null
+     */
     private $extensions;
 
     /**
@@ -179,5 +180,21 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
     public function getChallenge(): ByteBuffer
     {
         return $this->challenge;
+    }
+
+    /**
+     * @return AuthenticationExtensionsClientInputs|null
+     */
+    public function getExtensions(): ?AuthenticationExtensionsClientInputs
+    {
+        return $this->extensions;
+    }
+
+    /**
+     * @param AuthenticationExtensionsClientInputs|null $extensions
+     */
+    public function setExtensions(?AuthenticationExtensionsClientInputs $extensions): void
+    {
+        $this->extensions = $extensions;
     }
 }

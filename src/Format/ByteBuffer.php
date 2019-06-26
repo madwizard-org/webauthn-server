@@ -160,7 +160,7 @@ class ByteBuffer implements Serializable
 
     public function equals(ByteBuffer $buffer) : bool
     {
-        return $this->data === $buffer->data;
+        return $this->data === $buffer->data; // TODO constant time
     }
 
     /**

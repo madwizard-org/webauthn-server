@@ -271,7 +271,7 @@ class CborTest extends TestCase
     {
         // array as map key
         $buf = HexData::buf(
-                'A3       # map(3)
+            'A3       # map(3)
                    01    # unsigned(1)
                    61    # text(1)
                       62 # "b"

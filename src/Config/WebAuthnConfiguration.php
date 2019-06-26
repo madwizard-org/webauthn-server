@@ -3,8 +3,6 @@
 
 namespace MadWizard\WebAuthn\Config;
 
-use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
-use MadWizard\WebAuthn\Attestation\Registry\BuiltInFormats;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRpEntity;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
@@ -182,15 +180,6 @@ class WebAuthnConfiguration implements WebAuthnConfigurationInterface
     public function getAllowedAlgorithms() : array
     {
         return $this->algorithms;
-    }
-
-    /**
-     * @return AttestationFormatInterface[]
-     */
-    public function getAttestationFormats() : array
-    {
-        // Default formats, TODO: customization
-        return BuiltInFormats::getSupportedFormats();
     }
 
     public function setRelyingPartyIconUrl(?string $url) : void

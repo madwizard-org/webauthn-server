@@ -136,4 +136,20 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
 
         $this->userVerification = $value;
     }
+
+    /**
+     * @return AuthenticationExtensionsClientInputs|null
+     */
+    public function getExtensions(): ?AuthenticationExtensionsClientInputs
+    {
+        return $this->extensions;
+    }
+
+    /**
+     * @param AuthenticationExtensionsClientInputs|null $extensions
+     */
+    public function setExtensions(?AuthenticationExtensionsClientInputs $extensions): void
+    {
+        $this->extensions = $extensions;
+    }
 }

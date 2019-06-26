@@ -3,24 +3,25 @@
 
 namespace MadWizard\WebAuthn\Server;
 
-use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
-use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
-use MadWizard\WebAuthn\Dom\AuthenticatorTransport;
+use MadWizard\WebAuthn\Dom\AuthenticationExtensionsClientInputs;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialDescriptor;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialParameters;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
+use MadWizard\WebAuthn\Exception\CredentialIdExistsException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Json\JsonConverter;
+use MadWizard\WebAuthn\Policy\WebAuthnConfigPolicy;
+use MadWizard\WebAuthn\Policy\WebAuthnPolicyInterface;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationContext;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationRequest;
@@ -32,7 +33,7 @@ use MadWizard\WebAuthn\Server\Registration\RegistrationRequest;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResult;
 use MadWizard\WebAuthn\Server\Registration\RegistrationVerifier;
 
-class WebAuthnServer
+class WebAuthnServer // TODO interface?
 {
     /**
      * @var WebAuthnConfigurationInterface
@@ -40,19 +41,27 @@ class WebAuthnServer
     private $config;
 
     /**
-     * @var AttestationFormatRegistryInterface|null
-     */
-    private $formatRegistry;
-
-    /**
      * @var CredentialStoreInterface
      */
     private $credentialStore;
+
+    /**
+     * @var WebAuthnPolicyInterface|null
+     */
+    private $policy;
 
     public function __construct(WebAuthnConfigurationInterface $config, CredentialStoreInterface $credentialStore)
     {
         $this->config = $config;
         $this->credentialStore = $credentialStore;
+    }
+
+    public function getPolicy() : WebAuthnPolicyInterface
+    {
+        if ($this->policy === null) {
+            $this->policy = new WebAuthnConfigPolicy($this->config);
+        }
+        return $this->policy;
     }
 
     public function startRegistration(RegistrationOptions $options) : RegistrationRequest
@@ -68,6 +77,12 @@ class WebAuthnServer
 
         $creationOptions->setAttestation($options->getAttestation());
         $creationOptions->setAuthenticatorSelection($options->getAuthenticatorSelection());
+        $extensions = $options->getExtensionInputs();
+        if ($extensions !== null) {
+            $creationOptions->setExtensions(
+                AuthenticationExtensionsClientInputs::fromArray($extensions)
+            );
+        }
 
         $context = RegistrationContext::create($creationOptions, $this->config);
         return new RegistrationRequest($creationOptions, $context);
@@ -77,17 +92,18 @@ class WebAuthnServer
      * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
      * @param RegistrationContext $context
      * @return RegistrationResult
+     * @throws CredentialIdExistsException
      */
     public function finishRegistration($credential, RegistrationContext $context) : RegistrationResult
     {
         $credential = $this->convertAttestationCredential($credential);
-        $verifier = new RegistrationVerifier($this->getFormatRegistry());
-        $attestationResult = $verifier->verify($credential, $context);
+        $verifier = new RegistrationVerifier($this->getPolicy()->getAttestationFormatRegistry());
+        $registrationResult = $verifier->verify($credential, $context);
 
         // 15. If validation is successful, obtain a list of acceptable trust anchors (attestation root certificates or
         //     ECDAA-Issuer public keys) for that attestation type and attestation statement format fmt, from a trusted
-        //     source or from policy. For example, the FIDO Metadata Service [FIDOMetadataService] provides one way to
-        //     obtain such information, using the aaguid in the attestedCredentialData in authData.
+        //     source or from policy.
+        $trustAnchorSet = $this->getPolicy()->getTrustAnchorSet();
 
         // TODO
 
@@ -130,10 +146,13 @@ class WebAuthnServer
         //    also be able to build the attestation certificate chain if the client did not provide this chain in the
         //    attestation information.
 
-        $registration = new CredentialRegistration($attestationResult->getCredentialId(), $attestationResult->getPublicKey(), $context->getUserHandle());
+
+        // TODO:check timeout
+
+        $registration = new CredentialRegistration($registrationResult->getCredentialId(), $registrationResult->getPublicKey(), $context->getUserHandle());
         $this->credentialStore->registerCredential($registration);
-        // TODO set signature counter
-        return $attestationResult;
+        $this->credentialStore->updateSignatureCounter($registrationResult->getCredentialId(), $registrationResult->getSignatureCounter());
+        return $registrationResult;
     }
 
     public function startAuthentication(AuthenticationOptions $options) : AuthenticationRequest
@@ -244,24 +263,5 @@ class WebAuthnServer
         }
 
         throw new WebAuthnException('Parameter credential should be of type string or PublicKeyCredentialInterface.');
-    }
-
-    public function getFormatRegistry() : AttestationFormatRegistryInterface
-    {
-        if ($this->formatRegistry === null) {
-            $this->formatRegistry = $this->createDefaultFormatRegistry();
-        }
-
-        return $this->formatRegistry;
-    }
-
-    private function createDefaultFormatRegistry() : AttestationFormatRegistry
-    {
-        $registry = new AttestationFormatRegistry();
-        $formats = $this->config->getAttestationFormats();
-        foreach ($formats as $format) {
-            $registry->addFormat($format);
-        }
-        return $registry;
     }
 }

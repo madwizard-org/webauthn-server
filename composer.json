@@ -17,10 +17,13 @@
         "sop/x509": "^0.6.1",
         "sop/jwx": "^0.10.1",
         "ext-openssl": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^6.3",
+        "psr/cache": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.1"
+        "phpunit/phpunit": "^7.1",
+        "symfony/cache": "^4.2"
     },
     "archive": {
         "exclude": [

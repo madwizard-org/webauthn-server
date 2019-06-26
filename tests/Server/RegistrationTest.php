@@ -69,11 +69,11 @@ class RegistrationTest extends TestCase
             ->method('registerCredential')
             ->with(
                 $this->callback(
-                function (CredentialRegistration $reg) {
-                    return $reg->getCredentialId() === self::CREDENTIAL_ID &&
+                    function (CredentialRegistration $reg) {
+                        return $reg->getCredentialId() === self::CREDENTIAL_ID &&
                             $reg->getUserHandle()->equals(new ByteBuffer('00112233')) &&
                             $reg->getPublicKey() instanceof Ec2Key;
-                }
+                    }
             )
             );
 

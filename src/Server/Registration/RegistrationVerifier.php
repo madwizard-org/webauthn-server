@@ -89,7 +89,7 @@ class RegistrationVerifier extends AbstractVerifier
         //     of the serialized client data computed in step 7.
         $verificationResult = $verifier->verify($statement, $authData, $clientDataHash);
 
-        return new RegistrationResult($credential->getRawId()->getBase64Url(), $authData->getKey(), $verificationResult);
+        return new RegistrationResult($credential->getRawId()->getBase64Url(), $authData->getKey(), $verificationResult, $authData->getSignCount());
     }
 
     private function checkClientData(array $clientData, RegistrationContext $context)

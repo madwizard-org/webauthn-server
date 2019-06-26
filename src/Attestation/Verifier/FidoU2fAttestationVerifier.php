@@ -17,10 +17,17 @@ use function openssl_verify;
 
 class FidoU2fAttestationVerifier extends AbstractAttestationVerifier
 {
+    private const ZERO_AAGUID = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
     {
         if (!($attStmt instanceof FidoU2fAttestationStatement)) {
             throw new VerificationException('Expecting FidoU2fAttestationStatement');
+        }
+
+        // AAGUID for U2F should be zeroes (not in WebAuthn spec but in FIDO2 CTAP specs and FIDO conformance tools)
+        if ($authenticatorData->getAaguid()->getBinaryString() !== self::ZERO_AAGUID) {
+            throw new VerificationException('AAGUID should be zeroed for U2F attestations.');
         }
 
         // 1. Verify that attStmt is valid CBOR conforming to the syntax defined above and perform CBOR decoding

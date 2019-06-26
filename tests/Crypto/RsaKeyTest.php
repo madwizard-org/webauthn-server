@@ -107,13 +107,13 @@ class RsaKeyTest extends TestCase
         // Example key from webauthn spec
         $cbor = HexData::buf(
             sprintf(
-            'A4        
+                'A4        
              01  03          #   1:   3,    ; kty: RSA   key type
              03  39 0100     #   3:  -257,  ; alg: RS256 signature algorithm
              20  59 0100 %s  #  -1:   m,    ; modulus
              21  43 %s       #  -2:   e,    ; exponent',
-            self::TEST_KEY_MODULUS,
-            self::TEST_KEY_EXPONENT
+                self::TEST_KEY_MODULUS,
+                self::TEST_KEY_EXPONENT
         )
         );
 

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace MadWizard\WebAuthn\Tests\Attestation;
+namespace MadWizard\WebAuthn\Tests\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;

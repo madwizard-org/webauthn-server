@@ -4,12 +4,11 @@
 namespace MadWizard\WebAuthn\Credential;
 
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
-use MadWizard\WebAuthn\Format\ByteBuffer;
 
 class CredentialRegistration
 {
     /**
-     * @var string
+     * @var CredentialId
      */
     private $credentialId;
 
@@ -19,11 +18,11 @@ class CredentialRegistration
     private $publicKey;
 
     /**
-     * @var ByteBuffer
+     * @var UserHandle
      */
     private $userHandle;
 
-    public function __construct(string $credentialId, CoseKeyInterface $publicKey, ByteBuffer $userHandle)
+    public function __construct(CredentialId $credentialId, CoseKeyInterface $publicKey, UserHandle $userHandle)
     {
         $this->credentialId = $credentialId;
         $this->publicKey = $publicKey;
@@ -31,9 +30,9 @@ class CredentialRegistration
     }
 
     /**
-     * @return string
+     * @return CredentialId
      */
-    public function getCredentialId(): string
+    public function getCredentialId(): CredentialId
     {
         return $this->credentialId;
     }
@@ -47,9 +46,9 @@ class CredentialRegistration
     }
 
     /**
-     * @return ByteBuffer
+     * @return UserHandle
      */
-    public function getUserHandle(): ByteBuffer
+    public function getUserHandle(): UserHandle
     {
         return $this->userHandle;
     }

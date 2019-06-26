@@ -74,7 +74,7 @@ class TpmAttestationVerifier extends AbstractAttestationVerifier
         // If x5c is present, this indicates that the attestation type is not ECDAA. In this case:
         $x5c = $attStmt->getCertificates();
         if ($x5c !== null) {
-            return  $this->verifyX5C($x5c, $attStmt->getSignature(), $attStmt->getAlgorithm(), $attStmt->getRawCertInfo(), $authenticatorData, $clientDataHash);
+            return  $this->verifyX5C($x5c, $attStmt->getSignature(), $attStmt->getAlgorithm(), $attStmt->getRawCertInfo(), $authenticatorData);
         }
 
         // Either x5c or ECDAA is set, but only x5c is supported by this library. So if we reach this the statement

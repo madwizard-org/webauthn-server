@@ -16,6 +16,6 @@ class ExtensionHelper // TODO rename/final
         if (strlen($identifier) > self::MAX_IDENTIFIER_LENGHT) {
             return false;
         }
-        return preg_match('~^[\x21\x23-\x5B\x5D-\x7E]+$~', $identifier);
+        return (bool) preg_match('~^[\x21\x23-\x5B\x5D-\x7E]+$~', $identifier);
     }
 }

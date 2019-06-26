@@ -3,16 +3,16 @@
 
 namespace MadWizard\WebAuthn\Server\Authentication;
 
-use MadWizard\WebAuthn\Credential\UserCredentialInterface;
+use MadWizard\WebAuthn\Credential\CredentialId;
+use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Extension\ExtensionInputInterface;
-use MadWizard\WebAuthn\Format\ByteBuffer;
 
 class AuthenticationOptions
 {
     /**
-     * @var UserCredentialInterface[]
+     * @var CredentialId[]
      */
     private $allowCredentials = [];
 
@@ -33,7 +33,7 @@ class AuthenticationOptions
 
     /**
      * User handle to load credentials from
-     * @var ByteBuffer|null
+     * @var UserHandle|null
      */
     private $allowUserHandle;
 
@@ -41,29 +41,29 @@ class AuthenticationOptions
     {
     }
 
-    public function allowUserHandle(ByteBuffer $userHandle)
+    public function allowUserHandle(UserHandle $userHandle)
     {
         $this->allowUserHandle = $userHandle;
     }
 
     /**
-     * @return ByteBuffer|null
+     * @return UserHandle|null
      */
-    public function getAllowUserHandle(): ?ByteBuffer
+    public function getAllowUserHandle(): ?UserHandle
     {
         return $this->allowUserHandle;
     }
 
     /**
-     * @param UserCredentialInterface $credential
+     * @param CredentialId $credential
      */
-    public function addAllowCredential(UserCredentialInterface $credential)
+    public function addAllowCredential(CredentialId $credential)
     {
         $this->allowCredentials[] = $credential;
     }
 
     /**
-     * @return UserCredentialInterface[]
+     * @return CredentialId[]
      */
     public function getAllowCredentials(): array
     {

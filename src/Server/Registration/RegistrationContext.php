@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
+use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
@@ -15,11 +16,11 @@ use MadWizard\WebAuthn\Web\Origin;
 class RegistrationContext extends AbstractContext implements RequestContext
 {
     /**
-     * @var ByteBuffer
+     * @var UserHandle
      */
     private $userHandle;
 
-    public function __construct(ByteBuffer $challenge, Origin $origin, string $rpId, ByteBuffer $userHandle)
+    public function __construct(ByteBuffer $challenge, Origin $origin, string $rpId, UserHandle $userHandle)
     {
         parent::__construct($challenge, $origin, $rpId);
         $this->userHandle = $userHandle;
@@ -37,7 +38,7 @@ class RegistrationContext extends AbstractContext implements RequestContext
             $rpId = $configuration->getEffectiveRelyingPartyId();
         }
 
-        $context = new self($options->getChallenge(), $origin, $rpId, $options->getUserEntity()->getId());
+        $context = new self($options->getChallenge(), $origin, $rpId, UserHandle::fromBuffer($options->getUserEntity()->getId()));
 
         $context->setUserPresenceRequired($configuration->isUserPresenceRequired());
         $authSel = $options->getAuthenticatorSelection();
@@ -48,7 +49,7 @@ class RegistrationContext extends AbstractContext implements RequestContext
         return $context;
     }
 
-    public function getUserHandle() : ByteBuffer
+    public function getUserHandle() : UserHandle
     {
         return $this->userHandle;
     }

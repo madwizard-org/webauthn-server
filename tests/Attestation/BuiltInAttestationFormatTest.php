@@ -1,7 +1,8 @@
 <?php
 
-namespace MadWizard\WebAuthn\Attestation;
+namespace MadWizard\WebAuthn\Tests\Attestation;
 
+use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;

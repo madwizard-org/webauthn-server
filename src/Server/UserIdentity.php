@@ -3,14 +3,12 @@
 
 namespace MadWizard\WebAuthn\Server;
 
-use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
-use MadWizard\WebAuthn\Exception\WebAuthnException;
-use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Credential\UserHandle;
 
 class UserIdentity
 {
     /**
-     * @var ByteBuffer
+     * @var UserHandle
      */
     private $userHandle;
 
@@ -24,22 +22,17 @@ class UserIdentity
      */
     private $displayName;
 
-    public function __construct(ByteBuffer $userHandle, string $username, string $displayName)
+    public function __construct(UserHandle $userHandle, string $username, string $displayName)
     {
-        $length = $userHandle->getLength();
-        if ($length === 0 || $length > PublicKeyCredentialUserEntity::MAX_USER_HANDLE_BYTES) {
-            throw new WebAuthnException('Invalid user handle length.');
-        }
-
         $this->userHandle = $userHandle;
         $this->username = $username;
         $this->displayName = $displayName;
     }
 
     /**
-     * @return ByteBuffer
+     * @return UserHandle
      */
-    public function getUserHandle(): ByteBuffer
+    public function getUserHandle(): UserHandle
     {
         return $this->userHandle;
     }

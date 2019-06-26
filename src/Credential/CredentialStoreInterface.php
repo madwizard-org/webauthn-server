@@ -3,28 +3,48 @@
 
 namespace MadWizard\WebAuthn\Credential;
 
+use http\Client\Curl\User;
 use MadWizard\WebAuthn\Exception\CredentialIdExistsException;
-use MadWizard\WebAuthn\Format\ByteBuffer;
 
+/**
+ * Interface to implement by users of this library to persist user credentials
+ */
 interface CredentialStoreInterface
 {
-    public function findCredential(string $credentialId) : ?UserCredentialInterface;
+    /**
+     * Finds a credential by its (binary) credential id
+     * Return null if no credential exists with this id.
+     * @param CredentialId $credentialId
+     * @return UserCredentialInterface|null
+     */
+    public function findCredential(CredentialId $credentialId) : ?UserCredentialInterface;
 
     /**
      * @param CredentialRegistration $credential
-     * @return mixed
+     * @return void
      * @throws CredentialIdExistsException
      */
-    public function registerCredential(CredentialRegistration $credential);
+    public function registerCredential(CredentialRegistration $credential): void;
 
-    public function getSignatureCounter(string $credentialId) : ?int;
+    /**
+     * Retrieve the current signature counter for a given credential id. Return null if the signature counter has not
+     * been set yet or when signature counters are not supported.
+     * @param CredentialId $credentialId
+     * @return int|null
+     */
+    public function getSignatureCounter(CredentialId $credentialId) : ?int;
 
-    public function updateSignatureCounter(string $credentialId, int $counter) : void;
+    /**
+     * Update the signature counter for a given credential id.
+     * @param CredentialId $credentialId
+     * @param int $counter
+     */
+    public function updateSignatureCounter(CredentialId $credentialId, int $counter) : void;
 
     /**
      * Returns all registered credentials for a given user handle
-     * @param ByteBuffer $userHandle
-     * @return UserCredentialInterface[]
+     * @param UserHandle $userHandle
+     * @return CredentialId[]
      */
-    public function getUserCredentials(ByteBuffer $userHandle): array;
+    public function getUserCredentialIds(UserHandle $userHandle): array;
 }

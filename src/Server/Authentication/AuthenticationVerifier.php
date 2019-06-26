@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
@@ -45,14 +46,14 @@ class AuthenticationVerifier extends AbstractVerifier
         // Note: step 2 done after 3 because credential is available then.
         // 3. Using credential’s id attribute (or the corresponding rawId, if base64url encoding is inappropriate for
         // your use case), look up the corresponding credential public key.
-        $accountCredential = $this->credentialCollection->findCredential($credential->getId());
+        $accountCredential = $this->credentialCollection->findCredential(CredentialId::fromBinary($credential->getRawId()->getBinaryString()));
         if ($accountCredential === null) {
             throw new VerificationException('Account was not found');
         }
 
         // 2. If credential.response.userHandle is present, verify that the user identified by this value is the owner
         //    of the public key credential identified by credential.id.
-        if ($response->getUserHandle() !== null && !$response->getUserHandle()->equals($accountCredential->getUserHandle())) {
+        if ($response->getUserHandle() !== null && !$response->getUserHandle()->equals($accountCredential->getUserHandle()->toBuffer())) {
             throw new VerificationException("Credential does not belong to the user identified by the client's userHandle.");
         }
 

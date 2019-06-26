@@ -4,8 +4,10 @@
 namespace MadWizard\WebAuthn\Tests\Server;
 
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
+use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
+use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Crypto\Ec2Key;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\VerificationException;
@@ -39,12 +41,12 @@ class AuthenticationTest extends TestCase
     {
         $options = new AuthenticationOptions();
         $userCredential = $this->createCredential();
-        $options->addAllowCredential($userCredential);
+        $options->addAllowCredential($userCredential->getCredentialId());
         $request = $this->server->startAuthentication($options);
         $clientOptions = $request->getClientOptions();
         $allowCredentials = $clientOptions->getAllowCredentials();
         $this->assertCount(1, $allowCredentials);
-        $this->assertSame($userCredential->getCredentialId(), Base64UrlEncoding::encode($allowCredentials[0]->getId()->getBinaryString()));
+        $this->assertSame($userCredential->getCredentialId()->toString(), $allowCredentials[0]->getId()->getBase64Url());
         $this->assertNull($allowCredentials[0]->getTransports());
         $this->assertNull($clientOptions->getRpId());
 
@@ -55,7 +57,7 @@ class AuthenticationTest extends TestCase
                     [
                         [
                             'type' => 'public-key',
-                            'id' => $userCredential->getCredentialId(),
+                            'id' => $userCredential->getCredentialId()->toString(),
                         ],
                     ],
             ],
@@ -80,7 +82,7 @@ class AuthenticationTest extends TestCase
         $helper = new AssertionDataHelper();
 
         $userCred = $this->runAuth($helper);
-        $this->assertSame(AssertionDataHelper::DEFAULT_CREDENTIAL_ID, $userCred->getCredentialId());
+        $this->assertSame(AssertionDataHelper::DEFAULT_CREDENTIAL_ID, $userCred->getCredentialId()->toString());
         /** @var Ec2Key $pubKey */
         $pubKey = $userCred->getPublicKey();
 
@@ -111,7 +113,7 @@ class AuthenticationTest extends TestCase
 
         $helper->setClientOptions(['userHandle' => $userHandle]);
         $userCred = $this->runAuth($helper);
-        $this->assertSame('123456', $userCred->getUserHandle()->getHex());
+        $this->assertSame('123456', $userCred->getUserHandle()->toHex());
     }
 
     public function testUserHandleNotOwner()
@@ -290,7 +292,7 @@ class AuthenticationTest extends TestCase
 
         $cred->expects($this->any())
             ->method('getCredentialId')
-            ->willReturn(AssertionDataHelper::DEFAULT_CREDENTIAL_ID);
+            ->willReturn(CredentialId::fromString(AssertionDataHelper::DEFAULT_CREDENTIAL_ID));
 
         $cred->expects($this->any())
             ->method('getPublicKey')
@@ -305,7 +307,7 @@ class AuthenticationTest extends TestCase
 
         $cred->expects($this->any())
             ->method('getUserHandle')
-            ->willReturn(ByteBuffer::fromHex('123456'));
+            ->willReturn(UserHandle::fromHex('123456'));
 
         return $cred;
     }

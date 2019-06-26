@@ -3,16 +3,12 @@
 
 namespace MadWizard\WebAuthn\Dom;
 
+use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
 class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
 {
-    /**
-     * SPEC: 4 Terminology - User Handle
-     */
-    public const MAX_USER_HANDLE_BYTES = 64;
-
     /**
      * @var ByteBuffer Binary user handle of the account (max MAX_USER_HANDLE_BYTES)
      */
@@ -47,10 +43,10 @@ class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
             throw new WebAuthnException('User handle cannot be empty.');
         }
 
-        if ($id->getLength() > self::MAX_USER_HANDLE_BYTES) {
+        if ($id->getLength() > UserHandle::MAX_USER_HANDLE_BYTES) {
             throw new WebAuthnException(sprintf(
                 'User handle cannot be larger than %d bytes.',
-                self::MAX_USER_HANDLE_BYTES
+                UserHandle::MAX_USER_HANDLE_BYTES
             ));
         }
         $this->id = $id;

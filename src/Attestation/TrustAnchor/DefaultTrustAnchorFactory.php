@@ -3,6 +3,8 @@
 
 namespace MadWizard\WebAuthn\Attestation\TrustAnchor;
 
+use RuntimeException;
+
 class DefaultTrustAnchorFactory implements TrustAnchorFactoryInterface
 {
     private $map;
@@ -10,13 +12,13 @@ class DefaultTrustAnchorFactory implements TrustAnchorFactoryInterface
     public function __construct()
     {
         $this->map = [
-            'none' => function (array $options) {
+            'none' => function () {
                 return new NoneTrustAnchor();
             },
-            'self' => function (array $options) {
+            'self' => function () {
                 return new SelfTrustAnchor();
             },
-            'u2f-yubico' => function (array $options) {
+            'u2f-yubico' => function () {
                 return new U2FMetadataAnchor(__DIR__ . '/../../../data/yubico/yubico-metadata.json');
             },
             'fido-mds1' => function (array $options) {
@@ -31,5 +33,6 @@ class DefaultTrustAnchorFactory implements TrustAnchorFactoryInterface
     public function createTrustAnchor(string $name): TrustAnchorInterface
     {
         // TODO: Implement createTrustAnchor() method.
+        throw new RuntimeException('Not implemented yet');
     }
 }

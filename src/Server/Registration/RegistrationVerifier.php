@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Server\Registration;
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
+use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
@@ -89,7 +90,7 @@ class RegistrationVerifier extends AbstractVerifier
         //     of the serialized client data computed in step 7.
         $verificationResult = $verifier->verify($statement, $authData, $clientDataHash);
 
-        return new RegistrationResult($credential->getRawId()->getBase64Url(), $authData->getKey(), $verificationResult, $authData->getSignCount());
+        return new RegistrationResult(CredentialId::fromBuffer($credential->getRawId()), $authData->getKey(), $verificationResult, $authData->getSignCount());
     }
 
     private function checkClientData(array $clientData, RegistrationContext $context)

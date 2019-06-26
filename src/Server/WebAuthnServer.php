@@ -17,7 +17,6 @@ use MadWizard\WebAuthn\Exception\CredentialIdExistsException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
-use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Json\JsonConverter;
 use MadWizard\WebAuthn\Policy\WebAuthnConfigPolicy;
@@ -86,10 +85,10 @@ class WebAuthnServer // TODO interface?
 
 
         if ($options->getExcludeExistingCredentials()) {   // TODO default?
-            $credentials = $this->credentialStore->getUserCredentials($options->getUser()->getUserHandle());
-            foreach ($credentials as $credential) {
+            $credentialIds = $this->credentialStore->getUserCredentialIds($options->getUser()->getUserHandle());
+            foreach ($credentialIds as $credential) {
                 $creationOptions->addExcludeCredential(
-                    new PublicKeyCredentialDescriptor(ByteBuffer::fromBase64Url($credential->getCredentialId())) // TODO
+                    new PublicKeyCredentialDescriptor($credential->toBuffer())
                 );
             }
         }
@@ -213,19 +212,18 @@ class WebAuthnServer // TODO interface?
     {
         $userHandle = $options->getAllowUserHandle();
         if ($userHandle !== null) {
-            $credentials = $this->credentialStore->getUserCredentials($userHandle);
-            foreach ($credentials as $credential) {
-                $credentialId = new ByteBuffer(Base64UrlEncoding::decode($credential->getCredentialId()));
-                $descriptor = new PublicKeyCredentialDescriptor($credentialId);
+            $credentialIds = $this->credentialStore->getUserCredentialIds($userHandle);
+            foreach ($credentialIds as $credentialId) {
+                $descriptor = new PublicKeyCredentialDescriptor($credentialId->toBuffer());
                 $requestOptions->addAllowedCredential($descriptor);
             }
         }
 
-        $credentials = $options->getAllowCredentials();
+        $credentialIds = $options->getAllowCredentials();
 //        $transports = AuthenticatorTransport::allKnownTransports(); // TODO: from config
-        if (count($credentials) > 0) {
-            foreach ($credentials as $credential) {
-                $credentialId = new ByteBuffer(Base64UrlEncoding::decode($credential->getCredentialId()));
+        if (count($credentialIds) > 0) {
+            foreach ($credentialIds as $credential) {
+                $credentialId = $credential->toBuffer();
                 $descriptor = new PublicKeyCredentialDescriptor($credentialId);
 //                foreach ($transports as $transport) {
 //                    $descriptor->addTransport($transport);
@@ -239,7 +237,7 @@ class WebAuthnServer // TODO interface?
     {
         return new PublicKeyCredentialUserEntity(
             $user->getUsername(),
-            $user->getUserHandle(),
+            $user->getUserHandle()->toBuffer(),
             $user->getDisplayName()
         );
     }

@@ -10,7 +10,7 @@ use MadWizard\WebAuthn\Format\CborDecoder;
 use MadWizard\WebAuthn\Format\DataValidator;
 use function is_array;
 
-abstract class CoseKey
+abstract class CoseKey implements CoseKeyInterface
 {
     /**
      * EC2 key type
@@ -58,6 +58,11 @@ abstract class CoseKey
         $this->algorithm = $algorithm;
     }
 
+    public function toString() : string
+    {
+        return $this->getCbor()->getBase64Url();
+    }
+
     public static function parseCbor(ByteBuffer $buffer, int $offset = 0, int &$endOffset = null) : CoseKey
     {
         $data = CborDecoder::decodeInPlace($buffer, $offset, $endOffset);
@@ -76,6 +81,11 @@ abstract class CoseKey
 
         $keyType = $data[self::COSE_KEY_PARAM_KTY];
         return self::createKey($keyType, $data);
+    }
+
+    public static function fromString(string $key) : CoseKey
+    {
+        return self::parseCbor(ByteBuffer::fromBase64Url($key));
     }
 
     private static function createKey(int $keyType, array $data) : CoseKey

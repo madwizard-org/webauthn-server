@@ -4,7 +4,7 @@
 namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
-use MadWizard\WebAuthn\Crypto\CoseKey;
+use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 
 class RegistrationResult
 {
@@ -14,7 +14,7 @@ class RegistrationResult
     private $credentialId;
 
     /**
-     * @var CoseKey
+     * @var CoseKeyInterface
      */
     private $publicKey;
 
@@ -28,7 +28,7 @@ class RegistrationResult
      */
     private $signCounter;
 
-    public function __construct(string $credentialId, CoseKey $publicKey, VerificationResult $attestation, int $signCounter)
+    public function __construct(string $credentialId, CoseKeyInterface $publicKey, VerificationResult $attestation, int $signCounter)           // TODO credentialID ByteBuffer? or specific class?
     {
         $this->credentialId = $credentialId;
         $this->publicKey = $publicKey;
@@ -45,9 +45,9 @@ class RegistrationResult
     }
 
     /**
-     * @return CoseKey
+     * @return CoseKeyInterface
      */
-    public function getPublicKey(): CoseKey
+    public function getPublicKey(): CoseKeyInterface
     {
         return $this->publicKey;
     }

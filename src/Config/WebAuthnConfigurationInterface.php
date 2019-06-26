@@ -34,4 +34,6 @@ interface WebAuthnConfigurationInterface
     public function getAllowedAlgorithms() : array;
 
     public function getRelyingPartyIconUrl() : ?string;
+
+    public function isUserPresenceRequired() : bool;
 }

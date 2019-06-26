@@ -54,6 +54,11 @@ class WebAuthnConfiguration implements WebAuthnConfigurationInterface
      */
     private $algorithms = self::SUPPORTED_ALGORITHMS;
 
+    /**
+     * @var bool
+     */
+    private $requireUserPresence = true;
+
     public function __construct()
     {
     }
@@ -194,5 +199,24 @@ class WebAuthnConfiguration implements WebAuthnConfigurationInterface
     public function getRelyingPartyIconUrl(): ?string
     {
         return $this->rpIconUrl;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUserPresenceRequired(): bool
+    {
+        return $this->requireUserPresence;
+    }
+
+    /**
+     * Set to false to allow silent authenticators (User Preset bit not set in authenticator data)
+     * NOTE: setting this to false violates the WebAuthn specs but this option is needed to pass FIDO2 conformance, which
+     * includes silent operations.
+     * @param bool $required
+     */
+    public function setUserPresenceRequired(bool $required): void
+    {
+        $this->requireUserPresence = $required;
     }
 }

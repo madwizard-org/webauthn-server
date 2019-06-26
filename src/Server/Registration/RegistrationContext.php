@@ -39,6 +39,7 @@ class RegistrationContext extends AbstractContext implements RequestContext
 
         $context = new self($options->getChallenge(), $origin, $rpId, $options->getUserEntity()->getId());
 
+        $context->setUserPresenceRequired($configuration->isUserPresenceRequired());
         $authSel = $options->getAuthenticatorSelection();
         if ($authSel !== null && $authSel->getUserVerification() === UserVerificationRequirement::REQUIRED) {
             $context->setUserVerificationRequired(true);

@@ -84,6 +84,16 @@ class WebAuthnServer // TODO interface?
             );
         }
 
+
+        if ($options->getExcludeExistingCredentials()) {   // TODO default?
+            $credentials = $this->credentialStore->getUserCredentials($options->getUser()->getUserHandle());
+            foreach ($credentials as $credential) {
+                $creationOptions->addExcludeCredential(
+                    new PublicKeyCredentialDescriptor(ByteBuffer::fromBase64Url($credential->getCredentialId())) // TODO
+                );
+            }
+        }
+
         $context = RegistrationContext::create($creationOptions, $this->config);
         return new RegistrationRequest($creationOptions, $context);
     }
@@ -166,6 +176,13 @@ class WebAuthnServer // TODO interface?
 
         $this->addAllowCredentials($options, $requestOptions);
 
+        $extensions = $options->getExtensionInputs();
+        if ($extensions !== null) {
+            $requestOptions->setExtensions(
+                AuthenticationExtensionsClientInputs::fromArray($extensions)
+            );
+        }
+
 
         $context = AuthenticationContext::create($requestOptions, $this->config);
         return new AuthenticationRequest($requestOptions, $context);
@@ -194,6 +211,16 @@ class WebAuthnServer // TODO interface?
      */
     private function addAllowCredentials(AuthenticationOptions $options, PublicKeyCredentialRequestOptions $requestOptions): void
     {
+        $userHandle = $options->getAllowUserHandle();
+        if ($userHandle !== null) {
+            $credentials = $this->credentialStore->getUserCredentials($userHandle);
+            foreach ($credentials as $credential) {
+                $credentialId = new ByteBuffer(Base64UrlEncoding::decode($credential->getCredentialId()));
+                $descriptor = new PublicKeyCredentialDescriptor($credentialId);
+                $requestOptions->addAllowedCredential($descriptor);
+            }
+        }
+
         $credentials = $options->getAllowCredentials();
 //        $transports = AuthenticatorTransport::allKnownTransports(); // TODO: from config
         if (count($credentials) > 0) {

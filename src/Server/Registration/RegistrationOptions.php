@@ -31,6 +31,11 @@ class RegistrationOptions
      */
     private $extensions;
 
+    /**
+     * @var bool|null
+     */
+    private $excludeExistingCredentials;
+
     public function __construct(UserIdentity $user)
     {
         $this->user = $user;
@@ -78,7 +83,26 @@ class RegistrationOptions
 
     public function addExtensionInput(ExtensionInputInterface $input)
     {
+        if ($this->extensions === null) {
+            $this->extensions = [];
+        }
         $this->extensions[] = $input;
+    }
+
+    /**
+     * @return null|bool
+     */
+    public function getExcludeExistingCredentials(): ?bool
+    {
+        return $this->excludeExistingCredentials;
+    }
+
+    /**
+     * @param null|bool $excludeExistingCredentials     // TODO not null?
+     */
+    public function setExcludeExistingCredentials(?bool $excludeExistingCredentials): void
+    {
+        $this->excludeExistingCredentials = $excludeExistingCredentials;
     }
 
     /**

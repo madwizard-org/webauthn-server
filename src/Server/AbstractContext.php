@@ -24,6 +24,11 @@ abstract class AbstractContext
     private $userVerificationRequired = false;
 
     /**
+     * @var bool
+     */
+    private $userPresenceRequired = true;
+
+    /**
      * @var Origin
      */
     private $origin;
@@ -65,6 +70,19 @@ abstract class AbstractContext
     }
 
     /**
+     * @return bool
+     */
+    public function isUserPresenceRequired(): bool
+    {
+        return $this->userPresenceRequired;
+    }
+
+    public function setUserPresenceRequired(bool $required): void
+    {
+        $this->userPresenceRequired = $required;
+    }
+
+    /**
      * @return Origin
      */
     public function getOrigin(): Origin
@@ -72,9 +90,9 @@ abstract class AbstractContext
         return $this->origin;
     }
 
-    public function serialize()
+    public function serialize()  // TODO remove?
     {
-        return \serialize([$this->challenge, $this->rpId, $this->userVerificationRequired, $this->origin]);
+        return \serialize([$this->challenge, $this->rpId, $this->userVerificationRequired, $this->origin, $this->userPresenceRequired]);
     }
 
     public function unserialize($serialized)
@@ -83,7 +101,8 @@ abstract class AbstractContext
             $this->challenge,
             $this->rpId,
             $this->userVerificationRequired,
-            $this->origin
+            $this->origin,
+            $this->userPresenceRequired
         ] = \unserialize((string) $serialized);
     }
 }

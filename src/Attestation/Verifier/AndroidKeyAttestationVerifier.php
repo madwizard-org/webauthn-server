@@ -12,7 +12,7 @@ use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Statement\AndroidKeyAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
-use MadWizard\WebAuthn\Crypto\CoseKey;
+use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Pki\CertificateDetailsInterface;
@@ -111,7 +111,7 @@ class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
         }
     }
 
-    private function certificateKeyMatches(CertificateDetailsInterface $cert, CoseKey $key): bool
+    private function certificateKeyMatches(CertificateDetailsInterface $cert, CoseKeyInterface $key): bool
     {
         // Compare DER encodings of both keys to ensure they are equal.
         // By definition there is always only one exact DER encoding for a public key.

@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
+use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Server\AbstractContext;
@@ -41,6 +42,12 @@ class AuthenticationContext extends AbstractContext implements RequestContext
         }
 
         $context = new self($options->getChallenge(), $origin, $rpId);
+
+        if ($options->getUserVerification() === UserVerificationRequirement::REQUIRED) {
+            $context->setUserVerificationRequired(true);
+        }
+
+        $context->setUserPresenceRequired($configuration->isUserPresenceRequired());
 
         $allowCredentials = $options->getAllowCredentials();
         if ($allowCredentials !== null) {

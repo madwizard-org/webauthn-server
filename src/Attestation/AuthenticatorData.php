@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Attestation;
 
 use MadWizard\WebAuthn\Crypto\CoseKey;
+use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 use MadWizard\WebAuthn\Exception\ByteBufferException;
 use MadWizard\WebAuthn\Exception\CborException;
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -50,7 +51,7 @@ class AuthenticatorData
     private $signCount;
 
     /**
-     * @var CoseKey|null
+     * @var CoseKeyInterface|null
      */
     private $key;
 
@@ -157,11 +158,11 @@ class AuthenticatorData
     }
 
     /**
-     * @return CoseKey
+     * @return CoseKeyInterface
      * @throws WebAuthnException when authenticator data does not contain a key.
      * @see hasKey
      */
-    public function getKey(): CoseKey
+    public function getKey(): CoseKeyInterface
     {
         if ($this->key === null) {
             throw new WebAuthnException('AuthenticatorData does not contain a key.');

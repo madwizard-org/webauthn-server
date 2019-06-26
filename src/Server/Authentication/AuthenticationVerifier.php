@@ -6,7 +6,7 @@ namespace MadWizard\WebAuthn\Server\Authentication;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
-use MadWizard\WebAuthn\Crypto\CoseKey;
+use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 use MadWizard\WebAuthn\Dom\AuthenticatorAssertionResponseInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Exception\VerificationException;
@@ -121,7 +121,7 @@ class AuthenticationVerifier extends AbstractVerifier
         return false;
     }
 
-    private function verifySignature(AuthenticatorAssertionResponseInterface $response, CoseKey $publicKey) : bool
+    private function verifySignature(AuthenticatorAssertionResponseInterface $response, CoseKeyInterface $publicKey) : bool
     {
         // 15. Let hash be the result of computing a hash over the cData using SHA-256.
         $clientData = $response->getClientDataJson();

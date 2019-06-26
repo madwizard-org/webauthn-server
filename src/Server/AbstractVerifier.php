@@ -38,7 +38,11 @@ class AbstractVerifier
         // Reg 10/11, Auth 12/13
 
         // Reg 7.1 #10 Verify that the User Present bit of the flags in authData is set.
-        if (!$authData->isUserPresent()) {
+        // Note: isUserPresenceRequired is true by default to conform to the WebAuthn spec.
+        // It can be set to false manually when required to pass full FIDO2 compliance, which conflicts the
+        // WebAuthn spec.
+        // @see https://github.com/fido-alliance/conformance-tools-issues/issues/434
+        if (!$authData->isUserPresent() && $context->isUserPresenceRequired()) {
             return false;
         }
 

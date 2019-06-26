@@ -6,6 +6,8 @@ namespace MadWizard\WebAuthn\Server\Authentication;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
+use MadWizard\WebAuthn\Extension\ExtensionInputInterface;
+use MadWizard\WebAuthn\Format\ByteBuffer;
 
 class AuthenticationOptions
 {
@@ -24,8 +26,32 @@ class AuthenticationOptions
      */
     private $timeout;
 
+    /**
+     * @var ExtensionInputInterface[]|null
+     */
+    private $extensions;
+
+    /**
+     * User handle to load credentials from
+     * @var ByteBuffer|null
+     */
+    private $allowUserHandle;
+
     public function __construct()
     {
+    }
+
+    public function allowUserHandle(ByteBuffer $userHandle)
+    {
+        $this->allowUserHandle = $userHandle;
+    }
+
+    /**
+     * @return ByteBuffer|null
+     */
+    public function getAllowUserHandle(): ?ByteBuffer
+    {
+        return $this->allowUserHandle;
     }
 
     /**
@@ -75,5 +101,21 @@ class AuthenticationOptions
     public function setTimeout(?int $timeout): void
     {
         $this->timeout = $timeout;
+    }
+
+    public function addExtensionInput(ExtensionInputInterface $input) // TODO move to trait? shared with Registration
+    {
+        if ($this->extensions === null) {
+            $this->extensions = [];
+        }
+        $this->extensions[] = $input;
+    }
+
+    /**
+     * @return ExtensionInputInterface[]|null
+     */
+    public function getExtensionInputs():?array
+    {
+        return $this->extensions;
     }
 }

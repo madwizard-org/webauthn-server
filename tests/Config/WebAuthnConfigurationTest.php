@@ -125,20 +125,20 @@ class WebAuthnConfigurationTest extends TestCase
         $this->assertContains(CoseAlgorithm::RS256, $default);
     }
 
-    public function testDefaultFormats()
-    {
-        $config = new WebAuthnConfiguration();
-        $formats = $config->getAttestationFormats();
-        $formatIds = array_map(
-            function (AttestationFormatInterface $f) {
-                return $f->getFormatId();
-            },
-            $formats
-        );
-
-        $this->assertContains('none', $formatIds);
-        $this->assertContains('fido-u2f', $formatIds);
-    }
+//    public function testDefaultFormats()
+//    {
+//        $config = new WebAuthnConfiguration();
+//        $formats = $config->getAttestationFormats();
+//        $formatIds = array_map(
+//            function (AttestationFormatInterface $f) {
+//                return $f->getFormatId();
+//            },
+//            $formats
+//        );
+//
+//        $this->assertContains('none', $formatIds);
+//        $this->assertContains('fido-u2f', $formatIds);
+//    }
 
     public function testSetAlgorithms()
     {

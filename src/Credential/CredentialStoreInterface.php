@@ -3,7 +3,6 @@
 
 namespace MadWizard\WebAuthn\Credential;
 
-use http\Client\Curl\User;
 use MadWizard\WebAuthn\Exception\CredentialIdExistsException;
 
 /**

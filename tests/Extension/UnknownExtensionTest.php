@@ -21,7 +21,7 @@ class UnknownExtensionTest extends TestCase
     {
         $output = new UnknownExtensionOutput('unknown', ['a' => 'b']);
         $this->assertSame(['a' => 'b'], $output->getOutput());
-        $output->setInput('boo');
+        $output->setOutput('boo');
         $this->assertSame('boo', $output->getOutput());
     }
 }

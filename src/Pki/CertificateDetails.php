@@ -195,4 +195,13 @@ class CertificateDetails implements CertificateDetailsInterface
             throw new ParseException('Failed to retrieve subject unit', 0, $e);
         }
     }
+
+    public function getPublicKeyIdentifier() : string
+    {
+        try {
+            return \bin2hex($this->cert->subjectPublicKeyInfo()->keyIdentifier());
+        } catch (Exception $e) {
+            throw new ParseException('Failed to get public key identifier', 0, $e);
+        }
+    }
 }

@@ -27,4 +27,10 @@ interface CertificateDetailsInterface
     public function getPublicKeyDer(): string;
 
     public function getExtensionData(string $oid) : ?ByteBuffer;
+
+    /**
+     * Returns public key identifier as hexadecimal string, using method 1 in RFC 5280.
+     * @return string
+     */
+    public function getPublicKeyIdentifier() : string;
 }

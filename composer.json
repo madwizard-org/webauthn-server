@@ -9,7 +9,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "MadWizard\\WebAuthn\\Tests\\": "tests/"
+            "MadWizard\\WebAuthn\\Tests\\": "tests/",
+            "MadWizard\\WebAuthn\\Conformance\\": "conformance/src/"
         }
     },
     "require": {

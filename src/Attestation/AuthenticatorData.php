@@ -3,6 +3,7 @@
 
 namespace MadWizard\WebAuthn\Attestation;
 
+use MadWizard\WebAuthn\Attestation\Identifier\Aaguid;
 use MadWizard\WebAuthn\Crypto\CoseKey;
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 use MadWizard\WebAuthn\Exception\ByteBufferException;
@@ -175,9 +176,17 @@ class AuthenticatorData
         return $this->key !== null;
     }
 
-    public function getAaguid() : ?ByteBuffer
+    public function hasAaguid(): bool
     {
-        return $this->aaguid;
+        return $this->aaguid !== null;
+    }
+
+    public function getAaguid() : Aaguid
+    {
+        if ($this->aaguid === null) {
+            throw new WebAuthnException('AuthenticatorData does not contain an AAGUID.');
+        }
+        return new Aaguid($this->aaguid);
     }
 
     /**

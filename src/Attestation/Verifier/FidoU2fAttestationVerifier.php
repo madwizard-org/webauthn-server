@@ -17,8 +17,6 @@ use function openssl_verify;
 
 class FidoU2fAttestationVerifier extends AbstractAttestationVerifier
 {
-    private const ZERO_AAGUID = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
     {
         if (!($attStmt instanceof FidoU2fAttestationStatement)) {
@@ -26,7 +24,7 @@ class FidoU2fAttestationVerifier extends AbstractAttestationVerifier
         }
 
         // AAGUID for U2F should be zeroes (not in WebAuthn spec but in FIDO2 CTAP specs and FIDO conformance tools)
-        if ($authenticatorData->getAaguid()->getBinaryString() !== self::ZERO_AAGUID) {
+        if (!$authenticatorData->getAaguid()->isZeroAaguid()) {
             throw new VerificationException('AAGUID should be zeroed for U2F attestations.');
         }
 

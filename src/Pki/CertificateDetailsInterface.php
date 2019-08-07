@@ -2,13 +2,14 @@
 
 namespace MadWizard\WebAuthn\Pki;
 
+use MadWizard\WebAuthn\Attestation\Identifier\Aaguid;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
 interface CertificateDetailsInterface
 {
     public function verifySignature(string $data, string $signature, int $coseAlgorithm): bool;
 
-    public function getFidoAaguidExtensionValue(): ?ByteBuffer;
+    public function getFidoAaguidExtensionValue(): ?Aaguid;
 
     public function getCertificateVersion(): ?int;
 

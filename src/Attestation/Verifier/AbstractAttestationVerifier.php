@@ -3,14 +3,14 @@
 
 namespace MadWizard\WebAuthn\Attestation\Verifier;
 
+use MadWizard\WebAuthn\Attestation\Identifier\Aaguid;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
-use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Pki\CertificateDetailsInterface;
 
 abstract class AbstractAttestationVerifier implements AttestationVerifierInterface
 {
-    protected function checkAaguidExtension(CertificateDetailsInterface $cert, ?ByteBuffer $validAaguid): void
+    protected function checkAaguidExtension(CertificateDetailsInterface $cert, Aaguid $validAaguid): void
     {
         try {
             $aaguid = $cert->getFidoAaguidExtensionValue();
@@ -22,7 +22,7 @@ abstract class AbstractAttestationVerifier implements AttestationVerifierInterfa
             return;
         }
 
-        if ($validAaguid === null || !$validAaguid->equals($aaguid)) {
+        if (!$validAaguid->equals($aaguid)) {
             throw new VerificationException('AAGUID in certificate extension does not match the AAGUID in the authenticator data.');
         }
     }

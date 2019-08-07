@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Pki;
 use ASN1\Type\UnspecifiedType;
 use Exception;
 use LogicException;
+use MadWizard\WebAuthn\Attestation\Identifier\Aaguid;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
@@ -89,7 +90,7 @@ class CertificateDetails implements CertificateDetailsInterface
         throw new WebAuthnException(sprintf('Signature format %d not supported.', $coseAlgorithm));
     }
 
-    public function getFidoAaguidExtensionValue() : ?ByteBuffer // TODO move outside class
+    public function getFidoAaguidExtensionValue() : ?Aaguid // TODO move outside class
     {
         try {
             $extension = $this->cert->extensions()->get(self::OID_FIDO_GEN_CE_AAGUID);
@@ -105,7 +106,7 @@ class CertificateDetails implements CertificateDetailsInterface
         try {
             $derEncoded = $extension->toASN1()->at(1)->asOctetString()->string();
             $rawAaguid = UnspecifiedType::fromDER($derEncoded)->asOctetString()->string();
-            return new ByteBuffer($rawAaguid);
+            return new Aaguid(new ByteBuffer($rawAaguid));
         } catch (Exception $e) {
             throw new ParseException('Failed to parse AAGUID extension', 0, $e);
         }

@@ -68,8 +68,15 @@ class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
         }
         $ext = $this->extensionParser->parseAttestationExtension($data);
 
-        // Verify that the attestationChallenge field in the attestation certificate extension data is identical to clientDataHash.
+        $this->checkAndroidKeyExtension($ext, $clientDataHash);
 
+        //  If successful, return implementation-specific values representing attestation type Basic and attestation trust path x5c.
+        return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath($x5c));
+    }
+
+    private function checkAndroidKeyExtension(AndroidAttestationExtension $ext, string $clientDataHash)
+    {
+        // Verify that the attestationChallenge field in the attestation certificate extension data is identical to clientDataHash.
 
         if (!\hash_equals($ext->getChallenge()->getBinaryString(), $clientDataHash)) {
             throw new VerificationException('AttestationChallenge in Android attestation extension does not match clientDataHash.');
@@ -96,9 +103,6 @@ class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
         if (!($seValid || $teeValid)) {
             throw new VerificationException('Invalid Android attestation extension: no acceptable authorization lists.');
         }
-
-        //  If successful, return implementation-specific values representing attestation type Basic and attestation trust path x5c.
-        return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath($x5c));
     }
 
     private function verifySignature(CertificateDetailsInterface $cert, AndroidKeyAttestationStatement $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash): bool

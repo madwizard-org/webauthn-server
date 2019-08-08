@@ -14,7 +14,7 @@ Installation
 ------------
 Installation via composer:
 ```bash
-composer require madwizard/webauthn:^0.0.2
+composer require madwizard/webauthn:^0.2.0
 ```
 
 Library reference

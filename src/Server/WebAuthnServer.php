@@ -7,6 +7,7 @@ use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Dom\AuthenticationExtensionsClientInputs;
+use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialDescriptor;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
@@ -109,6 +110,11 @@ class WebAuthnServer // TODO interface?
         $verifier = new RegistrationVerifier($this->getPolicy()->getAttestationFormatRegistry());
         $registrationResult = $verifier->verify($credential, $context);
 
+        /**
+         * @var AuthenticatorAttestationResponseInterface $response
+         */
+        $response = $credential->getResponse();
+
         // 15. If validation is successful, obtain a list of acceptable trust anchors (attestation root certificates or
         //     ECDAA-Issuer public keys) for that attestation type and attestation statement format fmt, from a trusted
         //     source or from policy.
@@ -158,7 +164,7 @@ class WebAuthnServer // TODO interface?
 
         // TODO:check timeout
 
-        $registration = new CredentialRegistration($registrationResult->getCredentialId(), $registrationResult->getPublicKey(), $context->getUserHandle());
+        $registration = new CredentialRegistration($registrationResult->getCredentialId(), $registrationResult->getPublicKey(), $context->getUserHandle(), $response->getAttestationObject());
         $this->credentialStore->registerCredential($registration);
         $this->credentialStore->updateSignatureCounter($registrationResult->getCredentialId(), $registrationResult->getSignatureCounter());
         return $registrationResult;

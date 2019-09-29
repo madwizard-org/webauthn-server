@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class AuthenticatorSelectionCriteriaTest extends TestCase
 {
-
     public function testDefault()
     {
         $criteria = new AuthenticatorSelectionCriteria();
@@ -42,6 +41,4 @@ class AuthenticatorSelectionCriteriaTest extends TestCase
         $this->assertSame(AuthenticatorAttachment::CROSS_PLATFORM, $criteria->getAuthenticatorAttachment());
         $this->assertTrue($criteria->getRequireResidentKey());
     }
-
-
 }

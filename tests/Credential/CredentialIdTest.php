@@ -3,15 +3,12 @@
 
 namespace MadWizard\WebAuthn\Tests\Credential;
 
-
 use MadWizard\WebAuthn\Credential\CredentialId;
-use MadWizard\WebAuthn\Format\Base64UrlEncoding as b64;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use PHPUnit\Framework\TestCase;
 
 class CredentialIdTest extends TestCase
 {
-
     private function checkId(CredentialId $id)
     {
         $this->assertSame('3c4fbf08', bin2hex($id->toBinary()));

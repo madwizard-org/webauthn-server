@@ -13,6 +13,8 @@ use function hex2bin;
 
 class ByteBuffer implements Serializable
 {
+    use SerializableTrait;
+
     /**
      * @var string
      */
@@ -176,14 +178,14 @@ class ByteBuffer implements Serializable
         return Base64UrlEncoding::encode($this->data);
     }
 
-    public function serialize()
+    public function __serialize(): array
     {
-        return \serialize($this->data);
+        return ['d' => $this->data];
     }
 
-    public function unserialize($serialized)
+    public function __unserialize(array $data): void
     {
-        $this->data = \unserialize($serialized);
-        $this->length = \strlen($this->data);
+        $this->data = $data['d'];
+        $this->length = strlen($this->data);
     }
 }

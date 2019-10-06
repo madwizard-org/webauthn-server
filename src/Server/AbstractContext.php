@@ -4,10 +4,13 @@
 namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Format\SerializableTrait;
 use MadWizard\WebAuthn\Web\Origin;
 
 abstract class AbstractContext
 {
+    use SerializableTrait;
+
     /**
      * @var ByteBuffer
      */
@@ -90,19 +93,23 @@ abstract class AbstractContext
         return $this->origin;
     }
 
-    public function serialize()  // TODO remove?
+    public function __serialize(): array
     {
-        return \serialize([$this->challenge, $this->rpId, $this->userVerificationRequired, $this->origin, $this->userPresenceRequired]);
+        return [
+            'challenge' => $this->challenge,
+            'rpId' => $this->rpId,
+            'userVerificationRequired' => $this->userVerificationRequired,
+            'origin' => $this->origin,
+            'userPresenceRequired' => $this->userPresenceRequired
+        ];
     }
 
-    public function unserialize($serialized)
+    public function __unserialize(array $data): void
     {
-        [
-            $this->challenge,
-            $this->rpId,
-            $this->userVerificationRequired,
-            $this->origin,
-            $this->userPresenceRequired
-        ] = \unserialize((string) $serialized);
+        $this->challenge = $data['challenge'];
+        $this->rpId = $data['rpId'];
+        $this->userVerificationRequired = $data['userVerificationRequired'];
+        $this->origin = $data['origin'];
+        $this->userPresenceRequired = $data['userPresenceRequired'];
     }
 }

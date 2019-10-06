@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Tests\Web;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Web\Origin;
 use PHPUnit\Framework\TestCase;
+use Serializable;
 
 class OriginTest extends TestCase
 {
@@ -87,5 +88,17 @@ class OriginTest extends TestCase
     {
         $this->expectException(ParseException::class);
         Origin::parse(':');
+    }
+
+    public function testSerialize()
+    {
+        $origin = Origin::parse('https://example.com:8443');
+        $this->assertInstanceOf(Serializable::class, $origin);
+        $s = serialize($origin);
+        $new = unserialize($s);
+        $this->assertInstanceOf(Origin::class, $new);
+        $this->assertSame('example.com', $new->getHost());
+        $this->assertSame('https', $new->getScheme());
+        $this->assertSame(8443, $new->getPort());
     }
 }

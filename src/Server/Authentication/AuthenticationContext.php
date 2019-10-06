@@ -66,14 +66,17 @@ class AuthenticationContext extends AbstractContext implements RequestContext
         return $this->allowCredentialIds;
     }
 
-    public function serialize()
+    public function __serialize(): array
     {
-        return \serialize([ parent::serialize(), $this->allowCredentialIds]);
+        return [
+            'parent' => parent::__serialize(),
+            'allowCredentialIds' => $this->allowCredentialIds,
+        ];
     }
 
-    public function unserialize($serialized)
+    public function __unserialize(array $data): void
     {
-        [$parentStr, $this->allowCredentialIds] = \unserialize((string) $serialized);
-        parent::unserialize($parentStr);
+        parent::__unserialize($data['parent']);
+        $this->allowCredentialIds = $data['allowCredentialIds'];
     }
 }

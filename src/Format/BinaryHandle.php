@@ -4,11 +4,14 @@
 namespace MadWizard\WebAuthn\Format;
 
 use InvalidArgumentException;
+use Serializable;
 use function bin2hex;
 use function hex2bin;
 
-abstract class BinaryHandle
+abstract class BinaryHandle implements Serializable
 {
+    use SerializableTrait;
+
     /**
      * @var string
      */
@@ -46,5 +49,17 @@ abstract class BinaryHandle
             throw new InvalidArgumentException('Invalid hex string');
         }
         return $bin;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'raw' => $this->raw,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->raw = $data['raw'];
     }
 }

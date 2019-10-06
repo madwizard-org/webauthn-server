@@ -3,10 +3,13 @@
 
 namespace MadWizard\WebAuthn\Remote;
 
+use MadWizard\WebAuthn\Format\SerializableTrait;
 use Serializable;
 
 class FileContents implements Serializable
 {
+    use SerializableTrait;
+
     private $data;
 
     private $contentType;
@@ -33,13 +36,17 @@ class FileContents implements Serializable
         return $this->contentType;
     }
 
-    public function serialize()
+    public function __serialize(): array
     {
-        return \serialize([$this->contentType, $this->data]);
+        return [
+            'contentType' => $this->contentType,
+            'data' => $this->data
+        ];
     }
 
-    public function unserialize($serialized)
+    public function __unserialize(array $serialized): void
     {
-        [$this->contentType, $this->data] = \unserialize($serialized);
+        $this->contentType = $serialized['contentType'];
+        $this->data = $serialized['data'];
     }
 }

@@ -4,10 +4,14 @@
 namespace MadWizard\WebAuthn\Web;
 
 use MadWizard\WebAuthn\Exception\ParseException;
+use MadWizard\WebAuthn\Format\SerializableTrait;
+use Serializable;
 use function mb_strtolower;
 
-class Origin // TODO serializable
+class Origin implements Serializable
 {
+    use SerializableTrait;
+
     /**
      * @var string
      */
@@ -141,5 +145,21 @@ class Origin // TODO serializable
     public function getPort(): int
     {
         return $this->port;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'scheme' => $this->scheme,
+            'host' => $this->host,
+            'port' => $this->port,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->scheme = $data['scheme'];
+        $this->host = $data['host'];
+        $this->port = $data['port'];
     }
 }

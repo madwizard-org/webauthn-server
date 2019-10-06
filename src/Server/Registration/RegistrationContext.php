@@ -54,14 +54,17 @@ class RegistrationContext extends AbstractContext implements RequestContext
         return $this->userHandle;
     }
 
-    public function serialize()
+    public function __serialize(): array
     {
-        return \serialize([parent::serialize(), clone $this->userHandle]);
+        return [
+            'parent' => parent::__serialize(),
+            'userHandle' => $this->userHandle,
+        ];
     }
 
-    public function unserialize($serialized)
+    public function __unserialize(array $data): void
     {
-        [ $parentStr,$this->userHandle] = \unserialize((string) $serialized);
-        parent::unserialize($parentStr);
+        parent::__unserialize($data['parent']);
+        $this->userHandle = $data['userHandle'];
     }
 }

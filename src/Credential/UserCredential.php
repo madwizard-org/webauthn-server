@@ -3,7 +3,6 @@
 
 namespace MadWizard\WebAuthn\Credential;
 
-use MadWizard\WebAuthn\Crypto\CoseKey;
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 
 class UserCredential implements UserCredentialInterface
@@ -39,7 +38,7 @@ class UserCredential implements UserCredentialInterface
     }
 
     /**
-     * @return CoseKey
+     * @return CoseKeyInterface
      */
     public function getPublicKey(): CoseKeyInterface
     {

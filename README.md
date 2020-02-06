@@ -6,9 +6,14 @@ WebAuthn Relying Party server library for PHP
 [![Build Status](https://scrutinizer-ci.com/g/madwizard-thomas/webauthn-server/badges/build.png?b=master)](https://scrutinizer-ci.com/g/madwizard-thomas/webauthn-server/build-status/master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+Current state
+-------------
 **Work in progress - use for testing purposes only**
+The basic functionality of this library (the registration and authentication ceremonies) is functional but the API interface may change at any time until the first stable release.
 
-This library aims to implement the relying party server of the WebAuthn specification in PHP. The library is currently being development and not yet ready to be used. APIs may change at any time until the first stable release.
+Goal
+----
+This library aims to implement the relying party server of the WebAuthn specification in PHP.
 
 Installation
 ------------
@@ -25,7 +30,7 @@ https://madwizard-thomas.github.io/webauthn/
 Symfony bundle
 --------------
 
-If you want to integrate this library in a symfony project, have a look at the [webuathn-server-bundle](https://github.com/madwizard-thomas/webauthn-server-bundle) package.
+A Symfony bundle for this library is planned (see [webauthn-server-bundle](https://github.com/madwizard-thomas/webauthn-server-bundle)) but currently development is focussed on creating a stable version of this library first.
 
 Support
 -------

@@ -30,7 +30,8 @@
     "archive": {
         "exclude": [
             "/tests",
-            "/phpunit.xml.dist"
+            "/phpunit.xml.dist",
+            "/conformance"
         ]
     },
     "license": "MIT",

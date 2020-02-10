@@ -70,6 +70,6 @@ class Aaguid implements IdentifierInterface
 
     public function equals(IdentifierInterface $identifier): bool
     {
-        return $identifier instanceof self && $identifier->raw->equals($identifier->raw);
+        return $identifier instanceof self && $this->raw->equals($identifier->raw);
     }
 }

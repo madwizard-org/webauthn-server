@@ -114,7 +114,7 @@ class RsaKeyTest extends TestCase
              21  43 %s       #  -2:   e,    ; exponent',
                 self::TEST_KEY_MODULUS,
                 self::TEST_KEY_EXPONENT
-        )
+            )
         );
 
         $key = CoseKey::parseCbor($cbor);

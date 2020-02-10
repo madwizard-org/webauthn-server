@@ -30,7 +30,6 @@ class DataValidatorTest extends TestCase
                 'e' => 'boolean',
                 'f' => 'NULL',
             ]
-
         );
 
         // Assert when no exceptions thrown
@@ -51,7 +50,6 @@ class DataValidatorTest extends TestCase
                 'a' => 'integer',
                 'b' => 'integer',
             ]
-
         );
 
         // Assert when no exceptions thrown
@@ -72,7 +70,6 @@ class DataValidatorTest extends TestCase
                 'a' => ByteBuffer::class,
                 'b' => DateTime::class,
             ]
-
         );
 
         // Assert when no exceptions thrown
@@ -154,7 +151,6 @@ class DataValidatorTest extends TestCase
                 'c' => 'array',
                 'd' => '?' . ByteBuffer::class
             ]
-
         );
 
         // Assert when no exceptions thrown
@@ -176,7 +172,6 @@ class DataValidatorTest extends TestCase
                 'c' => '?array',
                 'd' => '?' . ByteBuffer::class,
             ]
-
         );
 
         // Assert when no exceptions thrown
@@ -196,7 +191,6 @@ class DataValidatorTest extends TestCase
                 'c' => ':string',
                 'd' => ':string',
             ]
-
         );
 
         // Assert when no exceptions thrown
@@ -217,7 +211,6 @@ class DataValidatorTest extends TestCase
                 'a' => 'integer',
                 'c' => ':string',
             ]
-
         );
     }
 
@@ -233,7 +226,6 @@ class DataValidatorTest extends TestCase
                 'a' => 'integer',
                 'c' => ':string',
             ]
-
         );
     }
 
@@ -252,7 +244,6 @@ class DataValidatorTest extends TestCase
                 'c' => '?:string',
                 'd' => '?:string',
             ]
-
         );
 
         // Assert when no exceptions thrown

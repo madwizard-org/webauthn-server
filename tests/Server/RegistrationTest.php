@@ -75,7 +75,7 @@ class RegistrationTest extends TestCase
                             $reg->getUserHandle()->equals(UserHandle::fromHex('00112233')) &&
                             $reg->getPublicKey() instanceof Ec2Key;
                     }
-            )
+                )
             );
 
         $challenge = new ByteBuffer(Base64UrlEncoding::decode('Vu8uDqnkwOjd83KLj6Scn2BgFNLFbGR7Kq_XJJwQnnatztUR7XIBL7K8uMPCIaQmKw1MCVQ5aazNJFk7NakgqA'));

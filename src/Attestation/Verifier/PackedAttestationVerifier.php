@@ -90,7 +90,7 @@ class PackedAttestationVerifier extends AbstractAttestationVerifier
         $this->checkAaguidExtension($cert, $authenticatorData->getAaguid());
 
         // If successful, return attestation type Basic and attestation trust path x5c.
-        return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath($x5c));
+        return new VerificationResult(AttestationType::BASIC, CertificateTrustPath::fromPemList($x5c));
     }
 
 //    private function verifyEcdaa(ByteBuffer $ecdaaKeyId, AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult

@@ -3,9 +3,7 @@
 
 namespace MadWizard\WebAuthn\Attestation\TrustAnchor;
 
-use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
-
 interface TrustAnchorInterface
 {
-    public function isTrusted(VerificationResult $verificationResult): TrustStatus;
+    public function getType(): string;
 }

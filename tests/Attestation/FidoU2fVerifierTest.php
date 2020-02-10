@@ -36,7 +36,7 @@ class FidoU2fVerifierTest extends VerifierTest
          * @var CertificateTrustPath $path
          */
         $this->assertCount(1, $path->getCertificates());
-        $this->assertContains('XPyTKmyvroUpl3LtsCeCAgPNQUHT7rb2os6Z45V4AyY6urjW', $path->getCertificates()[0]);
+        $this->assertContains('XPyTKmyvroUpl3LtsCeCAgPNQUHT7rb2os6Z45V4AyY6urjW', $path->asPemList()[0]);
     }
 
     public function testFidoU2fHypersecu()
@@ -61,7 +61,7 @@ class FidoU2fVerifierTest extends VerifierTest
          * @var CertificateTrustPath $path
          */
         $this->assertCount(1, $path->getCertificates());
-        $this->assertContains('AAIjLWZXR95+CztkDiGfPlfcJLrt5RaAwBJnOnAodXJuiGGmkoYD', $path->getCertificates()[0]);
+        $this->assertContains('AAIjLWZXR95+CztkDiGfPlfcJLrt5RaAwBJnOnAodXJuiGGmkoYD', $path->asPemList()[0]);
     }
 
     public function testFidoU2fWrongHash()

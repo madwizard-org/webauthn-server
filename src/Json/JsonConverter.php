@@ -8,6 +8,7 @@ use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponse;
 use MadWizard\WebAuthn\Dom\AuthenticatorResponseInterface;
 use MadWizard\WebAuthn\Dom\DictionaryInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredential;
+use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialType;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
@@ -72,11 +73,11 @@ final class JsonConverter
      * @param string $json
      * @param string $responseType Expected type of response in the public key's response field.
      * Either 'attestation' for attestation responses or 'assertion' for assertion responses.
-     * @return PublicKeyCredential
+     * @return PublicKeyCredentialInterface
      * @throws ParseException
      * @see https://www.w3.org/TR/webauthn/#publickeycredential
      */
-    public static function decodeCredential(string $json, string $responseType) : PublicKeyCredential
+    public static function decodeCredential(string $json, string $responseType) : PublicKeyCredentialInterface
     {
         $decoded = json_decode($json, true, 10);
         if ($decoded === false) {
@@ -110,12 +111,12 @@ final class JsonConverter
         return new PublicKeyCredential(new ByteBuffer($rawId), $response);
     }
 
-    public static function decodeAttestationCredential(string $json) : PublicKeyCredential
+    public static function decodeAttestationCredential(string $json) : PublicKeyCredentialInterface
     {
         return self::decodeCredential($json, 'attestation');
     }
 
-    public static function decodeAssertionCredential(string $json) : PublicKeyCredential
+    public static function decodeAssertionCredential(string $json) : PublicKeyCredentialInterface
     {
         return self::decodeCredential($json, 'assertion');
     }

@@ -34,6 +34,6 @@ class AndroidKeyStatementVerifierTest extends TestCase
          */
         $trustPath = $result->getTrustPath();
         $this->assertInstanceOf(CertificateTrustPath::class, $trustPath);
-        $this->assertSame($chains['android-key'], $trustPath->getCertificates());
+        $this->assertSame($chains['android-key'], $trustPath->asPemList());
     }
 }

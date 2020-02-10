@@ -110,7 +110,7 @@ class TpmAttestationVerifier extends AbstractAttestationVerifier
         $this->checkAaguidExtension($cert, $authenticatorData->getAaguid());
 
         // If successful, return attestation type AttCA and attestation trust path x5c.
-        return new VerificationResult(AttestationType::ATT_CA, new CertificateTrustPath($x5c));
+        return new VerificationResult(AttestationType::ATT_CA, CertificateTrustPath::fromPemList($x5c));
     }
 
     private function checkTpmPublicKeyMatchesAuthenticatorData(TpmPublic $pubArea, AuthenticatorData $authData) : bool

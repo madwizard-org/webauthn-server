@@ -118,7 +118,6 @@ class WebAuthnServer // TODO interface?
         // 15. If validation is successful, obtain a list of acceptable trust anchors (attestation root certificates or
         //     ECDAA-Issuer public keys) for that attestation type and attestation statement format fmt, from a trusted
         //     source or from policy.
-        $trustAnchorSet = $this->getPolicy()->getTrustAnchorSet();
 
         // TODO
 

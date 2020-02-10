@@ -89,6 +89,6 @@ class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterfac
         }
 
         // If successful, return implementation-specific values representing attestation type Basic and attestation trust path attestationCert.
-        return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath($x5c));
+        return new VerificationResult(AttestationType::BASIC, CertificateTrustPath::fromPemList($x5c));
     }
 }

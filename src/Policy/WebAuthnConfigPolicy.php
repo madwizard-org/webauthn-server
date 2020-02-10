@@ -7,8 +7,6 @@ use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInFormats;
-use MadWizard\WebAuthn\Attestation\TrustAnchor\TrustAnchorSet;
-use MadWizard\WebAuthn\Attestation\TrustAnchor\TrustAnchorSetInterface;
 use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
 
 class WebAuthnConfigPolicy implements WebAuthnPolicyInterface
@@ -22,11 +20,6 @@ class WebAuthnConfigPolicy implements WebAuthnPolicyInterface
      * @var AttestationFormatRegistryInterface|null
      */
     private $formatRegistry;
-
-    /**
-     * @var TrustAnchorSetInterface|null
-     */
-    private $trustAnchorSet;
 
     public function __construct(WebAuthnConfigurationInterface $config)
     {
@@ -58,20 +51,5 @@ class WebAuthnConfigPolicy implements WebAuthnPolicyInterface
             $registry->addFormat($format);
         }
         return $registry;
-    }
-
-    public function getTrustAnchorSet(): TrustAnchorSetInterface
-    {
-        if ($this->trustAnchorSet === null) {
-            $this->trustAnchorSet = $this->createTrustAnchorSet();
-        }
-        return $this->trustAnchorSet;
-    }
-
-    private function createTrustAnchorSet() : TrustAnchorSetInterface
-    {
-        $set = new TrustAnchorSet();
-        // TODO
-        return $set;
     }
 }

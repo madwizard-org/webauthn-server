@@ -60,7 +60,7 @@ class FidoU2fAttestationVerifier extends AbstractAttestationVerifier
 
             if ($result === 1) {
                 // 7. If successful, return attestation type Basic with the attestation trust path set to x5c.
-                return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath($attStmt->getCertificates()));
+                return new VerificationResult(AttestationType::BASIC, CertificateTrustPath::fromPemList($attStmt->getCertificates()));
             }
 
             if ($result === 0) {

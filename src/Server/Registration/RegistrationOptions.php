@@ -7,7 +7,7 @@ use MadWizard\WebAuthn\Dom\AttestationConveyancePreference;
 use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Extension\ExtensionInputInterface;
-use MadWizard\WebAuthn\Server\UserIdentity;
+use MadWizard\WebAuthn\Server\UserIdentityInterface;
 
 class RegistrationOptions
 {
@@ -17,7 +17,7 @@ class RegistrationOptions
     private $attestation;
 
     /**
-     * @var UserIdentity
+     * @var UserIdentityInterface
      */
     private $user;
 
@@ -36,15 +36,15 @@ class RegistrationOptions
      */
     private $excludeExistingCredentials;
 
-    public function __construct(UserIdentity $user)
+    public function __construct(UserIdentityInterface $user)
     {
         $this->user = $user;
     }
 
     /**
-     * @return UserIdentity
+     * @return UserIdentityInterface
      */
-    public function getUser(): UserIdentity
+    public function getUser(): UserIdentityInterface
     {
         return $this->user;
     }

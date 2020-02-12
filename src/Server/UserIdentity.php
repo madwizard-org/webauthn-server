@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Credential\UserHandle;
 
-class UserIdentity
+class UserIdentity implements UserIdentityInterface
 {
     /**
      * @var UserHandle

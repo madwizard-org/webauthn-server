@@ -8,7 +8,7 @@ use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
 use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 
-class RegistrationResult
+final class RegistrationResult implements RegistrationResultInterface // TODO: use interface everywhere
 {
     /**
      * @var CredentialId

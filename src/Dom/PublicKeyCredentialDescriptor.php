@@ -34,7 +34,7 @@ class PublicKeyCredentialDescriptor extends AbstractDictionary // TODO serializa
 
     public function addTransport(string $transport)
     {
-        if (!AuthenticatorTransport::isValidValue($transport)) {
+        if (!AuthenticatorTransport::isValidValue($transport)) {        // TODO:REMOVE see https://github.com/w3c/webauthn/issues/1268
             throw new WebAuthnException(sprintf("Transport '%s' is not a valid transport value.", $transport));
         }
         if ($this->transports === null) {

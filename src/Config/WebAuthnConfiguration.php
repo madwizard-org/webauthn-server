@@ -9,7 +9,7 @@ use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Web\Origin;
 
-class WebAuthnConfiguration implements WebAuthnConfigurationInterface
+class WebAuthnConfiguration implements ConfigurationInterface
 {
     public const DEFAULT_CHALLENGE_LENGTH = 64;
 
@@ -58,6 +58,11 @@ class WebAuthnConfiguration implements WebAuthnConfigurationInterface
      * @var bool
      */
     private $requireUserPresence = true;
+
+    /**
+     * string|null
+     */
+    private $cacheDirectory;
 
     public function __construct()
     {
@@ -218,5 +223,18 @@ class WebAuthnConfiguration implements WebAuthnConfigurationInterface
     public function setUserPresenceRequired(bool $required): void
     {
         $this->requireUserPresence = $required;
+    }
+
+    public function getCacheDirectory(): string
+    {
+        if ($this->cacheDirectory === null) {
+            return sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'webauthn-server-cache';
+        }
+        return $this->cacheDirectory;
+    }
+
+    public function setCacheDirectory(string $directory): void
+    {
+        $this->cacheDirectory = $directory;
     }
 }

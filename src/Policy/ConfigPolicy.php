@@ -7,12 +7,14 @@ use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInFormats;
-use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
+use MadWizard\WebAuthn\Config\ConfigurationInterface;
+use MadWizard\WebAuthn\Metadata\MetadataResolverInterface;
+use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManagerInterface;
 
-class WebAuthnConfigPolicy implements WebAuthnPolicyInterface
+class ConfigPolicy implements PolicyInterface
 {
     /**
-     * @var WebAuthnConfigurationInterface
+     * @var ConfigurationInterface
      */
     private $config;
 
@@ -21,9 +23,21 @@ class WebAuthnConfigPolicy implements WebAuthnPolicyInterface
      */
     private $formatRegistry;
 
-    public function __construct(WebAuthnConfigurationInterface $config)
+    /**
+     * @var TrustDecisionManagerInterface
+     */
+    private $trustDecisionManager;
+
+    /**
+     * @var MetadataResolverInterface
+     */
+    private $metadataResolver;
+
+    public function __construct(ConfigurationInterface $config, MetadataResolverInterface $metadataResolver, TrustDecisionManagerInterface $trustDecisionManager)
     {
         $this->config = $config;
+        $this->metadataResolver = $metadataResolver;
+        $this->trustDecisionManager = $trustDecisionManager;
     }
 
     public function getAttestationFormatRegistry(): AttestationFormatRegistryInterface
@@ -51,5 +65,15 @@ class WebAuthnConfigPolicy implements WebAuthnPolicyInterface
             $registry->addFormat($format);
         }
         return $registry;
+    }
+
+    public function getTrustDecisionManager(): TrustDecisionManagerInterface
+    {
+        return $this->trustDecisionManager;
+    }
+
+    public function getMetadataResolver(): MetadataResolverInterface
+    {
+        return $this->metadataResolver;
     }
 }

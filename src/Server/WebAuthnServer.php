@@ -3,7 +3,8 @@
 
 namespace MadWizard\WebAuthn\Server;
 
-use MadWizard\WebAuthn\Config\WebAuthnConfigurationInterface;
+use MadWizard\WebAuthn\Config\ConfigurationInterface;
+
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Dom\AuthenticationExtensionsClientInputs;
@@ -20,8 +21,8 @@ use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Json\JsonConverter;
-use MadWizard\WebAuthn\Policy\WebAuthnConfigPolicy;
-use MadWizard\WebAuthn\Policy\WebAuthnPolicyInterface;
+use MadWizard\WebAuthn\Policy\PolicyInterface;
+
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationContext;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationRequest;
@@ -33,10 +34,10 @@ use MadWizard\WebAuthn\Server\Registration\RegistrationRequest;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResult;
 use MadWizard\WebAuthn\Server\Registration\RegistrationVerifier;
 
-class WebAuthnServer // TODO interface?
+class WebAuthnServer implements ServerInterface
 {
     /**
-     * @var WebAuthnConfigurationInterface
+     * @var ConfigurationInterface
      */
     private $config;
 
@@ -46,22 +47,15 @@ class WebAuthnServer // TODO interface?
     private $credentialStore;
 
     /**
-     * @var WebAuthnPolicyInterface|null
+     * @var PolicyInterface|null
      */
     private $policy;
 
-    public function __construct(WebAuthnConfigurationInterface $config, CredentialStoreInterface $credentialStore)
+    public function __construct(ConfigurationInterface $config, PolicyInterface $policy, CredentialStoreInterface $credentialStore)
     {
         $this->config = $config;
+        $this->policy = $policy;
         $this->credentialStore = $credentialStore;
-    }
-
-    public function getPolicy() : WebAuthnPolicyInterface
-    {
-        if ($this->policy === null) {
-            $this->policy = new WebAuthnConfigPolicy($this->config);
-        }
-        return $this->policy;
     }
 
     public function startRegistration(RegistrationOptions $options) : RegistrationRequest
@@ -107,7 +101,8 @@ class WebAuthnServer // TODO interface?
     public function finishRegistration($credential, RegistrationContext $context) : RegistrationResult
     {
         $credential = $this->convertAttestationCredential($credential);
-        $verifier = new RegistrationVerifier($this->getPolicy()->getAttestationFormatRegistry());
+
+        $verifier = new RegistrationVerifier($this->policy->getAttestationFormatRegistry());
         $registrationResult = $verifier->verify($credential, $context);
 
         /**
@@ -119,7 +114,7 @@ class WebAuthnServer // TODO interface?
         //     ECDAA-Issuer public keys) for that attestation type and attestation statement format fmt, from a trusted
         //     source or from policy.
 
-        // TODO
+        $metadata = $this->policy->getMetadataResolver()->getMetadata($registrationResult);
 
         // 16. Assess the attestation trustworthiness using the outputs of the verification procedure in step 14,
         //     as follows:
@@ -129,7 +124,9 @@ class WebAuthnServer // TODO interface?
         //       Otherwise, use the X.509 certificates returned by the verification procedure to verify that the
         //       attestation public key correctly chains up to an acceptable root certificate.
 
-        // TODO
+        if (!$this->policy->getTrustDecisionManager()->isTrusted($registrationResult, $metadata)) {
+            throw new VerificationException('The attestation is not trusted.');
+        }
 
         // 17. Check that the credentialId is not yet registered to any other user. If registration is requested for a
         //     credential that is already registered to a different user, the Relying Party SHOULD fail this
@@ -238,7 +235,7 @@ class WebAuthnServer // TODO interface?
         }
     }
 
-    private function createUserEntity(UserIdentity $user) : PublicKeyCredentialUserEntity
+    private function createUserEntity(UserIdentityInterface $user) : PublicKeyCredentialUserEntity
     {
         return new PublicKeyCredentialUserEntity(
             $user->getUsername(),

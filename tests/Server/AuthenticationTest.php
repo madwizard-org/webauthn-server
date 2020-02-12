@@ -13,6 +13,10 @@ use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Metadata\NullMetadataResolver;
+use MadWizard\WebAuthn\Policy\ConfigPolicy;
+use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManager;
+use MadWizard\WebAuthn\Policy\Trust\Voter\AnyTrustVoter;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\WebAuthnServer;
 use MadWizard\WebAuthn\Tests\Helper\AssertionDataHelper;
@@ -280,7 +284,11 @@ class AuthenticationTest extends TestCase
         $this->store->expects($this->any())
             ->method('getSignatureCounter')
             ->willReturn(8);
-        $this->server = new WebAuthnServer($this->config, $this->store);
+        $metadataResolver = new NullMetadataResolver();
+        $trustDecisionManager = new TrustDecisionManager();
+        $trustDecisionManager->addVoter(new AnyTrustVoter());
+        $policy = new ConfigPolicy($this->config, $metadataResolver, $trustDecisionManager);
+        $this->server = new WebAuthnServer($this->config, $policy, $this->store);
     }
 
     private function createCredential() : UserCredentialInterface

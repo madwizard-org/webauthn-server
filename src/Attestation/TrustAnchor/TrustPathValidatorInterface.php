@@ -12,5 +12,5 @@ interface TrustPathValidatorInterface
      * @param string[] $anchorCertificates
      * @return bool
      */
-    public function validateCertificateChain(CertificateTrustPath $trustPath, array $anchorCertificates):bool;
+    public function validateCertificateChain(CertificateTrustPath $trustPath, array $anchorCertificates):bool; // TODO generic trustpath?
 }

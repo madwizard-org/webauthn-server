@@ -6,7 +6,7 @@ namespace MadWizard\WebAuthn\Config;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRpEntity;
 use MadWizard\WebAuthn\Web\Origin;
 
-interface WebAuthnConfigurationInterface
+interface ConfigurationInterface
 {
     /**
      * Returns the configured relying party id when set.
@@ -36,4 +36,6 @@ interface WebAuthnConfigurationInterface
     public function getRelyingPartyIconUrl() : ?string;
 
     public function isUserPresenceRequired() : bool;
+
+    public function getCacheDirectory(): string;
 }

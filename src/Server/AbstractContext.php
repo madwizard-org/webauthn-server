@@ -7,7 +7,7 @@ use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\SerializableTrait;
 use MadWizard\WebAuthn\Web\Origin;
 
-abstract class AbstractContext
+abstract class AbstractContext  // TODO: use composition instead of inheritance
 {
     use SerializableTrait;
 

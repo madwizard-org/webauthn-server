@@ -31,16 +31,6 @@ class WebAuthnConfiguration implements ConfigurationInterface
      */
     private $algorithms = self::SUPPORTED_ALGORITHMS;
 
-    /**
-     * @var bool
-     */
-    private $requireUserPresence = true;
-
-    /**
-     * string|null
-     */
-    private $cacheDirectory;
-
     public function __construct()
     {
     }
@@ -90,37 +80,5 @@ class WebAuthnConfiguration implements ConfigurationInterface
     public function getAllowedAlgorithms() : array
     {
         return $this->algorithms;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isUserPresenceRequired(): bool
-    {
-        return $this->requireUserPresence;
-    }
-
-    /**
-     * Set to false to allow silent authenticators (User Preset bit not set in authenticator data)
-     * NOTE: setting this to false violates the WebAuthn specs but this option is needed to pass FIDO2 conformance, which
-     * includes silent operations.
-     * @param bool $required
-     */
-    public function setUserPresenceRequired(bool $required): void
-    {
-        $this->requireUserPresence = $required;
-    }
-
-    public function getCacheDirectory(): string
-    {
-        if ($this->cacheDirectory === null) {
-            return sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'webauthn-server-cache';
-        }
-        return $this->cacheDirectory;
-    }
-
-    public function setCacheDirectory(string $directory): void
-    {
-        $this->cacheDirectory = $directory;
     }
 }

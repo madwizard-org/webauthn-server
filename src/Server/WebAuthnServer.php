@@ -3,8 +3,6 @@
 
 namespace MadWizard\WebAuthn\Server;
 
-use MadWizard\WebAuthn\Config\ConfigurationInterface;
-
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Dom\AuthenticationExtensionsClientInputs;
@@ -38,11 +36,6 @@ use MadWizard\WebAuthn\Server\Registration\RegistrationVerifier;
 class WebAuthnServer implements ServerInterface
 {
     /**
-     * @var ConfigurationInterface
-     */
-    private $config;
-
-    /**
      * @var CredentialStoreInterface
      */
     private $credentialStore;
@@ -52,9 +45,8 @@ class WebAuthnServer implements ServerInterface
      */
     private $policy;
 
-    public function __construct(ConfigurationInterface $config, PolicyInterface $policy, CredentialStoreInterface $credentialStore)
+    public function __construct(PolicyInterface $policy, CredentialStoreInterface $credentialStore)
     {
-        $this->config = $config;
         $this->policy = $policy;
         $this->credentialStore = $credentialStore;
     }
@@ -186,7 +178,7 @@ class WebAuthnServer implements ServerInterface
         }
 
 
-        $context = AuthenticationContext::create($requestOptions, $this->config, $this->policy->getRelyingParty());
+        $context = AuthenticationContext::create($requestOptions, $this->policy->getRelyingParty());
         return new AuthenticationRequest($requestOptions, $context);
     }
 

@@ -4,7 +4,6 @@
 namespace MadWizard\WebAuthn\Attestation\Identifier;
 
 use MadWizard\WebAuthn\Exception\ParseException;
-use MadWizard\WebAuthn\Pki\CertificateParser;
 
 class AttestationKeyIdentifier implements IdentifierInterface
 {
@@ -36,13 +35,5 @@ class AttestationKeyIdentifier implements IdentifierInterface
     public function equals(IdentifierInterface $identifier): bool
     {
         return $identifier instanceof self && $this->id === $identifier->id;
-    }
-
-    // TODO MOVE to other class
-    public static function fromPemCertificate(string $pem) : IdentifierInterface
-    {
-        $parser = new CertificateParser();
-        $cert = $parser->parsePem($pem);
-        return new self($cert->getPublicKeyIdentifier());
     }
 }

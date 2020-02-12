@@ -3,6 +3,7 @@
 
 namespace MadWizard\WebAuthn\Conformance;
 
+use MadWizard\WebAuthn\Builder\ServerBuilder;
 use MadWizard\WebAuthn\Config\RelyingParty;
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
@@ -56,13 +57,25 @@ class Router
 
     private function createServer(string $metadataDir) : WebAuthnServer
     {
+
+        $builder = new ServerBuilder();
+
         $rp = new RelyingParty('Test server', 'http://' . $_SERVER['HTTP_HOST']);
-        $config = new WebAuthnConfiguration();
-        $config->setUserPresenceRequired(false);
+
+        $builder
+            ->setRelyingParty($rp)
+            ->useSystemTempCache();
+
+
         $metadataResolver = new NullMetadataResolver();
         $trustDecisionManager = new TrustDecisionManager();
         $policy = new Policy($rp, $metadataResolver, $trustDecisionManager);
-        return new WebAuthnServer($config, $policy, $this->store);
+
+        // Conformance tools do not require user presence
+        // see https://github.com/fido-alliance/conformance-tools-issues/issues/434
+        $policy->setUserPresenceRequired(false);
+
+        return new WebAuthnServer($policy, $this->store);
     }
 
     private function getPostJson(string $postData) : array

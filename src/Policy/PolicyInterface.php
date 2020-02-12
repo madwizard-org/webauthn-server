@@ -19,4 +19,6 @@ interface PolicyInterface
     public function getMetadataResolver() : MetadataResolverInterface;
 
     public function getRelyingParty() : RelyingPartyInterface;
+
+    public function isUserPresenceRequired(): bool;
 }

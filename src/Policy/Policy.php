@@ -11,7 +11,7 @@ use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Metadata\MetadataResolverInterface;
 use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManagerInterface;
 
-class Policy implements PolicyInterface
+final class Policy implements PolicyInterface
 {
     /**
      * @var RelyingPartyInterface
@@ -32,6 +32,11 @@ class Policy implements PolicyInterface
      * @var MetadataResolverInterface
      */
     private $metadataResolver;
+
+    /**
+     * @var bool
+     */
+    private $userPresenceRequired = true;
 
     public function __construct(RelyingPartyInterface $relyingParty, MetadataResolverInterface $metadataResolver, TrustDecisionManagerInterface $trustDecisionManager)
     {
@@ -80,5 +85,21 @@ class Policy implements PolicyInterface
     public function getRelyingParty(): RelyingPartyInterface
     {
         return $this->relyingParty;
+    }
+
+    public function isUserPresenceRequired(): bool
+    {
+        return $this->userPresenceRequired;
+    }
+
+    /**
+     * Set to false to allow silent authenticators (User Preset bit not set in authenticator data)
+     * NOTE: setting this to false violates the WebAuthn specs but this option is needed to pass FIDO2 conformance, which
+     * includes silent operations.
+     * @param bool $required
+     */
+    public function setUserPresenceRequired(bool $required)
+    {
+        $this->userPresenceRequired = $required;
     }
 }

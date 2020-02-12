@@ -3,6 +3,7 @@
 namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
+use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
@@ -23,7 +24,7 @@ class BuiltInAttestationFormatTest extends TestCase
         $this->assertSame('testformat', $format->getFormatId());
 
         /** @var AttestationObject $attObj */
-        $attObj = $this->createMock(AttestationObject::class);
+        $attObj = $this->createMock(AttestationObjectInterface::class);
 
         $statement = $format->createStatement($attObj);
         $this->assertInstanceOf('TestStatement', $statement);

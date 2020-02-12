@@ -7,6 +7,7 @@ use MadWizard\WebAuthn\Attestation\Android\SafetyNetResponseParser;
 use MadWizard\WebAuthn\Attestation\Android\SafetyNetResponseParserInterface;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Attestation\Statement\AndroidSafetyNetAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
@@ -43,7 +44,7 @@ class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterfac
         return microtime(true) * 1000;
     }
 
-    public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
+    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash) : VerificationResult
     {
         if (!($attStmt instanceof AndroidSafetyNetAttestationStatement)) {
             throw new VerificationException('Expecting AndroidSafetyNetAttestationStatement');

@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Format;
 
-use MadWizard\WebAuthn\Exception\WebAuthnException;
+use MadWizard\WebAuthn\Exception\ParseException;
 use function base64_decode;
 use function base64_encode;
 
@@ -18,7 +18,7 @@ final class Base64UrlEncoding
     {
         $res = base64_decode(strtr($data, '-_', '+/'), true);
         if ($res === false) {
-            throw new WebAuthnException('Failed to decode base64url encoded data');
+            throw new ParseException('Failed to decode base64url encoded data');
         }
         return $res;
     }

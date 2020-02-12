@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Attestation\Verifier;
 
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
@@ -34,7 +35,7 @@ class PackedAttestationVerifier extends AbstractAttestationVerifier
         $this->certificateParser = $certificateParser;
     }
 
-    public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
+    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash) : VerificationResult
     {
         // Verification procedure from https://www.w3.org/TR/webauthn/#packed-attestation
 
@@ -63,7 +64,7 @@ class PackedAttestationVerifier extends AbstractAttestationVerifier
         return $this->verifySelf($attStmt->getSignature(), $attStmt->getAlgorithm(), $authenticatorData, $clientDataHash);
     }
 
-    private function verifyX5c(array $x5c, ByteBuffer $signature, int $signatureAlgorithm, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
+    private function verifyX5c(array $x5c, ByteBuffer $signature, int $signatureAlgorithm, AuthenticatorDataInterface $authenticatorData, string $clientDataHash) : VerificationResult
     {
         // Verify that sig is a valid signature over the concatenation of authenticatorData and clientDataHash using
         // the attestation public key in attestnCert with the algorithm specified in alg.
@@ -100,7 +101,7 @@ class PackedAttestationVerifier extends AbstractAttestationVerifier
 //        throw new UnsupportedException('ECDAA is not supported by this library.');
 //    }
 
-    private function verifySelf(ByteBuffer $signature, int $algorithm, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
+    private function verifySelf(ByteBuffer $signature, int $algorithm, AuthenticatorDataInterface $authenticatorData, string $clientDataHash) : VerificationResult
     {
         // Validate that alg matches the algorithm of the credentialPublicKey in authenticatorData.
         if (!$authenticatorData->hasKey()) {

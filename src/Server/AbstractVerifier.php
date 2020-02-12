@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Server;
 
-use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Dom\AuthenticatorResponseInterface;
 use MadWizard\WebAuthn\Dom\TokenBindingStatus;
 use MadWizard\WebAuthn\Exception\DataValidationException;
@@ -26,14 +26,14 @@ class AbstractVerifier
         return $clientOrigin->equals($rpOrigin);
     }
 
-    protected function verifyRpIdHash(AuthenticatorData $authData, AbstractContext $context)
+    protected function verifyRpIdHash(AuthenticatorDataInterface $authData, AbstractContext $context)
     {
         // TODO: lowercase? spec?
         $validHash = hash('sha256', $context->getRpId(), true);
         return hash_equals($validHash, $authData->getRpIdHash()->getBinaryString());
     }
 
-    protected function verifyUser(AuthenticatorData $authData, AbstractContext $context)
+    protected function verifyUser(AuthenticatorDataInterface $authData, AbstractContext $context)
     {
         // Reg 10/11, Auth 12/13
 

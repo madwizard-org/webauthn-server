@@ -80,7 +80,7 @@ final class JsonConverter
     public static function decodeCredential(string $json, string $responseType) : PublicKeyCredentialInterface
     {
         $decoded = json_decode($json, true, 10);
-        if ($decoded === false) {
+        if ($decoded === null) {
             throw new ParseException('Failed to decode PublicKeyCredential Json');
         }
 
@@ -93,7 +93,7 @@ final class JsonConverter
         }
         $id = $decoded['id'];
         if (!is_string($id)) {
-            throw new ParseException('Id in json data should be string');
+            throw new ParseException('Id in json data should be a string');
         }
 
         $rawId = Base64UrlEncoding::decode($id);

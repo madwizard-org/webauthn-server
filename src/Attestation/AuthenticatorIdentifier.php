@@ -45,7 +45,7 @@ class AuthenticatorIdentifier
         return $this->type;
     }
 
-    public static function fromAuthenticatorData(AuthenticatorData $ad) : ?AuthenticatorIdentifier // TODO Move to other class
+    public static function fromAuthenticatorData(AuthenticatorDataInterface $ad) : ?AuthenticatorIdentifier // TODO Move to other class
     {
         $aaguid = $ad->getAaguid();
         if ($aaguid !== null) {

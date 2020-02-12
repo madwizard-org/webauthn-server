@@ -11,7 +11,7 @@ use MadWizard\WebAuthn\Format\CborDecoder;
 use MadWizard\WebAuthn\Format\DataValidator;
 use function is_array;
 
-class AttestationObject
+final class AttestationObject implements AttestationObjectInterface
 {
     /**
      * @var string

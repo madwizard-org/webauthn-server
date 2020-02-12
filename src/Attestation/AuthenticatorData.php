@@ -13,7 +13,7 @@ use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborDecoder;
 
-class AuthenticatorData
+class AuthenticatorData implements AuthenticatorDataInterface
 {
     /**
      * User present (UP)

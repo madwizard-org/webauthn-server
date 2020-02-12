@@ -47,7 +47,7 @@ class WebAuthnServer implements ServerInterface
     private $credentialStore;
 
     /**
-     * @var PolicyInterface|null
+     * @var PolicyInterface
      */
     private $policy;
 

@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Server\Registration;
 
-use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
 use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
@@ -16,7 +16,7 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
     private $credentialId;
 
     /**
-     * @var AuthenticatorData
+     * @var AuthenticatorDataInterface
      */
     private $authenticatorData;
 
@@ -25,7 +25,7 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
      */
     private $attestation;
 
-    public function __construct(CredentialId $credentialId, AuthenticatorData $authenticatorData, VerificationResult $attestation)
+    public function __construct(CredentialId $credentialId, AuthenticatorDataInterface $authenticatorData, VerificationResult $attestation)
     {
         $this->credentialId = $credentialId;
         $this->authenticatorData = $authenticatorData;
@@ -64,7 +64,7 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
         return $this->authenticatorData->getSignCount();
     }
 
-    public function getAuthenticatorData(): AuthenticatorData
+    public function getAuthenticatorData(): AuthenticatorDataInterface
     {
         return $this->authenticatorData;
     }

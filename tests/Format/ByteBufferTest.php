@@ -4,6 +4,7 @@ namespace MadWizard\WebAuthn\Tests\Format;
 
 use const PHP_INT_SIZE;
 use InvalidArgumentException;
+use MadWizard\WebAuthn\Exception\ByteBufferException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use PHPUnit\Framework\TestCase;
 use function bin2hex;
@@ -53,21 +54,17 @@ class ByteBufferTest extends TestCase
         $this->assertSame("\x02\x03ef", $data->getBytes(5, 4));
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetBytesBoundsOffset()
     {
+        $this->expectException(ByteBufferException::class);
         $binaryString = 'abcefg';
         $data = new ByteBuffer($binaryString);
         $data->getBytes(6, 1);
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetBytesBoundsLength()
     {
+        $this->expectException(ByteBufferException::class);
         $binaryString = 'abcefg';
         $data = new ByteBuffer($binaryString);
         $data->getBytes(4, 3);
@@ -81,11 +78,9 @@ class ByteBufferTest extends TestCase
         $this->assertSame(ord('E'), $buf->getByteVal(4));
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetByteValBounds()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('ABCDEF');
         $buf->getByteVal(6);
     }
@@ -97,20 +92,16 @@ class ByteBufferTest extends TestCase
         $this->assertSame(0x1234, $buf->getUint16Val(1));
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetUint16ValBoundsOffset()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('abc');
         $buf->getUint16Val(4);
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetUint16ValBoundsLength()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('abc');
         $buf->getUint16Val(2);
     }
@@ -123,33 +114,27 @@ class ByteBufferTest extends TestCase
         $this->assertSame(0x12345678, $buf->getUint32Val(1));
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetUint32ValBoundsOffset()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('abc');
         $buf->getUint32Val(4);
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetUint32ValBoundsLength()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('abcd');
         $buf->getUint32Val(1);
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetUint32ValLimits()
     {
         if (PHP_INT_SIZE !== 4) {
             $this->markTestSkipped('No 32 bits ints');
             return;
         }
+        $this->expectException(ByteBufferException::class);
 
         $buf = new ByteBuffer(hex2bin('80000000'));
 
@@ -167,9 +152,6 @@ class ByteBufferTest extends TestCase
         $this->assertSame(0x12345678ABCDEF00, $buf->getUint64Val(1));
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetUint64ValLimits()
     {
         if (PHP_INT_SIZE !== 8) {
@@ -177,25 +159,23 @@ class ByteBufferTest extends TestCase
             return;
         }
 
+        $this->expectException(ByteBufferException::class);
+
         $buf = new ByteBuffer(hex2bin('8000000000000000'));
 
         $buf->getUint64Val(0);
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetUint64ValBoundsOffset()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('abc');
         $buf->getUint64Val(4);
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetUint64ValBoundsLength()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('abcdefgh');
         $buf->getUint64Val(1);
     }
@@ -212,20 +192,17 @@ class ByteBufferTest extends TestCase
         $this->assertGreaterThan(0, $result);
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetFloatValBoundsOffset()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('abc');
         $buf->getFloatVal(4);
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetFloatValBoundsLength()
     {
+        $this->expectException(ByteBufferException::class);
+
         $buf = new ByteBuffer('abcd');
         $buf->getFloatVal(1);
     }
@@ -241,20 +218,16 @@ class ByteBufferTest extends TestCase
         $this->assertLessThan(0, $result);
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetDoubleValBoundsOffset()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('abc');
         $buf->getDoubleVal(4);
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetDoubleValBoundsLength()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('abc');
         $buf->getDoubleVal(2);
     }
@@ -293,20 +266,16 @@ class ByteBufferTest extends TestCase
         $this->assertSame(0.333251953125, $testHalf('3555')); // 0.333251953125 ≈ 1/3
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetHalfFloatValBoundsOffset()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('abc');
         $buf->getHalfFloatVal(3);
     }
 
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\ByteBufferException
-     */
     public function testGetHalfFloatValBoundsLength()
     {
+        $this->expectException(ByteBufferException::class);
         $buf = new ByteBuffer('abc');
         $buf->getHalfFloatVal(2);
     }

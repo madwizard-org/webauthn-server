@@ -3,6 +3,7 @@
 
 namespace MadWizard\WebAuthn\Tests\Format;
 
+use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding as b64;
 use PHPUnit\Framework\TestCase;
 use function bin2hex;
@@ -32,13 +33,9 @@ class Base64UrlEncodingTest extends TestCase
         $this->assertSame('3c4fbf08', bin2hex(b64::decode('PE-_CA')));
     }
 
-    // TODO: different exception
-
-    /**
-     * @expectedException \MadWizard\WebAuthn\Exception\WebAuthnException
-     */
     public function testInvalid()
     {
+        $this->expectException(ParseException::class);
         b64::decode('ab#c');
     }
 }

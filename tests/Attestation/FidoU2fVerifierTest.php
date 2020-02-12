@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Tests\Attestation;
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Attestation\Statement\FidoU2fAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
@@ -86,7 +87,7 @@ class FidoU2fVerifierTest extends VerifierTest
         $this->expectExceptionMessageRegExp('~expecting.+fido~i');
         $verifier->verify(
             $this->createMock(NoneAttestationStatement::class),
-            $this->createMock(AuthenticatorData::class),
+            $this->createMock(AuthenticatorDataInterface::class),
             hash('sha256', '123', true)
         );
     }

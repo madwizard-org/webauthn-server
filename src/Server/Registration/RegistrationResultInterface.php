@@ -2,7 +2,7 @@
 
 namespace MadWizard\WebAuthn\Server\Registration;
 
-use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
 use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
@@ -29,5 +29,5 @@ interface RegistrationResultInterface
      */
     public function getSignatureCounter(): int;
 
-    public function getAuthenticatorData(): AuthenticatorData;
+    public function getAuthenticatorData(): AuthenticatorDataInterface;
 }

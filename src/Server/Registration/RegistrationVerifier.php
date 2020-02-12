@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
@@ -122,7 +123,7 @@ class RegistrationVerifier extends AbstractVerifier
         }
     }
 
-    private function checkAuthenticatorData(AuthenticatorData $authData, RegistrationContext $context)
+    private function checkAuthenticatorData(AuthenticatorDataInterface $authData, RegistrationContext $context)
     {
         if (!$authData->hasAttestedCredentialData()) {
             throw new VerificationException('Authenticator data does not contain attested credential.');

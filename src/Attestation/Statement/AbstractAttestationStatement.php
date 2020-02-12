@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
-use MadWizard\WebAuthn\Attestation\AttestationObject;
+use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
 use MadWizard\WebAuthn\Crypto\Der;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -15,7 +15,7 @@ abstract class AbstractAttestationStatement implements AttestationStatementInter
      */
     private $formatId;
 
-    public function __construct(AttestationObject $attestationObject, string $formatId)
+    public function __construct(AttestationObjectInterface $attestationObject, string $formatId)
     {
         $actualFormat = $attestationObject->getFormat();
         if ($actualFormat !== $formatId) {

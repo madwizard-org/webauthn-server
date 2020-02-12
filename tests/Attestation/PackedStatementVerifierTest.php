@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Tests\Attestation;
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\EmptyTrustPath;
@@ -57,7 +58,7 @@ class PackedStatementVerifierTest extends VerifierTest
         $this->expectExceptionMessageRegExp('~expecting.+packed~i');
         $verifier->verify(
             $this->createMock(NoneAttestationStatement::class),
-            $this->createMock(AuthenticatorData::class),
+            $this->createMock(AuthenticatorDataInterface::class),
             hash('sha256', '123', true)
         );
     }
@@ -72,7 +73,7 @@ class PackedStatementVerifierTest extends VerifierTest
         $statement->expects($this->once())->method('getEcdaaKeyId')->willReturn(new ByteBuffer('12345678'));
         $verifier->verify(
             $statement,
-            $this->createMock(AuthenticatorData::class),
+            $this->createMock(AuthenticatorDataInterface::class),
             hash('sha256', '123', true)
         );
     }

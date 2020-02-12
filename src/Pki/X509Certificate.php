@@ -54,7 +54,9 @@ class X509Certificate implements Serializable
 
     public function asDer(): string
     {
-        return base64_decode($this->base64, true);
+        $binary = base64_decode($this->base64, true);
+        assert(is_string($binary));
+        return $binary;
     }
 
     public function asPem(): string

@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Attestation\Registry;
 
-use MadWizard\WebAuthn\Attestation\AttestationObject;
+use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
 
@@ -41,7 +41,7 @@ class BuiltInAttestationFormat implements AttestationFormatInterface
         return $this->formatId;
     }
 
-    public function createStatement(AttestationObject $attestationObject): AttestationStatementInterface
+    public function createStatement(AttestationObjectInterface $attestationObject): AttestationStatementInterface
     {
         $class = $this->statementClass;
         return new $class($attestationObject);

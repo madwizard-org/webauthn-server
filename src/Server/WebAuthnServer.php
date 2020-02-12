@@ -14,6 +14,7 @@ use MadWizard\WebAuthn\Dom\PublicKeyCredentialDescriptor;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialParameters;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
+use MadWizard\WebAuthn\Dom\PublicKeyCredentialRpEntity;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
 use MadWizard\WebAuthn\Exception\CredentialIdExistsException;
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -63,7 +64,7 @@ class WebAuthnServer implements ServerInterface
         $challenge = $this->createChallenge();
 
         $creationOptions = new PublicKeyCredentialCreationOptions(
-            $this->config->getRelyingPartyEntity(),
+            PublicKeyCredentialRpEntity::fromRelyingParty($this->policy->getRelyingParty()),
             $this->createUserEntity($options->getUser()),
             $challenge,
             $this->getCredentialParameters()
@@ -88,7 +89,7 @@ class WebAuthnServer implements ServerInterface
             }
         }
 
-        $context = RegistrationContext::create($creationOptions, $this->config);
+        $context = RegistrationContext::create($creationOptions, $this->config, $this->policy->getRelyingParty());
         return new RegistrationRequest($creationOptions, $context);
     }
 
@@ -171,7 +172,7 @@ class WebAuthnServer implements ServerInterface
         $challenge = $this->createChallenge();
 
         $requestOptions = new PublicKeyCredentialRequestOptions($challenge);
-        $requestOptions->setRpId($this->config->getRelyingPartyId());
+        $requestOptions->setRpId($this->policy->getRelyingParty()->getId());
         $requestOptions->setUserVerification($options->getUserVerification());
         $requestOptions->setTimeout($options->getTimeout());
 
@@ -185,7 +186,7 @@ class WebAuthnServer implements ServerInterface
         }
 
 
-        $context = AuthenticationContext::create($requestOptions, $this->config);
+        $context = AuthenticationContext::create($requestOptions, $this->config, $this->policy->getRelyingParty());
         return new AuthenticationRequest($requestOptions, $context);
     }
 

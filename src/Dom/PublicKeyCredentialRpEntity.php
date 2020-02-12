@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Dom;
 
 use const FILTER_VALIDATE_DOMAIN;
+use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 
 class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
@@ -45,5 +46,12 @@ class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
             $map['id'] = $this->id;
         }
         return $map;
+    }
+
+    public static function fromRelyingParty(RelyingPartyInterface $rp): self     // TODO move?
+    {
+        $rpEntity = new self($rp->getName(), $rp->getId());
+        $rpEntity->setIcon($rp->getIconUrl());
+        return $rpEntity;
     }
 }

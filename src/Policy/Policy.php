@@ -7,16 +7,16 @@ use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInFormats;
-use MadWizard\WebAuthn\Config\ConfigurationInterface;
+use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Metadata\MetadataResolverInterface;
 use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManagerInterface;
 
-class ConfigPolicy implements PolicyInterface
+class Policy implements PolicyInterface
 {
     /**
-     * @var ConfigurationInterface
+     * @var RelyingPartyInterface
      */
-    private $config;
+    private $relyingParty;
 
     /**
      * @var AttestationFormatRegistryInterface|null
@@ -33,9 +33,9 @@ class ConfigPolicy implements PolicyInterface
      */
     private $metadataResolver;
 
-    public function __construct(ConfigurationInterface $config, MetadataResolverInterface $metadataResolver, TrustDecisionManagerInterface $trustDecisionManager)
+    public function __construct(RelyingPartyInterface $relyingParty, MetadataResolverInterface $metadataResolver, TrustDecisionManagerInterface $trustDecisionManager)
     {
-        $this->config = $config;
+        $this->relyingParty = $relyingParty;
         $this->metadataResolver = $metadataResolver;
         $this->trustDecisionManager = $trustDecisionManager;
     }
@@ -75,5 +75,10 @@ class ConfigPolicy implements PolicyInterface
     public function getMetadataResolver(): MetadataResolverInterface
     {
         return $this->metadataResolver;
+    }
+
+    public function getRelyingParty(): RelyingPartyInterface
+    {
+        return $this->relyingParty;
     }
 }

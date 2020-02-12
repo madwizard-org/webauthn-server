@@ -3,6 +3,7 @@
 
 namespace MadWizard\WebAuthn\Conformance;
 
+use MadWizard\WebAuthn\Config\RelyingParty;
 use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
@@ -10,7 +11,7 @@ use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Extension\UnknownExtensionInput;
 use MadWizard\WebAuthn\Metadata\NullMetadataResolver;
-use MadWizard\WebAuthn\Policy\ConfigPolicy;
+use MadWizard\WebAuthn\Policy\Policy;
 use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManager;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\Registration\RegistrationContext;
@@ -55,14 +56,12 @@ class Router
 
     private function createServer(string $metadataDir) : WebAuthnServer
     {
+        $rp = new RelyingParty('Test server', 'http://' . $_SERVER['HTTP_HOST']);
         $config = new WebAuthnConfiguration();
-        $config->setRelyingPartyName('Test server');
-        $config->setRelyingPartyId('localhost');
         $config->setUserPresenceRequired(false);
-        $config->setRelyingPartyOrigin('http://' . $_SERVER['HTTP_HOST']);
         $metadataResolver = new NullMetadataResolver();
         $trustDecisionManager = new TrustDecisionManager();
-        $policy = new ConfigPolicy($config, $metadataResolver, $trustDecisionManager);
+        $policy = new Policy($rp, $metadataResolver, $trustDecisionManager);
         return new WebAuthnServer($config, $policy, $this->store);
     }
 

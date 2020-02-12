@@ -4,9 +4,9 @@
 namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Config\ConfigurationInterface;
+use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
-use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Server\AbstractContext;
 use MadWizard\WebAuthn\Server\RequestContext;
@@ -29,18 +29,13 @@ class AuthenticationContext extends AbstractContext implements RequestContext
         $this->allowCredentialIds[] = $buffer;
     }
 
-    public static function create(PublicKeyCredentialRequestOptions $options, ConfigurationInterface $configuration) : self
+    // TODO: remove configuration
+    public static function create(PublicKeyCredentialRequestOptions $options, ConfigurationInterface $configuration, RelyingPartyInterface $rp) : self
     {
-        $origin = $configuration->getRelyingPartyOrigin();
-        if ($origin === null) {
-            throw new ConfigurationException('Could not determine relying party origin.');
-        }
+        $origin = $rp->getOrigin();
+        $rpId = $rp->getEffectiveId();
 
-        $rpId = $options->getRpId();
-        if ($rpId === null) {
-            $rpId = $configuration->getEffectiveRelyingPartyId();
-        }
-
+        // TODO: mismatch $rp and rp in $options? Check?
         $context = new self($options->getChallenge(), $origin, $rpId);
 
         if ($options->getUserVerification() === UserVerificationRequirement::REQUIRED) {

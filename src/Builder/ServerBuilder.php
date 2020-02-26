@@ -23,6 +23,7 @@ final class ServerBuilder
 
     // TODO:interface?
     // TODO:split in traits?
+
     /**
      * @var RelyingParty|null
      */
@@ -43,31 +44,34 @@ final class ServerBuilder
      */
     private $metadataSources = [];
 
-
     public function setRelyingParty(RelyingParty $rp) : self
     {
         $this->rp = $rp;
+        return $this;
     }
 
     public function setCredentialStore(CredentialStoreInterface $store) : self
     {
         $this->store = $store;
+        return $this;
     }
 
     public function setCacheDirectory(string $directory) : self
     {
         $this->cacheDir = $directory;
+        return $this;
     }
 
     public function useSystemTempCache(string $subDirectory = 'webauthn-server-cache') : self
     {
         $this->cacheDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $subDirectory;
+        return $this;
     }
 
     private function getCacheDirectory(): string
     {
         if ($this->cacheDir === null) {
-            throw new ConfigurationException("No cache directory configured. Use useCacheDirectory or useSystemTempCache.");
+            throw new ConfigurationException('No cache directory configured. Use useCacheDirectory or useSystemTempCache.');
         }
         return $this->cacheDir;
     }
@@ -75,7 +79,7 @@ final class ServerBuilder
     private function getCredentialStore() : CredentialStoreInterface
     {
         if ($this->store === null) {
-            throw new ConfigurationException("Credential store not configured. Use setCredentialStore.");
+            throw new ConfigurationException('Credential store not configured. Use setCredentialStore.');
         }
 
         return $this->store;
@@ -94,12 +98,11 @@ final class ServerBuilder
     private function getRelyingParty(): RelyingPartyInterface
     {
         if ($this->rp === null) {
-            throw new ConfigurationException("Relying party not configured. Use setRelyingParty.");
+            throw new ConfigurationException('Relying party not configured. Use setRelyingParty.');
         }
 
         return $this->rp;
     }
-
 
     private function getMetadataResolver() : MetadataResolverInterface
     {

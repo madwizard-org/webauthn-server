@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Pki;
 
 use DateTimeImmutable;
 use MadWizard\WebAuthn\Remote\Downloader;
+use MadWizard\WebAuthn\Remote\DownloaderInterface;
 use X509\Certificate\Certificate;
 use X509\CertificationPath\CertificationPath;
 use X509\CertificationPath\PathValidation\PathValidationConfig;
@@ -14,11 +15,11 @@ final class ChainValidator implements ChainValidatorInterface
     public const MAX_VALIDATION_LENGTH = 5;
 
     /**
-     * @var Downloader|null
+     * @var DownloaderInterface|null
      */
     private $downloader;
 
-    public function __construct(Downloader $downloader = null)
+    public function __construct(DownloaderInterface $downloader = null) // todo remove downloader? CRL separate?
     {
         $this->downloader = $downloader;
     }

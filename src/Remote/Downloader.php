@@ -4,10 +4,11 @@
 namespace MadWizard\WebAuthn\Remote;
 
 use GuzzleHttp\Client;
+use MadWizard\WebAuthn\Cache\CacheProviderInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use function var_dump;
 
-class Downloader
+class Downloader implements DownloaderInterface
 {
     /**
      * @var CacheItemPoolInterface
@@ -19,9 +20,9 @@ class Downloader
      */
     private $client;
 
-    public function __construct(CacheItemPoolInterface $cache, ?Client $client = null)
+    public function __construct(CacheProviderInterface $cacheProvider, ?Client $client = null)
     {
-        $this->cache = $cache;
+        $this->cache = $cacheProvider->getCachePool('downloader'); // todo lazy?
         $this->client = $client ?? new Client();
     }
 

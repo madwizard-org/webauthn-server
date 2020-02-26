@@ -5,7 +5,6 @@ namespace MadWizard\WebAuthn\Conformance;
 
 use MadWizard\WebAuthn\Builder\ServerBuilder;
 use MadWizard\WebAuthn\Config\RelyingParty;
-use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
@@ -57,14 +56,13 @@ class Router
 
     private function createServer(string $metadataDir) : WebAuthnServer
     {
-
         $builder = new ServerBuilder();
 
         $rp = new RelyingParty('Test server', 'http://' . $_SERVER['HTTP_HOST']);
 
         $builder
             ->setRelyingParty($rp)
-            ->useSystemTempCache();
+            ->setCacheDirectory(__DIR__ . '/../../var/conformance');
 
 
         $metadataResolver = new NullMetadataResolver();

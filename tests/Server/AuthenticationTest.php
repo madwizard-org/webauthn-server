@@ -4,7 +4,6 @@
 namespace MadWizard\WebAuthn\Tests\Server;
 
 use MadWizard\WebAuthn\Config\RelyingParty;
-use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
@@ -27,11 +26,6 @@ use function hex2bin;
 
 class AuthenticationTest extends TestCase
 {
-    /**
-     * @var WebAuthnConfiguration|MockObject
-     */
-    private $config;
-
     /**
      * @var CredentialStoreInterface|MockObject
      */
@@ -278,7 +272,6 @@ class AuthenticationTest extends TestCase
     protected function setUp()
     {
         $rp = new RelyingParty('Example', 'https://example.com');
-        $this->config = new WebAuthnConfiguration();
         $this->store = $this->createMock(CredentialStoreInterface::class);
 
         $this->store->expects($this->any())
@@ -288,7 +281,7 @@ class AuthenticationTest extends TestCase
         $trustDecisionManager = new TrustDecisionManager();
         $trustDecisionManager->addVoter(new AnyTrustVoter());
         $policy = new Policy($rp, $metadataResolver, $trustDecisionManager);
-        $this->server = new WebAuthnServer($this->config, $policy, $this->store);
+        $this->server = new WebAuthnServer($policy, $this->store);
     }
 
     private function createCredential() : UserCredentialInterface

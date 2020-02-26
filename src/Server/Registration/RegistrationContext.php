@@ -3,7 +3,6 @@
 
 namespace MadWizard\WebAuthn\Server\Registration;
 
-use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
@@ -29,7 +28,7 @@ class RegistrationContext extends AbstractContext implements RequestContext
     /**
      * @internal TODO: do not include heree?
      * @param PublicKeyCredentialCreationOptions $options
-     * @param RelyingPartyInterface $rp
+     * @param PolicyInterface $policy
      * @return static
      */
     public static function create(PublicKeyCredentialCreationOptions $options, PolicyInterface $policy) : self

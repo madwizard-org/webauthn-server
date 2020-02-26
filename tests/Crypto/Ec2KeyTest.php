@@ -92,7 +92,7 @@ class Ec2KeyTest extends TestCase
     {
         // Example key from webauthn spec
         $cbor = HexData::buf(
-            'A5        
+            'A5
              01  02  #   1:   2,  ; kty: EC2 key type
              03  26  #   3:  -7,  ; alg: ES256 signature algorithm
              20  01  #  -1:   1,  ; crv: P-256 curve
@@ -102,7 +102,7 @@ class Ec2KeyTest extends TestCase
 
         $key = CoseKey::parseCbor($cbor);
         $this->assertInstanceOf(Ec2Key::class, $key);
-        /** @var $key Ec2Key */
+        /** @var Ec2Key $key */
 
         $this->assertSame(Ec2Key::CURVE_P256, $key->getCurve());
         $this->assertSame(CoseAlgorithm::ES256, $key->getAlgorithm());

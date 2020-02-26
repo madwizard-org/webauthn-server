@@ -179,7 +179,7 @@ class WebAuthnServer implements ServerInterface
         }
 
 
-        $context = AuthenticationContext::create($options, $this->policy);
+        $context = AuthenticationContext::create($requestOptions, $this->policy);
         return new AuthenticationRequest($requestOptions, $context);
     }
 

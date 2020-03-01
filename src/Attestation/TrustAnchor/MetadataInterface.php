@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Attestation\TrustAnchor;
 
 use MadWizard\WebAuthn\Attestation\AttestationType;
+use MadWizard\WebAuthn\Metadata\Statement\StatusReport;
 
 interface MetadataInterface
 {
@@ -19,5 +20,8 @@ interface MetadataInterface
      */
     public function supportsAttestationType(string $type): bool;
 
-    public function getStatusReports(): array; // TODO: types
+    /**
+     * @return StatusReport[]
+     */
+    public function getStatusReports(): array;
 }

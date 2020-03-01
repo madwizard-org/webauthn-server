@@ -7,9 +7,11 @@ use MadWizard\WebAuthn\Attestation\Identifier\AttestationKeyIdentifier;
 use MadWizard\WebAuthn\Attestation\Identifier\IdentifierInterface;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
+use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Metadata\Source\MetadataSourceInterface;
 use MadWizard\WebAuthn\Pki\CertificateParser;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResult;
+use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
 
 final class MetadataResolver implements MetadataResolverInterface
 {
@@ -23,7 +25,7 @@ final class MetadataResolver implements MetadataResolverInterface
         $this->sources = $sources;
     }
 
-    private function determineIdentifier(RegistrationResult $registrationResult) : ?IdentifierInterface
+    private function determineIdentifier(RegistrationResultInterface $registrationResult) : ?IdentifierInterface
     {
 
         // If a valid AAGUID is present, this is the main identifier. Do not look for others.
@@ -43,19 +45,21 @@ final class MetadataResolver implements MetadataResolverInterface
         return null;
     }
 
-    public function getMetadata(RegistrationResult $registrationResult) : ?MetadataInterface
+    public function getMetadata(RegistrationResultInterface $registrationResult) : ?MetadataInterface
     {
         $identifier = $this->determineIdentifier($registrationResult);
         if ($identifier === null) {
             return null;
         }
 
-        // TEMP error_log("**** ID " . $id->getType() . " " . $id->toString());
         foreach ($this->sources as $source) {
-            $metadata = $source->getMetadata($identifier);
-            if ($metadata !== null) {
-                return $metadata;
-            }
+            try {
+                $metadata = $source->getMetadata($identifier);
+                if ($metadata !== null) {
+                    return $metadata;
+                }
+            } catch (WebAuthnException $e) {
+                error_log('IGNORE: ' . $e->getMessage()); // TODO!                     }
         }
         return null;
     }

@@ -10,9 +10,9 @@ use MadWizard\WebAuthn\Attestation\Identifier\AttestationKeyIdentifier;
 use MadWizard\WebAuthn\Attestation\Identifier\IdentifierInterface;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\CertificateTrustAnchor;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
-use MadWizard\WebAuthn\Crypto\Der;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\DataValidator;
+use MadWizard\WebAuthn\Pki\X509Certificate;
 use function base64_decode;
 use function in_array;
 
@@ -99,7 +99,7 @@ class MetadataStatement implements MetadataInterface
 //    /** @var null|ExtensionDescriptor[] */
 //    private $supportedExtensions;
 
-    use StatusReportsTrait;
+    private $statusReports = [];
 
     public static function decodeString(string $json) : self
     {
@@ -302,8 +302,24 @@ class MetadataStatement implements MetadataInterface
     {
         $trustAnchors = [];
         foreach ($this->getAttestationRootCertificates() as $pem) {
-            $trustAnchors[] = new CertificateTrustAnchor(Der::pem('CERTIFICATE', base64_decode($pem))); // TODO: error check/optimize
+            $trustAnchors[] = new CertificateTrustAnchor(X509Certificate::fromBase64($pem));
         }
         return $trustAnchors;
+    }
+
+    /**
+     * @return StatusReport[]
+     */
+    public function getStatusReports(): array
+    {
+        return $this->statusReports;
+    }
+
+    /**
+     * @param StatusReport $statusReports
+     */
+    public function setStatusReports(array $statusReports): void
+    {
+        $this->statusReports = $statusReports;
     }
 }

@@ -6,7 +6,6 @@ namespace MadWizard\WebAuthn\Attestation\Verifier;
 use MadWizard\WebAuthn\Attestation\Android\SafetyNetResponseParser;
 use MadWizard\WebAuthn\Attestation\Android\SafetyNetResponseParserInterface;
 use MadWizard\WebAuthn\Attestation\AttestationType;
-use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Attestation\Statement\AndroidSafetyNetAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
@@ -14,7 +13,6 @@ use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Pki\CertificateParser;
 use MadWizard\WebAuthn\Pki\CertificateParserInterface;
-use X509\Certificate\Certificate;
 use function base64_encode;
 use function hash_equals;
 use function microtime;
@@ -71,7 +69,7 @@ class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterfac
         $attCert = $x5c[0];
 
         // Verify that attestationCert is issued to the hostname "attest.android.com" (see SafetyNet online documentation).
-        $certInfo = $this->certificateParser->parsePem($attCert);
+        $certInfo = $this->certificateParser->parsePem($attCert->asPem());
         $cn = $certInfo->getSubjectCommonName();
 
         if ($cn !== self::ATTEST_HOSTNAME) {
@@ -90,6 +88,6 @@ class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterfac
         }
 
         // If successful, return implementation-specific values representing attestation type Basic and attestation trust path attestationCert.
-        return new VerificationResult(AttestationType::BASIC, CertificateTrustPath::fromPemList($x5c));
+        return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath($x5c));
     }
 }

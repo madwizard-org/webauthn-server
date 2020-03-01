@@ -3,6 +3,8 @@
 
 namespace MadWizard\WebAuthn\Attestation\Android;
 
+use MadWizard\WebAuthn\Pki\X509Certificate;
+
 class SafetyNetResponse implements SafetyNetResponseInterface
 {
     /**
@@ -11,7 +13,7 @@ class SafetyNetResponse implements SafetyNetResponseInterface
     private $nonce;
 
     /**
-     * @var array
+     * @var X509Certificate[]
      */
     private $x5c;
 
@@ -42,7 +44,7 @@ class SafetyNetResponse implements SafetyNetResponseInterface
     }
 
     /**
-     * @return string[]
+     * @return X509Certificate[]
      */
     public function getCertificateChain(): array
     {

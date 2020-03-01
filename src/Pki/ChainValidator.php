@@ -4,8 +4,6 @@
 namespace MadWizard\WebAuthn\Pki;
 
 use DateTimeImmutable;
-use MadWizard\WebAuthn\Remote\Downloader;
-use MadWizard\WebAuthn\Remote\DownloaderInterface;
 use X509\Certificate\Certificate;
 use X509\CertificationPath\CertificationPath;
 use X509\CertificationPath\PathValidation\PathValidationConfig;
@@ -15,13 +13,13 @@ final class ChainValidator implements ChainValidatorInterface
     public const MAX_VALIDATION_LENGTH = 5;
 
     /**
-     * @var DownloaderInterface|null
+     * @var CertificateStatusResolverInterface|null
      */
-    private $downloader;
+    private $statusResolver;
 
-    public function __construct(DownloaderInterface $downloader = null) // todo remove downloader? CRL separate?
+    public function __construct(?CertificateStatusResolverInterface $statusResolver)
     {
-        $this->downloader = $downloader;
+        $this->statusResolver = $statusResolver;
     }
 
     private function getReferenceDate() : DateTimeImmutable
@@ -29,7 +27,7 @@ final class ChainValidator implements ChainValidatorInterface
         return new DateTimeImmutable();
     }
 
-    public function validateChain(X509Certificate... $certificates) : bool
+    private function validateCertificates(X509Certificate... $certificates)
     {
         $pathCerts = array_map(function (X509Certificate $c) {
             return Certificate::fromDER($c->asDer());
@@ -42,5 +40,21 @@ final class ChainValidator implements ChainValidatorInterface
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    public function validateChain(X509Certificate... $certificates) : bool
+    {
+        if ($this->validateCertificates(...$certificates)) {
+            if ($this->statusResolver) {
+                $numCerts = count($certificates);
+                for ($i = 1; $i < $numCerts; $i++) {
+                    if ($this->statusResolver->isRevoked($certificates[$i], $certificates[$i - 1])) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

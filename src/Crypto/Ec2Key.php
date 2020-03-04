@@ -110,6 +110,8 @@ class Ec2Key extends CoseKey // TODO exceptions
 
     public static function fromCborData(array $data) : Ec2Key
     {
+        // Note: leading zeroes in X and Y coordinates are preserved in CBOR
+        // See RFC8152 13.1.1. Double Coordinate Curves
         DataValidator::checkTypes(
             $data,
             [

@@ -3,13 +3,12 @@
 
 namespace MadWizard\WebAuthn\Attestation\Android;
 
-use JWX\JWK\Asymmetric\PublicKeyJWK;
-use JWX\JWT\JWT;
-use JWX\JWT\ValidationContext;
-use MadWizard\WebAuthn\Crypto\Der;
 use MadWizard\WebAuthn\Exception\ParseException;
-use Sop\CryptoEncoding\PEM;
-use X509\Certificate\Certificate;
+use MadWizard\WebAuthn\Pki\Jwt\Jwt;
+use MadWizard\WebAuthn\Pki\Jwt\JwtInterface;
+use MadWizard\WebAuthn\Pki\Jwt\JwtValidator;
+use MadWizard\WebAuthn\Pki\Jwt\ValidationContext;
+use MadWizard\WebAuthn\Pki\Jwt\X5cParameterReader;
 use function is_float;
 
 class SafetyNetResponseParser implements SafetyNetResponseParserInterface
@@ -17,45 +16,39 @@ class SafetyNetResponseParser implements SafetyNetResponseParserInterface
     public function parse(string $response): SafetyNetResponseInterface
     {
         try {
-            $jwt = new JWT($response);
-            if (!$jwt->header()->hasX509CertificateChain()) {
+            $jwt = new Jwt($response);
+
+            $validator = new JwtValidator();
+
+            $x5cParam = X5cParameterReader::getX5cParameter($jwt);
+
+            if ($x5cParam === null) {
                 throw new ParseException('SafetyNet response does not include x5c certificates.');
             }
-            $x5c = $jwt->header()->X509CertificateChain()->value();
-            if (count($x5c) === 0) {
-                throw new ParseException('SafetyNet response has empty x5c certificate chain.');
-            }
-            $x5c = array_map(function ($x) {
-                $x = base64_decode($x);
-                if ($x === false) {
-                    throw new ParseException('x509 does not have a valid base64 encoding.');
-                }
-                return Der::pem('CERTIFICATE', $x);
-            }, $x5c);
 
-            $cert = Certificate::fromPEM(PEM::fromString($x5c[0]))->tbsCertificate();
-            $key = PublicKeyJWK::fromPublicKeyInfo($cert->subjectPublicKeyInfo());
+            // NOTE: the chain itself is not validated here (the specs do not tell how other than to use metadata, which
+            // is done in later step when enabled.
 
-            $context = ValidationContext::fromJWK($key); // TODO: TEST: no encryption used -> error
+            $context = new ValidationContext(JwtInterface::ES_AND_RSA, $x5cParam->getCoseKey());
 
-            $claims = $jwt->claims($context);
+            $claims = $validator->validate($jwt, $context);
 
-            $nonce = $claims->get('nonce')->value();
+            $nonce = $claims['nonce'] ?? null;
             if (!\is_string($nonce)) {
                 throw new ParseException('Expecting nonce to be a string.');
             }
 
-            $ctsProfileMatch = $claims->get('ctsProfileMatch')->value();
+            $ctsProfileMatch = $claims['ctsProfileMatch'] ?? null;
             if (!\is_bool($ctsProfileMatch)) {
                 throw new ParseException('Expecting ctsProfileMatch to be a boolean.');
             }
 
-            $timetampMs = $claims->get('timestampMs')->value();
+            $timetampMs = $claims['timestampMs'] ?? null;
             if (!is_int($timetampMs) && !is_float($timetampMs)) {
                 throw new ParseException('Expecting timeStampMs to be a number.');
             }
 
-            return new SafetyNetResponse($nonce, $x5c, $ctsProfileMatch, $timetampMs);
+            return new SafetyNetResponse($nonce, $x5cParam->getCertificates(), $ctsProfileMatch, $timetampMs);
         } catch (\Exception $e) {
             throw new ParseException('Failed to parse SafetyNet response.', 0, $e);
         }

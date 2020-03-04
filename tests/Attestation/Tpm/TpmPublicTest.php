@@ -17,7 +17,7 @@ class TpmPublicTest extends TestCase
         '0001 # type
          000b # Name alg
          00060472 # Object attributes
-         0020 # Auth policy length 
+         0020 # Auth policy length
          9dffcbf36c383ae699fb9868dc6dcb89d7153884be2803922c124158bfad22ae # Auth policy
          00100010080000000000 # Parameters (10 bytes RSA)
          0100 # Unique length
@@ -58,10 +58,11 @@ class TpmPublicTest extends TestCase
 
         $this->assertSame(HexData::buf(self::RSA_KEY_BITS)->getHex(), $public->getUnique()->getHex());
 
+        /** @var TpmRsaParameters $parameters */
         $parameters = $public->getParameters();
         $this->assertInstanceOf(TpmRsaParameters::class, $parameters);
 
-        /** @var TpmRsaParameters $parameters */
+
         $this->assertSame(65537, $parameters->getExponent());
         $this->assertSame(TpmPublic::TPM_ALG_NULL, $parameters->getSymmetric());
         $this->assertSame(TpmPublic::TPM_ALG_NULL, $parameters->getScheme());

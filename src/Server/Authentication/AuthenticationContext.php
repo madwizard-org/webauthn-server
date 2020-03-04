@@ -3,11 +3,10 @@
 
 namespace MadWizard\WebAuthn\Server\Authentication;
 
-use MadWizard\WebAuthn\Config\ConfigurationInterface;
-use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Policy\PolicyInterface;
 use MadWizard\WebAuthn\Server\AbstractContext;
 use MadWizard\WebAuthn\Server\RequestContext;
 use MadWizard\WebAuthn\Web\Origin;
@@ -29,20 +28,26 @@ class AuthenticationContext extends AbstractContext implements RequestContext
         $this->allowCredentialIds[] = $buffer;
     }
 
-    // TODO: remove configuration
-    public static function create(PublicKeyCredentialRequestOptions $options, ConfigurationInterface $configuration, RelyingPartyInterface $rp) : self
+    /**
+     * @internal TODO: do not include here?
+     * @param PublicKeyCredentialRequestOptions $options
+     * @param PolicyInterface $policy
+     * @return static
+     */
+    public static function create(PublicKeyCredentialRequestOptions $options, PolicyInterface $policy) : self
     {
-        $origin = $rp->getOrigin();
-        $rpId = $rp->getEffectiveId();
+        $relyingParty = $policy->getRelyingParty();
+        $origin = $relyingParty->getOrigin();
+        $rpId = $relyingParty->getEffectiveId();
 
-        // TODO: mismatch $rp and rp in $options? Check?
+        // TODO: mismatch $rp and rp in $policy? Check?
         $context = new self($options->getChallenge(), $origin, $rpId);
 
         if ($options->getUserVerification() === UserVerificationRequirement::REQUIRED) {
             $context->setUserVerificationRequired(true);
         }
 
-        $context->setUserPresenceRequired($configuration->isUserPresenceRequired());
+        $context->setUserPresenceRequired($policy->isUserPresenceRequired());
 
         $allowCredentials = $options->getAllowCredentials();
         if ($allowCredentials !== null) {

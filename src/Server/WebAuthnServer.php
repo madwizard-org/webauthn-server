@@ -3,8 +3,6 @@
 
 namespace MadWizard\WebAuthn\Server;
 
-use MadWizard\WebAuthn\Config\ConfigurationInterface;
-
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Dom\AuthenticationExtensionsClientInputs;
@@ -38,11 +36,6 @@ use MadWizard\WebAuthn\Server\Registration\RegistrationVerifier;
 class WebAuthnServer implements ServerInterface
 {
     /**
-     * @var ConfigurationInterface
-     */
-    private $config;
-
-    /**
      * @var CredentialStoreInterface
      */
     private $credentialStore;
@@ -52,9 +45,8 @@ class WebAuthnServer implements ServerInterface
      */
     private $policy;
 
-    public function __construct(ConfigurationInterface $config, PolicyInterface $policy, CredentialStoreInterface $credentialStore)
+    public function __construct(PolicyInterface $policy, CredentialStoreInterface $credentialStore)
     {
-        $this->config = $config;
         $this->policy = $policy;
         $this->credentialStore = $credentialStore;
     }
@@ -89,7 +81,7 @@ class WebAuthnServer implements ServerInterface
             }
         }
 
-        $context = RegistrationContext::create($creationOptions, $this->config, $this->policy->getRelyingParty());
+        $context = RegistrationContext::create($creationOptions, $this->policy);
         return new RegistrationRequest($creationOptions, $context);
     }
 
@@ -116,6 +108,7 @@ class WebAuthnServer implements ServerInterface
         //     source or from policy.
 
         $metadata = $this->policy->getMetadataResolver()->getMetadata($registrationResult);
+        $registrationResult = $registrationResult->withMetadata($metadata);
 
         // 16. Assess the attestation trustworthiness using the outputs of the verification procedure in step 14,
         //     as follows:
@@ -159,7 +152,7 @@ class WebAuthnServer implements ServerInterface
         //    attestation information.
 
 
-        // TODO:check timeout
+        // TODO:check timeout (spec does not mention this?)
 
         $registration = new CredentialRegistration($registrationResult->getCredentialId(), $registrationResult->getPublicKey(), $context->getUserHandle(), $response->getAttestationObject());
         $this->credentialStore->registerCredential($registration);
@@ -186,7 +179,7 @@ class WebAuthnServer implements ServerInterface
         }
 
 
-        $context = AuthenticationContext::create($requestOptions, $this->config, $this->policy->getRelyingParty());
+        $context = AuthenticationContext::create($requestOptions, $this->policy);
         return new AuthenticationRequest($requestOptions, $context);
     }
 
@@ -251,7 +244,7 @@ class WebAuthnServer implements ServerInterface
     private function getCredentialParameters() : array
     {
         $parameters = [];
-        $algorithms = $this->config->getAllowedAlgorithms();
+        $algorithms = $this->policy->getAllowedAlgorithms();
         foreach ($algorithms as $algorithm) {
             $parameters[] = new PublicKeyCredentialParameters($algorithm);
         }
@@ -260,7 +253,7 @@ class WebAuthnServer implements ServerInterface
 
     private function createChallenge() : ByteBuffer
     {
-        return ByteBuffer::randomBuffer($this->config->getChallengeLength());
+        return ByteBuffer::randomBuffer($this->policy->getChallengeLength());
     }
 
     private function convertAttestationCredential($credential) : PublicKeyCredentialInterface

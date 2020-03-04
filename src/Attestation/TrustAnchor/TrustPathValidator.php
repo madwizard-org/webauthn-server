@@ -4,9 +4,8 @@
 namespace MadWizard\WebAuthn\Attestation\TrustAnchor;
 
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
+use MadWizard\WebAuthn\Attestation\TrustPath\TrustPathInterface;
 use MadWizard\WebAuthn\Pki\ChainValidatorInterface;
-use MadWizard\WebAuthn\Pki\X509Certificate;
-use function array_merge;
 use function array_reverse;
 
 class TrustPathValidator implements TrustPathValidatorInterface
@@ -22,15 +21,14 @@ class TrustPathValidator implements TrustPathValidatorInterface
     }
 
     /**
-     * @param CertificateTrustPath $trustPath
-     * @param X509Certificate[] $anchorCertificates
+     * @param TrustPathInterface $trustPath
+     * @param TrustAnchorInterface $trustAnchor
      * @return bool
      */
-    public function validateCertificateChain(CertificateTrustPath $trustPath, array $anchorCertificates) : bool
+    public function validate(TrustPathInterface $trustPath, TrustAnchorInterface $trustAnchor) : bool
     {
-        foreach ($anchorCertificates as $rootCertificate) {
-            $list = array_merge([$rootCertificate], array_reverse($trustPath->getCertificates()));
-            if ($this->chainValidator->validateChain($list)) {
+        if ($trustAnchor instanceof CertificateTrustAnchor && $trustPath instanceof CertificateTrustPath) {
+            if ($this->chainValidator->validateChain($trustAnchor->getCertificate(), ...array_reverse($trustPath->getCertificates()))) {
                 return true;
             }
         }

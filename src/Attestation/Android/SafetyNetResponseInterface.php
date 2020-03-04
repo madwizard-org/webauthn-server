@@ -3,6 +3,8 @@
 
 namespace MadWizard\WebAuthn\Attestation\Android;
 
+use MadWizard\WebAuthn\Pki\X509Certificate;
+
 interface SafetyNetResponseInterface
 {
     public function getNonce() : string;
@@ -13,7 +15,7 @@ interface SafetyNetResponseInterface
     public function getTimestampMs();
 
     /**
-     * @return string[]
+     * @return X509Certificate[]
      */
     public function getCertificateChain(): array;
 

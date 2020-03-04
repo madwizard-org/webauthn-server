@@ -1,6 +1,6 @@
 <?php
 
-namespace MadWizard\WebAuthn\Tests\Metadata\Statement;
+namespace MadWizard\WebAuthn\Tests\Attestation\Statement;
 
 use InvalidArgumentException;
 use MadWizard\WebAuthn\Attestation\AttestationType;

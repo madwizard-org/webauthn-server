@@ -3,23 +3,25 @@
 
 namespace MadWizard\WebAuthn\Attestation\TrustAnchor;
 
+use MadWizard\WebAuthn\Pki\X509Certificate;
+
 class CertificateTrustAnchor implements TrustAnchorInterface
 {
     public const TYPE = 'certificate';
 
     /**
-     * @var string
+     * @var X509Certificate
      */
-    private $pem;
+    private $cert;
 
-    public function __construct(string $pem)
+    public function __construct(X509Certificate $cert)
     {
-        $this->pem = $pem;
+        $this->cert = $cert;
     }
 
-    public function getPem() :string
+    public function getCertificate() :X509Certificate
     {
-        return $this->pem;
+        return $this->cert;
     }
 
     public function getType(): string

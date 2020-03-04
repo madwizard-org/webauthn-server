@@ -3,15 +3,14 @@
 
 namespace MadWizard\WebAuthn\Attestation\TrustAnchor;
 
-use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
-use MadWizard\WebAuthn\Pki\X509Certificate;
+use MadWizard\WebAuthn\Attestation\TrustPath\TrustPathInterface;
 
 interface TrustPathValidatorInterface
 {
     /**
-     * @param CertificateTrustPath $trustPath
-     * @param X509Certificate[] $anchorCertificates
+     * @param TrustPathInterface $trustPath
+     * @param TrustAnchorInterface $trustAnchor
      * @return bool
      */
-    public function validateCertificateChain(CertificateTrustPath $trustPath, array $anchorCertificates):bool; // TODO generic trustpath?
+    public function validate(TrustPathInterface $trustPath, TrustAnchorInterface $trustAnchor) : bool;
 }

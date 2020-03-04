@@ -4,7 +4,6 @@
 namespace MadWizard\WebAuthn\Tests\Server;
 
 use MadWizard\WebAuthn\Config\RelyingParty;
-use MadWizard\WebAuthn\Config\WebAuthnConfiguration;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
@@ -29,11 +28,6 @@ use function json_encode;
 
 class RegistrationTest extends TestCase
 {
-    /**
-     * @var WebAuthnConfiguration|MockObject
-     */
-    private $config;
-
     /**
      * @var CredentialStoreInterface|MockObject
      */
@@ -93,7 +87,6 @@ class RegistrationTest extends TestCase
 
     protected function setUp()
     {
-        $this->config = new WebAuthnConfiguration();
         $rp = new RelyingParty('Example', 'https://example.com');
         $this->store = $this->createMock(CredentialStoreInterface::class);
 
@@ -101,7 +94,7 @@ class RegistrationTest extends TestCase
         $trustDecisionManager = new TrustDecisionManager();
         $trustDecisionManager->addVoter(new AnyTrustVoter());
         $policy = new Policy($rp, $metadataResolver, $trustDecisionManager);
-        $this->server = new WebAuthnServer($this->config, $policy, $this->store);
+        $this->server = new WebAuthnServer($policy, $this->store);
     }
 
     private function createCredential() : UserCredentialInterface

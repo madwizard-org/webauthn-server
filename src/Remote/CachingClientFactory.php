@@ -28,8 +28,6 @@ final class CachingClientFactory
     {
         $stack = HandlerStack::create();
 
-
-
         $stack->push(
             new CacheMiddleware(
                 new PrivateCacheStrategy(
@@ -39,23 +37,6 @@ final class CachingClientFactory
                 )
             )
         );
-        $stack->push(
-            function (callable $handler) {
-                return function (RequestInterface $request, array $options) use ($handler) {
-                    error_log('DL:' . $request->getHeaderLine('Host') . ' ' . $request->getUri());
-
-                    $res = $handler($request, $options);
-
-                    return $res->then(function (ResponseInterface $response) use ($request) {
-                        // Invalidate cache after a call of non-safe method on the same URI
-                        error_log('DL:' . $response->getStatusCode());
-
-                        return $response;
-                    });
-                };
-            }
-        );
-
 
         return new Client(['handler' => $stack]);
     }

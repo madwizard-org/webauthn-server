@@ -2,6 +2,11 @@ tools:
     external_code_coverage:
         timeout: 600
 
+build:
+    environment:
+        php:
+            version: 7.4
+
 filter:
     paths: ["src/*"]
     dependency_paths:

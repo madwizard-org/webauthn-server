@@ -3,6 +3,8 @@
 
 namespace MadWizard\WebAuthn\Metadata\Preset;
 
+use MadWizard\WebAuthn\Metadata\Source\MetadataServiceSource;
+
 final class FidoMetadataService
 {
     public const MDS2_URL = 'https://mds2.fidoalliance.org';
@@ -24,4 +26,9 @@ DcMdeQIxAMOEzOFsxX9Bo0h4LOFE5y5H8bdPFYW+l5gy1tQiJv+5NUyM2IBB55XU
 YjdBz56jSA==
 -----END CERTIFICATE-----
 CERT;
+
+    public static function mds2(string $accessToken) : MetadataServiceSource
+    {
+        return new MetadataServiceSource(self::MDS2_URL, self::MDS_ROOT, $accessToken);
+    }
 }

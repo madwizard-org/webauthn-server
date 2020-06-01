@@ -316,7 +316,7 @@ class MetadataStatement implements MetadataInterface
     }
 
     /**
-     * @param StatusReport $statusReports
+     * @param StatusReport[] $statusReports
      */
     public function setStatusReports(array $statusReports): void
     {

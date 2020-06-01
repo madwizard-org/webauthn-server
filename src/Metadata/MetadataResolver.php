@@ -8,21 +8,20 @@ use MadWizard\WebAuthn\Attestation\Identifier\IdentifierInterface;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
-use MadWizard\WebAuthn\Metadata\Source\MetadataSourceInterface;
+use MadWizard\WebAuthn\Metadata\Provider\MetadataProviderInterface;
 use MadWizard\WebAuthn\Pki\CertificateParser;
-use MadWizard\WebAuthn\Server\Registration\RegistrationResult;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
 
 final class MetadataResolver implements MetadataResolverInterface
 {
     /**
-     * @var MetadataSourceInterface[]
+     * @var MetadataProviderInterface[]
      */
-    private $sources;
+    private $providers;
 
-    public function __construct(MetadataSourceInterface ...$sources)
+    public function __construct(array $providers)
     {
-        $this->sources = $sources;
+        $this->providers = $providers;
     }
 
     private function determineIdentifier(RegistrationResultInterface $registrationResult) : ?IdentifierInterface
@@ -52,15 +51,15 @@ final class MetadataResolver implements MetadataResolverInterface
             return null;
         }
 
-        foreach ($this->sources as $source) {
+        foreach ($this->providers as $provider) {
             try {
-                $metadata = $source->getMetadata($identifier);
+                $metadata = $provider->getMetadata($identifier, $registrationResult);
                 if ($metadata !== null) {
                     return $metadata;
                 }
             } catch (WebAuthnException $e) {
                 // error_log('IGNORE: ' . $e->getMessage()); // TODO!
-                throw new WebAuthnException("TODO");
+                throw new WebAuthnException('TODO');
             }
         }
         return null;

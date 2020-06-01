@@ -4,11 +4,8 @@
 namespace MadWizard\WebAuthn\Pki;
 
 use MadWizard\WebAuthn\Cache\CacheProviderInterface;
-use MadWizard\WebAuthn\Exception\RemoteException;
-use MadWizard\WebAuthn\Pki\Crl\CrlParser;
 use MadWizard\WebAuthn\Remote\DownloaderInterface;
 use Psr\Cache\CacheItemPoolInterface;
-use X509\Certificate\Certificate;
 
 final class CertificateStatusResolver implements CertificateStatusResolverInterface
 {

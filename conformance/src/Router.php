@@ -10,14 +10,16 @@ use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Extension\UnknownExtensionInput;
-use MadWizard\WebAuthn\Metadata\NullMetadataResolver;
+use MadWizard\WebAuthn\Metadata\Source\MetadataServiceSource;
+use MadWizard\WebAuthn\Metadata\Source\StatementDirectorySource;
 use MadWizard\WebAuthn\Policy\Policy;
-use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManager;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\Registration\RegistrationContext;
 use MadWizard\WebAuthn\Server\Registration\RegistrationOptions;
+use MadWizard\WebAuthn\Server\ServerInterface;
 use MadWizard\WebAuthn\Server\UserIdentity;
 use MadWizard\WebAuthn\Server\WebAuthnServer;
+use RuntimeException;
 
 class Router
 {
@@ -51,29 +53,41 @@ class Router
         $this->store = new TestCredentialStore();
         $this->server = $this->createServer($metadataDir);
         $this->varDir = $varDir;
-        $this->debug = true;
+        $this->debug = (bool) ($_ENV['DEBUG'] ?? false);
     }
 
-    private function createServer(string $metadataDir) : WebAuthnServer
+    private function createServer(string $metadataDir) : ServerInterface
     {
         $builder = new ServerBuilder();
 
         $rp = new RelyingParty('Test server', 'http://' . $_SERVER['HTTP_HOST']);
 
+        $root = $_ENV['MDS_ROOT'] ?? null;
+        if ($root === null) {
+            throw new RuntimeException('Missing MDS_ROOT env setting.');
+        }
+
         $builder
             ->setRelyingParty($rp)
+            ->configurePolicy(
+                function (Policy $policy) {
+                    // Conformance tools do not require user presence
+                    // see https://github.com/fido-alliance/conformance-tools-issues/issues/434
+                    $policy->setUserPresenceRequired(false);
+                }
+            )
+            ->setCredentialStore($this->store)
             ->setCacheDirectory(__DIR__ . '/../../var/conformance');
 
+        for ($i = 0; $i < 10; $i++) {
+            $url = $_ENV['MDS_URL' . $i] ?? null;
+            if ($url) {
+                $builder->addMetadataSource(new MetadataServiceSource($url, $root));
+            }
+        }
 
-        $metadataResolver = new NullMetadataResolver();
-        $trustDecisionManager = new TrustDecisionManager();
-        $policy = new Policy($rp, $metadataResolver, $trustDecisionManager);
-
-        // Conformance tools do not require user presence
-        // see https://github.com/fido-alliance/conformance-tools-issues/issues/434
-        $policy->setUserPresenceRequired(false);
-
-        return new WebAuthnServer($policy, $this->store);
+        $builder->addMetadataSource(new StatementDirectorySource(__DIR__ . '/../metadata'));
+        return $builder->build();
     }
 
     private function getPostJson(string $postData) : array

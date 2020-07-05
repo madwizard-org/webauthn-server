@@ -3,10 +3,10 @@
 
 namespace MadWizard\WebAuthn\Attestation\Android;
 
-use ASN1\Type\Constructed\Sequence;
-use ASN1\Type\UnspecifiedType;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use Sop\ASN1\Type\Constructed\Sequence;
+use Sop\ASN1\Type\UnspecifiedType;
 
 class AndroidExtensionParser implements AndroidExtensionParserInterface
 {

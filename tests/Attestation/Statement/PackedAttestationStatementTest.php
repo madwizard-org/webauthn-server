@@ -60,7 +60,7 @@ class PackedAttestationStatementTest extends TestCase
         $attObj = FixtureHelper::getFidoTestObject('dummyPackedBothKeyAndX5C');
 
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~ecdaaKeyId and x5c cannot both be set~i');
+        $this->expectExceptionMessageMatches('~ecdaaKeyId and x5c cannot both be set~i');
 
         new PackedAttestationStatement($attObj);
     }
@@ -69,7 +69,7 @@ class PackedAttestationStatementTest extends TestCase
     {
         $attObj = FixtureHelper::getFidoTestObject('invalidPackedStatementMap');
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~invalid .+ attestation statement~i');
+        $this->expectExceptionMessageMatches('~invalid .+ attestation statement~i');
         new PackedAttestationStatement($attObj);
     }
 

@@ -3,7 +3,7 @@
 
 namespace MadWizard\WebAuthn\Builder;
 
-use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Client;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\TrustPathValidator;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\TrustPathValidatorInterface;
 use MadWizard\WebAuthn\Cache\CacheProviderInterface;
@@ -69,7 +69,7 @@ final class ServerBuilder
     private $downloader;
 
     /**
-     * @var ClientInterface|null
+     * @var Client|null
      */
     private $httpClient;
 
@@ -235,7 +235,7 @@ final class ServerBuilder
         return $this->chainValidator;
     }
 
-    private function buildHttpClient(): ClientInterface
+    private function buildHttpClient(): Client
     {
         if ($this->httpClient === null) {
             $factory = new CachingClientFactory($this->buildCacheProvider());

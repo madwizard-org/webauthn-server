@@ -26,42 +26,42 @@ class JsonConverterTest extends TestCase
     public function testNotPublicKey()
     {
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~public-key~i');
+        $this->expectExceptionMessageMatches('~public-key~i');
         JsonConverter::decodeCredential('{}', 'assertion');
     }
 
     public function testMissingId()
     {
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~missing id~i');
+        $this->expectExceptionMessageMatches('~missing id~i');
         JsonConverter::decodeCredential('{"type":"public-key"}', 'assertion');
     }
 
     public function testNonStringId()
     {
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~should be a string~i');
+        $this->expectExceptionMessageMatches('~should be a string~i');
         JsonConverter::decodeCredential('{"type":"public-key","id":333}', 'assertion');
     }
 
     public function testInvalidEncodedId()
     {
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~base64url~i');
+        $this->expectExceptionMessageMatches('~base64url~i');
         JsonConverter::decodeCredential('{"type":"public-key","id":"%%%"}', 'assertion');
     }
 
     public function testInvalidType()
     {
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~Unknown or missing type~i');
+        $this->expectExceptionMessageMatches('~Unknown or missing type~i');
         JsonConverter::decodeCredential(json_encode($this->getResponse()), 'invalid');
     }
 
     public function testInvalidResponse()
     {
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~expecting array~i');
+        $this->expectExceptionMessageMatches('~expecting array~i');
         $json =
             json_encode(
                 array_merge(
@@ -76,7 +76,7 @@ class JsonConverterTest extends TestCase
     public function testInvalidClientDataType()
     {
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~client data json~i');
+        $this->expectExceptionMessageMatches('~client data json~i');
         $json =
             json_encode(
                 array_merge(

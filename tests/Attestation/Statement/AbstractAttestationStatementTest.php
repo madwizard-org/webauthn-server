@@ -12,7 +12,7 @@ class AbstractAttestationStatementTest extends TestCase
     public function testWrongFormat()
     {
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~not expecting format~i');
+        $this->expectExceptionMessageMatches('~not expecting format~i');
 
         $attObj = FixtureHelper::getTestObject('none');
 

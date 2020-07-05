@@ -15,7 +15,7 @@ use SplFileInfo;
 class FileProvider implements MetadataProviderInterface
 {
     /**
-     * @var string
+     * @var StatementDirectorySource
      */
     private $source;
 
@@ -36,9 +36,9 @@ class FileProvider implements MetadataProviderInterface
                 continue;
             }
 
-            $data = file_get_contents($fileInfo->getRealPath());
+            $data = file_get_contents($fileInfo->getPathname());
             if ($data === false) {
-                throw new WebAuthnException(sprintf('Cannot read file %s.', $fileInfo->getRealPath()));
+                throw new WebAuthnException(sprintf('Cannot read file %s.', $fileInfo->getPathname()));
             }
             $statement = MetadataStatement::decodeString($data);
 

@@ -25,7 +25,7 @@ class AbstractExtensionTest extends TestCase
     public function testInvalidIdentifierInput()
     {
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~identifier~');
+        $this->expectExceptionMessageMatches('~identifier~');
         $this->getMockForAbstractClass(AbstractExtensionInput::class, [
             'not valid'
         ]);
@@ -47,7 +47,7 @@ class AbstractExtensionTest extends TestCase
     public function testInvalidIdentifierOutput()
     {
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~identifier~');
+        $this->expectExceptionMessageMatches('~identifier~');
         $this->getMockForAbstractClass(AbstractExtensionOutput::class, [
             'not valid'
         ]);

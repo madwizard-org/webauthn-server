@@ -3,7 +3,6 @@
 
 namespace MadWizard\WebAuthn\Pki;
 
-use ASN1\Type\UnspecifiedType;
 use Exception;
 use LogicException;
 use MadWizard\WebAuthn\Attestation\Identifier\Aaguid;
@@ -11,6 +10,7 @@ use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use Sop\ASN1\Type\UnspecifiedType;
 use Sop\CryptoBridge\Crypto;
 use Sop\CryptoEncoding\PEM;
 use Sop\CryptoTypes\AlgorithmIdentifier\Feature\SignatureAlgorithmIdentifier;
@@ -18,8 +18,8 @@ use Sop\CryptoTypes\AlgorithmIdentifier\Signature\ECDSAWithSHA256AlgorithmIdenti
 use Sop\CryptoTypes\AlgorithmIdentifier\Signature\SHA1WithRSAEncryptionAlgorithmIdentifier;
 use Sop\CryptoTypes\AlgorithmIdentifier\Signature\SHA256WithRSAEncryptionAlgorithmIdentifier;
 use Sop\CryptoTypes\Signature\Signature;
-use X509\Certificate\Certificate;
-use X509\Certificate\TBSCertificate;
+use Sop\X509\Certificate\Certificate;
+use Sop\X509\Certificate\TBSCertificate;
 
 class CertificateDetails implements CertificateDetailsInterface
 {

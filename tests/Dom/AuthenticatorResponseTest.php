@@ -46,7 +46,7 @@ class AuthenticatorResponseTest extends TestCase
         $buf = ByteBuffer::fromHex('12');
 
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~Unparseable~i');
+        $this->expectExceptionMessageMatches('~Unparseable~i');
 
         new AuthenticatorAssertionResponse('{{123', $buf, $buf, null);
     }
@@ -65,7 +65,7 @@ class AuthenticatorResponseTest extends TestCase
     public function testAttestationUnparseableJson()
     {
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~Unparseable~i');
+        $this->expectExceptionMessageMatches('~Unparseable~i');
 
         new AuthenticatorAttestationResponse('{{123', ByteBuffer::fromHex('123456'));
     }

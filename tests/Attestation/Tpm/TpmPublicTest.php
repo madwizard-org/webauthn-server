@@ -73,7 +73,7 @@ class TpmPublicTest extends TestCase
     {
         $raw = HexData::buf(self::TPMT_PUBLIC_EXAMPLE . PHP_EOL . 'aa');
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~unexpected bytes~i');
+        $this->expectExceptionMessageMatches('~unexpected bytes~i');
         new TpmPublic($raw);
     }
 
@@ -82,7 +82,7 @@ class TpmPublicTest extends TestCase
         $raw = HexData::buf(self::TPMT_PUBLIC_EXAMPLE);
         $public = new TpmPublic($raw);
         $this->expectException(UnsupportedException::class);
-        $this->expectExceptionMessageRegExp('~0xFAFB~i');
+        $this->expectExceptionMessageMatches('~0xFAFB~i');
         $public->isValidPubInfoName(ByteBuffer::fromHex('FAFB00112233'));
     }
 }

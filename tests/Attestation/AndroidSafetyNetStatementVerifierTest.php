@@ -60,7 +60,7 @@ class AndroidSafetyNetStatementVerifierTest extends TestCase
         };
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~Attestation should have ctsProfileMatch set to true~i');
+        $this->expectExceptionMessageMatches('~Attestation should have ctsProfileMatch set to true~i');
         $verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
     }
 }

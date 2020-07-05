@@ -55,7 +55,7 @@ class PackedStatementVerifierTest extends VerifierTest
         $verifier = new PackedAttestationVerifier();
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~expecting.+packed~i');
+        $this->expectExceptionMessageMatches('~expecting.+packed~i');
         $verifier->verify(
             $this->createMock(NoneAttestationStatement::class),
             $this->createMock(AuthenticatorDataInterface::class),

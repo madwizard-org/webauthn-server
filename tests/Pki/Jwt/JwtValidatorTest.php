@@ -28,7 +28,7 @@ class JwtValidatorTest extends TestCase
             $this->expectException($exeptionClass);
         }
         if ($msgRegEx) {
-            $this->expectExceptionMessageRegExp($msgRegEx);
+            $this->expectExceptionMessageMatches($msgRegEx);
         }
 
         // TODO: split parse and validate tests

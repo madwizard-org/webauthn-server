@@ -37,7 +37,7 @@ class FidoU2fVerifierTest extends VerifierTest
          * @var CertificateTrustPath $path
          */
         $this->assertCount(1, $path->getCertificates());
-        $this->assertContains('XPyTKmyvroUpl3LtsCeCAgPNQUHT7rb2os6Z45V4AyY6urjW', $path->asPemList()[0]);
+        $this->assertStringContainsString('XPyTKmyvroUpl3LtsCeCAgPNQUHT7rb2os6Z45V4AyY6urjW', $path->asPemList()[0]);
     }
 
     public function testFidoU2fHypersecu()
@@ -62,7 +62,7 @@ class FidoU2fVerifierTest extends VerifierTest
          * @var CertificateTrustPath $path
          */
         $this->assertCount(1, $path->getCertificates());
-        $this->assertContains('AAIjLWZXR95+CztkDiGfPlfcJLrt5RaAwBJnOnAodXJuiGGmkoYD', $path->asPemList()[0]);
+        $this->assertStringContainsString('AAIjLWZXR95+CztkDiGfPlfcJLrt5RaAwBJnOnAodXJuiGGmkoYD', $path->asPemList()[0]);
     }
 
     public function testFidoU2fWrongHash()
@@ -75,7 +75,7 @@ class FidoU2fVerifierTest extends VerifierTest
         $verifier = new FidoU2fAttestationVerifier();
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~signature~i');
+        $this->expectExceptionMessageMatches('~signature~i');
         $verifier->verify($statement, new AuthenticatorData($att->getAuthenticatorData()), hash('sha256', '123', true));
     }
 
@@ -84,7 +84,7 @@ class FidoU2fVerifierTest extends VerifierTest
         $verifier = new FidoU2fAttestationVerifier();
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~expecting.+fido~i');
+        $this->expectExceptionMessageMatches('~expecting.+fido~i');
         $verifier->verify(
             $this->createMock(NoneAttestationStatement::class),
             $this->createMock(AuthenticatorDataInterface::class),

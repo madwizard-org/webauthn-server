@@ -96,7 +96,7 @@ class AuthenticationTest extends TestCase
         $helper = new AssertionDataHelper();
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~not in list of allowed credentials~i');
+        $this->expectExceptionMessageMatches('~not in list of allowed credentials~i');
 
         $helper->setContextOptions(['allowedCredentials' => [Base64UrlEncoding::encode('different credential id')]]);
         $this->runAuth($helper);
@@ -124,7 +124,7 @@ class AuthenticationTest extends TestCase
         $userHandle = Base64UrlEncoding::encode(hex2bin('667788'));
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~does not belong to the user~i');
+        $this->expectExceptionMessageMatches('~does not belong to the user~i');
 
         $helper->setClientOptions(['userHandle' => $userHandle]);
         $this->runAuth($helper);
@@ -138,7 +138,7 @@ class AuthenticationTest extends TestCase
         $helper->setClientOptions(['makeWrongClientJson' => true]);
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~failed to parse json~i');
+        $this->expectExceptionMessageMatches('~failed to parse json~i');
 
         $this->runAuth($helper);
     }
@@ -150,7 +150,7 @@ class AuthenticationTest extends TestCase
         $helper->setClientOptions(['removeChallenge' => true]);
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~missing data .+ clientData~i');
+        $this->expectExceptionMessageMatches('~missing data .+ clientData~i');
 
         $this->runAuth($helper);
     }
@@ -176,7 +176,7 @@ class AuthenticationTest extends TestCase
         $helper->setClientOptions(['type' => 'webauthn.create']);
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~webauthn\.get~i');
+        $this->expectExceptionMessageMatches('~webauthn\.get~i');
 
         $this->runAuth($helper);
     }
@@ -190,7 +190,7 @@ class AuthenticationTest extends TestCase
         $helper->setClientOptions(['challenge' => Base64UrlEncoding::encode('differentchallenge123456789')]);
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~challenge.+does not match~i');
+        $this->expectExceptionMessageMatches('~challenge.+does not match~i');
 
         $this->runAuth($helper);
     }
@@ -203,7 +203,7 @@ class AuthenticationTest extends TestCase
         $helper->setClientOptions(['origin' => 'http://example.com']);
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~origin.+does not match~i');
+        $this->expectExceptionMessageMatches('~origin.+does not match~i');
 
         $this->runAuth($helper);
     }
@@ -216,7 +216,7 @@ class AuthenticationTest extends TestCase
         $helper->setClientOptions(['rpId' => 'not-localhost']);
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~rpIdHash was not correct~i');
+        $this->expectExceptionMessageMatches('~rpIdHash was not correct~i');
 
         $this->runAuth($helper);
     }
@@ -228,7 +228,7 @@ class AuthenticationTest extends TestCase
         $helper->setClientOptions(['tokenBinding' => ['status' => 'present', 'id' => '123456']]);
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~token binding is not supported~i');
+        $this->expectExceptionMessageMatches('~token binding is not supported~i');
 
         $this->runAuth($helper);
     }
@@ -240,7 +240,7 @@ class AuthenticationTest extends TestCase
         $helper->setClientOptions(['tokenBinding' => [true, false]]);
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~unexpected .+ tokenBinding~i');
+        $this->expectExceptionMessageMatches('~unexpected .+ tokenBinding~i');
 
         $this->runAuth($helper);
     }
@@ -252,7 +252,7 @@ class AuthenticationTest extends TestCase
         $helper->setClientOptions(['tokenBinding' => ['status' => 'invalidstatus']]);
 
         $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageRegExp('~status.+invalid~i');
+        $this->expectExceptionMessageMatches('~status.+invalid~i');
 
         $this->runAuth($helper);
     }
@@ -269,7 +269,7 @@ class AuthenticationTest extends TestCase
         $this->assertTrue(true);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $rp = new RelyingParty('Example', 'https://example.com');
         $this->store = $this->createMock(CredentialStoreInterface::class);

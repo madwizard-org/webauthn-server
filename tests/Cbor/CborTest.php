@@ -51,7 +51,7 @@ class CborTest extends TestCase
                 $this->assertArrayNotHasKey('error', $test, $message);
             } catch (CborException $exception) {
                 $this->assertArrayHasKey('error', $test, $message);
-                $this->assertContains($test['error'], $exception->getMessage(), $message);
+                $this->assertStringContainsString($test['error'], $exception->getMessage(), $message);
             }
         }
     }
@@ -122,7 +122,7 @@ class CborTest extends TestCase
         );
 
         $this->expectException(CborException::class);
-        $this->expectExceptionMessageRegExp('~map key~i');
+        $this->expectExceptionMessageMatches('~map key~i');
         CborDecoder::decode($buf);
     }
 
@@ -138,7 +138,7 @@ class CborTest extends TestCase
         );
 
         $this->expectException(CborException::class);
-        $this->expectExceptionMessageRegExp('~indefinite~i');
+        $this->expectExceptionMessageMatches('~indefinite~i');
         CborDecoder::decode($buf);
     }
 
@@ -147,7 +147,7 @@ class CborTest extends TestCase
         $buf = HexData::buf('FE');
 
         $this->expectException(CborException::class);
-        $this->expectExceptionMessageRegExp('~reserved~i');
+        $this->expectExceptionMessageMatches('~reserved~i');
         CborDecoder::decode($buf);
     }
 
@@ -157,7 +157,7 @@ class CborTest extends TestCase
         $buf = HexData::buf('FF');
 
         $this->expectException(CborException::class);
-        $this->expectExceptionMessageRegExp('~indefinite~i');
+        $this->expectExceptionMessageMatches('~indefinite~i');
         CborDecoder::decode($buf);
     }
 
@@ -166,7 +166,7 @@ class CborTest extends TestCase
         // array as map key
         $buf = HexData::buf('1E');
         $this->expectException(CborException::class);
-        $this->expectExceptionMessageRegExp('~reserved~i');
+        $this->expectExceptionMessageMatches('~reserved~i');
 
         CborDecoder::decode($buf);
     }
@@ -176,7 +176,7 @@ class CborTest extends TestCase
         // integer 15 followed by extra byte
         $buf = HexData::buf('1020');
         $this->expectException(CborException::class);
-        $this->expectExceptionMessageRegExp('~unused bytes~i');
+        $this->expectExceptionMessageMatches('~unused bytes~i');
         CborDecoder::decode($buf);
     }
 
@@ -237,7 +237,7 @@ class CborTest extends TestCase
         $validCbor =
             HexData::bin('
                 A5              # map(5)
-                05              # 5 
+                05              # 5
                     F4          #       false
                 21              # -2
                     F6          #       null
@@ -285,7 +285,7 @@ class CborTest extends TestCase
         );
 
         $this->expectException(CborException::class);
-        $this->expectExceptionMessageRegExp('~duplicate key~i');
+        $this->expectExceptionMessageMatches('~duplicate key~i');
         CborDecoder::decode($buf);
     }
 }

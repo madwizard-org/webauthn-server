@@ -47,7 +47,7 @@ final class JwtValidator implements JwtValidatorInterface
         }
         $componentLen = $algInfo['sigComponentLen'];
         if ($signature->getLength() !== ($componentLen * 2)) {
-            throw new ParseException(sprintf('Invalid signature length %d.', strlen($signature)));
+            throw new ParseException(sprintf('Invalid signature length %d.', $signature->getLength()));
         }
         $r = $signature->getBytes(0, $componentLen);
         $s = $signature->getBytes($componentLen, $componentLen);

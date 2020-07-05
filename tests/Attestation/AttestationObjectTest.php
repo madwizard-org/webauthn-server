@@ -23,7 +23,7 @@ class AttestationObjectTest extends TestCase
     public function testInvalidType()
     {
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~expecting.+Cbor map~i');
+        $this->expectExceptionMessageMatches('~expecting.+Cbor map~i');
         new AttestationObject(ByteBuffer::fromHex('10'));
     }
 
@@ -45,7 +45,7 @@ class AttestationObjectTest extends TestCase
         );
 
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~expecting.+fmt.+string~i');
+        $this->expectExceptionMessageMatches('~expecting.+fmt.+string~i');
         new AttestationObject($buf);
     }
 
@@ -68,7 +68,7 @@ class AttestationObjectTest extends TestCase
         );
 
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~expecting.+attStmt.+array~i');
+        $this->expectExceptionMessageMatches('~expecting.+attStmt.+array~i');
         new AttestationObject($buf);
     }
 
@@ -90,7 +90,7 @@ class AttestationObjectTest extends TestCase
         );
 
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~expecting.+authData.+byte~i');
+        $this->expectExceptionMessageMatches('~expecting.+authData.+byte~i');
         new AttestationObject($buf);
     }
 

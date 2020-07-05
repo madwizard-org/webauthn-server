@@ -85,7 +85,7 @@ class RegistrationTest extends TestCase
         $this->assertSame('Basic', $result->getVerificationResult()->getAttestationType());  // TODO:ugly
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $rp = new RelyingParty('Example', 'https://example.com');
         $this->store = $this->createMock(CredentialStoreInterface::class);

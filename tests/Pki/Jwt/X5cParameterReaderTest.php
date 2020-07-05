@@ -22,7 +22,7 @@ class X5cParameterReaderTest extends TestCase
             $this->expectException($exeptionClass);
         }
         if ($msgRegEx) {
-            $this->expectExceptionMessageRegExp($msgRegEx);
+            $this->expectExceptionMessageMatches($msgRegEx);
         }
         $param = X5cParameterReader::getX5cParameter($jwt);
 

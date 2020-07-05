@@ -22,14 +22,14 @@ class PublicKeyCredentialUserEntityTest extends TestCase
     public function testEmptyID()
     {
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~empty~i');
+        $this->expectExceptionMessageMatches('~empty~i');
         new PublicKeyCredentialUserEntity('eddy', new ByteBuffer(''), 'Eddy Wally');
     }
 
     public function testTooLargeID()
     {
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~cannot be larger~i');
+        $this->expectExceptionMessageMatches('~cannot be larger~i');
         new PublicKeyCredentialUserEntity('eddy', new ByteBuffer(str_repeat('x', 65)), 'Eddy Wally');
     }
 }

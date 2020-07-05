@@ -3,18 +3,18 @@
 
 namespace MadWizard\WebAuthn\Remote;
 
-use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use MadWizard\WebAuthn\Exception\RemoteException;
 
 class Downloader implements DownloaderInterface
 {
     /**
-     * @var ClientInterface
+     * @var Client
      */
     private $client;
 
-    public function __construct(ClientInterface $client)
+    public function __construct(Client $client)
     {
         $this->client = $client;
     }

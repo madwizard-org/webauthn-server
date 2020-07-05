@@ -58,8 +58,8 @@ final class MetadataResolver implements MetadataResolverInterface
                     return $metadata;
                 }
             } catch (WebAuthnException $e) {
-                // error_log('IGNORE: ' . $e->getMessage()); // TODO!
-                throw new WebAuthnException('TODO');
+                error_log('IGNORE: ' . $e->getMessage()); // TODO!
+                //throw new WebAuthnException('TODO');
             }
         }
         return null;

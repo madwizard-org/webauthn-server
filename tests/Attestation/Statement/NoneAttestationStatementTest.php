@@ -27,7 +27,7 @@ class NoneAttestationStatementTest extends TestCase
     public function testInvalidStatement()
     {
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~expecting empty map~i');
+        $this->expectExceptionMessageMatches('~expecting empty map~i');
         $invalid = new AttestationObject(
             new ByteBuffer(
                 CborEncoder::encodeMapValues([

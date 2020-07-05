@@ -49,7 +49,7 @@ class CertificateDetailsTest extends TestCase
         $cert = CertificateDetails::fromPem($pem);
 
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~not supported~i');
+        $this->expectExceptionMessageMatches('~not supported~i');
 
         $cert->verifySignature('testmessage', hex2bin($this->getData('ecSignedData')), 7799999);
     }
@@ -60,7 +60,7 @@ class CertificateDetailsTest extends TestCase
         $cert = CertificateDetails::fromPem($pem);
 
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~failed to verify~i');
+        $this->expectExceptionMessageMatches('~failed to verify~i');
 
         // Signature i  s RSA, not EC.
         $cert->verifySignature('testdata', hex2bin($this->getData('v1SignedData')), CoseAlgorithm::ES256);
@@ -72,7 +72,7 @@ class CertificateDetailsTest extends TestCase
         $cert = CertificateDetails::fromPem($pem);
 
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~organizational unit~i');
+        $this->expectExceptionMessageMatches('~organizational unit~i');
 
         $cert->getOrganizationalUnit();
     }
@@ -105,7 +105,7 @@ class CertificateDetailsTest extends TestCase
         $cert = CertificateDetails::fromPem($pem);
 
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~failed to parse AAGUID extension~i');
+        $this->expectExceptionMessageMatches('~failed to parse AAGUID extension~i');
         $cert->getFidoAaguidExtensionValue();
     }
 
@@ -115,7 +115,7 @@ class CertificateDetailsTest extends TestCase
         $cert = CertificateDetails::fromPem($pem);
 
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageRegExp('~must not be critical~i');
+        $this->expectExceptionMessageMatches('~must not be critical~i');
         $cert->getFidoAaguidExtensionValue();
     }
 

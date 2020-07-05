@@ -37,7 +37,7 @@ class AndroidKeyAttestationStatementTest extends TestCase
     {
         $attObj = FixtureHelper::getTestObject('invalid-android-key');
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~invalid .+ attestation statement~i');
+        $this->expectExceptionMessageMatches('~invalid .+ attestation statement~i');
         new AndroidKeyAttestationStatement($attObj);
     }
 

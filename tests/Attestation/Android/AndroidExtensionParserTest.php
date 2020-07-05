@@ -2,15 +2,10 @@
 
 namespace MadWizard\WebAuthn\Tests\Attestation\Android;
 
-use ASN1\Type\Primitive\NullType;
-use ASN1\Type\Tagged\ExplicitlyTaggedType;
-use ASN1\Type\UnspecifiedType;
 use MadWizard\WebAuthn\Attestation\Android\AndroidExtensionParser;
 use MadWizard\WebAuthn\Attestation\Android\AuthorizationList;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
 use PHPUnit\Framework\TestCase;
-use function bin2hex;
-use function chunk_split;
 
 class AndroidExtensionParserTest extends TestCase
 {
@@ -19,7 +14,7 @@ class AndroidExtensionParserTest extends TestCase
      */
     private $parser;
 
-    protected function setUp()
+    protected function setUp():void
     {
         $this->parser = new AndroidExtensionParser();
     }

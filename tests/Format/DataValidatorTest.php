@@ -39,7 +39,7 @@ class DataValidatorTest extends TestCase
     public function testCheckTypesWrong()
     {
         $this->expectException(DataValidationException::class);
-        $this->expectExceptionMessageRegExp('~expecting.+type~i');
+        $this->expectExceptionMessageMatches('~expecting.+type~i');
         DataValidator::checkTypes(
             [
                 'a' => 4,
@@ -59,7 +59,7 @@ class DataValidatorTest extends TestCase
     public function testCheckTypesWrongClass()
     {
         $this->expectException(DataValidationException::class);
-        $this->expectExceptionMessageRegExp('~expecting.+DateTime~i');
+        $this->expectExceptionMessageMatches('~expecting.+DateTime~i');
         DataValidator::checkTypes(
             [
                 'a' => new ByteBuffer(''),
@@ -79,7 +79,7 @@ class DataValidatorTest extends TestCase
     public function testCheckTypesMissing()
     {
         $this->expectException(DataValidationException::class);
-        $this->expectExceptionMessageRegExp('~missing~i');
+        $this->expectExceptionMessageMatches('~missing~i');
 
         DataValidator::checkTypes(
             [
@@ -104,7 +104,7 @@ class DataValidatorTest extends TestCase
     public function testCheckTypesAdditional()
     {
         $this->expectException(DataValidationException::class);
-        $this->expectExceptionMessageRegExp('~unexpected~i');
+        $this->expectExceptionMessageMatches('~unexpected~i');
 
         DataValidator::checkTypes(
             [
@@ -200,7 +200,7 @@ class DataValidatorTest extends TestCase
     public function testCheckTypesNullableInvalid()
     {
         $this->expectException(DataValidationException::class);
-        $this->expectExceptionMessageRegExp('~string~i');
+        $this->expectExceptionMessageMatches('~string~i');
 
         DataValidator::checkTypes(
             [
@@ -217,7 +217,7 @@ class DataValidatorTest extends TestCase
     public function testCheckTypesNullableMissing()
     {
         $this->expectException(DataValidationException::class);
-        $this->expectExceptionMessageRegExp('~required key "c"~i');
+        $this->expectExceptionMessageMatches('~required key "c"~i');
         DataValidator::checkTypes(
             [
                 'a' => 4,
@@ -253,7 +253,7 @@ class DataValidatorTest extends TestCase
     public function testCheckTypesWrongParameters()
     {
         $this->expectException(DataValidationException::class);
-        $this->expectExceptionMessageRegExp('~invalid type~i');
+        $this->expectExceptionMessageMatches('~invalid type~i');
 
         DataValidator::checkTypes(
             [

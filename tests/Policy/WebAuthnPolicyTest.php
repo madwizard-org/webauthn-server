@@ -17,7 +17,7 @@ class WebAuthnPolicyTest extends TestCase
      */
     private $policy;
 
-    protected function setUp()
+    protected function setUp():void
     {
         $this->policy = new Policy(new RelyingParty('rp', 'http://localhost'), new NullMetadataResolver(), new TrustDecisionManager());
     }

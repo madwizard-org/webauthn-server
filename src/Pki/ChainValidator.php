@@ -4,9 +4,9 @@
 namespace MadWizard\WebAuthn\Pki;
 
 use DateTimeImmutable;
-use X509\Certificate\Certificate;
-use X509\CertificationPath\CertificationPath;
-use X509\CertificationPath\PathValidation\PathValidationConfig;
+use Sop\X509\Certificate\Certificate;
+use Sop\X509\CertificationPath\CertificationPath;
+use Sop\X509\CertificationPath\PathValidation\PathValidationConfig;
 
 final class ChainValidator implements ChainValidatorInterface
 {

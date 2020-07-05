@@ -55,7 +55,7 @@ class TpmAttestationStatementTest extends TestCase
 
 
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~invalid TPM~i');
+        $this->expectExceptionMessageMatches('~invalid TPM~i');
         new TpmAttestationStatement($attObj);
     }
 
@@ -65,7 +65,7 @@ class TpmAttestationStatementTest extends TestCase
 
 
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~ecdaaKeyId and x5c cannot both~i');
+        $this->expectExceptionMessageMatches('~ecdaaKeyId and x5c cannot both~i');
         new TpmAttestationStatement($attObj);
     }
 

@@ -53,7 +53,7 @@ class FidoU2fAttestationStatementTest extends TestCase
     {
         $attObj = FixtureHelper::getFidoTestObject('invalidFidoU2fCertList');
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~x5c should be array of binary data elements~');
+        $this->expectExceptionMessageMatches('~x5c should be array of binary data elements~');
         new FidoU2fAttestationStatement($attObj);
     }
 
@@ -61,7 +61,7 @@ class FidoU2fAttestationStatementTest extends TestCase
     {
         $attObj = FixtureHelper::getFidoTestObject('invalidFidoU2fStatementMap');
         $this->expectException(ParseException::class);
-        $this->expectExceptionMessageRegExp('~invalid .+ attestation statement~i');
+        $this->expectExceptionMessageMatches('~invalid .+ attestation statement~i');
         new FidoU2fAttestationStatement($attObj);
     }
 

@@ -59,11 +59,11 @@ final class AndroidKeyAttestationVerifier implements AttestationVerifierInterfac
             throw new VerificationException('Public key of first certificate in chain does not match the public key from the authenticator data.');
         }
 
-        $data = $cert->getExtensionData(AndroidAttestationExtension::OID);
-        if ($data === null) {
+        $extension = $cert->getExtensionData(AndroidAttestationExtension::OID);
+        if ($extension === null) {
             throw new VerificationException('Missing Android attestation extension.');
         }
-        $ext = $this->extensionParser->parseAttestationExtension($data);
+        $ext = $this->extensionParser->parseAttestationExtension($extension->getValue());
 
         $this->checkAndroidKeyExtension($ext, $clientDataHash);
 

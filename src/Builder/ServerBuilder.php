@@ -86,7 +86,7 @@ final class ServerBuilder
     private $chainValidator;
 
     /**
-     * @var TrustDecisionManagerInterface
+     * @var TrustDecisionManagerInterface|null
      */
     private $trustDecisionManager;
 
@@ -269,23 +269,26 @@ final class ServerBuilder
 
     private function getTrustDecisionManager(): TrustDecisionManagerInterface
     {
-        $tdm = new TrustDecisionManager();
+        if ($this->trustDecisionManager === null) {
+            $tdm = new TrustDecisionManager();
 
-        if ($this->allowNoneAttestation) {
-            $tdm->addVoter(new TrustAttestationTypeVoter(AttestationType::NONE));
+            if ($this->allowNoneAttestation) {
+                $tdm->addVoter(new TrustAttestationTypeVoter(AttestationType::NONE));
+            }
+            if ($this->allowSelfAttestation) {
+                $tdm->addVoter(new TrustAttestationTypeVoter(AttestationType::SELF));
+            }
+            if ($this->trustWithoutMetadata) {
+                $tdm->addVoter(new AllowEmptyMetadataVoter());
+            }
+            if ($this->useMetadata) {
+                $tdm->addVoter(new SupportedAttestationTypeVoter());
+                $tdm->addVoter(new UndesiredStatusReportVoter());
+                $tdm->addVoter(new TrustChainVoter($this->getTrustPathValidator()));
+            }
+            $this->trustDecisionManager = $tdm;
         }
-        if ($this->allowSelfAttestation) {
-            $tdm->addVoter(new TrustAttestationTypeVoter(AttestationType::SELF));
-        }
-        if ($this->trustWithoutMetadata) {
-            $tdm->addVoter(new AllowEmptyMetadataVoter());
-        }
-        if ($this->useMetadata) {
-            $tdm->addVoter(new SupportedAttestationTypeVoter());
-            $tdm->addVoter(new UndesiredStatusReportVoter());
-            $tdm->addVoter(new TrustChainVoter($this->getTrustPathValidator()));
-        }
-        return $tdm;
+        return $this->trustDecisionManager;
     }
 
     private function getTrustPathValidator(): TrustPathValidatorInterface

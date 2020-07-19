@@ -23,6 +23,7 @@ class TrustVote
     private function __construct(string $type, ?string $reason = null)
     {
         $this->type = $type;
+        $this->reason = $reason;
     }
 
     public function isAbstain(): bool

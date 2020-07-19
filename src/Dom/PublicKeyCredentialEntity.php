@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Exception\ConfigurationException;
@@ -22,33 +21,21 @@ class PublicKeyCredentialEntity extends AbstractDictionary
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
     public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return null|string
-     */
     public function getIcon(): ?string
     {
         return $this->icon;
     }
 
-    /**
-     * @param null|string $icon
-     */
     public function setIcon(?string $icon): void
     {
         // TODO: FILTER_VALIDATE_URL does not allow data urls
@@ -62,7 +49,7 @@ class PublicKeyCredentialEntity extends AbstractDictionary
     {
         return  self::removeNullValues([
             'name' => $this->name,
-            'icon' => $this->icon
+            'icon' => $this->icon,
         ]);
     }
 }

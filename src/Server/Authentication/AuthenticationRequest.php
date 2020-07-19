@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
@@ -24,7 +23,7 @@ class AuthenticationRequest
         $this->context = $context;
     }
 
-    public function getClientOptions() : PublicKeyCredentialRequestOptions
+    public function getClientOptions(): PublicKeyCredentialRequestOptions
     {
         return $this->requestOptions;
     }
@@ -34,7 +33,7 @@ class AuthenticationRequest
         return JsonConverter::encodeDictionary($this->requestOptions);
     }
 
-    public function getContext() : AuthenticationContext
+    public function getContext(): AuthenticationContext
     {
         return $this->context;
     }

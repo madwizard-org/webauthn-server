@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Verifier;
 
 use InvalidArgumentException;
@@ -21,8 +20,8 @@ class VerificationResult
 
     /**
      * @param string $type Attestation type (see AttestationType for type enumeration)
+     *
      * @see AttestationType
-     * @param TrustPathInterface $trustPath
      */
     public function __construct(string $type, TrustPathInterface $trustPath)
     {
@@ -33,17 +32,11 @@ class VerificationResult
         $this->trustPath = $trustPath;
     }
 
-    /**
-     * @return string
-     */
     public function getAttestationType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return TrustPathInterface
-     */
     public function getTrustPath(): TrustPathInterface
     {
         return $this->trustPath;

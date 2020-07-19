@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Web;
 
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -37,7 +36,7 @@ class Origin implements Serializable
     }
 
     // TODO: stricter parsing/canonalization according to spec
-    public static function parse(string $origin) : Origin
+    public static function parse(string $origin): Origin
     {
         [$scheme, $host, $port] = self::parseElements($origin);
 
@@ -54,7 +53,7 @@ class Origin implements Serializable
         return new Origin($scheme, $host, $port);
     }
 
-    private static function defaultPort(string $scheme) : int
+    private static function defaultPort(string $scheme): int
     {
         if ($scheme === 'https') {
             return 443;
@@ -65,7 +64,7 @@ class Origin implements Serializable
         throw new ParseException(sprintf("No default port number for scheme '%s'.", $scheme));
     }
 
-    private static function isValidHost(string $host) : bool
+    private static function isValidHost(string $host): bool
     {
         if ($host === '') {
             return false;
@@ -85,7 +84,7 @@ class Origin implements Serializable
         return false;
     }
 
-    private static function parseElements($origin) : array
+    private static function parseElements($origin): array
     {
         if (!preg_match(self::PARSE_REGEXP, $origin, $matches)) {
             throw new ParseException(sprintf("Could not parse origin '%s'.", $origin));
@@ -97,7 +96,7 @@ class Origin implements Serializable
         return [$scheme, $host, $port];
     }
 
-    public function equals(Origin $origin) : bool
+    public function equals(Origin $origin): bool
     {
         return $this->host === $origin->host &&
             $this->port === $origin->port &&
@@ -112,7 +111,7 @@ class Origin implements Serializable
         return sprintf('%s://%s:%d', $this->scheme, $this->host, $this->port);
     }
 
-    private function usesDefaultPort() : bool
+    private function usesDefaultPort(): bool
     {
         if ($this->scheme === 'http' && $this->port === 80) {
             return true;
@@ -123,25 +122,16 @@ class Origin implements Serializable
         return false;
     }
 
-    /**
-     * @return string
-     */
     public function getHost(): string
     {
         return $this->host;
     }
 
-    /**
-     * @return string
-     */
     public function getScheme(): string
     {
         return $this->scheme;
     }
 
-    /**
-     * @return int
-     */
     public function getPort(): int
     {
         return $this->port;

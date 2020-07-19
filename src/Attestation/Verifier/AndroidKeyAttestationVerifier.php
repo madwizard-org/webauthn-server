@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Verifier;
 
 use MadWizard\WebAuthn\Attestation\Android\AndroidAttestationExtension;
@@ -31,7 +30,7 @@ class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
         $this->extensionParser = $extensionParser ?? new AndroidExtensionParser();
     }
 
-    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash) : VerificationResult
+    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash): VerificationResult
     {
         if (!($attStmt instanceof AndroidKeyAttestationStatement)) {
             throw new VerificationException('Expecting AndroidKeyAttestationStatement');
@@ -40,7 +39,6 @@ class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
         // Verify that attStmt is valid CBOR conforming to the syntax defined above and perform
         // CBOR decoding on it to extract the contained fields.
         // -> this is done in AndroidKeyAttestationStatement
-
 
         $x5c = $attStmt->getCertificates();
         if (count($x5c) === 0) {
@@ -60,7 +58,6 @@ class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
         if (!$this->certificateKeyMatches($cert, $authenticatorData->getKey())) {
             throw new VerificationException('Public key of first certificate in chain does not match the public key from the authenticator data.');
         }
-
 
         $data = $cert->getExtensionData(AndroidAttestationExtension::OID);
         if ($data === null) {
@@ -94,7 +91,6 @@ class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
 
         //  - The value in the AuthorizationList.origin field is equal to KM_ORIGIN_GENERATED.
         //  - The value in the AuthorizationList.purpose field is equal to KM_PURPOSE_SIGN.
-
 
         $seValid = ($seAuth->hasPurpose(AuthorizationList::KM_PURPOSE_SIGN) && $seAuth->getOrigin() === AuthorizationList::KM_ORIGIN_GENERATED);
         $teeValid = ($teeAuth->hasPurpose(AuthorizationList::KM_PURPOSE_SIGN) && $teeAuth->getOrigin() === AuthorizationList::KM_ORIGIN_GENERATED);

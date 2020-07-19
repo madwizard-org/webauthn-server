@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
@@ -17,7 +16,7 @@ class AuthenticationResult
         $this->userCredential = $userCredential;
     }
 
-    public function getUserCredential() : UserCredentialInterface
+    public function getUserCredential(): UserCredentialInterface
     {
         return $this->userCredential;
     }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
@@ -33,7 +32,7 @@ class FidoU2fVerifierTest extends VerifierTest
         $this->assertSame(AttestationType::BASIC, $result->getAttestationType());
         $this->assertInstanceOf(CertificateTrustPath::class, $result->getTrustPath());
         $path = $result->getTrustPath();
-        /**
+        /*
          * @var CertificateTrustPath $path
          */
         $this->assertCount(1, $path->getCertificates());
@@ -58,7 +57,7 @@ class FidoU2fVerifierTest extends VerifierTest
         $this->assertSame(AttestationType::BASIC, $result->getAttestationType());
         $this->assertInstanceOf(CertificateTrustPath::class, $result->getTrustPath());
         $path = $result->getTrustPath();
-        /**
+        /*
          * @var CertificateTrustPath $path
          */
         $this->assertCount(1, $path->getCertificates());

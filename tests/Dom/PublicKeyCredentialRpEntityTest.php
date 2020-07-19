@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Dom;
 
 use MadWizard\WebAuthn\Config\RelyingParty;
@@ -37,7 +36,6 @@ class PublicKeyCredentialRpEntityTest extends TestCase
             'name' => 'Relying party',
             'icon' => $imgUrl,
             'id' => 'localhost',
-
         ], $rpEntity->getAsArray());
     }
 
@@ -64,7 +62,6 @@ class PublicKeyCredentialRpEntityTest extends TestCase
             'name' => 'Relying party',
             'icon' => $imgUrl,
             'id' => 'localhost',
-
         ], $rpEntity->getAsArray());
     }
 

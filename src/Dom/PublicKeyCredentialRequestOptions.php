@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Exception\WebAuthnException;
@@ -30,6 +29,7 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
 
     /**
      * @var string|null
+     *
      * @see UserVerificationRequirement
      */
     private $userVerification;
@@ -72,33 +72,21 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
         return $map;
     }
 
-    /**
-     * @return string|null
-     */
     public function getRpId(): ?string
     {
         return $this->rpId;
     }
 
-    /**
-     * @param string|null $rpId
-     */
     public function setRpId(?string $rpId): void
     {
         $this->rpId = $rpId;
     }
 
-    /**
-     * @return int|null
-     */
     public function getTimeout(): ?int
     {
         return $this->timeout;
     }
 
-    /**
-     * @param int|null $timeout
-     */
     public function setTimeout(?int $timeout): void
     {
         $this->timeout = $timeout;
@@ -112,23 +100,17 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
         return $this->allowCredentials;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getChallenge(): ByteBuffer
     {
         return $this->challenge;
     }
 
-    /**
-     * @return null|string
-     */
     public function getUserVerification(): ?string
     {
         return $this->userVerification;
     }
 
-    public function setUserVerification(?string $value) :void
+    public function setUserVerification(?string $value): void
     {
         if ($value !== null && !UserVerificationRequirement::isValidValue($value)) {
             throw new WebAuthnException(sprintf('Value %s is not a valid UserVerificationRequirement', $value));
@@ -137,17 +119,11 @@ class PublicKeyCredentialRequestOptions extends AbstractDictionary
         $this->userVerification = $value;
     }
 
-    /**
-     * @return AuthenticationExtensionsClientInputs|null
-     */
     public function getExtensions(): ?AuthenticationExtensionsClientInputs
     {
         return $this->extensions;
     }
 
-    /**
-     * @param AuthenticationExtensionsClientInputs|null $extensions
-     */
     public function setExtensions(?AuthenticationExtensionsClientInputs $extensions): void
     {
         $this->extensions = $extensions;

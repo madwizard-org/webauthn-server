@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
@@ -23,7 +22,7 @@ class NoneAttestationStatement extends AbstractAttestationStatement
         }
     }
 
-    public static function createFormat() : AttestationFormatInterface
+    public static function createFormat(): AttestationFormatInterface
     {
         return new BuiltInAttestationFormat(
             self::FORMAT_ID,

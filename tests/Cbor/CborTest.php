@@ -1,9 +1,7 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Cbor;
 
-use const PHP_INT_SIZE;
 use MadWizard\WebAuthn\Exception\CborException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborDecoder;
@@ -15,6 +13,7 @@ use function bin2hex;
 use function hex2bin;
 use function json_decode;
 use function var_dump;
+use const PHP_INT_SIZE;
 
 class CborTest extends TestCase
 {
@@ -56,7 +55,7 @@ class CborTest extends TestCase
         }
     }
 
-    private function dumpValue($result) : string
+    private function dumpValue($result): string
     {
         $result = $this->convertByteBuffers($result);
         ob_start();

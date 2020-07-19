@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\TrustPath;
 
 use InvalidArgumentException;
@@ -15,6 +14,7 @@ class CertificateTrustPath implements TrustPathInterface
 
     /**
      * CertificateTrustPath constructor.
+     *
      * @param X509Certificate[] $certificates
      */
     public function __construct(array $certificates)
@@ -27,16 +27,16 @@ class CertificateTrustPath implements TrustPathInterface
         $this->certificates = $certificates;
     }
 
-    public static function fromPemList(array $x5c) : self
+    public static function fromPemList(array $x5c): self
     {
-        return new CertificateTrustPath(array_map(static function (string $s) : X509Certificate {
+        return new CertificateTrustPath(array_map(static function (string $s): X509Certificate {
             return X509Certificate::fromPem($s);
         }, $x5c));
     }
 
-    public static function fromBase64List(array $x5c) : self
+    public static function fromBase64List(array $x5c): self
     {
-        return new CertificateTrustPath(array_map(static function (string $s) : X509Certificate {
+        return new CertificateTrustPath(array_map(static function (string $s): X509Certificate {
             return X509Certificate::fromBase64($s);
         }, $x5c));
     }
@@ -51,11 +51,12 @@ class CertificateTrustPath implements TrustPathInterface
 
     /**
      * Returns certificates as a list of PEM encoded strings (including armor).
+     *
      * @return string[]
      */
-    public function asPemList() : array
+    public function asPemList(): array
     {
-        return array_map(static function (X509Certificate $cert) : string {
+        return array_map(static function (X509Certificate $cert): string {
             return $cert->asPem();
         }, $this->certificates);
     }

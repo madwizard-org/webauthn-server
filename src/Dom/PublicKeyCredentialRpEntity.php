@@ -1,11 +1,10 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
-use const FILTER_VALIDATE_DOMAIN;
 use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
+use const FILTER_VALIDATE_DOMAIN;
 
 class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
 {
@@ -16,7 +15,9 @@ class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
 
     /**
      * PublicKeyCredentialRpEntity constructor.
-     * @param null|string $id Relying party ID (valid domain string)
+     *
+     * @param string|null $id Relying party ID (valid domain string)
+     *
      * @throws WebAuthnException
      */
     public function __construct(string $name, ?string $id = null)
@@ -31,9 +32,6 @@ class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
         }
     }
 
-    /**
-     * @return null|string
-     */
     public function getId(): ?string
     {
         return $this->id;

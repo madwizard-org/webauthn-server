@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Credential;
 
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
@@ -42,41 +41,26 @@ final class CredentialRegistration
         $this->signCounter = $signCounter;
     }
 
-    /**
-     * @return CredentialId
-     */
     public function getCredentialId(): CredentialId
     {
         return $this->credentialId;
     }
 
-    /**
-     * @return int
-     */
     public function getSignCounter(): int
     {
         return $this->signCounter;
     }
 
-    /**
-     * @return CoseKeyInterface
-     */
     public function getPublicKey(): CoseKeyInterface
     {
         return $this->publicKey;
     }
 
-    /**
-     * @return UserHandle
-     */
     public function getUserHandle(): UserHandle
     {
         return $this->userHandle;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getAttestationObject(): ByteBuffer
     {
         return $this->attestationObject;

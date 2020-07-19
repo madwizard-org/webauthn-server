@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Server;
 
 use MadWizard\WebAuthn\Config\RelyingParty;
@@ -52,8 +51,7 @@ class AuthenticationTest extends TestCase
         $this->assertSame(
             [
                 'challenge' => $request->getContext()->getChallenge()->getBase64Url(),
-                'allowCredentials' =>
-                    [
+                'allowCredentials' => [
                         [
                             'type' => 'public-key',
                             'id' => $userCredential->getCredentialId()->toString(),
@@ -64,7 +62,7 @@ class AuthenticationTest extends TestCase
         );
     }
 
-    public function runAuth(AssertionDataHelper $helper) : UserCredentialInterface
+    public function runAuth(AssertionDataHelper $helper): UserCredentialInterface
     {
         $credential = $this->createCredential();
         $this->store
@@ -284,7 +282,7 @@ class AuthenticationTest extends TestCase
         $this->server = new WebAuthnServer($policy, $this->store);
     }
 
-    private function createCredential() : UserCredentialInterface
+    private function createCredential(): UserCredentialInterface
     {
         /**
          * @var $cred UserCredentialInterface|MockObject

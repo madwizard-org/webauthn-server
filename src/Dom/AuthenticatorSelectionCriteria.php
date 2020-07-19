@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 use InvalidArgumentException;
@@ -8,8 +7,10 @@ use InvalidArgumentException;
 class AuthenticatorSelectionCriteria extends AbstractDictionary
 {
     /**
-     * Platform attachment value from the AuthenticatorAttachment enumeration
+     * Platform attachment value from the AuthenticatorAttachment enumeration.
+     *
      * @see AuthenticatorAttachment
+     *
      * @var string|null
      */
     private $authenticatorAttachment;
@@ -21,21 +22,16 @@ class AuthenticatorSelectionCriteria extends AbstractDictionary
 
     /**
      * @see UserVerificationRequirement
+     *
      * @var string|null
      */
     private $userVerification;
 
-    /**
-     * @return null|string
-     */
     public function getAuthenticatorAttachment(): ?string
     {
         return $this->authenticatorAttachment;
     }
 
-    /**
-     * @param null|string $value
-     */
     public function setAuthenticatorAttachment(?string $value): void
     {
         if ($value !== null && !AuthenticatorAttachment::isValidValue($value)) {
@@ -44,33 +40,21 @@ class AuthenticatorSelectionCriteria extends AbstractDictionary
         $this->authenticatorAttachment = $value;
     }
 
-    /**
-     * @return bool|null
-     */
     public function getRequireResidentKey(): ?bool
     {
         return $this->requireResidentKey;
     }
 
-    /**
-     * @param bool|null $value
-     */
     public function setRequireResidentKey(?bool $value): void
     {
         $this->requireResidentKey = $value;
     }
 
-    /**
-     * @return null|string
-     */
     public function getUserVerification(): ?string
     {
         return $this->userVerification;
     }
 
-    /**
-     * @param null|string $value
-     */
     public function setUserVerification(?string $value): void
     {
         if ($value !== null && !UserVerificationRequirement::isValidValue($value)) {

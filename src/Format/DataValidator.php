@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Format;
 
 use MadWizard\WebAuthn\Exception\DataValidationException;
@@ -18,18 +17,20 @@ final class DataValidator
     }
 
     /**
-     * @param array $data Data array to valdiate
-     * @param array $types Expected types in the data array. Keys match with the keys from the data array, the values
-     * of this array are the expected types as strings. In case of objects this is the fully qualified classname, for
-     * other types this can be any of the return values of PHP's gettype() function. When a type is prefixed with `?`
-     * it is optional and not required to be in the data array.
-     * @param bool $complete Indicates whether the $types parameter completely covers the data. If any additional fields
-     * are found in the $data array that are not in the $types array an exception is thrown. When false additional
-     * fields are ignored.
+     * @param array $data     Data array to valdiate
+     * @param array $types    Expected types in the data array. Keys match with the keys from the data array, the values
+     *                        of this array are the expected types as strings. In case of objects this is the fully qualified classname, for
+     *                        other types this can be any of the return values of PHP's gettype() function. When a type is prefixed with `?`
+     *                        it is optional and not required to be in the data array.
+     * @param bool  $complete Indicates whether the $types parameter completely covers the data. If any additional fields
+     *                        are found in the $data array that are not in the $types array an exception is thrown. When false additional
+     *                        fields are ignored.
+     *
      * @throws DataValidationException
+     *
      * @return void Returns nothing but only returns when the data is valid. Otherwise an exception is thrown.
      */
-    public static function checkTypes(array $data, array $types, bool $complete = true):void
+    public static function checkTypes(array $data, array $types, bool $complete = true): void
     {
         foreach ($types as $key => $type) {
             $type = self::parseType($type, $key, $optional, $nullable);

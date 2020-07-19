@@ -12,7 +12,7 @@ use function hex2bin;
 
 class CertificateDetailsTest extends TestCase
 {
-    private function getData(string $name) : string
+    private function getData(string $name): string
     {
         $json = FixtureHelper::getJsonFixture('Pki/testcertificates.json');
         return $json[$name];

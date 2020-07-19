@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 final class PublicKeyCredentialType
@@ -15,7 +14,7 @@ final class PublicKeyCredentialType
     {
     }
 
-    public static function isValidType(string $type) : bool
+    public static function isValidType(string $type): bool
     {
         return $type === self::PUBLIC_KEY;
     }

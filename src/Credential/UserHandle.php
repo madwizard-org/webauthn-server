@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Credential;
 
 use MadWizard\WebAuthn\Exception\WebAuthnException;
@@ -13,17 +12,14 @@ use function sprintf;
 class UserHandle extends BinaryHandle
 {
     /**
-     * SPEC: 4 Terminology - User Handle
+     * SPEC: 4 Terminology - User Handle.
      */
     public const MAX_USER_HANDLE_BYTES = 64;
 
     protected function __construct(string $rawBytes)
     {
         if (\strlen($rawBytes) > self::MAX_USER_HANDLE_BYTES) {
-            throw new WebAuthnException(sprintf(
-                'User handle cannot be larger than %d bytes.',
-                self::MAX_USER_HANDLE_BYTES
-            ));
+            throw new WebAuthnException(sprintf('User handle cannot be larger than %d bytes.', self::MAX_USER_HANDLE_BYTES));
         }
         parent::__construct($rawBytes);
     }
@@ -38,7 +34,7 @@ class UserHandle extends BinaryHandle
         return new self($binary);
     }
 
-    public static function fromHex(string $hex) : self
+    public static function fromHex(string $hex): self
     {
         return new self(parent::convertHex($hex));
     }

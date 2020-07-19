@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Extension;
 
 class UnknownExtensionInput extends AbstractExtensionInput

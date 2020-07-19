@@ -10,8 +10,5 @@ interface AttestationObjectInterface
 
     public function getStatement(): array;
 
-    /**
-     * @return ByteBuffer
-     */
     public function getAuthenticatorData(): ByteBuffer;
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Policy;
 
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
@@ -82,12 +81,12 @@ final class Policy implements PolicyInterface
     /**
      * @return AttestationFormatInterface[]
      */
-    private function getAttestationFormats() : array
+    private function getAttestationFormats(): array
     {
         return BuiltInFormats::getSupportedFormats();
     }
 
-    private function createDefaultFormatRegistry() : AttestationFormatRegistry
+    private function createDefaultFormatRegistry(): AttestationFormatRegistry
     {
         $registry = new AttestationFormatRegistry();
         $formats = $this->getAttestationFormats();
@@ -121,16 +120,12 @@ final class Policy implements PolicyInterface
      * Set to false to allow silent authenticators (User Preset bit not set in authenticator data)
      * NOTE: setting this to false violates the WebAuthn specs but this option is needed to pass FIDO2 conformance, which
      * includes silent operations.
-     * @param bool $required
      */
     public function setUserPresenceRequired(bool $required)
     {
         $this->userPresenceRequired = $required;
     }
 
-    /**
-     * @return int
-     */
     public function getChallengeLength(): int
     {
         return $this->challengeLength;
@@ -146,12 +141,15 @@ final class Policy implements PolicyInterface
 
     /**
      * Sets which algorithms are allowed for the credentials that are created. Array of constants from the COSEAlgorithm
-     * enumeration (e.g. COSEAlgorithm::ES256)
+     * enumeration (e.g. COSEAlgorithm::ES256).
+     *
      * @param int[] $algorithms
+     *
      * @throws ConfigurationException
+     *
      * @see CoseAlgorithm
      */
-    public function setAllowedAlgorithms(array $algorithms) : void
+    public function setAllowedAlgorithms(array $algorithms): void
     {
         $validList = [];
         foreach ($algorithms as $algorithm) {
@@ -170,7 +168,7 @@ final class Policy implements PolicyInterface
     /**
      * @return int[]
      */
-    public function getAllowedAlgorithms() : array
+    public function getAllowedAlgorithms(): array
     {
         return $this->algorithms;
     }

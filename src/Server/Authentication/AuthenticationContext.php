@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
@@ -30,11 +29,10 @@ class AuthenticationContext extends AbstractContext implements RequestContext
 
     /**
      * @internal TODO: do not include here?
-     * @param PublicKeyCredentialRequestOptions $options
-     * @param PolicyInterface $policy
+     *
      * @return static
      */
-    public static function create(PublicKeyCredentialRequestOptions $options, PolicyInterface $policy) : self
+    public static function create(PublicKeyCredentialRequestOptions $options, PolicyInterface $policy): self
     {
         $relyingParty = $policy->getRelyingParty();
         $origin = $relyingParty->getOrigin();
@@ -61,7 +59,7 @@ class AuthenticationContext extends AbstractContext implements RequestContext
     /**
      * @return ByteBuffer[]
      */
-    public function getAllowCredentialIds() : array
+    public function getAllowCredentialIds(): array
     {
         return $this->allowCredentialIds;
     }

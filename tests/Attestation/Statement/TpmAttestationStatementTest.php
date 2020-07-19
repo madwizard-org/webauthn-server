@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\Statement\TpmAttestationStatement;
@@ -53,7 +52,6 @@ class TpmAttestationStatementTest extends TestCase
     {
         $attObj = FixtureHelper::getFidoTestObject('missingFieldsTpmAttestation');
 
-
         $this->expectException(ParseException::class);
         $this->expectExceptionMessageMatches('~invalid TPM~i');
         new TpmAttestationStatement($attObj);
@@ -62,7 +60,6 @@ class TpmAttestationStatementTest extends TestCase
     public function testBothKeyAndX5C()
     {
         $attObj = FixtureHelper::getFidoTestObject('bothKeyAndX5CTpmAttestation');
-
 
         $this->expectException(ParseException::class);
         $this->expectExceptionMessageMatches('~ecdaaKeyId and x5c cannot both~i');

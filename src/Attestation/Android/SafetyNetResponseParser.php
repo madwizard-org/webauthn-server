@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Android;
 
 use MadWizard\WebAuthn\Exception\ParseException;

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Builder;
 
 use GuzzleHttp\Client;
@@ -129,25 +128,25 @@ final class ServerBuilder
         $this->trustDecisionManager = null;
     }
 
-    public function setRelyingParty(RelyingParty $rp) : self
+    public function setRelyingParty(RelyingParty $rp): self
     {
         $this->rp = $rp;
         return $this;
     }
 
-    public function setCredentialStore(CredentialStoreInterface $store) : self
+    public function setCredentialStore(CredentialStoreInterface $store): self
     {
         $this->store = $store;
         return $this;
     }
 
-    public function setCacheDirectory(string $directory) : self
+    public function setCacheDirectory(string $directory): self
     {
         $this->cacheDir = $directory;
         return $this;
     }
 
-    public function useSystemTempCache(string $subDirectory = 'webauthn-server-cache') : self
+    public function useSystemTempCache(string $subDirectory = 'webauthn-server-cache'): self
     {
         $this->cacheDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $subDirectory;
         return $this;
@@ -161,7 +160,7 @@ final class ServerBuilder
         return $this->cacheDir;
     }
 
-    private function getCredentialStore() : CredentialStoreInterface
+    private function getCredentialStore(): CredentialStoreInterface
     {
         if ($this->store === null) {
             throw new ConfigurationException('Credential store not configured. Use setCredentialStore.');
@@ -172,6 +171,7 @@ final class ServerBuilder
 
     /**
      * @param callable|PolicyCallbackInterface $policyCallback
+     *
      * @return $this
      */
     public function configurePolicy(callable $policyCallback): self
@@ -190,7 +190,7 @@ final class ServerBuilder
         return $this;
     }
 
-    public function useMetadata(bool $use) :self
+    public function useMetadata(bool $use): self
     {
         $this->useMetadata = $use;
         return $this;
@@ -232,7 +232,7 @@ final class ServerBuilder
         return $policy;
     }
 
-    public function build() : ServerInterface
+    public function build(): ServerInterface
     {
         $this->reset();
         try {
@@ -257,7 +257,7 @@ final class ServerBuilder
         return $this;
     }
 
-    private function getMetadataResolver() : MetadataResolverInterface
+    private function getMetadataResolver(): MetadataResolverInterface
     {
         if (count($this->metadataSources) === 0) {
             return new NullMetadataResolver();
@@ -293,7 +293,7 @@ final class ServerBuilder
         return new TrustPathValidator($this->buildChainValidator());
     }
 
-    private function buildDownloader() :DownloaderInterface
+    private function buildDownloader(): DownloaderInterface
     {
         if ($this->downloader === null) {
             $this->downloader = new Downloader($this->buildHttpClient());

@@ -1,10 +1,8 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Pki;
 
 use DateTimeImmutable;
-
 use Exception;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use Sop\X509\Certificate\Certificate;
@@ -25,12 +23,12 @@ final class ChainValidator implements ChainValidatorInterface
         $this->statusResolver = $statusResolver;
     }
 
-    private function getReferenceDate() : DateTimeImmutable
+    private function getReferenceDate(): DateTimeImmutable
     {
         return new DateTimeImmutable();
     }
 
-    private function validateCertificates(X509Certificate... $certificates)
+    private function validateCertificates(X509Certificate ...$certificates)
     {
         try {
             $pathCerts = array_map(function (X509Certificate $c) {
@@ -49,7 +47,7 @@ final class ChainValidator implements ChainValidatorInterface
         }
     }
 
-    public function validateChain(X509Certificate... $certificates) : bool
+    public function validateChain(X509Certificate ...$certificates): bool
     {
         if ($this->validateCertificates(...$certificates)) {
             if ($this->statusResolver) {

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
@@ -99,18 +98,12 @@ class TpmAttestationStatement extends AbstractAttestationStatement
         $this->certInfo = $statement['certInfo'];
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getSignature(): ByteBuffer
     {
         return $this->signature;
     }
 
-    /**
-     * @return int
-     */
-    public function getAlgorithm() : int
+    public function getAlgorithm(): int
     {
         return $this->algorithm;
     }
@@ -123,9 +116,6 @@ class TpmAttestationStatement extends AbstractAttestationStatement
         return $this->certificates;
     }
 
-    /**
-     * @return ByteBuffer|null
-     */
     public function getEcdaaKeyId(): ?ByteBuffer
     {
         return $this->ecdaaKeyId;
@@ -136,17 +126,11 @@ class TpmAttestationStatement extends AbstractAttestationStatement
         return $this->certInfo;
     }
 
-    /**
-     * @return TpmAttest
-     */
     public function getCertInfo(): TpmAttest
     {
         return $this->attest;
     }
 
-    /**
-     * @return TpmPublic
-     */
     public function getPubArea(): TpmPublic
     {
         return $this->public;

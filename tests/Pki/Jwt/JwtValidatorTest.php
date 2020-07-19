@@ -23,7 +23,6 @@ class JwtValidatorTest extends TestCase
 
         $validator = new JwtValidator();
 
-
         if ($exeptionClass) {
             $this->expectException($exeptionClass);
         }
@@ -34,7 +33,6 @@ class JwtValidatorTest extends TestCase
         // TODO: split parse and validate tests
         $jwt = new Jwt($token);
 
-
         $ctx = new ValidationContext(['ES256', 'ES384', 'ES512'], $key);
         $this->assertSame(['test' => 'data', 'hello' => true], $validator->validate($jwt, $ctx));
     }
@@ -42,7 +40,6 @@ class JwtValidatorTest extends TestCase
     public function invalidTokensData()
     {
         return [
-
             'invalid-sig' => ['Jwt/token-invalid-sig.txt', VerificationException::class],
 
             'unsupported-alg' => ['Jwt/token-unsupported-alg.txt', VerificationException::class, '~Algorithm not allowed~i'],
@@ -54,8 +51,6 @@ class JwtValidatorTest extends TestCase
             // TODO: remove/move to chain test
             //  'ca-only' => [false, 'Jwt/token-ca-only.txt', VerificationException::class],
             //  'missing-ca' => [false, 'Jwt/token-missing-ca.txt', VerificationException::class, '~chain could not be validated~i'],
-
-
         ];
     }
 }

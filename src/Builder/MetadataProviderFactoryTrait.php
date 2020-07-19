@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Builder;
 
 use MadWizard\WebAuthn\Cache\CacheProviderInterface;
@@ -25,7 +24,9 @@ trait MetadataProviderFactoryTrait
 
     /**
      * @param MetadataSourceInterface[] $sources
+     *
      * @return MetadataProviderInterface[]
+     *
      * @throws UnsupportedException
      */
     private function createMetadataProviders(array $sources): array

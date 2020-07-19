@@ -36,7 +36,6 @@ class Ec2KeyTest extends TestCase
         $valid = $key->verifySignature($message, $signature);
         $this->assertTrue($valid);
 
-
         $valid = $key->verifySignature($message, $wrongSignature);
         $this->assertFalse($valid);
     }
@@ -102,7 +101,7 @@ class Ec2KeyTest extends TestCase
 
         $key = CoseKey::parseCbor($cbor);
         $this->assertInstanceOf(Ec2Key::class, $key);
-        /** @var Ec2Key $key */
+        /* @var Ec2Key $key */
 
         $this->assertSame(Ec2Key::CURVE_P256, $key->getCurve());
         $this->assertSame(CoseAlgorithm::ES256, $key->getAlgorithm());

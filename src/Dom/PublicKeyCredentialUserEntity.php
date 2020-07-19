@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Credential\UserHandle;
@@ -21,8 +20,10 @@ class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
 
     /**
      * PublicKeyCredentialUserEntity constructor.
-     * @param ByteBuffer $id The user handle of the user account entity (max length MAX_USER_HANDLE_BYTES)
-     * @param string $displayName A human-friendly name for the user account. Used for display purposes only, may be truncated by authenticators if too long
+     *
+     * @param ByteBuffer $id          The user handle of the user account entity (max length MAX_USER_HANDLE_BYTES)
+     * @param string     $displayName A human-friendly name for the user account. Used for display purposes only, may be truncated by authenticators if too long
+     *
      * @throws WebAuthnException
      */
     public function __construct(string $name, ByteBuffer $id, string $displayName)
@@ -44,10 +45,7 @@ class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
         }
 
         if ($id->getLength() > UserHandle::MAX_USER_HANDLE_BYTES) {
-            throw new WebAuthnException(sprintf(
-                'User handle cannot be larger than %d bytes.',
-                UserHandle::MAX_USER_HANDLE_BYTES
-            ));
+            throw new WebAuthnException(sprintf('User handle cannot be larger than %d bytes.', UserHandle::MAX_USER_HANDLE_BYTES));
         }
         $this->id = $id;
     }

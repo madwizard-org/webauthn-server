@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Format;
 
 /**
@@ -15,6 +14,7 @@ trait SerializableTrait
 
     /**
      * @final
+     *
      * @return string
      */
     public function serialize()
@@ -24,6 +24,7 @@ trait SerializableTrait
 
     /**
      * @final
+     *
      * @param string $serialized
      */
     public function unserialize($serialized)

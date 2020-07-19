@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Crypto;
 
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
@@ -30,7 +29,7 @@ class OpenSslVerifier
         $this->openSslAlgorithm = $this->getOpenSslAlgorithm($coseAlgorithm);
     }
 
-    private function getOpenSslAlgorithm(int $algorithm) : int
+    private function getOpenSslAlgorithm(int $algorithm): int
     {
         $openSslAlgorithm = self::OPENSSL_ALGO_MAP[$algorithm] ?? null;
 
@@ -41,7 +40,7 @@ class OpenSslVerifier
         return $openSslAlgorithm;
     }
 
-    public function verify(string $data, string $signature, string $pem) : bool
+    public function verify(string $data, string $signature, string $pem): bool
     {
         $publicKey = openssl_pkey_get_public($pem);
         if ($publicKey === false) {

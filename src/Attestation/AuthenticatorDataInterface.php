@@ -24,8 +24,8 @@ interface AuthenticatorDataInterface
     public function getCredentialId(): ?ByteBuffer;
 
     /**
-     * @return CoseKeyInterface
      * @throws WebAuthnException when authenticator data does not contain a key.
+     *
      * @see hasKey
      */
     public function getKey(): CoseKeyInterface;
@@ -36,8 +36,5 @@ interface AuthenticatorDataInterface
 
     public function getAaguid(): Aaguid;
 
-    /**
-     * @return ByteBuffer
-     */
     public function getRaw(): ByteBuffer;
 }

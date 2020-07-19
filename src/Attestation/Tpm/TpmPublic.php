@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Tpm;
 
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -8,7 +7,7 @@ use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
 /**
- * Represents TPMT_PUBLIC structure
+ * Represents TPMT_PUBLIC structure.
  */
 class TpmPublic extends AbstractTpmStructure
 {
@@ -89,7 +88,7 @@ class TpmPublic extends AbstractTpmStructure
         }
     }
 
-    private function parseParameters(int $type, ByteBuffer $buffer, int &$offset) : KeyParametersInterface
+    private function parseParameters(int $type, ByteBuffer $buffer, int &$offset): KeyParametersInterface
     {
         if ($type === self::TPM_ALG_RSA) {
             $parameters = TpmRsaParameters::parse($buffer, $offset, $endOffset);
@@ -104,41 +103,26 @@ class TpmPublic extends AbstractTpmStructure
         throw new UnsupportedException(sprintf('TPM public key type %d is not supported.', $type));
     }
 
-    /**
-     * @return int
-     */
     public function getType(): int
     {
         return $this->type;
     }
 
-    /**
-     * @return int
-     */
     public function getObjectAttributes(): int
     {
         return $this->objectAttributes;
     }
 
-    /**
-     * @return KeyParametersInterface
-     */
     public function getParameters(): KeyParametersInterface
     {
         return $this->parameters;
     }
 
-    /**
-     * @return int
-     */
     public function getNameAlg(): int
     {
         return $this->nameAlg;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getUnique(): ByteBuffer
     {
         return $this->unique;

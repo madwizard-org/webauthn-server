@@ -17,21 +17,20 @@ interface CertificateDetailsInterface
 
     public function isCA(): ?bool;
 
-    public function getSubjectAlternateNameDN(string $oid) : string;
+    public function getSubjectAlternateNameDN(string $oid): string;
 
     public function extendedKeyUsageContains(string $oid): bool;
 
-    public function getSubject() : string;
+    public function getSubject(): string;
 
-    public function getSubjectCommonName() : string;
+    public function getSubjectCommonName(): string;
 
     public function getPublicKeyDer(): string;
 
-    public function getExtensionData(string $oid) : ?ByteBuffer;
+    public function getExtensionData(string $oid): ?ByteBuffer;
 
     /**
      * Returns public key identifier as hexadecimal string, using method 1 in RFC 5280.
-     * @return string
      */
-    public function getPublicKeyIdentifier() : string;
+    public function getPublicKeyIdentifier(): string;
 }

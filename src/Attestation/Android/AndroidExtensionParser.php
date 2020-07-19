@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Android;
 
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -24,7 +23,7 @@ class AndroidExtensionParser implements AndroidExtensionParserInterface
 
     private const TAG_ORIGIN = 702;
 
-    private function parseAuthorizationList(Sequence $seq) : AuthorizationList
+    private function parseAuthorizationList(Sequence $seq): AuthorizationList
     {
         $authList = new AuthorizationList();
 
@@ -53,7 +52,7 @@ class AndroidExtensionParser implements AndroidExtensionParserInterface
         return $authList;
     }
 
-    public function parseAttestationExtension(ByteBuffer $data) : AndroidAttestationExtension
+    public function parseAttestationExtension(ByteBuffer $data): AndroidAttestationExtension
     {
         try {
             $der = $data->getBinaryString();

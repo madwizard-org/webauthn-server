@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Pki;
 
 use MadWizard\WebAuthn\Pki\X509Certificate;

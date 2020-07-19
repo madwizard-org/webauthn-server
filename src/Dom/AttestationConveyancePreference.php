@@ -1,12 +1,11 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 final class AttestationConveyancePreference
 {
     /**
-     *  Indicates that the Relying Party is not interested in authenticator attestation. F
+     *  Indicates that the Relying Party is not interested in authenticator attestation. F.
      */
     public const NONE = 'none';
 
@@ -28,8 +27,8 @@ final class AttestationConveyancePreference
     {
     }
 
-    public static function isValidValue(string $value) : bool
+    public static function isValidValue(string $value): bool
     {
-        return ($value === self::NONE || $value === self::INDRECT || $value === self::DIRECT);
+        return $value === self::NONE || $value === self::INDRECT || $value === self::DIRECT;
     }
 }

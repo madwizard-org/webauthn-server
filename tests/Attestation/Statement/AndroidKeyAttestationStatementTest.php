@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\Statement\AndroidKeyAttestationStatement;

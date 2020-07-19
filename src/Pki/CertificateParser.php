@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace MadWizard\WebAuthn\Pki;
 
 class CertificateParser implements CertificateParserInterface

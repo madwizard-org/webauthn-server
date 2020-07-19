@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Tpm;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -42,7 +41,7 @@ class TpmRsaParameters implements KeyParametersInterface
         return TpmPublic::TPM_ALG_RSA;
     }
 
-    public static function parse(ByteBuffer $buffer, int $offset, ?int &$endOffset) : KeyParametersInterface
+    public static function parse(ByteBuffer $buffer, int $offset, ?int &$endOffset): KeyParametersInterface
     {
         $symmetric = $buffer->getUint16Val($offset);
         $scheme = $buffer->getUint16Val($offset + 2);
@@ -52,41 +51,26 @@ class TpmRsaParameters implements KeyParametersInterface
         return new self($symmetric, $scheme, $keyBits, $exponent);
     }
 
-    /**
-     * @return int
-     */
     public function getSymmetric(): int
     {
         return $this->symmetric;
     }
 
-    /**
-     * @return int
-     */
     public function getScheme(): int
     {
         return $this->scheme;
     }
 
-    /**
-     * @return int
-     */
     public function getKeyBits(): int
     {
         return $this->keyBits;
     }
 
-    /**
-     * @return int
-     */
     public function getExponent(): int
     {
         return $this->exponent;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getExponentAsBuffer(): ByteBuffer
     {
         $raw = '';

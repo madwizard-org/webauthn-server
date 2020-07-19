@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 final class AuthenticatorAttachment
@@ -28,8 +27,8 @@ final class AuthenticatorAttachment
     {
     }
 
-    public static function isValidValue($value) : bool
+    public static function isValidValue($value): bool
     {
-        return ($value === self::PLATFORM || $value === self::CROSS_PLATFORM);
+        return $value === self::PLATFORM || $value === self::CROSS_PLATFORM;
     }
 }

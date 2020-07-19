@@ -34,7 +34,6 @@ class AuthenticatorResponseTest extends TestCase
             ByteBuffer::fromHex('0099aabbcc')
         );
 
-
         $this->assertSame('{"a": 123}', $assertion->getClientDataJson());
         $this->assertSame('123456', $assertion->getAuthenticatorData()->getHex());
         $this->assertSame('789abc', $assertion->getSignature()->getHex());

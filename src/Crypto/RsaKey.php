@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Crypto;
 
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
@@ -11,25 +10,29 @@ use MadWizard\WebAuthn\Format\DataValidator;
 class RsaKey extends CoseKey
 {
     /**
-     * RSA modulus n key type parameter (key type 3, RSA)
+     * RSA modulus n key type parameter (key type 3, RSA).
+     *
      * @see https://www.iana.org/assignments/cose/cose.xhtml#key-type-parameters
      */
     private const KTP_N = -1;
 
     /**
-     * RSA exponent e key type parameter (key type 3, RSA)
+     * RSA exponent e key type parameter (key type 3, RSA).
+     *
      * @see https://www.iana.org/assignments/cose/cose.xhtml#key-type-parameters
      */
     private const KTP_E = -2;
 
     /**
-     * RSA modulus. Unsigned integer value represented as binary buffer with leading zero bytes removed
+     * RSA modulus. Unsigned integer value represented as binary buffer with leading zero bytes removed.
+     *
      * @var ByteBuffer
      */
     private $modulus;
 
     /**
-     * RSA exponent. Unsigned integer value represented as binary buffer with leading zero bytes removed
+     * RSA exponent. Unsigned integer value represented as binary buffer with leading zero bytes removed.
+     *
      * @var ByteBuffer
      */
     private $exponent;
@@ -48,7 +51,7 @@ class RsaKey extends CoseKey
         $this->exponent = $this->compactIntegerBuffer($exponent);
     }
 
-    public static function fromCborData(array $data) : RsaKey
+    public static function fromCborData(array $data): RsaKey
     {
         DataValidator::checkTypes(
             $data,
@@ -60,7 +63,6 @@ class RsaKey extends CoseKey
             ]
         );
 
-
         $alorithm = $data[self::COSE_KEY_PARAM_ALG];
         $modulus = $data[self::KTP_N];
         $exponent = $data[self::KTP_E];
@@ -68,7 +70,7 @@ class RsaKey extends CoseKey
         return new RsaKey($modulus, $exponent, $alorithm);
     }
 
-    public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool
+    public function verifySignature(ByteBuffer $data, ByteBuffer $signature): bool
     {
         $verifier = new OpenSslVerifier($this->getAlgorithm());
         return $verifier->verify($data->getBinaryString(), $signature->getBinaryString(), $this->asPem());
@@ -78,7 +80,6 @@ class RsaKey extends CoseKey
      * Removes all leading zero bytes from a ByteBuffer, but keeps one zero byte if it is the only byte left and the
      * original buffer did not have zero length.
      *
-     * @param ByteBuffer $buffer
      * @return ByteBuffer
      */
     private function compactIntegerBuffer(ByteBuffer $buffer)
@@ -96,23 +97,17 @@ class RsaKey extends CoseKey
         return $buffer;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getModulus(): ByteBuffer
     {
         return $this->modulus;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getExponent(): ByteBuffer
     {
         return $this->exponent;
     }
 
-    public function asDer() : string
+    public function asDer(): string
     {
         // DER encoded RSA key
         $der =
@@ -132,12 +127,12 @@ class RsaKey extends CoseKey
         return $der;
     }
 
-    public function asPem() : string
+    public function asPem(): string
     {
         return Der::pem('PUBLIC KEY', $this->asDer());
     }
 
-    public function getCbor() : ByteBuffer
+    public function getCbor(): ByteBuffer
     {
         $map = [
             self::COSE_KEY_PARAM_KTY => self::COSE_KTY_RSA,
@@ -148,7 +143,7 @@ class RsaKey extends CoseKey
         return new ByteBuffer(CborEncoder::encodeMap($map));
     }
 
-    protected function algorithmSupported(int $algorithm) : bool
+    protected function algorithmSupported(int $algorithm): bool
     {
         return in_array($algorithm, self::SUPPORTED_ALGORITHMS, true);
     }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Remote;
 
 use GuzzleHttp\Client;

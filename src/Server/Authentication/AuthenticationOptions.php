@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Credential\CredentialId;
@@ -32,7 +31,8 @@ class AuthenticationOptions
     private $extensions;
 
     /**
-     * User handle to load credentials from
+     * User handle to load credentials from.
+     *
      * @var UserHandle|null
      */
     private $allowUserHandle;
@@ -46,17 +46,11 @@ class AuthenticationOptions
         $this->allowUserHandle = $userHandle;
     }
 
-    /**
-     * @return UserHandle|null
-     */
     public function getAllowUserHandle(): ?UserHandle
     {
         return $this->allowUserHandle;
     }
 
-    /**
-     * @param CredentialId $credential
-     */
     public function addAllowCredential(CredentialId $credential)
     {
         $this->allowCredentials[] = $credential;
@@ -70,15 +64,12 @@ class AuthenticationOptions
         return $this->allowCredentials;
     }
 
-    /**
-     * @return null|string
-     */
     public function getUserVerification(): ?string
     {
         return $this->userVerification;
     }
 
-    public function setUserVerification(?string $value) :void
+    public function setUserVerification(?string $value): void
     {
         if ($value !== null && !UserVerificationRequirement::isValidValue($value)) {
             throw new WebAuthnException(sprintf('Value %s is not a valid UserVerificationRequirement', $value));
@@ -87,17 +78,11 @@ class AuthenticationOptions
         $this->userVerification = $value;
     }
 
-    /**
-     * @return int|null
-     */
     public function getTimeout(): ?int
     {
         return $this->timeout;
     }
 
-    /**
-     * @param int|null $timeout
-     */
     public function setTimeout(?int $timeout): void
     {
         $this->timeout = $timeout;
@@ -114,7 +99,7 @@ class AuthenticationOptions
     /**
      * @return ExtensionInputInterface[]|null
      */
-    public function getExtensionInputs():?array
+    public function getExtensionInputs(): ?array
     {
         return $this->extensions;
     }

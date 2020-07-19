@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Android;
 
 use MadWizard\WebAuthn\Pki\X509Certificate;
@@ -35,9 +34,6 @@ class SafetyNetResponse implements SafetyNetResponseInterface
         $this->timestampMs = $timestampMs;
     }
 
-    /**
-     * @return string
-     */
     public function getNonce(): string
     {
         return $this->nonce;
@@ -51,9 +47,6 @@ class SafetyNetResponse implements SafetyNetResponseInterface
         return $this->x5c;
     }
 
-    /**
-     * @return bool
-     */
     public function isCtsProfileMatch(): bool
     {
         return $this->ctsProfileMatch;

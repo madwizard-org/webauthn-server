@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
@@ -29,6 +28,7 @@ class AndroidKeyAttestationStatement extends AbstractAttestationStatement
 
     /**
      * @see CoseAlgorithm enumeration
+     *
      * @var int
      */
     private $algorithm;
@@ -57,17 +57,11 @@ class AndroidKeyAttestationStatement extends AbstractAttestationStatement
         $this->certificates = $this->buildPEMCertificateArray($statement['x5c']);
     }
 
-    /**
-     * @return int
-     */
     public function getAlgorithm(): int
     {
         return $this->algorithm;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getSignature(): ByteBuffer
     {
         return $this->signature;
@@ -81,7 +75,7 @@ class AndroidKeyAttestationStatement extends AbstractAttestationStatement
         return $this->certificates;
     }
 
-    public static function createFormat() : AttestationFormatInterface
+    public static function createFormat(): AttestationFormatInterface
     {
         return new BuiltInAttestationFormat(
             self::FORMAT_ID,

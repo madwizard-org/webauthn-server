@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Exception\WebAuthnException;
@@ -52,17 +51,11 @@ class PublicKeyCredentialDescriptor extends AbstractDictionary // TODO serializa
         ]);
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getId(): ByteBuffer
     {
         return $this->id;

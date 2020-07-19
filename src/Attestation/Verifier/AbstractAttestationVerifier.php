@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Verifier;
 
 use MadWizard\WebAuthn\Attestation\Identifier\Aaguid;

@@ -1,12 +1,11 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 final class AuthenticatorTransport
 {
     /**
-     * USB
+     * USB.
      */
     public const USB = 'usb';
 
@@ -32,12 +31,12 @@ final class AuthenticatorTransport
     {
     }
 
-    public static function isValidValue($value) : bool
+    public static function isValidValue($value): bool
     {
         return in_array($value, self::allKnownTransports(), true);
     }
 
-    public static function allKnownTransports() : array
+    public static function allKnownTransports(): array
     {
         return [self::USB, self::NFC, self::BLE, self::INTERNAL];
     }

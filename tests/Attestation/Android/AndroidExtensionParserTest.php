@@ -14,7 +14,7 @@ class AndroidExtensionParserTest extends TestCase
      */
     private $parser;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         $this->parser = new AndroidExtensionParser();
     }

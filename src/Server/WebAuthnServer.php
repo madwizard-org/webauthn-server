@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
@@ -22,7 +21,6 @@ use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Json\JsonConverter;
 use MadWizard\WebAuthn\Policy\PolicyInterface;
-
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationContext;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationRequest;
@@ -52,7 +50,7 @@ class WebAuthnServer implements ServerInterface
         $this->credentialStore = $credentialStore;
     }
 
-    public function startRegistration(RegistrationOptions $options) : RegistrationRequest
+    public function startRegistration(RegistrationOptions $options): RegistrationRequest
     {
         $challenge = $this->createChallenge();
 
@@ -72,7 +70,6 @@ class WebAuthnServer implements ServerInterface
             );
         }
 
-
         if ($options->getExcludeExistingCredentials()) {   // TODO default?
             $credentialIds = $this->credentialStore->getUserCredentialIds($options->getUser()->getUserHandle());
             foreach ($credentialIds as $credential) {
@@ -88,11 +85,10 @@ class WebAuthnServer implements ServerInterface
 
     /**
      * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
-     * @param RegistrationContext $context
-     * @return RegistrationResult
+     *
      * @throws CredentialIdExistsException
      */
-    public function finishRegistration($credential, RegistrationContext $context) : RegistrationResult
+    public function finishRegistration($credential, RegistrationContext $context): RegistrationResult
     {
         $credential = $this->convertAttestationCredential($credential);
 
@@ -154,7 +150,6 @@ class WebAuthnServer implements ServerInterface
         //    also be able to build the attestation certificate chain if the client did not provide this chain in the
         //    attestation information.
 
-
         // TODO:check timeout (spec does not mention this?)
 
         $registration = new CredentialRegistration($registrationResult->getCredentialId(), $registrationResult->getPublicKey(), $context->getUserHandle(), $response->getAttestationObject(), $registrationResult->getSignatureCounter());
@@ -162,7 +157,7 @@ class WebAuthnServer implements ServerInterface
         return $registrationResult;
     }
 
-    public function startAuthentication(AuthenticationOptions $options) : AuthenticationRequest
+    public function startAuthentication(AuthenticationOptions $options): AuthenticationRequest
     {
         $challenge = $this->createChallenge();
 
@@ -180,17 +175,14 @@ class WebAuthnServer implements ServerInterface
             );
         }
 
-
         $context = AuthenticationContext::create($requestOptions, $this->policy);
         return new AuthenticationRequest($requestOptions, $context);
     }
 
     /**
      * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
-     * @param AuthenticationContext $context
-     * @return AuthenticationResult
      */
-    public function finishAuthentication($credential, AuthenticationContext $context) : AuthenticationResult
+    public function finishAuthentication($credential, AuthenticationContext $context): AuthenticationResult
     {
         $credential = $this->convertAssertionCredential($credential);
 
@@ -202,8 +194,6 @@ class WebAuthnServer implements ServerInterface
     }
 
     /**
-     * @param AuthenticationOptions $options
-     * @param PublicKeyCredentialRequestOptions $requestOptions
      * @throws WebAuthnException
      */
     private function addAllowCredentials(AuthenticationOptions $options, PublicKeyCredentialRequestOptions $requestOptions): void
@@ -231,7 +221,7 @@ class WebAuthnServer implements ServerInterface
         }
     }
 
-    private function createUserEntity(UserIdentityInterface $user) : PublicKeyCredentialUserEntity
+    private function createUserEntity(UserIdentityInterface $user): PublicKeyCredentialUserEntity
     {
         return new PublicKeyCredentialUserEntity(
             $user->getUsername(),
@@ -243,7 +233,7 @@ class WebAuthnServer implements ServerInterface
     /**
      * @return PublicKeyCredentialParameters[]
      */
-    private function getCredentialParameters() : array
+    private function getCredentialParameters(): array
     {
         $parameters = [];
         $algorithms = $this->policy->getAllowedAlgorithms();
@@ -253,12 +243,12 @@ class WebAuthnServer implements ServerInterface
         return $parameters;
     }
 
-    private function createChallenge() : ByteBuffer
+    private function createChallenge(): ByteBuffer
     {
         return ByteBuffer::randomBuffer($this->policy->getChallengeLength());
     }
 
-    private function convertAttestationCredential($credential) : PublicKeyCredentialInterface
+    private function convertAttestationCredential($credential): PublicKeyCredentialInterface
     {
         if (\is_string($credential)) {
             return JsonConverter::decodeAttestationCredential($credential);
@@ -271,7 +261,7 @@ class WebAuthnServer implements ServerInterface
         throw new WebAuthnException('Parameter credential should be of type string or PublicKeyCredentialInterface.');
     }
 
-    private function convertAssertionCredential($credential) : PublicKeyCredentialInterface
+    private function convertAssertionCredential($credential): PublicKeyCredentialInterface
     {
         if (\is_string($credential)) {
             try {

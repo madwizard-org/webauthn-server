@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Credential;
 
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
@@ -20,7 +19,7 @@ class CredentialId extends BinaryHandle
         return new self($binary);
     }
 
-    public static function fromHex(string $hex) : self
+    public static function fromHex(string $hex): self
     {
         return new self(parent::convertHex($hex));
     }

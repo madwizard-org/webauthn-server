@@ -19,8 +19,7 @@ interface ServerInterface
 
     /**
      * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
-     * @param RegistrationContext $context
-     * @return RegistrationResult
+     *
      * @throws CredentialIdExistsException
      */
     public function finishRegistration($credential, RegistrationContext $context): RegistrationResult;
@@ -29,8 +28,6 @@ interface ServerInterface
 
     /**
      * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
-     * @param AuthenticationContext $context
-     * @return AuthenticationResult
      */
     public function finishAuthentication($credential, AuthenticationContext $context): AuthenticationResult;
 }

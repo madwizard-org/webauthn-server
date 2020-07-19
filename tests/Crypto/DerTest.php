@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Crypto;
 
 use MadWizard\WebAuthn\Crypto\Der;

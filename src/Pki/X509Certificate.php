@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Pki;
 
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -30,7 +29,7 @@ class X509Certificate implements Serializable
         return new self(base64_encode($der));
     }
 
-    public static function fromPem(string $pem) : self
+    public static function fromPem(string $pem): self
     {
         $start = strpos($pem, self::BEGIN_CERTIFICATE);
         $end = strpos($pem, self::END_CERTIFICATE);
@@ -43,7 +42,7 @@ class X509Certificate implements Serializable
         return self::fromBase64($base64);
     }
 
-    public static function fromBase64(string $base64) : self
+    public static function fromBase64(string $base64): self
     {
         $decoded = base64_decode($base64, true);
         if ($decoded === false) {

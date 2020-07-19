@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Tpm;
 
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -62,9 +61,6 @@ class TpmAttest extends AbstractTpmStructure
         }
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getAttName(): ByteBuffer
     {
         return $this->attName;

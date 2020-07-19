@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
@@ -56,23 +55,17 @@ class AndroidSafetyNetAttestationStatement extends AbstractAttestationStatement
         $this->response = $res->getBinaryString();
     }
 
-    /**
-     * @return string
-     */
     public function getVersion(): string
     {
         return $this->version;
     }
 
-    /**
-     * @return string
-     */
     public function getResponse(): string
     {
         return $this->response;
     }
 
-    public static function createFormat() : AttestationFormatInterface
+    public static function createFormat(): AttestationFormatInterface
     {
         return new BuiltInAttestationFormat(
             self::FORMAT_ID,

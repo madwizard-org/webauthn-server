@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Crypto;
 
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
@@ -25,19 +24,22 @@ class Ec2Key extends CoseKey // TODO exceptions
     private $curve;
 
     /**
-     * NIST P-256 also known as secp256r1
+     * NIST P-256 also known as secp256r1.
+     *
      * @see https://www.iana.org/assignments/cose/cose.xhtml#elliptic-curves
      */
     public const CURVE_P256 = 1;
 
     /**
-     * NIST P-256 also known as secp256r1
+     * NIST P-256 also known as secp256r1.
+     *
      * @see https://www.iana.org/assignments/cose/cose.xhtml#elliptic-curves
      */
     public const CURVE_P384 = 2;
 
     /**
-     * NIST P-521 also known as secp256r1
+     * NIST P-521 also known as secp256r1.
+     *
      * @see https://www.iana.org/assignments/cose/cose.xhtml#elliptic-curves
      */
     public const CURVE_P521 = 3;
@@ -49,17 +51,17 @@ class Ec2Key extends CoseKey // TODO exceptions
     ];
 
     /**
-     *  EC identifier
+     *  EC identifier.
      */
     private const KTP_CRV = -1;
 
     /**
-     * X-coordinate
+     * X-coordinate.
      */
     private const KTP_X = -2;
 
     /**
-     * Y-coordinate
+     * Y-coordinate.
      */
     private const KTP_Y = -3;
 
@@ -76,7 +78,6 @@ class Ec2Key extends CoseKey // TODO exceptions
     ];
 
     private const CURVE_OID = [
-
         // 1.2.840.10045.3.1.7 NIST P-256 / secp256r1
         self::CURVE_P256 => "\x2A\x86\x48\xCE\x3D\x03\x01\x07",
 
@@ -85,7 +86,6 @@ class Ec2Key extends CoseKey // TODO exceptions
 
         // 1.3.132.0.35 NIST P-521 / secp521r1
         self::CURVE_P521 => "\x2B\x81\x04\x00\x23",
-
     ];
 
     public function __construct(ByteBuffer $x, ByteBuffer $y, int $curve, int $algorithm)
@@ -102,13 +102,12 @@ class Ec2Key extends CoseKey // TODO exceptions
             throw new WebAuthnException(sprintf('Expecting length %d for x and y', $coordLength));
         }
 
-
         $this->x = $x;
         $this->y = $y;
         $this->curve = $curve;
     }
 
-    public static function fromCborData(array $data) : Ec2Key
+    public static function fromCborData(array $data): Ec2Key
     {
         // Note: leading zeroes in X and Y coordinates are preserved in CBOR
         // See RFC8152 13.1.1. Double Coordinate Curves
@@ -131,31 +130,22 @@ class Ec2Key extends CoseKey // TODO exceptions
         return new Ec2Key($x, $y, $curve, $alorithm);
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getX(): ByteBuffer
     {
         return $this->x;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getY(): ByteBuffer
     {
         return $this->y;
     }
 
-    /**
-     * @return int
-     */
     public function getCurve(): int
     {
         return $this->curve;
     }
 
-    public function asDer() : string
+    public function asDer(): string
     {
         // DER encoded P256 curve
         $der =
@@ -172,17 +162,17 @@ class Ec2Key extends CoseKey // TODO exceptions
         return $der;
     }
 
-    public function asPem() : string
+    public function asPem(): string
     {
         return Der::pem('PUBLIC KEY', $this->asDER());
     }
 
-    private function getCurveOid() : string
+    private function getCurveOid(): string
     {
         return self::CURVE_OID[$this->curve];
     }
 
-    public function getCbor() : ByteBuffer
+    public function getCbor(): ByteBuffer
     {
         $map = [
             self::COSE_KEY_PARAM_KTY => self::COSE_KTY_EC2,
@@ -194,7 +184,7 @@ class Ec2Key extends CoseKey // TODO exceptions
         return new ByteBuffer(CborEncoder::encodeMap($map));
     }
 
-    public function getUncompressedCoordinates() : ByteBuffer
+    public function getUncompressedCoordinates(): ByteBuffer
     {
         $data = "\x04" . // ECC uncompressed key format
             $this->x->getBinaryString() .
@@ -202,13 +192,13 @@ class Ec2Key extends CoseKey // TODO exceptions
         return new ByteBuffer($data);
     }
 
-    public function verifySignature(ByteBuffer $data, ByteBuffer $signature) : bool
+    public function verifySignature(ByteBuffer $data, ByteBuffer $signature): bool
     {
         $verifier = new OpenSslVerifier($this->getAlgorithm());
         return $verifier->verify($data->getBinaryString(), $signature->getBinaryString(), $this->asPem());
     }
 
-    protected function algorithmSupported(int $algorithm) : bool
+    protected function algorithmSupported(int $algorithm): bool
     {
         return in_array($algorithm, self::SUPPORTED_ALGORITHMS, true);
     }

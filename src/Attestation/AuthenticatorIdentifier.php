@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation;
 
 class AuthenticatorIdentifier
@@ -27,17 +26,11 @@ class AuthenticatorIdentifier
         $this->type = $type;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;

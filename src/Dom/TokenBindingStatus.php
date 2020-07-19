@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 class TokenBindingStatus
@@ -22,8 +21,8 @@ class TokenBindingStatus
     {
     }
 
-    public static function isValidValue(string $value) : bool
+    public static function isValidValue(string $value): bool
     {
-        return ($value === self::PRESENT || $value === self::SUPPORTED);
+        return $value === self::PRESENT || $value === self::SUPPORTED;
     }
 }

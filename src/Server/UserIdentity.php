@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Credential\UserHandle;
@@ -29,25 +28,16 @@ class UserIdentity implements UserIdentityInterface
         $this->displayName = $displayName;
     }
 
-    /**
-     * @return UserHandle
-     */
     public function getUserHandle(): UserHandle
     {
         return $this->userHandle;
     }
 
-    /**
-     * @return string
-     */
     public function getUsername(): string
     {
         return $this->username;
     }
 
-    /**
-     * @return string
-     */
     public function getDisplayName(): string
     {
         return $this->displayName;

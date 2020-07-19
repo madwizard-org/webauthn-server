@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace MadWizard\WebAuthn\Server;
 
 use Serializable;

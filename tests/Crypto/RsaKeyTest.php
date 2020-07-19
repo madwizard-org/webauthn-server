@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Crypto;
 
 use MadWizard\WebAuthn\Crypto\CoseKey;
@@ -45,14 +44,12 @@ class RsaKeyTest extends TestCase
         $wrongData[10] = "\x2B";
         $wrongSignature = new ByteBuffer($wrongData);
 
-
         $message = new ByteBuffer('testmessage');
 
         $key = $this->getKey();
 
         $valid = $key->verifySignature($message, $signature);
         $this->assertTrue($valid);
-
 
         $valid = $key->verifySignature($message, $wrongSignature);
         $this->assertFalse($valid);
@@ -119,7 +116,7 @@ class RsaKeyTest extends TestCase
 
         $key = CoseKey::parseCbor($cbor);
         $this->assertInstanceOf(RsaKey::class, $key);
-        /** @var $key RsaKey */
+        /* @var $key RsaKey */
 
         $this->assertSame(CoseAlgorithm::RS256, $key->getAlgorithm());
         $this->assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());

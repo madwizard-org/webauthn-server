@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Android;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -29,9 +28,6 @@ class AndroidAttestationExtension
 
     /**
      * AndroidAttestationExtension constructor.
-     * @param AuthorizationList $seAuthList
-     * @param AuthorizationList $teeAuthList
-     * @param ByteBuffer $challenge
      */
     public function __construct(ByteBuffer $challenge, AuthorizationList $seAuthList, AuthorizationList $teeAuthList)
     {
@@ -40,25 +36,16 @@ class AndroidAttestationExtension
         $this->challenge = $challenge;
     }
 
-    /**
-     * @return AuthorizationList
-     */
     public function getSoftwareEnforcedAuthList(): AuthorizationList
     {
         return $this->seAuthList;
     }
 
-    /**
-     * @return AuthorizationList
-     */
     public function getTeeEnforcedAuthList(): AuthorizationList
     {
         return $this->teeAuthList;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getChallenge(): ByteBuffer
     {
         return $this->challenge;

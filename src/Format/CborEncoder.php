@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Format;
 
 use MadWizard\WebAuthn\Exception\CborException;

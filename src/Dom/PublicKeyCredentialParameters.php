@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Exception\WebAuthnException;
@@ -8,7 +7,8 @@ use MadWizard\WebAuthn\Exception\WebAuthnException;
 class PublicKeyCredentialParameters extends AbstractDictionary
 {
     /**
-     * Algorithm from COSE
+     * Algorithm from COSE.
+     *
      * @var int
      */
     private $alg;
@@ -20,7 +20,7 @@ class PublicKeyCredentialParameters extends AbstractDictionary
 
     /**
      * PublicKeyCredentialParameters constructor.
-     * @param string $type
+     *
      * @param int $alg COSEAlgorithmIdentifier;
      */
     public function __construct(int $alg, string $type = PublicKeyCredentialType::PUBLIC_KEY)

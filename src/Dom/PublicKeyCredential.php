@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Exception\UnsupportedException;
@@ -36,7 +35,6 @@ class PublicKeyCredential implements PublicKeyCredentialInterface
 
     /**
      * The credential's identifier. For public key credentials this is a base64url encoded version of the raw credential ID.
-     * @return string
      */
     public function getId(): string
     {

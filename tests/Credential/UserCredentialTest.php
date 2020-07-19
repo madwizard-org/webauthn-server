@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Credential;
 
 use MadWizard\WebAuthn\Credential\CredentialId;

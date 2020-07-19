@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Verifier;
 
 use MadWizard\WebAuthn\Attestation\Android\SafetyNetResponseParser;
@@ -37,12 +36,12 @@ class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterfac
         $this->responseParser = $responseParser ?? new SafetyNetResponseParser();
     }
 
-    protected function getMsTimestamp() : float
+    protected function getMsTimestamp(): float
     {
         return microtime(true) * 1000;
     }
 
-    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash) : VerificationResult
+    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash): VerificationResult
     {
         if (!($attStmt instanceof AndroidSafetyNetAttestationStatement)) {
             throw new VerificationException('Expecting AndroidSafetyNetAttestationStatement');

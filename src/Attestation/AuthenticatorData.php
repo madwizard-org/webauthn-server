@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation;
 
 use MadWizard\WebAuthn\Attestation\Identifier\Aaguid;
@@ -16,27 +15,28 @@ use MadWizard\WebAuthn\Format\CborDecoder;
 class AuthenticatorData implements AuthenticatorDataInterface
 {
     /**
-     * User present (UP)
+     * User present (UP).
      */
     private const FLAG_UP = 1 << 0;
 
     /**
-     * User verified (UV)
+     * User verified (UV).
      */
     private const FLAG_UV = 1 << 2;
 
     /**
-     * Attested credential data included (AT)
+     * Attested credential data included (AT).
      */
     private const FLAG_AT = 1 << 6;
 
     /**
-     * Extension data included (ED)
+     * Extension data included (ED).
      */
     private const FLAG_ED = 1 << 7;
 
     /**
      * SHA-256 hash of the RP ID associated with the credential.
+     *
      * @var ByteBuffer
      */
     private $rpIdHash;
@@ -77,7 +77,7 @@ class AuthenticatorData implements AuthenticatorDataInterface
 
     /**
      * AuthenticatorData constructor.
-     * @param ByteBuffer $data
+     *
      * @throws ParseException
      * @throws \MadWizard\WebAuthn\Exception\DataValidationException
      */
@@ -123,12 +123,12 @@ class AuthenticatorData implements AuthenticatorDataInterface
         }
     }
 
-    public function getRpIdHash() : ByteBuffer
+    public function getRpIdHash(): ByteBuffer
     {
         return $this->rpIdHash;
     }
 
-    public function getSignCount() : int
+    public function getSignCount(): int
     {
         return $this->signCount;
     }
@@ -159,8 +159,8 @@ class AuthenticatorData implements AuthenticatorDataInterface
     }
 
     /**
-     * @return CoseKeyInterface
      * @throws WebAuthnException when authenticator data does not contain a key.
+     *
      * @see hasKey
      */
     public function getKey(): CoseKeyInterface
@@ -181,7 +181,7 @@ class AuthenticatorData implements AuthenticatorDataInterface
         return $this->aaguid !== null;
     }
 
-    public function getAaguid() : Aaguid
+    public function getAaguid(): Aaguid
     {
         if ($this->aaguid === null) {
             throw new WebAuthnException('AuthenticatorData does not contain an AAGUID.');
@@ -189,9 +189,6 @@ class AuthenticatorData implements AuthenticatorDataInterface
         return new Aaguid($this->aaguid);
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getRaw(): ByteBuffer
     {
         return $this->raw;

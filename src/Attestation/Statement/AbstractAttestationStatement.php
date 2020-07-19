@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
@@ -26,10 +25,12 @@ abstract class AbstractAttestationStatement implements AttestationStatementInter
 
     /**
      * @param ByteBuffer[] $x5c
+     *
      * @return string[]
+     *
      * @throws ParseException
      */
-    protected function buildPEMCertificateArray(array $x5c) : array
+    protected function buildPEMCertificateArray(array $x5c): array
     {
         $certificates = [];
         foreach ($x5c as $item) {

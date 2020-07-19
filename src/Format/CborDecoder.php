@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Format;
 
 use MadWizard\WebAuthn\Exception\ByteBufferException;
@@ -9,8 +8,8 @@ use MadWizard\WebAuthn\Exception\CborException;
 class CborDecoder
 {
     /**
-     * @param ByteBuffer $buf
      * @return mixed
+     *
      * @throws CborException
      */
     public static function decode(ByteBuffer $buf)
@@ -29,10 +28,8 @@ class CborDecoder
     }
 
     /**
-     * @param ByteBuffer $buf
-     * @param int $startOffset
-     * @param int|null $endOffset
      * @return mixed
+     *
      * @throws CborException
      */
     public static function decodeInPlace(ByteBuffer $buf, int $startOffset, int &$endOffset = null)
@@ -48,8 +45,6 @@ class CborDecoder
     }
 
     /**
-     * @param ByteBuffer $buf
-     * @param int $offset
      * @return mixed
      */
     private static function parseItem(ByteBuffer $buf, int &$offset)
@@ -98,8 +93,8 @@ class CborDecoder
     }
 
     /**
-     * @param int $val
      * @return mixed
+     *
      * @throws CborException
      */
     private static function parseSimple(int $val)
@@ -116,7 +111,7 @@ class CborDecoder
         throw new CborException(sprintf('Unsupported simple value %d.', $val));
     }
 
-    private static function parseExtraLength(int $val, ByteBuffer $buf, int &$offset) : int
+    private static function parseExtraLength(int $val, ByteBuffer $buf, int &$offset): int
     {
         switch ($val) {
             case 24:
@@ -173,7 +168,7 @@ class CborDecoder
         throw new CborException(sprintf('Unknown major type %d.', $type));
     }
 
-    private static function parseMap(ByteBuffer $buf, int &$offset, int $count) : array
+    private static function parseMap(ByteBuffer $buf, int &$offset, int $count): array
     {
         $map = [];
 
@@ -191,7 +186,7 @@ class CborDecoder
         return $map;
     }
 
-    private static function parseArray(ByteBuffer $buf, int &$offset, int $count) : array
+    private static function parseArray(ByteBuffer $buf, int &$offset, int $count): array
     {
         $arr = [];
         for ($i = 0; $i < $count; $i++) {

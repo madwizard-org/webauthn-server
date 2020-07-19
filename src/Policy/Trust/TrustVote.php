@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Policy\Trust;
 
 class TrustVote

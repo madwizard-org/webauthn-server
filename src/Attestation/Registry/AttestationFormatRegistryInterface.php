@@ -12,8 +12,6 @@ interface AttestationFormatRegistryInterface
     public function createStatement(AttestationObjectInterface $attestationObject): AttestationStatementInterface;
 
     /**
-     * @param string $formatId
-     * @return AttestationVerifierInterface
      * @throws FormatNotSupportedException
      */
     public function getVerifier(string $formatId): AttestationVerifierInterface;

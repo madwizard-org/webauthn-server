@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Conformance;
 
 use MadWizard\WebAuthn\Builder\ServerBuilder;
@@ -56,7 +55,7 @@ class Router
         $this->debug = (bool) ($_ENV['DEBUG'] ?? false);
     }
 
-    private function createServer(string $metadataDir) : ServerInterface
+    private function createServer(string $metadataDir): ServerInterface
     {
         $builder = new ServerBuilder();
 
@@ -91,7 +90,7 @@ class Router
         return $builder->build();
     }
 
-    private function getPostJson(string $postData) : array
+    private function getPostJson(string $postData): array
     {
         $json = json_decode($postData, true, 10);
         if ($json === null) {
@@ -114,7 +113,7 @@ class Router
             $response = [500, ['status' => 'failed', 'errorMessage' => $prefix . $e->getMessage()]];
         } catch (WebAuthnException $e) {
             $prefix = $this->debugIdx === null ? '' : ($this->debugIdx . ' ');
-            $response = [400, ['status' => 'failed', 'errorMessage' => $prefix . $e->getMessage() . PHP_EOL . $e->getTraceAsString()] ];
+            $response = [400, ['status' => 'failed', 'errorMessage' => $prefix . $e->getMessage() . PHP_EOL . $e->getTraceAsString()]];
         }
 
         if ($response === null) {
@@ -131,7 +130,7 @@ class Router
         die(json_encode($response[1], JSON_PRETTY_PRINT));
     }
 
-    private function getResponse(string $url, string $postData) :?array
+    private function getResponse(string $url, string $postData): ?array
     {
         $saveReq = $this->debug;
         $serDir = $this->varDir . DIRECTORY_SEPARATOR . '/ser/';
@@ -170,7 +169,7 @@ class Router
         return null;
     }
 
-    public function attestationOptions(string $postData) : array
+    public function attestationOptions(string $postData): array
     {
         $req = $this->getPostJson($postData);
         $userIdentity = new UserIdentity(
@@ -191,9 +190,6 @@ class Router
             $crit->setUserVerification($v);
         }
 
-
-
-
         $att = $req['attestation'] ?? 'none';
 
         $opts = new RegistrationOptions($userIdentity);
@@ -206,13 +202,11 @@ class Router
         $opts->setExcludeExistingCredentials(true);
         $regReq = $this->server->startRegistration($opts);
 
-
-
         $_SESSION['context'] = $regReq->getContext();
         return [200, array_merge(['status' => 'ok', 'errorMessage' => ''], $regReq->getClientOptionsJson())];
     }
 
-    public function attestationResult(string $req) : array
+    public function attestationResult(string $req): array
     {
         $context = $_SESSION['context'];
 
@@ -224,7 +218,7 @@ class Router
         return [200, ['status' => 'ok', 'errorMessage' => '']];
     }
 
-    public function assertionOptions(string $postData) : array
+    public function assertionOptions(string $postData): array
     {
         $req = $this->getPostJson($postData);
 
@@ -242,7 +236,7 @@ class Router
         return [200, array_merge(['status' => 'ok', 'errorMessage' => ''], $regReq->getClientOptionsJson())];
     }
 
-    public function assertionResult(string $req) : array
+    public function assertionResult(string $req): array
     {
         $context = $_SESSION['context'];
 

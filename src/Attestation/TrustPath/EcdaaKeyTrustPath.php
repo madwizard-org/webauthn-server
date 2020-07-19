@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\TrustPath;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -17,9 +16,6 @@ class EcdaaKeyTrustPath implements TrustPathInterface
         $this->ecdaaKeyId = $ecdaaKeyId;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getEcdaaKeyId(): ByteBuffer
     {
         return $this->ecdaaKeyId;

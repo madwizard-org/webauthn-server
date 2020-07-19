@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Android;
 
 use function in_array;
@@ -26,9 +25,6 @@ class AuthorizationList
      */
     private $origin;
 
-    /**
-     * @return bool
-     */
     public function hasPurpose(int $purpose): bool
     {
         return in_array($purpose, $this->purposeList, true);
@@ -47,33 +43,21 @@ class AuthorizationList
         $this->purposeList[] = $purpose;
     }
 
-    /**
-     * @return bool
-     */
     public function hasAllApplications(): bool
     {
         return $this->allApplications;
     }
 
-    /**
-     * @param bool $allApplications
-     */
     public function setAllApplications(bool $allApplications): void
     {
         $this->allApplications = $allApplications;
     }
 
-    /**
-     * @return int|null
-     */
     public function getOrigin(): ?int
     {
         return $this->origin;
     }
 
-    /**
-     * @param int|null $origin
-     */
     public function setOrigin(?int $origin): void
     {
         $this->origin = $origin;

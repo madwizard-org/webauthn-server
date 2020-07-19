@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Dom;
 
 use MadWizard\WebAuthn\Dom\AbstractDictionary;
@@ -10,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class DictionaryTest extends TestCase
 {
-    private function createDictionary(array $data) : AbstractDictionary
+    private function createDictionary(array $data): AbstractDictionary
     {
         $mock = $this->getMockForAbstractClass(AbstractDictionary::class);
 
@@ -52,14 +51,12 @@ class DictionaryTest extends TestCase
             ['a' => 'b', 'nested' => $nested],
             [
                 'a' => 'b',
-                'nested' =>
-                [
+                'nested' => [
                     'number' => 123,
-                    'inner' =>
-                        [
-                            'x' => 'wP_u'
-                        ]
-                ]
+                    'inner' => [
+                            'x' => 'wP_u',
+                        ],
+                ],
             ]
         );
     }

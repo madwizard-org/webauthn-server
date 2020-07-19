@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -8,7 +7,7 @@ use function json_last_error;
 
 abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInterface
 {
-    const UTF8_BOM = "\xEF\xBB\xBF";
+    public const UTF8_BOM = "\xEF\xBB\xBF";
 
     /**
      * @var string
@@ -40,7 +39,7 @@ abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInt
         return $this->clientDataJson;
     }
 
-    public function getParsedClientData() : array
+    public function getParsedClientData(): array
     {
         return $this->parsedJson;
     }

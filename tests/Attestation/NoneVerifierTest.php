@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;

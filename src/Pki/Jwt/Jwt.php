@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Pki\Jwt;
 
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -73,33 +72,21 @@ class Jwt implements JwtInterface
         return $decoded;
     }
 
-    /**
-     * @return array
-     */
     public function getHeader(): array
     {
         return $this->header;
     }
 
-    /**
-     * @return array
-     */
     public function getBody(): array
     {
         return $this->body;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getSignedData(): ByteBuffer
     {
         return $this->signedData;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getSignature(): ByteBuffer
     {
         return $this->signature;

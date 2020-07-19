@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
@@ -24,7 +23,7 @@ class RegistrationRequest
         $this->context = $context;
     }
 
-    public function getClientOptions() : PublicKeyCredentialCreationOptions
+    public function getClientOptions(): PublicKeyCredentialCreationOptions
     {
         return $this->creationOptions;
     }
@@ -34,7 +33,7 @@ class RegistrationRequest
         return JsonConverter::encodeDictionary($this->creationOptions);
     }
 
-    public function getContext() : RegistrationContext
+    public function getContext(): RegistrationContext
     {
         return $this->context;
     }

@@ -62,7 +62,6 @@ class PublicKeyCredentialCreationOptionsTest extends TestCase
         $options->setAuthenticatorSelection($authSelection);
         $this->assertSame($authSelection, $options->getAuthenticatorSelection());
 
-
         $this->assertSame(
             [
                 'rp' => [

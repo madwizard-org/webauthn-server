@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
@@ -29,7 +28,6 @@ class AuthenticatorDataTest extends TestCase
             '
         );
 
-
         $data = new AuthenticatorData($buf);
 
         $this->assertSame('1194228da8fdbdeefd261bd7b6595cfd70a50d70c6407bcf013de96d4efb17de', $data->getRpIdHash()->getHex());
@@ -43,7 +41,7 @@ class AuthenticatorDataTest extends TestCase
         $this->assertTrue($data->hasKey());
         $key = $data->getKey();
         $this->assertInstanceOf(Ec2Key::class, $key);
-        /**
+        /*
          * @var Ec2Key $key
          */
         $this->assertEquals(CoseAlgorithm::ES256, $key->getAlgorithm());

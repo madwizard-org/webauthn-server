@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Pki\Jwt;
 
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
@@ -22,7 +21,6 @@ final class X5cParameterReader
             'RS256' => ['keyType' => OPENSSL_KEYTYPE_RSA, 'coseAlg' => CoseAlgorithm::RS256],
             'RS384' => ['keyType' => OPENSSL_KEYTYPE_RSA, 'coseAlg' => CoseAlgorithm::RS256],
             'RS512' => ['keyType' => OPENSSL_KEYTYPE_RSA, 'coseAlg' => CoseAlgorithm::RS512],
-
         ];
 
     public static function getX5cParameter(JwtInterface $token): ?X5cParameter
@@ -45,11 +43,11 @@ final class X5cParameterReader
     }
 
     /**
-     * @param array $header
      * @return X509Certificate[]|null
+     *
      * @throws ParseException
      */
-    private static function extractChain(array $header) : ?array
+    private static function extractChain(array $header): ?array
     {
         $x5c = $header['x5c'] ?? null;
         if ($x5c === null) {

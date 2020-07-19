@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Registry;
 
 use MadWizard\WebAuthn\Attestation\Statement\AndroidKeyAttestationStatement;
@@ -22,7 +21,7 @@ final class BuiltInFormats
     /**
      * @return AttestationFormatInterface[]
      */
-    public static function getSupportedFormats() : array
+    public static function getSupportedFormats(): array
     {
         return [
             FidoU2fAttestationStatement::createFormat(),

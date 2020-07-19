@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -43,25 +42,16 @@ abstract class AbstractContext  // TODO: use composition instead of inheritance
         $this->rpId = $rpId;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getChallenge(): ByteBuffer
     {
         return $this->challenge;
     }
 
-    /**
-     * @return string
-     */
     public function getRpId(): string
     {
         return $this->rpId;
     }
 
-    /**
-     * @return bool
-     */
     public function isUserVerificationRequired(): bool
     {
         return $this->userVerificationRequired;
@@ -72,9 +62,6 @@ abstract class AbstractContext  // TODO: use composition instead of inheritance
         $this->userVerificationRequired = $required;
     }
 
-    /**
-     * @return bool
-     */
     public function isUserPresenceRequired(): bool
     {
         return $this->userPresenceRequired;
@@ -85,9 +72,6 @@ abstract class AbstractContext  // TODO: use composition instead of inheritance
         $this->userPresenceRequired = $required;
     }
 
-    /**
-     * @return Origin
-     */
     public function getOrigin(): Origin
     {
         return $this->origin;
@@ -100,7 +84,7 @@ abstract class AbstractContext  // TODO: use composition instead of inheritance
             'rpId' => $this->rpId,
             'userVerificationRequired' => $this->userVerificationRequired,
             'origin' => $this->origin,
-            'userPresenceRequired' => $this->userPresenceRequired
+            'userPresenceRequired' => $this->userPresenceRequired,
         ];
     }
 

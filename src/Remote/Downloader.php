@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Remote;
 
 use GuzzleHttp\Client;
@@ -20,11 +19,9 @@ class Downloader implements DownloaderInterface
     }
 
     /**
-     * @param string $uri
-     * @return FileContents
      * @throws RemoteException
      */
-    public function downloadFile(string $uri) : FileContents
+    public function downloadFile(string $uri): FileContents
     {
         try {
             $response = $this->client->get($uri);

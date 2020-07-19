@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Dom;
 
 use MadWizard\WebAuthn\Dom\CredentialCreationOptions;
@@ -23,8 +22,7 @@ class CreationOptionsTest extends TestCase
         $arr = $options->getJsonData();
         $this->assertSame(
             [
-                'publicKey' =>
-                    [
+                'publicKey' => [
                         'rp' => [
                             'name' => 'RP',
                         ],

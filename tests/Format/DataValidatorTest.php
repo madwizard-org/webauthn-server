@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Format;
 
 use DateTime;
@@ -44,7 +43,6 @@ class DataValidatorTest extends TestCase
             [
                 'a' => 4,
                 'b' => 'ab',
-
             ],
             [
                 'a' => 'integer',
@@ -64,7 +62,6 @@ class DataValidatorTest extends TestCase
             [
                 'a' => new ByteBuffer(''),
                 'b' => new ByteBuffer(''),
-
             ],
             [
                 'a' => ByteBuffer::class,
@@ -110,7 +107,7 @@ class DataValidatorTest extends TestCase
             [
                 'a' => 4,
                 'b' => 'ab',
-                'e' => false
+                'e' => false,
             ],
             [
                 'a' => 'integer',
@@ -125,7 +122,7 @@ class DataValidatorTest extends TestCase
             [
                 'a' => 4,
                 'b' => 'ab',
-                'e' => false
+                'e' => false,
             ],
             [
                 'a' => 'integer',
@@ -149,7 +146,7 @@ class DataValidatorTest extends TestCase
                 'a' => 'integer',
                 'b' => '?string',
                 'c' => 'array',
-                'd' => '?' . ByteBuffer::class
+                'd' => '?' . ByteBuffer::class,
             ]
         );
 
@@ -164,7 +161,7 @@ class DataValidatorTest extends TestCase
                 'a' => 4,
                 'b' => 'test',
                 'c' => [1, 2, 3],
-                'd' => new ByteBuffer('')
+                'd' => new ByteBuffer(''),
             ],
             [
                 'a' => 'integer',

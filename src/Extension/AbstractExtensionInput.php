@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Extension;
 
 use MadWizard\WebAuthn\Exception\WebAuthnException;
@@ -27,9 +26,6 @@ abstract class AbstractExtensionInput implements ExtensionInputInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function getIdentifier(): string
     {
         return $this->identifier;

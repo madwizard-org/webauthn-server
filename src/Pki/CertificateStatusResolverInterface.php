@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Pki;
 
 interface CertificateStatusResolverInterface

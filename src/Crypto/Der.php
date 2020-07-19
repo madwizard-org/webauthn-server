@@ -1,11 +1,10 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Crypto;
 
 class Der
 {
-    private static function length(int $len) : string
+    private static function length(int $len): string
     {
         if ($len < 128) {
             return \chr($len);
@@ -19,17 +18,17 @@ class Der
         return \chr(0x80 | \strlen($lenBytes)) . $lenBytes;
     }
 
-    public static function sequence(string $contents) : string
+    public static function sequence(string $contents): string
     {
         return "\x30" . self::length(\strlen($contents)) . $contents;
     }
 
-    public static function oid(string $encoded) : string
+    public static function oid(string $encoded): string
     {
         return "\x06" . self::length(\strlen($encoded)) . $encoded;
     }
 
-    public static function unsignedInteger(string $bytes) : string
+    public static function unsignedInteger(string $bytes): string
     {
         $len = \strlen($bytes);
 
@@ -51,19 +50,19 @@ class Der
         return "\x02" . self::length(\strlen($bytes)) . $bytes;
     }
 
-    public static function bitString(string $bytes) : string
+    public static function bitString(string $bytes): string
     {
         $len = \strlen($bytes) + 1;
 
         return "\x03" . self::length($len) . "\x00" . $bytes;
     }
 
-    public static function nullValue() : string
+    public static function nullValue(): string
     {
         return "\x05\x00";
     }
 
-    public static function pem(string $type, string $der) : string
+    public static function pem(string $type, string $der): string
     {
         return sprintf("-----BEGIN %s-----\n", strtoupper($type)) .
             chunk_split(base64_encode($der), 64, "\n") .

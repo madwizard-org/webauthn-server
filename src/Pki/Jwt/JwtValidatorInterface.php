@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Pki\Jwt;
 
 interface JwtValidatorInterface

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Conformance;
 
 use MadWizard\WebAuthn\Credential\CredentialId;
@@ -14,7 +13,7 @@ use function array_map;
 
 /**
  * Test credential store for conformance test
- * NOTE: this class is a simple implementation for running the FIDO conformance tests only
+ * NOTE: this class is a simple implementation for running the FIDO conformance tests only.
  */
 class TestCredentialStore implements CredentialStoreInterface
 {
@@ -23,12 +22,12 @@ class TestCredentialStore implements CredentialStoreInterface
         return $_SESSION['credentials'][$credentialId->toString()]['credential'] ?? null;
     }
 
-    public function registerCredential(CredentialRegistration $credential):void
+    public function registerCredential(CredentialRegistration $credential): void
     {
         $_SESSION['credentials'][$credential->getCredentialId()->toString()] =
             [
                 'credential' => new UserCredential($credential->getCredentialId(), $credential->getPublicKey(), $credential->getUserHandle()),
-                'counter' => $credential->getSignCounter()
+                'counter' => $credential->getSignCounter(),
             ];
     }
 
@@ -42,7 +41,7 @@ class TestCredentialStore implements CredentialStoreInterface
         $_SESSION['credentials'][$credentialId->toString()]['counter'] = $counter;
     }
 
-    public function getUserCredentialIds(UserHandle $userHandle) : array
+    public function getUserCredentialIds(UserHandle $userHandle): array
     {
         return array_map(function ($x) {
             return $x['credential']->getCredentialId();

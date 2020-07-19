@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Tpm;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -15,7 +14,7 @@ abstract class AbstractTpmStructure
         return new ByteBuffer($data);
     }
 
-    protected function readFixed(ByteBuffer $buffer, int &$offset, int $length) : ByteBuffer
+    protected function readFixed(ByteBuffer $buffer, int &$offset, int $length): ByteBuffer
     {
         $data = $buffer->getBytes($offset, $length);
         $offset += $length;

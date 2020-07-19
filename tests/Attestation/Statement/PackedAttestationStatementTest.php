@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
@@ -37,7 +36,6 @@ class PackedAttestationStatementTest extends TestCase
     public function testEcdaaKey()
     {
         $attObj = FixtureHelper::getFidoTestObject('dummyPackedEcdaaKeyStatment');
-
 
         $statement = new PackedAttestationStatement($attObj);
 

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Pki\Jwt;
 
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
@@ -20,6 +19,7 @@ class X5cParameter
 
     /**
      * X5cParameter constructor.
+     *
      * @param X509Certificate[] $certificates
      */
     public function __construct(array $certificates, CoseKeyInterface $key)
@@ -29,7 +29,8 @@ class X5cParameter
     }
 
     /**
-     * Certificates in X5C in the order from the JWT (leaf first)
+     * Certificates in X5C in the order from the JWT (leaf first).
+     *
      * @return array|X509Certificate[]
      */
     public function getCertificates()
@@ -37,9 +38,6 @@ class X5cParameter
         return $this->certificates;
     }
 
-    /**
-     * @return CoseKeyInterface
-     */
     public function getCoseKey(): CoseKeyInterface
     {
         return $this->key;

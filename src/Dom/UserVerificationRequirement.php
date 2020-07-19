@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 final class UserVerificationRequirement
@@ -30,8 +29,8 @@ final class UserVerificationRequirement
     {
     }
 
-    public static function isValidValue(string $value) : bool
+    public static function isValidValue(string $value): bool
     {
-        return ($value === self::REQUIRED || $value === self::PREFERRED || $value === self::DISCOURAGED);
+        return $value === self::REQUIRED || $value === self::PREFERRED || $value === self::DISCOURAGED;
     }
 }

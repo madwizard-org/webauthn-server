@@ -2,7 +2,6 @@
 
 namespace MadWizard\WebAuthn\Tests\Format;
 
-use const PHP_INT_SIZE;
 use InvalidArgumentException;
 use MadWizard\WebAuthn\Exception\ByteBufferException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -10,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use function bin2hex;
 use function hex2bin;
 use function unserialize;
+use const PHP_INT_SIZE;
 
 class ByteBufferTest extends TestCase
 {
@@ -109,7 +109,6 @@ class ByteBufferTest extends TestCase
     public function testGetUint32Val()
     {
         $buf = new ByteBuffer('a' . hex2bin('12345678'));
-
 
         $this->assertSame(0x12345678, $buf->getUint32Val(1));
     }
@@ -261,7 +260,6 @@ class ByteBufferTest extends TestCase
         $negInf = $testHalf('FC00');
         $this->assertInfinite($negInf);
         $this->assertLessThan(0, $negInf);
-
 
         $this->assertSame(0.333251953125, $testHalf('3555')); // 0.333251953125 ≈ 1/3
     }

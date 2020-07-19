@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
@@ -11,7 +10,6 @@ use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 
 final class RegistrationResult implements RegistrationResultInterface // TODO: use interface everywhere
 { // TODO: add credentialRegistration?
-
     /**
      * @var CredentialId
      */
@@ -40,33 +38,21 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
         $this->metadata = $metadata;
     }
 
-    /**
-     * @return CredentialId
-     */
     public function getCredentialId(): CredentialId
     {
         return $this->credentialId;
     }
 
-    /**
-     * @return CoseKeyInterface
-     */
     public function getPublicKey(): CoseKeyInterface
     {
         return $this->authenticatorData->getKey();
     }
 
-    /**
-     * @return VerificationResult
-     */
     public function getVerificationResult(): VerificationResult
     {
         return $this->attestation;
     }
 
-    /**
-     * @return int
-     */
     public function getSignatureCounter(): int
     {
         return $this->authenticatorData->getSignCount();
@@ -77,31 +63,22 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
         return $this->authenticatorData;
     }
 
-    /**
-     * @return VerificationResult
-     */
     public function getAttestation(): VerificationResult
     {
         return $this->attestation;
     }
 
-    /**
-     * @param VerificationResult $attestation
-     */
     public function setAttestation(VerificationResult $attestation): void
     {
         $this->attestation = $attestation;
     }
 
-    /**
-     * @return MetadataInterface|null
-     */
     public function getMetadata(): ?MetadataInterface
     {
         return $this->metadata;
     }
 
-    public function withMetadata(?MetadataInterface $metadata) : RegistrationResult
+    public function withMetadata(?MetadataInterface $metadata): RegistrationResult
     {
         return new RegistrationResult($this->credentialId, $this->authenticatorData, $this->attestation, $metadata);
     }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Json;
 
 use MadWizard\WebAuthn\Dom\AuthenticatorAssertionResponse;
@@ -20,12 +19,12 @@ use function is_string;
 final class JsonConverter
 {
     /**
-     * Prefix keys of ByteBuffers with `#prefix#`
+     * Prefix keys of ByteBuffers with `#prefix#`.
      */
     public const ENCODE_PREFIX = 1;
 
     /**
-     * Encode ByteBuffers as base64 strings instead of base64url
+     * Encode ByteBuffers as base64 strings instead of base64url.
      */
     public const ENCODE_BASE64 = 4;
 
@@ -70,14 +69,14 @@ final class JsonConverter
      * }
      * ```
      *
-     * @param string $json
      * @param string $responseType Expected type of response in the public key's response field.
-     * Either 'attestation' for attestation responses or 'assertion' for assertion responses.
-     * @return PublicKeyCredentialInterface
+     *                             Either 'attestation' for attestation responses or 'assertion' for assertion responses.
+     *
      * @throws ParseException
+     *
      * @see https://www.w3.org/TR/webauthn/#publickeycredential
      */
-    public static function decodeCredential(string $json, string $responseType) : PublicKeyCredentialInterface
+    public static function decodeCredential(string $json, string $responseType): PublicKeyCredentialInterface
     {
         $decoded = json_decode($json, true, 10);
         if ($decoded === null) {
@@ -105,23 +104,22 @@ final class JsonConverter
 
         $response = self::decodeResponse($responseData, $responseType);
 
-
         // TODO: clientExtensionResults
 
         return new PublicKeyCredential(new ByteBuffer($rawId), $response);
     }
 
-    public static function decodeAttestationCredential(string $json) : PublicKeyCredentialInterface
+    public static function decodeAttestationCredential(string $json): PublicKeyCredentialInterface
     {
         return self::decodeCredential($json, 'attestation');
     }
 
-    public static function decodeAssertionCredential(string $json) : PublicKeyCredentialInterface
+    public static function decodeAssertionCredential(string $json): PublicKeyCredentialInterface
     {
         return self::decodeCredential($json, 'assertion');
     }
 
-    private static function decodeResponse(array $response, string $responseType) : AuthenticatorResponseInterface
+    private static function decodeResponse(array $response, string $responseType): AuthenticatorResponseInterface
     {
         $clientDataJson = $response['clientDataJSON'] ?? null;
 
@@ -139,7 +137,7 @@ final class JsonConverter
         throw new WebAuthnException(sprintf('Unknown or missing type %s', $responseType));
     }
 
-    private static function decodeAssertionResponse(string $clientDataJson, array $response) : AuthenticatorAssertionResponse
+    private static function decodeAssertionResponse(string $clientDataJson, array $response): AuthenticatorAssertionResponse
     {
         DataValidator::checkTypes(
             $response,
@@ -164,7 +162,7 @@ final class JsonConverter
         return new AuthenticatorAssertionResponse($clientDataJson, $authenticatorData, $signature, $userHandle);
     }
 
-    private static function decodeAttestationResponse(string $clientDataJson, array $response) : AuthenticatorAttestationResponse
+    private static function decodeAttestationResponse(string $clientDataJson, array $response): AuthenticatorAttestationResponse
     {
         DataValidator::checkTypes(
             $response,
@@ -180,12 +178,12 @@ final class JsonConverter
         );
     }
 
-    public static function encodeDictionary(DictionaryInterface $dictionary) : array
+    public static function encodeDictionary(DictionaryInterface $dictionary): array
     {
         return self::encodeArray($dictionary->getAsArray());
     }
 
-    private static function encodeArray(array $map) : array
+    private static function encodeArray(array $map): array
     {
         $converted = [];
         foreach ($map as $key => $value) {

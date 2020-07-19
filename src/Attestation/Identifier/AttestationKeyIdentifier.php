@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Identifier;
 
 use MadWizard\WebAuthn\Exception\ParseException;

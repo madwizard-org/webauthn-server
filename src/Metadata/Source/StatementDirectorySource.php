@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Metadata\Source;
 
 class StatementDirectorySource implements MetadataSourceInterface
@@ -15,9 +14,6 @@ class StatementDirectorySource implements MetadataSourceInterface
         $this->metadataDir = $metadataDir;
     }
 
-    /**
-     * @return string
-     */
     public function getMetadataDir(): string
     {
         return $this->metadataDir;

@@ -1,9 +1,7 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Helper;
 
-use const OPENSSL_ALGO_SHA256;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationContext;
@@ -13,6 +11,7 @@ use stdClass;
 use function array_merge;
 use function json_encode;
 use function openssl_sign;
+use const OPENSSL_ALGO_SHA256;
 
 class AssertionDataHelper
 {
@@ -78,7 +77,7 @@ class AssertionDataHelper
         $this->contextOptions = array_merge($this->contextOptions, $map);
     }
 
-    public function getCredentialJson() : string
+    public function getCredentialJson(): string
     {
         $client = $this->clientOptions;
 
@@ -132,14 +131,14 @@ class AssertionDataHelper
                     'signature' => Base64UrlEncoding::encode($signature),
                     'userHandle' => $client['userHandle'],
                     ],
-                'getClientExtensionResults' => new stdClass()
+                'getClientExtensionResults' => new stdClass(),
             ]
         );
 
         return $credentialJson;
     }
 
-    public function getContext() : AuthenticationContext
+    public function getContext(): AuthenticationContext
     {
         $ctx = $this->contextOptions;
 

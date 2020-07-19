@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Server;
 
 use MadWizard\WebAuthn\Config\RelyingParty;
@@ -62,8 +61,6 @@ class RegistrationTest extends TestCase
         $credential = $json['challengeResponseAttestationU2fMsgB64Url'];
         $credentialJson = json_encode($credential);
 
-
-
         $this->store
             ->expects($this->once())
             ->method('registerCredential')
@@ -97,7 +94,7 @@ class RegistrationTest extends TestCase
         $this->server = new WebAuthnServer($policy, $this->store);
     }
 
-    private function createCredential() : UserCredentialInterface
+    private function createCredential(): UserCredentialInterface
     {
         /**
          * @var $cred UserCredentialInterface|MockObject

@@ -1,19 +1,18 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Helper;
 
-use const JSON_ERROR_NONE;
 use Exception;
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use function file_exists;
 use function file_get_contents;
 use function json_last_error;
+use const JSON_ERROR_NONE;
 
 class FixtureHelper
 {
-    public static function getFixture(string $path) : string
+    public static function getFixture(string $path): string
     {
         $path = dirname(__DIR__) . '/fixtures/' . $path;
         if (!file_exists($path)) {
@@ -23,7 +22,7 @@ class FixtureHelper
         return $path;
     }
 
-    public static function getFixtureContent(string $path) : string
+    public static function getFixtureContent(string $path): string
     {
         $content = file_get_contents(self::getFixture($path));
         if ($content === false) {

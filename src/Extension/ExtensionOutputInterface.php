@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Extension;
 
 interface ExtensionOutputInterface

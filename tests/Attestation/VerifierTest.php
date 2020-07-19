@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
@@ -17,7 +16,7 @@ abstract class VerifierTest extends TestCase
         $message['type'] = 'public-key';
         $credential = JsonConverter::decodeAttestationCredential(json_encode($message));
         $response = $credential->getResponse();
-        /**
+        /*
          * @var AuthenticatorAttestationResponseInterface $response
          */
         return $response;

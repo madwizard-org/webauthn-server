@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Exception;
 
 class UntrustedException extends VerificationException
@@ -10,9 +9,6 @@ class UntrustedException extends VerificationException
      */
     private $reason;
 
-    /**
-     * @return string|null
-     */
     public function getReason(): ?string
     {
         return $this->reason;

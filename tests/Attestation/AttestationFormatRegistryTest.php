@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 class AttestationFormatRegistryTest extends TestCase
 {
-    private function getRegistry() : AttestationFormatRegistry
+    private function getRegistry(): AttestationFormatRegistry
     {
         $registry = new AttestationFormatRegistry();
 
@@ -40,13 +40,13 @@ class AttestationFormatRegistryTest extends TestCase
         $attObj = $this->createMock(AttestationObjectInterface::class);
         $attObj->method('getFormat')->willReturn('format1');
 
-        /** @var AttestationObject $attObj */
+        /* @var AttestationObject $attObj */
         $this->assertInstanceOf('TestFormat1Statement', $registry->createStatement($attObj));
 
         $attObj2 = $this->createMock(AttestationObjectInterface::class);
         $attObj2->method('getFormat')->willReturn('format2');
 
-        /** @var AttestationObject $attObj2 */
+        /* @var AttestationObject $attObj2 */
         $this->assertInstanceOf('TestFormat2Statement', $registry->createStatement($attObj2));
     }
 
@@ -65,7 +65,7 @@ class AttestationFormatRegistryTest extends TestCase
         $attObj = $this->createMock(AttestationObjectInterface::class);
         $attObj->method('getFormat')->willReturn('unsupported');
 
-        /** @var AttestationObject $attObj */
+        /* @var AttestationObject $attObj */
         $registry->createStatement($attObj);
     }
 

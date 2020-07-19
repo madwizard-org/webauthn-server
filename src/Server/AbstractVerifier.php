@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
@@ -15,7 +14,7 @@ use MadWizard\WebAuthn\Web\Origin;
 class AbstractVerifier
 {
     // TODO: move?
-    protected function verifyOrigin(string $origin, Origin $rpOrigin) : bool
+    protected function verifyOrigin(string $origin, Origin $rpOrigin): bool
     {
         try {
             $clientOrigin = Origin::parse($origin);
@@ -64,7 +63,7 @@ class AbstractVerifier
                     'type' => 'string',
                     'challenge' => 'string',
                     'origin' => 'string',
-                    'tokenBinding' => '?array'
+                    'tokenBinding' => '?array',
                 ],
                 false
             );

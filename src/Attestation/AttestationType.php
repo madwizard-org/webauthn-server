@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation;
 
 final class AttestationType
@@ -40,7 +39,7 @@ final class AttestationType
     {
     }
 
-    public static function isValidType(string $type) : bool
+    public static function isValidType(string $type): bool
     {
         return \in_array(
             $type,

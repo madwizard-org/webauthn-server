@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Attestation\Tpm;
 
 use MadWizard\WebAuthn\Attestation\Tpm\TpmPublic;
@@ -61,7 +60,6 @@ class TpmPublicTest extends TestCase
         /** @var TpmRsaParameters $parameters */
         $parameters = $public->getParameters();
         $this->assertInstanceOf(TpmRsaParameters::class, $parameters);
-
 
         $this->assertSame(65537, $parameters->getExponent());
         $this->assertSame(TpmPublic::TPM_ALG_NULL, $parameters->getSymmetric());

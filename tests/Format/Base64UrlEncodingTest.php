@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Format;
 
 use MadWizard\WebAuthn\Exception\ParseException;

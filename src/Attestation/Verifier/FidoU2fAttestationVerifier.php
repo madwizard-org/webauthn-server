@@ -1,9 +1,7 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Verifier;
 
-use const OPENSSL_ALGO_SHA256;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
@@ -15,10 +13,11 @@ use MadWizard\WebAuthn\Exception\VerificationException;
 use function openssl_free_key;
 use function openssl_pkey_get_details;
 use function openssl_verify;
+use const OPENSSL_ALGO_SHA256;
 
 class FidoU2fAttestationVerifier extends AbstractAttestationVerifier
 {
-    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash) : VerificationResult
+    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash): VerificationResult
     {
         if (!($attStmt instanceof FidoU2fAttestationStatement)) {
             throw new VerificationException('Expecting FidoU2fAttestationStatement');
@@ -99,7 +98,7 @@ class FidoU2fAttestationVerifier extends AbstractAttestationVerifier
         return $x509;
     }
 
-    private function getPublicKeyU2f(AuthenticatorDataInterface $authData) : string
+    private function getPublicKeyU2f(AuthenticatorDataInterface $authData): string
     {
         // 4. Convert the COSE_KEY formatted credentialPublicKey (see Section 7 of [RFC8152]) to Raw ANSI X9.62 public
         //    key format (see ALG_KEY_ECC_X962_RAW in Section 3.6.2 Public Key Representation Formats of [FIDO-Registry]).

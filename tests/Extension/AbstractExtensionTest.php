@@ -15,7 +15,7 @@ class AbstractExtensionTest extends TestCase
          * @var AbstractExtensionInput $ext
          */
         $ext = $this->getMockForAbstractClass(AbstractExtensionInput::class, [
-            'validIdentifier'
+            'validIdentifier',
         ]);
 
         $this->assertNull($ext->getInput());
@@ -27,7 +27,7 @@ class AbstractExtensionTest extends TestCase
         $this->expectException(WebAuthnException::class);
         $this->expectExceptionMessageMatches('~identifier~');
         $this->getMockForAbstractClass(AbstractExtensionInput::class, [
-            'not valid'
+            'not valid',
         ]);
     }
 
@@ -37,7 +37,7 @@ class AbstractExtensionTest extends TestCase
          * @var AbstractExtensionOutput $ext
          */
         $ext = $this->getMockForAbstractClass(AbstractExtensionOutput::class, [
-            'validIdentifier'
+            'validIdentifier',
         ]);
 
         $this->assertNull($ext->getOutput());
@@ -49,7 +49,7 @@ class AbstractExtensionTest extends TestCase
         $this->expectException(WebAuthnException::class);
         $this->expectExceptionMessageMatches('~identifier~');
         $this->getMockForAbstractClass(AbstractExtensionOutput::class, [
-            'not valid'
+            'not valid',
         ]);
     }
 }

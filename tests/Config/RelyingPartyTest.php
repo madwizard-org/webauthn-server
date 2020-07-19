@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Config;
 
 use MadWizard\WebAuthn\Config\RelyingParty;
@@ -25,7 +24,6 @@ class RelyingPartyTest extends TestCase
         $this->assertSame('www.example.com', $rp->getEffectiveId());
         $this->assertSame('https://www.example.com', $rp->getOrigin()->toString());
         $this->assertNull($rp->getIconUrl());
-
 
         $imgUrl = 'data:image/png;base64,YWJj';
         $rp->setIconUrl($imgUrl);

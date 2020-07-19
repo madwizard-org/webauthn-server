@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Credential;
 
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
@@ -29,25 +28,16 @@ class UserCredential implements UserCredentialInterface
         $this->userHandle = $userHandle;
     }
 
-    /**
-     * @return CredentialId
-     */
     public function getCredentialId(): CredentialId
     {
         return $this->credentialId;
     }
 
-    /**
-     * @return CoseKeyInterface
-     */
     public function getPublicKey(): CoseKeyInterface
     {
         return $this->publicKey;
     }
 
-    /**
-     * @return UserHandle
-     */
     public function getUserHandle(): UserHandle
     {
         return $this->userHandle;

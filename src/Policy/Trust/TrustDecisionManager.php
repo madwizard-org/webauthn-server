@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Policy\Trust;
 
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;

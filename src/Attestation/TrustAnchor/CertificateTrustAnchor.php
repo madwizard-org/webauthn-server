@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\TrustAnchor;
 
 use MadWizard\WebAuthn\Pki\X509Certificate;
@@ -19,7 +18,7 @@ class CertificateTrustAnchor implements TrustAnchorInterface
         $this->cert = $cert;
     }
 
-    public function getCertificate() :X509Certificate
+    public function getCertificate(): X509Certificate
     {
         return $this->cert;
     }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Metadata\Preset;
 
 use MadWizard\WebAuthn\Metadata\Source\MetadataServiceSource;
@@ -27,7 +26,7 @@ YjdBz56jSA==
 -----END CERTIFICATE-----
 CERT;
 
-    public static function mds2(string $accessToken) : MetadataServiceSource
+    public static function mds2(string $accessToken): MetadataServiceSource
     {
         return new MetadataServiceSource(self::MDS2_URL, self::MDS_ROOT, $accessToken);
     }

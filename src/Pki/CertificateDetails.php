@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Pki;
 
 use Exception;
@@ -41,7 +40,7 @@ class CertificateDetails implements CertificateDetailsInterface
         $this->cert = $certificate;
     }
 
-    public static function fromPem(string $pem) : CertificateDetails
+    public static function fromPem(string $pem): CertificateDetails
     {
         try {
             return new self(Certificate::fromPEM(PEM::fromString($pem))->tbsCertificate());
@@ -50,7 +49,7 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
-    public function verifySignature(string $data, string $signature, int $coseAlgorithm) : bool
+    public function verifySignature(string $data, string $signature, int $coseAlgorithm): bool
     {
         $signatureAlgorithm = $this->convertCoseAlgorthm($coseAlgorithm);
         try {
@@ -68,7 +67,7 @@ class CertificateDetails implements CertificateDetailsInterface
         return $this->cert->subjectPublicKeyInfo()->toDER();
     }
 
-    private function convertCoseAlgorthm(int $coseAlgorithm) : SignatureAlgorithmIdentifier
+    private function convertCoseAlgorthm(int $coseAlgorithm): SignatureAlgorithmIdentifier
     {
         switch ($coseAlgorithm) {
             case CoseAlgorithm::ES256:
@@ -90,7 +89,7 @@ class CertificateDetails implements CertificateDetailsInterface
         throw new WebAuthnException(sprintf('Signature format %d not supported.', $coseAlgorithm));
     }
 
-    public function getFidoAaguidExtensionValue() : ?Aaguid // TODO move outside class
+    public function getFidoAaguidExtensionValue(): ?Aaguid // TODO move outside class
     {
         try {
             $extension = $this->cert->extensions()->get(self::OID_FIDO_GEN_CE_AAGUID);
@@ -112,7 +111,7 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
-    public function getExtensionData(string $oid) : ?ByteBuffer
+    public function getExtensionData(string $oid): ?ByteBuffer
     {
         try {
             $extension = $this->cert->extensions()->get($oid);
@@ -128,7 +127,7 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
-    public function getCertificateVersion() : ?int
+    public function getCertificateVersion(): ?int
     {
         // NOTE: version() can throw a LogicException if no version is set, however this is never the case
         // when reading certificates. Even version 1 x509 certificates without the (optional) tagged version
@@ -136,7 +135,7 @@ class CertificateDetails implements CertificateDetailsInterface
         return $this->cert->version();
     }
 
-    public function getOrganizationalUnit() : string
+    public function getOrganizationalUnit(): string
     {
         try {
             return $this->cert->subject()->firstValueOf('OU')->stringValue();
@@ -145,7 +144,7 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
-    public function getSubject() : string
+    public function getSubject(): string
     {
         try {
             return $this->cert->subject()->toString();
@@ -154,7 +153,7 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
-    public function getSubjectCommonName() : string
+    public function getSubjectCommonName(): string
     {
         try {
             return $this->cert->subject()->firstValueOf('CN')->stringValue();
@@ -163,7 +162,7 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
-    public function getSubjectAlternateNameDN(string $oid) : string
+    public function getSubjectAlternateNameDN(string $oid): string
     {
         try {
             $attrValue = $this->cert->extensions()->subjectAlternativeName()->names()->firstDN()->firstValueOf($oid);
@@ -173,7 +172,7 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
-    public function isCA() : ?bool
+    public function isCA(): ?bool
     {
         $extensions = $this->cert->extensions();
 
@@ -197,7 +196,7 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
-    public function getPublicKeyIdentifier() : string
+    public function getPublicKeyIdentifier(): string
     {
         try {
             return \bin2hex($this->cert->subjectPublicKeyInfo()->keyIdentifier());

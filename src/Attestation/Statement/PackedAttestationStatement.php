@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
@@ -49,7 +48,7 @@ class PackedAttestationStatement extends AbstractAttestationStatement
                     'alg' => 'integer',
                     'sig' => ByteBuffer::class,
                     'x5c' => '?array',
-                    'ecdaaKeyId' => '?' . ByteBuffer::class
+                    'ecdaaKeyId' => '?' . ByteBuffer::class,
                 ]
             );
         } catch (DataValidationException $e) {
@@ -68,18 +67,12 @@ class PackedAttestationStatement extends AbstractAttestationStatement
         $this->certificates = $x5c === null ? null : $this->buildPEMCertificateArray($x5c);
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getSignature(): ByteBuffer
     {
         return $this->signature;
     }
 
-    /**
-     * @return int
-     */
-    public function getAlgorithm() : int
+    public function getAlgorithm(): int
     {
         return $this->algorithm;
     }
@@ -92,15 +85,12 @@ class PackedAttestationStatement extends AbstractAttestationStatement
         return $this->certificates;
     }
 
-    /**
-     * @return ByteBuffer|null
-     */
     public function getEcdaaKeyId(): ?ByteBuffer
     {
         return $this->ecdaaKeyId;
     }
 
-    public static function createFormat() : AttestationFormatInterface
+    public static function createFormat(): AttestationFormatInterface
     {
         return new BuiltInAttestationFormat(
             self::FORMAT_ID,

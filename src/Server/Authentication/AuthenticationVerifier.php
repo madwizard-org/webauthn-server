@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
@@ -28,7 +27,7 @@ class AuthenticationVerifier extends AbstractVerifier
         $this->credentialCollection = $credentialCollection;
     }
 
-    public function verifyAuthenticatonAssertion(PublicKeyCredentialInterface $credential, AuthenticationContext $context) : UserCredentialInterface
+    public function verifyAuthenticatonAssertion(PublicKeyCredentialInterface $credential, AuthenticationContext $context): UserCredentialInterface
     {
         // SPEC 7.2 Verifying an authentication assertion
 
@@ -88,7 +87,6 @@ class AuthenticationVerifier extends AbstractVerifier
 
         // TODO: not yet supported
 
-
         // 15 and 16
         if (!$this->verifySignature($response, $accountCredential->getPublicKey())) {
             throw new VerificationException('Invalid signature');
@@ -104,11 +102,9 @@ class AuthenticationVerifier extends AbstractVerifier
     }
 
     /**
-     * @param PublicKeyCredentialInterface $credential
      * @param ByteBuffer[]|null $allowCredentialIds
-     * @return bool
      */
-    private function checkAllowCredentials(PublicKeyCredentialInterface $credential, ?array $allowCredentialIds) : bool
+    private function checkAllowCredentials(PublicKeyCredentialInterface $credential, ?array $allowCredentialIds): bool
     {
         if ($allowCredentialIds === null || \count($allowCredentialIds) === 0) {
             return true;
@@ -123,7 +119,7 @@ class AuthenticationVerifier extends AbstractVerifier
         return false;
     }
 
-    private function verifySignature(AuthenticatorAssertionResponseInterface $response, CoseKeyInterface $publicKey) : bool
+    private function verifySignature(AuthenticatorAssertionResponseInterface $response, CoseKeyInterface $publicKey): bool
     {
         // 15. Let hash be the result of computing a hash over the cData using SHA-256.
         $clientData = $response->getClientDataJson();
@@ -139,7 +135,6 @@ class AuthenticationVerifier extends AbstractVerifier
 
     private function verifySignatureCounter(AuthenticatorDataInterface $authData, UserCredentialInterface $accountCredential)
     {
-
         // 17. If the signature counter value adata.signCount is nonzero or the value stored in conjunction with credential’s id attribute is nonzero, then run the following sub-step:
         $counter = $authData->getSignCount();
         if ($counter === 0) {

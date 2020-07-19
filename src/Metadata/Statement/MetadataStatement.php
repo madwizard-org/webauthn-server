@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Metadata\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationType;
@@ -18,13 +17,13 @@ use function in_array;
 
 class MetadataStatement implements MetadataInterface
 {
-    /** @var null|Aaid */
+    /** @var Aaid|null */
     private $aaid;
 
-    /** @var null|Aaguid */
+    /** @var Aaguid|null */
     private $aaguid;
 
-    /** @var null|AttestationKeyIdentifier[] */
+    /** @var AttestationKeyIdentifier[]|null */
     private $attestationCertificateKeyIdentifiers;
 
     /** @var string */
@@ -101,7 +100,7 @@ class MetadataStatement implements MetadataInterface
 
     private $statusReports = [];
 
-    public static function decodeString(string $json) : self
+    public static function decodeString(string $json): self
     {
         $data = \json_decode($json, true, 20);
         if (!\is_array($data)) {
@@ -110,7 +109,7 @@ class MetadataStatement implements MetadataInterface
         return self::decodeJson($data);
     }
 
-    public static function decodeJson(array $data) : self
+    public static function decodeJson(array $data): self
     {
         if (is_string($data['isSecondFactorOnly'] ?? null)) {
             $data['isSecondFactorOnly'] = (bool) $data['isSecondFactorOnly']; // TODO
@@ -160,7 +159,7 @@ class MetadataStatement implements MetadataInterface
         return $statement;
     }
 
-    private static function validateAaguid(?string $aaguid) : ?Aaguid
+    private static function validateAaguid(?string $aaguid): ?Aaguid
     {
         if ($aaguid === null) {
             return null;
@@ -168,7 +167,7 @@ class MetadataStatement implements MetadataInterface
         return Aaguid::parseString($aaguid);
     }
 
-    private static function validateAaid(?string $aaid) : ?Aaid
+    private static function validateAaid(?string $aaid): ?Aaid
     {
         if ($aaid === null) {
             return null;
@@ -176,7 +175,7 @@ class MetadataStatement implements MetadataInterface
         return new Aaid($aaid);
     }
 
-    private static function validateKeyIdentifiers(?array $list) : ?array
+    private static function validateKeyIdentifiers(?array $list): ?array
     {
         if ($list === null) {
             return $list;
@@ -189,7 +188,7 @@ class MetadataStatement implements MetadataInterface
         return $result;
     }
 
-    private static function validateAttestationTypes(array $types) : array
+    private static function validateAttestationTypes(array $types): array
     {
         foreach ($types as $type) {
             if (!is_int($type)) {
@@ -199,7 +198,7 @@ class MetadataStatement implements MetadataInterface
         return $types;
     }
 
-    private static function parseRootCertificates(array $list) : array
+    private static function parseRootCertificates(array $list): array
     {
         foreach ($list as $item) {
             if (!is_string($item)) {
@@ -215,7 +214,7 @@ class MetadataStatement implements MetadataInterface
     /**
      * @return IdentifierInterface[]
      */
-    public function getIdentifiers() : array
+    public function getIdentifiers(): array
     {
         $ids = [];
         if ($this->aaguid !== null) {
@@ -242,17 +241,11 @@ class MetadataStatement implements MetadataInterface
         return false;
     }
 
-    /**
-     * @return Aaid|null
-     */
     public function getAaid(): ?Aaid
     {
         return $this->aaid;
     }
 
-    /**
-     * @return Aaguid|null
-     */
     public function getAaguid(): ?Aaguid
     {
         return $this->aaguid;
@@ -268,6 +261,7 @@ class MetadataStatement implements MetadataInterface
 
     /**
      * @return int[]
+     *
      * @see AttestationConstant
      */
     public function getAttestationTypes(): array
@@ -277,15 +271,17 @@ class MetadataStatement implements MetadataInterface
 
     /**
      * @param string $type Attestation type
+     *
      * @return bool True if the authenticator supports the given attestation type.
+     *
      * @see AttestationType
      */
-    public function supportsAttestationType(string $type) : bool
+    public function supportsAttestationType(string $type): bool
     {
         return in_array(AttestationConstant::convertType($type), $this->attestationTypes, true);
     }
 
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return $this->description;
     }

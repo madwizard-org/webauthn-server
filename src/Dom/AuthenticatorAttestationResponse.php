@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -18,7 +17,7 @@ class AuthenticatorAttestationResponse extends AbstractAuthenticatorResponse imp
         $this->attestationObject = $attestationObject;
     }
 
-    public function getAttestationObject() : ByteBuffer
+    public function getAttestationObject(): ByteBuffer
     {
         return $this->attestationObject;
     }

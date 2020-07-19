@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Pki;
 
 use MadWizard\WebAuthn\Cache\CacheProviderInterface;
@@ -9,7 +8,7 @@ use Psr\Cache\CacheItemPoolInterface;
 
 final class CertificateStatusResolver implements CertificateStatusResolverInterface
 {
-    /** @var CacheItemPoolInterface  */
+    /** @var CacheItemPoolInterface */
     private $cache;
 
     /**

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Extension;
 
 use MadWizard\WebAuthn\Extension\UnknownExtensionInput;

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 class CredentialCreationOptions extends AbstractDictionary
@@ -19,9 +18,6 @@ class CredentialCreationOptions extends AbstractDictionary
         $this->publicKey = $options;
     }
 
-    /**
-     * @return PublicKeyCredentialCreationOptions|null
-     */
     public function getPublicKeyOptions(): ?PublicKeyCredentialCreationOptions
     {
         return $this->publicKey;

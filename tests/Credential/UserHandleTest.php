@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Credential;
 
 use InvalidArgumentException;
@@ -33,7 +32,7 @@ class UserHandleTest extends TestCase
 
     public function testInvalidHex()
     {
-        $this->expectException(InvalidArgumentException::class);//TODO webauth exception?
+        $this->expectException(InvalidArgumentException::class); //TODO webauth exception?
         UserHandle::fromHex('sg');
     }
 

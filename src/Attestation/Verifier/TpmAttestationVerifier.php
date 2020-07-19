@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Verifier;
 
 use MadWizard\WebAuthn\Attestation\AttestationType;
@@ -46,7 +45,7 @@ class TpmAttestationVerifier extends AbstractAttestationVerifier
         $this->certificateParser = $certificateParser;
     }
 
-    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash) : VerificationResult
+    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash): VerificationResult
     {
         // Verification procedure from https://www.w3.org/TR/webauthn/#tpm-attestation
         if (!($attStmt instanceof TpmAttestationStatement)) {
@@ -82,7 +81,7 @@ class TpmAttestationVerifier extends AbstractAttestationVerifier
         throw new UnsupportedException('ECDAA is not supported by this library.');
     }
 
-    private function verifyX5c(array $x5c, ByteBuffer $signature, int $signatureAlgorithm, ByteBuffer $rawCertInfo, AuthenticatorDataInterface $authenticatorData) : VerificationResult
+    private function verifyX5c(array $x5c, ByteBuffer $signature, int $signatureAlgorithm, ByteBuffer $rawCertInfo, AuthenticatorDataInterface $authenticatorData): VerificationResult
     {
         // Verify the sig is a valid signature over certInfo using the attestation public key in aikCert with the
         // algorithm specified in alg.
@@ -113,7 +112,7 @@ class TpmAttestationVerifier extends AbstractAttestationVerifier
         return new VerificationResult(AttestationType::ATT_CA, CertificateTrustPath::fromPemList($x5c));
     }
 
-    private function checkTpmPublicKeyMatchesAuthenticatorData(TpmPublic $pubArea, AuthenticatorDataInterface $authData) : bool
+    private function checkTpmPublicKeyMatchesAuthenticatorData(TpmPublic $pubArea, AuthenticatorDataInterface $authData): bool
     {
         $key = $authData->getKey();
         $params = $pubArea->getParameters();
@@ -143,7 +142,6 @@ class TpmAttestationVerifier extends AbstractAttestationVerifier
 
             // TODO: CHECK CURVE ID
             throw new UnsupportedException('Not implemented yet');
-
             //return true;
         }
         throw new VerificationException('Unsupported TPM parameters type');

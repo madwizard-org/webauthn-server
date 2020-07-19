@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Format;
 
 use InvalidArgumentException;
@@ -37,12 +36,12 @@ abstract class BinaryHandle implements Serializable
         return bin2hex($this->raw);
     }
 
-    public function toBuffer() : ByteBuffer
+    public function toBuffer(): ByteBuffer
     {
         return new ByteBuffer($this->raw);
     }
 
-    protected static function convertHex(string $hex) : string
+    protected static function convertHex(string $hex): string
     {
         $bin = @hex2bin($hex);
         if ($bin === false) {

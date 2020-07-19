@@ -41,7 +41,6 @@ class X5cParameterReaderTest extends TestCase
             'unsupported-alg' => [true, 'Jwt/token-unsupported-alg.txt', UnsupportedException::class, '~Unsupported algorithm~i'],
             'invalid-x5c' => [true, 'Jwt/token-invalid-x5c.txt', ParseException::class, '~Expecting array for x5c~'],
             'no-x5c' => [false, 'Jwt/token-no-x5c.txt'],
-
         ];
     }
 }

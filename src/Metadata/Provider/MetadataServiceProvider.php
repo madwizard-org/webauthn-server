@@ -1,10 +1,8 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Metadata\Provider;
 
 use DateTimeImmutable;
-
 use MadWizard\WebAuthn\Attestation\Identifier\IdentifierInterface;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Cache\CacheProviderInterface;
@@ -185,7 +183,6 @@ final class MetadataServiceProvider implements MetadataProviderInterface, Logger
             throw new ParseException('MDS has no x5c certificate chain in header.');
         }
 
-
         $jwtValidator = new JwtValidator();
         $context = new ValidationContext(JwtInterface::ES_AND_RSA, $x5cParam->getCoseKey());
         try {
@@ -194,9 +191,7 @@ final class MetadataServiceProvider implements MetadataProviderInterface, Logger
             throw new VerificationException('Failed to verify JWT.', 0, $e);
         }
 
-
-        if (!$this->chainValidator->validateChain(X509Certificate::fromPem($this->mdsSource->getRootCert()), ...
-            array_reverse($x5cParam->getCertificates()))) {
+        if (!$this->chainValidator->validateChain(X509Certificate::fromPem($this->mdsSource->getRootCert()), ...array_reverse($x5cParam->getCertificates()))) {
             throw new VerificationException('Failed to verify x5c chain in JWT.');
         }
         return MetadataToc::fromJson($claims);

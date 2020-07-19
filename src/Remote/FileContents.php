@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Remote;
 
 use MadWizard\WebAuthn\Format\SerializableTrait;
@@ -20,17 +19,11 @@ class FileContents implements Serializable
         $this->contentType = $contentType;
     }
 
-    /**
-     * @return string
-     */
     public function getData(): string
     {
         return $this->data;
     }
 
-    /**
-     * @return string
-     */
     public function getContentType(): string
     {
         return $this->contentType;
@@ -40,7 +33,7 @@ class FileContents implements Serializable
     {
         return [
             'contentType' => $this->contentType,
-            'data' => $this->data
+            'data' => $this->data,
         ];
     }
 

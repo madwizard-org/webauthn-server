@@ -10,7 +10,6 @@ session_start();
 $dotenv = new Dotenv();
 $dotenv->load(__DIR__ . '/.env');
 
-
 $metadataDir = __DIR__ . '/metadata';
 $varDir = dirname(__DIR__) . '/var';
 $router = new Router($metadataDir, $varDir);

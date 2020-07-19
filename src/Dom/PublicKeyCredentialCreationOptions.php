@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 use InvalidArgumentException;
@@ -55,9 +54,7 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
 
     /**
      * PublicKeyCredentialCreationOptions constructor.
-     * @param PublicKeyCredentialRpEntity $rp
-     * @param PublicKeyCredentialUserEntity $user
-     * @param ByteBuffer $challenge
+     *
      * @param PublicKeyCredentialParameters[] $pubKeyCredParams
      */
     public function __construct(PublicKeyCredentialRpEntity $rp, PublicKeyCredentialUserEntity $user, ByteBuffer $challenge, array $pubKeyCredParams)
@@ -74,7 +71,7 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
             'rp' => $this->rp,
             'user' => $this->user,
             'challenge' => $this->challenge,
-            'pubKeyCredParams' => $this->pubKeyCredParams
+            'pubKeyCredParams' => $this->pubKeyCredParams,
         ];
 
         $map = array_merge(
@@ -93,17 +90,11 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
         return $map;
     }
 
-    /**
-     * @return null|string
-     */
     public function getAttestation(): ?string
     {
         return $this->attestation;
     }
 
-    /**
-     * @param null|string $attestation
-     */
     public function setAttestation(?string $attestation): void
     {
         if ($attestation !== null && !AttestationConveyancePreference::isValidValue($attestation)) {
@@ -128,22 +119,16 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
         $this->authenticatorSelection = $authenticatorSelection;
     }
 
-    public function getRpEntity() : PublicKeyCredentialRpEntity
+    public function getRpEntity(): PublicKeyCredentialRpEntity
     {
         return $this->rp;
     }
 
-    /**
-     * @return PublicKeyCredentialUserEntity
-     */
     public function getUserEntity(): PublicKeyCredentialUserEntity
     {
         return $this->user;
     }
 
-    /**
-     * @return int|null
-     */
     public function getTimeout(): ?int
     {
         return $this->timeout;
@@ -174,25 +159,16 @@ class PublicKeyCredentialCreationOptions extends AbstractDictionary
         return $this->pubKeyCredParams;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getChallenge(): ByteBuffer
     {
         return $this->challenge;
     }
 
-    /**
-     * @return AuthenticationExtensionsClientInputs|null
-     */
     public function getExtensions(): ?AuthenticationExtensionsClientInputs
     {
         return $this->extensions;
     }
 
-    /**
-     * @param AuthenticationExtensionsClientInputs|null $extensions
-     */
     public function setExtensions(?AuthenticationExtensionsClientInputs $extensions): void
     {
         $this->extensions = $extensions;

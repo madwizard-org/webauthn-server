@@ -23,7 +23,7 @@ class AttestationFormatRegistry implements AttestationFormatRegistryInterface
         $this->formats[$format->getFormatId()] = $format;
     }
 
-    public function createStatement(AttestationObjectInterface $attestationObject) : AttestationStatementInterface
+    public function createStatement(AttestationObjectInterface $attestationObject): AttestationStatementInterface
     {
         $formatId = $attestationObject->getFormat();
         $format = $this->formats[$formatId] ?? null;
@@ -33,7 +33,7 @@ class AttestationFormatRegistry implements AttestationFormatRegistryInterface
         return $format->createStatement($attestationObject);
     }
 
-    public function getVerifier(string $formatId) : AttestationVerifierInterface
+    public function getVerifier(string $formatId): AttestationVerifierInterface
     {
         $format = $this->formats[$formatId] ?? null;
         if ($format === null) {

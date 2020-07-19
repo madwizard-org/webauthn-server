@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Dom;
 
 use MadWizard\WebAuthn\Dom\AuthenticatorTransport;
@@ -33,7 +32,7 @@ class PublicKeyCredentialDescriptorTest extends TestCase
             [
                 'type' => 'public-key',
                 'id' => 'ESIzRFVmdw',
-                'transports' => ['usb', 'nfc']
+                'transports' => ['usb', 'nfc'],
             ],
             $data
         );

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Credential\UserHandle;
@@ -27,11 +26,10 @@ class RegistrationContext extends AbstractContext implements RequestContext
 
     /**
      * @internal TODO: do not include heree?
-     * @param PublicKeyCredentialCreationOptions $options
-     * @param PolicyInterface $policy
+     *
      * @return static
      */
-    public static function create(PublicKeyCredentialCreationOptions $options, PolicyInterface $policy) : self
+    public static function create(PublicKeyCredentialCreationOptions $options, PolicyInterface $policy): self
     {
         $relyingParty = $policy->getRelyingParty();
         $origin = $relyingParty->getOrigin();
@@ -49,7 +47,7 @@ class RegistrationContext extends AbstractContext implements RequestContext
         return $context;
     }
 
-    public function getUserHandle() : UserHandle
+    public function getUserHandle(): UserHandle
     {
         return $this->userHandle;
     }

@@ -1,15 +1,14 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Format;
 
-use const INF;
-use const PHP_INT_SIZE;
 use InvalidArgumentException;
 use MadWizard\WebAuthn\Exception\ByteBufferException;
 use Serializable;
 use function bin2hex;
 use function hex2bin;
+use const INF;
+use const PHP_INT_SIZE;
 
 class ByteBuffer implements Serializable
 {
@@ -31,7 +30,7 @@ class ByteBuffer implements Serializable
         $this->length = \strlen($binaryData);
     }
 
-    public static function fromHex(string $hex) : ByteBuffer
+    public static function fromHex(string $hex): ByteBuffer
     {
         $bin = @hex2bin($hex);
         if ($bin === false) {
@@ -40,27 +39,27 @@ class ByteBuffer implements Serializable
         return new ByteBuffer($bin);
     }
 
-    public static function fromBase64Url(string $base64url) : ByteBuffer
+    public static function fromBase64Url(string $base64url): ByteBuffer
     {
         return new ByteBuffer(Base64UrlEncoding::decode($base64url));
     }
 
-    public function isEmpty() : bool
+    public function isEmpty(): bool
     {
         return $this->length === 0;
     }
 
-    public function getLength() : int
+    public function getLength(): int
     {
         return $this->length;
     }
 
-    public static function randomBuffer(int $length) : ByteBuffer
+    public static function randomBuffer(int $length): ByteBuffer
     {
         return new ByteBuffer(\random_bytes($length));
     }
 
-    public function getBytes(int $offset, int $length) : string
+    public function getBytes(int $offset, int $length): string
     {
         if ($offset < 0 || $length < 0 || ($offset + $length > $this->length)) {
             throw new ByteBufferException('Invalid offset or length');
@@ -68,7 +67,7 @@ class ByteBuffer implements Serializable
         return \substr($this->data, $offset, $length);
     }
 
-    public function getByteVal(int $offset) : int
+    public function getByteVal(int $offset): int
     {
         if ($offset < 0 || $offset >= $this->length) {
             throw new ByteBufferException('Invalid offset');
@@ -76,7 +75,7 @@ class ByteBuffer implements Serializable
         return \ord($this->data[$offset]);
     }
 
-    public function getUint16Val(int $offset) : int
+    public function getUint16Val(int $offset): int
     {
         if ($offset < 0 || ($offset + 2) > $this->length) {
             throw new ByteBufferException('Invalid offset');
@@ -84,7 +83,7 @@ class ByteBuffer implements Serializable
         return unpack('n', $this->data, $offset)[1];
     }
 
-    public function getUint32Val(int $offset) : int
+    public function getUint32Val(int $offset): int
     {
         if ($offset < 0 || ($offset + 4) > $this->length) {
             throw new ByteBufferException('Invalid offset');
@@ -97,7 +96,7 @@ class ByteBuffer implements Serializable
         return $val;
     }
 
-    public function getUint64Val(int $offset) : int
+    public function getUint64Val(int $offset): int
     {
         if (PHP_INT_SIZE < 8) {
             throw new ByteBufferException('64-bit values not supported by this system');
@@ -115,7 +114,7 @@ class ByteBuffer implements Serializable
         return $val;
     }
 
-    public function getHalfFloatVal(int $offset) : float
+    public function getHalfFloatVal(int $offset): float
     {
         //FROM spec pseudo decode_half(unsigned char *halfp)
         $half = $this->getUint16Val($offset);
@@ -135,7 +134,7 @@ class ByteBuffer implements Serializable
     }
 
     // TODO: float fixed size?
-    public function getFloatVal(int $offset) : float
+    public function getFloatVal(int $offset): float
     {
         if ($offset < 0 || ($offset + 4) > $this->length) {
             throw new ByteBufferException('Invalid offset');
@@ -144,7 +143,7 @@ class ByteBuffer implements Serializable
     }
 
     // TODO: float fixed size?
-    public function getDoubleVal(int $offset) : float
+    public function getDoubleVal(int $offset): float
     {
         if ($offset < 0 || ($offset + 8) > $this->length) {
             throw new ByteBufferException('Invalid offset');
@@ -152,28 +151,22 @@ class ByteBuffer implements Serializable
         return unpack('E', $this->data, $offset)[1];
     }
 
-    /**
-     * @return string
-     */
     public function getBinaryString(): string
     {
         return $this->data;
     }
 
-    public function equals(ByteBuffer $buffer) : bool
+    public function equals(ByteBuffer $buffer): bool
     {
         return $this->data === $buffer->data; // TODO constant time
     }
 
-    /**
-     * @return string
-     */
     public function getHex(): string
     {
         return bin2hex($this->data);
     }
 
-    public function getBase64Url() : string
+    public function getBase64Url(): string
     {
         return Base64UrlEncoding::encode($this->data);
     }

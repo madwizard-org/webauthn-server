@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Dom;
 
 class CredentialRequestOptions extends AbstractDictionary

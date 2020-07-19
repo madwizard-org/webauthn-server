@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Tests\Attestation\Tpm;
 
 use MadWizard\WebAuthn\Attestation\Tpm\TpmAttest;

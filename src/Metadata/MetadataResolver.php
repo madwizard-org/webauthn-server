@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Metadata;
 
 use MadWizard\WebAuthn\Attestation\Identifier\AttestationKeyIdentifier;
@@ -30,9 +29,8 @@ final class MetadataResolver implements MetadataResolverInterface, LoggerAwareIn
         $this->logger = new NullLogger();
     }
 
-    private function determineIdentifier(RegistrationResultInterface $registrationResult) : ?IdentifierInterface
+    private function determineIdentifier(RegistrationResultInterface $registrationResult): ?IdentifierInterface
     {
-
         // If a valid AAGUID is present, this is the main identifier. Do not look for others.
         $identifier = $registrationResult->getAuthenticatorData()->getAaguid();
         if ($identifier !== null && !$identifier->isZeroAaguid()) {
@@ -50,7 +48,7 @@ final class MetadataResolver implements MetadataResolverInterface, LoggerAwareIn
         return null;
     }
 
-    public function getMetadata(RegistrationResultInterface $registrationResult) : ?MetadataInterface
+    public function getMetadata(RegistrationResultInterface $registrationResult): ?MetadataInterface
     {
         $identifier = $this->determineIdentifier($registrationResult);
         if ($identifier === null) {
@@ -71,7 +69,7 @@ final class MetadataResolver implements MetadataResolverInterface, LoggerAwareIn
         return null;
     }
 
-    private static function pkIdFromPemCertificate(string $pem) : IdentifierInterface
+    private static function pkIdFromPemCertificate(string $pem): IdentifierInterface
     {
         $parser = new CertificateParser();
         $cert = $parser->parsePem($pem);

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\TrustAnchor;
 
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
@@ -20,12 +19,7 @@ class TrustPathValidator implements TrustPathValidatorInterface
         $this->chainValidator = $chainValidator;
     }
 
-    /**
-     * @param TrustPathInterface $trustPath
-     * @param TrustAnchorInterface $trustAnchor
-     * @return bool
-     */
-    public function validate(TrustPathInterface $trustPath, TrustAnchorInterface $trustAnchor) : bool
+    public function validate(TrustPathInterface $trustPath, TrustAnchorInterface $trustAnchor): bool
     {
         if ($trustAnchor instanceof CertificateTrustAnchor && $trustPath instanceof CertificateTrustPath) {
             if ($this->chainValidator->validateChain($trustAnchor->getCertificate(), ...array_reverse($trustPath->getCertificates()))) {

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation;
 
 use MadWizard\WebAuthn\Exception\CborException;
@@ -41,7 +40,7 @@ final class AttestationObject implements AttestationObjectInterface
                 [
                     'fmt' => 'string',
                     'attStmt' => 'array',
-                    'authData' => ByteBuffer::class
+                    'authData' => ByteBuffer::class,
                 ]
             );
 
@@ -58,14 +57,11 @@ final class AttestationObject implements AttestationObjectInterface
         return $this->format;
     }
 
-    public function getStatement() : array
+    public function getStatement(): array
     {
         return $this->statement;
     }
 
-    /**
-     * @return ByteBuffer
-     */
     public function getAuthenticatorData(): ByteBuffer
     {
         return $this->authData;

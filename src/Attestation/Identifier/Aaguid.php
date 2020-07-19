@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Attestation\Identifier;
 
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -62,7 +61,7 @@ class Aaguid implements IdentifierInterface
         return $this->raw->getHex();
     }
 
-    public function isZeroAaguid() : bool
+    public function isZeroAaguid(): bool
     {
         // Check if all zero bytes - U2F authenticators use this to indicate they have no AAGUID
         return strspn($this->raw->getBinaryString(), "\0") === self::AAGUID_LENGTH;

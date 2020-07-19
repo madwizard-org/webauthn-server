@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Pki\Jwt;
 
 use MadWizard\WebAuthn\Crypto\Der;
@@ -18,7 +17,6 @@ final class JwtValidator implements JwtValidatorInterface
             'RS256' => ['convert' => false],
             'RS384' => ['convert' => false],
             'RS512' => ['convert' => false],
-
         ];
 
     public function __construct()

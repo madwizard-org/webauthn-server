@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Metadata\Statement;
 
 final class AuthenticatorStatus

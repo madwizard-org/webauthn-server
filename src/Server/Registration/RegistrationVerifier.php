@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
@@ -27,14 +26,11 @@ class RegistrationVerifier extends AbstractVerifier
     }
 
     /**
-     * @param PublicKeyCredentialInterface $credential
-     * @param RegistrationContext $context
-     * @return RegistrationResult
      * @throws VerificationException
      * @throws \MadWizard\WebAuthn\Exception\ParseException
      * @throws \MadWizard\WebAuthn\Exception\WebAuthnException
      */
-    public function verify(PublicKeyCredentialInterface $credential, RegistrationContext $context) : RegistrationResult
+    public function verify(PublicKeyCredentialInterface $credential, RegistrationContext $context): RegistrationResult
     {
         // SPEC 7.1 Registering a new credential
 
@@ -61,8 +57,6 @@ class RegistrationVerifier extends AbstractVerifier
 
         // 9 - 11
         $this->checkAuthenticatorData($authData, $context);
-
-
 
         // 12. Verify that the values of the client extension outputs in clientExtensionResults and the authenticator
         //     extension outputs in the extensions in authData are as expected, considering the client extension input
@@ -128,7 +122,6 @@ class RegistrationVerifier extends AbstractVerifier
         if (!$authData->hasAttestedCredentialData()) {
             throw new VerificationException('Authenticator data does not contain attested credential.');
         }
-
 
         // 9. Verify that the RP ID hash in authData is indeed the SHA-256 hash of the RP ID expected by the RP.
         if (!$this->verifyRpIdHash($authData, $context)) {

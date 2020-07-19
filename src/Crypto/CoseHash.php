@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Crypto;
 
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
@@ -22,8 +21,11 @@ class CoseHash
 
     /**
      * CoseHash constructor.
+     *
      * @param int $algorithm CoseAlgorithm identifier
+     *
      * @see CoseAlgorithm
+     *
      * @throws UnsupportedException
      */
     public function __construct(int $algorithm)
@@ -34,7 +36,7 @@ class CoseHash
         }
     }
 
-    public function hash(string $data) : string
+    public function hash(string $data): string
     {
         return hash($this->phpAlg, $data, true);
     }

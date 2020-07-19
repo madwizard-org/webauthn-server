@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Metadata\Statement;
 
 use DateTimeImmutable;
@@ -30,7 +29,7 @@ class MetadataToc implements Serializable
      */
     private $index = [];
 
-    public static function fromJson(array $json) : self
+    public static function fromJson(array $json): self
     {
         try {
             DataValidator::checkTypes($json, [
@@ -65,9 +64,6 @@ class MetadataToc implements Serializable
         return $toc;
     }
 
-    /**
-     * @return DateTimeImmutable
-     */
     public function getNextUpdate(): DateTimeImmutable
     {
         return $this->nextUpdate;
@@ -105,7 +101,7 @@ class MetadataToc implements Serializable
     {
         return [
             'nextUpdate' => $this->nextUpdate,
-            'index' => $this->index
+            'index' => $this->index,
         ];
     }
 

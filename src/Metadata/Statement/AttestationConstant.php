@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Metadata\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationType;
@@ -21,7 +20,7 @@ final class AttestationConstant
     public const TAG_ATTESTATION_ATT_CA = 0x3E0A;
 
     /**
-     * Indicates use of elliptic curve based direct anonymous attestation as defined in [FIDOEcdaaAlgorithm]
+     * Indicates use of elliptic curve based direct anonymous attestation as defined in [FIDOEcdaaAlgorithm].
      */
     public const TAG_ATTESTATION_ECDAA = 0x3E09;
 
@@ -40,12 +39,11 @@ final class AttestationConstant
     }
 
     /**
-     * Converts AttestationType style constant to numerical constant
-     * @param string $type
-     * @return int
+     * Converts AttestationType style constant to numerical constant.
+     *
      * @throws InvalidArgumentException Invalid type
      */
-    public static function convertType(string $type) : int
+    public static function convertType(string $type): int
     {
         $code = self::MAP[$type] ?? null;
         if ($code === null) {

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Conformance;
 
 use Psr\Log\AbstractLogger;

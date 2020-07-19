@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Policy\Trust\Voter;
 
 use InvalidArgumentException;

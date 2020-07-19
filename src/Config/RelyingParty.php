@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MadWizard\WebAuthn\Config;
 
 use MadWizard\WebAuthn\Exception\ConfigurationException;
@@ -35,32 +34,25 @@ class RelyingParty implements RelyingPartyInterface
         $this->origin = Origin::parse($origin);
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $rpName
-     */
     public function setName(string $rpName): void
     {
         $this->name = $rpName;
     }
 
     /**
-     * Returns the configured RelyingParty
-     * @return null|string
+     * Returns the configured RelyingParty.
      */
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getEffectiveId() : string
+    public function getEffectiveId(): string
     {
         if ($this->id !== null) {
             return $this->id;
@@ -70,9 +62,11 @@ class RelyingParty implements RelyingPartyInterface
     }
 
     /**
-     * @param null|string $rpId A valid domain string that identifies the Relying Party
-     * on whose behalf a given registration or authentication ceremony is being performed
+     * @param string|null $rpId A valid domain string that identifies the Relying Party
+     *                          on whose behalf a given registration or authentication ceremony is being performed
+     *
      * @throws ConfigurationException if rpId is not a valid domain name
+     *
      * @see https://www.w3.org/TR/webauthn/#relying-party-identifier
      */
     public function setId(?string $rpId): void
@@ -86,15 +80,12 @@ class RelyingParty implements RelyingPartyInterface
         $this->id = $rpId;
     }
 
-    /**
-     * @return string|null
-     */
     public function getIconUrl(): ?string
     {
         return $this->iconUrl;
     }
 
-    public function setIconUrl(?string $url) : void
+    public function setIconUrl(?string $url): void
     {
         // TODO: FILTER_VALIDATE_URL does not allow data urls
 //        if ($url !== null && filter_var($url, FILTER_VALIDATE_URL) === false) {
@@ -112,7 +103,7 @@ class RelyingParty implements RelyingPartyInterface
         }
     }
 
-    public function getOrigin() : Origin
+    public function getOrigin(): Origin
     {
         return $this->origin;
     }

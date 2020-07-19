@@ -27,7 +27,7 @@ class NoneAttestationStatementTest extends TestCase
     {
         $this->expectException(ParseException::class);
         $this->expectExceptionMessageMatches('~expecting empty map~i');
-        $invalid = new AttestationObject(
+        $invalid = AttestationObject::parse(
             new ByteBuffer(
                 CborEncoder::encodeMapValues([
                     CborEncoder::encodeTextString('fmt') => CborEncoder::encodeTextString('none'),

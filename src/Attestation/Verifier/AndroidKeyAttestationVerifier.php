@@ -7,7 +7,7 @@ use MadWizard\WebAuthn\Attestation\Android\AndroidExtensionParser;
 use MadWizard\WebAuthn\Attestation\Android\AndroidExtensionParserInterface;
 use MadWizard\WebAuthn\Attestation\Android\AuthorizationList;
 use MadWizard\WebAuthn\Attestation\AttestationType;
-use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
+use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Statement\AndroidKeyAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
@@ -18,7 +18,7 @@ use MadWizard\WebAuthn\Pki\CertificateDetailsInterface;
 use MadWizard\WebAuthn\Pki\CertificateParser;
 use MadWizard\WebAuthn\Pki\CertificateParserInterface;
 
-class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
+final class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
 {
     private $certificateParser;
 
@@ -30,7 +30,7 @@ class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
         $this->extensionParser = $extensionParser ?? new AndroidExtensionParser();
     }
 
-    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash): VerificationResult
+    public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash): VerificationResult
     {
         if (!($attStmt instanceof AndroidKeyAttestationStatement)) {
             throw new VerificationException('Expecting AndroidKeyAttestationStatement');
@@ -101,7 +101,7 @@ class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
         }
     }
 
-    private function verifySignature(CertificateDetailsInterface $cert, AndroidKeyAttestationStatement $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash): bool
+    private function verifySignature(CertificateDetailsInterface $cert, AndroidKeyAttestationStatement $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash): bool
     {
         try {
             $verificationData = $authenticatorData->getRaw()->getBinaryString() . $clientDataHash;

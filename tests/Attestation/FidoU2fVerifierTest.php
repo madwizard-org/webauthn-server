@@ -5,7 +5,6 @@ namespace MadWizard\WebAuthn\Tests\Attestation;
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
-use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Attestation\Statement\FidoU2fAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
@@ -19,7 +18,7 @@ class FidoU2fVerifierTest extends VerifierTest
         $response = $this->getFidoResponse('challengeResponseAttestationU2fMsgB64Url');
         $buffer = $response->getAttestationObject();
 
-        $att = new AttestationObject($buffer);
+        $att = AttestationObject::parse($buffer);
         $statement = new FidoU2fAttestationStatement($att);
         $verifier = new FidoU2fAttestationVerifier();
 
@@ -44,7 +43,7 @@ class FidoU2fVerifierTest extends VerifierTest
         $response = $this->getFidoResponse('challengeResponseAttestationU2fHypersecuB64UrlMsg');
         $buffer = $response->getAttestationObject();
 
-        $att = new AttestationObject($buffer);
+        $att = AttestationObject::parse($buffer);
         $statement = new FidoU2fAttestationStatement($att);
         $verifier = new FidoU2fAttestationVerifier();
 
@@ -69,7 +68,7 @@ class FidoU2fVerifierTest extends VerifierTest
         $response = $this->getFidoResponse('challengeResponseAttestationU2fMsgB64Url');
         $buffer = $response->getAttestationObject();
 
-        $att = new AttestationObject($buffer);
+        $att = AttestationObject::parse($buffer);
         $statement = new FidoU2fAttestationStatement($att);
         $verifier = new FidoU2fAttestationVerifier();
 
@@ -86,7 +85,7 @@ class FidoU2fVerifierTest extends VerifierTest
         $this->expectExceptionMessageMatches('~expecting.+fido~i');
         $verifier->verify(
             $this->createMock(NoneAttestationStatement::class),
-            $this->createMock(AuthenticatorDataInterface::class),
+            $this->getTestAuthenticatorData(),
             hash('sha256', '123', true)
         );
     }

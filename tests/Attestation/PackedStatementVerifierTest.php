@@ -5,7 +5,6 @@ namespace MadWizard\WebAuthn\Tests\Attestation;
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
-use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\EmptyTrustPath;
@@ -38,7 +37,7 @@ class PackedStatementVerifierTest extends VerifierTest
     public function testSelfSurrogate()
     {
         $clientResponse = FixtureHelper::getTestPlain('packed-surrogate');
-        $attObj = new AttestationObject(ByteBuffer::fromBase64Url($clientResponse['response']['attestationObject']));
+        $attObj = AttestationObject::parse(ByteBuffer::fromBase64Url($clientResponse['response']['attestationObject']));
 
         $hash = hash('sha256', Base64UrlEncoding::decode($clientResponse['response']['clientDataJSON']), true);
         $statement = new PackedAttestationStatement($attObj);
@@ -58,7 +57,7 @@ class PackedStatementVerifierTest extends VerifierTest
         $this->expectExceptionMessageMatches('~expecting.+packed~i');
         $verifier->verify(
             $this->createMock(NoneAttestationStatement::class),
-            $this->createMock(AuthenticatorDataInterface::class),
+            $this->getTestAuthenticatorData(),
             hash('sha256', '123', true)
         );
     }
@@ -73,7 +72,7 @@ class PackedStatementVerifierTest extends VerifierTest
         $statement->expects($this->once())->method('getEcdaaKeyId')->willReturn(new ByteBuffer('12345678'));
         $verifier->verify(
             $statement,
-            $this->createMock(AuthenticatorDataInterface::class),
+            $this->getTestAuthenticatorData(),
             hash('sha256', '123', true)
         );
     }

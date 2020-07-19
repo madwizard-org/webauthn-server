@@ -3,7 +3,6 @@
 namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
-use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
@@ -133,7 +132,7 @@ class AuthenticationVerifier extends AbstractVerifier
         return $publicKey->verifySignature(new ByteBuffer($signData), $response->getSignature());
     }
 
-    private function verifySignatureCounter(AuthenticatorDataInterface $authData, UserCredentialInterface $accountCredential)
+    private function verifySignatureCounter(AuthenticatorData $authData, UserCredentialInterface $accountCredential)
     {
         // 17. If the signature counter value adata.signCount is nonzero or the value stored in conjunction with credential’s id attribute is nonzero, then run the following sub-step:
         $counter = $authData->getSignCount();

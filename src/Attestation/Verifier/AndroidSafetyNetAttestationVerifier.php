@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Attestation\Verifier;
 use MadWizard\WebAuthn\Attestation\Android\SafetyNetResponseParser;
 use MadWizard\WebAuthn\Attestation\Android\SafetyNetResponseParserInterface;
 use MadWizard\WebAuthn\Attestation\AttestationType;
-use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
+use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Statement\AndroidSafetyNetAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
@@ -16,7 +16,7 @@ use function base64_encode;
 use function hash_equals;
 use function microtime;
 
-class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterface
+final class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterface
 {
     private const ATTEST_HOSTNAME = 'attest.android.com';
 
@@ -30,18 +30,34 @@ class AndroidSafetyNetAttestationVerifier implements AttestationVerifierInterfac
      */
     private $responseParser;
 
+    /**
+     * @var float|null
+     */
+    private $fixedTimestamp = null;
+
     public function __construct(?CertificateParserInterface $certificateParser = null, ?SafetyNetResponseParserInterface $responseParser = null)
     {
         $this->certificateParser = $certificateParser ?? new CertificateParser();
         $this->responseParser = $responseParser ?? new SafetyNetResponseParser();
     }
 
-    protected function getMsTimestamp(): float
+    private function getMsTimestamp(): float
     {
+        if ($this->fixedTimestamp !== null) {
+            return $this->fixedTimestamp;
+        }
         return microtime(true) * 1000;
     }
 
-    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash): VerificationResult
+    /**
+     * @internal Used for testing only
+     */
+    public function useFixedTimestamp(float $time): void
+    {
+        $this->fixedTimestamp = $time;
+    }
+
+    public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash): VerificationResult
     {
         if (!($attStmt instanceof AndroidSafetyNetAttestationStatement)) {
             throw new VerificationException('Expecting AndroidSafetyNetAttestationStatement');

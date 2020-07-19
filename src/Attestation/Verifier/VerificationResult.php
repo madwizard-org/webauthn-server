@@ -6,7 +6,7 @@ use InvalidArgumentException;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\TrustPath\TrustPathInterface;
 
-class VerificationResult
+final class VerificationResult
 {
     /**
      * @var string

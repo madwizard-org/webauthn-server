@@ -4,12 +4,11 @@ namespace MadWizard\WebAuthn\Pki;
 
 use Exception;
 use LogicException;
-use MadWizard\WebAuthn\Attestation\Identifier\Aaguid;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use Sop\ASN1\Type\UnspecifiedType;
+use Sop\ASN1\Element;
 use Sop\CryptoBridge\Crypto;
 use Sop\CryptoEncoding\PEM;
 use Sop\CryptoTypes\AlgorithmIdentifier\Feature\SignatureAlgorithmIdentifier;
@@ -32,8 +31,6 @@ class CertificateDetails implements CertificateDetailsInterface
      * @var TBSCertificate
      */
     private $cert;
-
-    private const OID_FIDO_GEN_CE_AAGUID = '1.3.6.1.4.1.45724.1.1.4';   // TODO move outside?
 
     private function __construct(TBSCertificate $certificate)
     {
@@ -89,29 +86,7 @@ class CertificateDetails implements CertificateDetailsInterface
         throw new WebAuthnException(sprintf('Signature format %d not supported.', $coseAlgorithm));
     }
 
-    public function getFidoAaguidExtensionValue(): ?Aaguid // TODO move outside class
-    {
-        try {
-            $extension = $this->cert->extensions()->get(self::OID_FIDO_GEN_CE_AAGUID);
-        } catch (LogicException $e) {
-            // No extension present
-            return null;
-        }
-
-        if ($extension->isCritical()) {
-            throw new WebAuthnException('FIDO AAGUID extension must not be critical.');
-        }
-
-        try {
-            $derEncoded = $extension->toASN1()->at(1)->asOctetString()->string();
-            $rawAaguid = UnspecifiedType::fromDER($derEncoded)->asOctetString()->string();
-            return new Aaguid(new ByteBuffer($rawAaguid));
-        } catch (Exception $e) {
-            throw new ParseException('Failed to parse AAGUID extension', 0, $e);
-        }
-    }
-
-    public function getExtensionData(string $oid): ?ByteBuffer
+    public function getExtensionData(string $oid): ?CertificateExtension
     {
         try {
             $extension = $this->cert->extensions()->get($oid);
@@ -120,8 +95,10 @@ class CertificateDetails implements CertificateDetailsInterface
             return null;
         }
         try {
-            $der = $extension->toASN1()->at(1)->asOctetString()->string();
-            return new ByteBuffer($der);
+            $seq = $extension->toASN1();
+            $idx = $seq->has(1, Element::TYPE_OCTET_STRING) ? 1 : 2;
+            $der = $seq->at($idx)->asOctetString()->string();
+            return new CertificateExtension($extension->oid(), $extension->isCritical(), new ByteBuffer($der));
         } catch (Exception $e) {
             throw new ParseException(sprintf('Failed to parse extension %s.', $oid), 0, $e);
         }

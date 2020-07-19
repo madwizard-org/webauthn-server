@@ -17,14 +17,14 @@ class AttestationObjectTest extends TestCase
     public function testInvalidEmpty()
     {
         $this->expectException(WebAuthnException::class);
-        new AttestationObject(new ByteBuffer(''));
+        AttestationObject::parse(new ByteBuffer(''));
     }
 
     public function testInvalidType()
     {
         $this->expectException(WebAuthnException::class);
         $this->expectExceptionMessageMatches('~expecting.+Cbor map~i');
-        new AttestationObject(ByteBuffer::fromHex('10'));
+        AttestationObject::parse(ByteBuffer::fromHex('10'));
     }
 
     public function testFormatType()
@@ -46,7 +46,7 @@ class AttestationObjectTest extends TestCase
 
         $this->expectException(WebAuthnException::class);
         $this->expectExceptionMessageMatches('~expecting.+fmt.+string~i');
-        new AttestationObject($buf);
+        AttestationObject::parse($buf);
     }
 
     public function testStatementType()
@@ -69,7 +69,7 @@ class AttestationObjectTest extends TestCase
 
         $this->expectException(WebAuthnException::class);
         $this->expectExceptionMessageMatches('~expecting.+attStmt.+array~i');
-        new AttestationObject($buf);
+        AttestationObject::parse($buf);
     }
 
     public function testAuthDataType()
@@ -91,7 +91,7 @@ class AttestationObjectTest extends TestCase
 
         $this->expectException(WebAuthnException::class);
         $this->expectExceptionMessageMatches('~expecting.+authData.+byte~i');
-        new AttestationObject($buf);
+        AttestationObject::parse($buf);
     }
 
     public function testU2f()
@@ -115,7 +115,7 @@ class AttestationObjectTest extends TestCase
         $response = $cred->getResponse();
         $buffer = $response->getAttestationObject();
 
-        $decoded = new AttestationObject($buffer);
+        $decoded = AttestationObject::parse($buffer);
 
         $this->assertSame('fido-u2f', $decoded->getFormat());
         $authData = HexData::bin(

@@ -24,7 +24,6 @@ class CertificateDetailsTest extends TestCase
         $cert = CertificateDetails::fromPem($pem);
         $this->assertSame(CertificateDetails::VERSION_1, $cert->getCertificateVersion());
         $this->assertNull($cert->isCA());
-        $this->assertNull($cert->getFidoAaguidExtensionValue());
     }
 
     public function testRSASignature()
@@ -84,7 +83,6 @@ class CertificateDetailsTest extends TestCase
 
         $this->assertSame(CertificateDetails::VERSION_3, $cert->getCertificateVersion());
         $this->assertFalse($cert->isCA());
-        $this->assertNull($cert->getFidoAaguidExtensionValue());
         $this->assertSame('Technology', $cert->getOrganizationalUnit());
     }
 
@@ -95,28 +93,7 @@ class CertificateDetailsTest extends TestCase
 
         $this->assertSame(CertificateDetails::VERSION_3, $cert->getCertificateVersion());
         $this->assertFalse($cert->isCA());
-        $this->assertSame('42383245443733433846423445354132', $cert->getFidoAaguidExtensionValue()->getHex());
         $this->assertSame('Authenticator Attestation', $cert->getOrganizationalUnit());
-    }
-
-    public function testWrongFidoExtensionType()
-    {
-        $pem = $this->getData('wrongFidoExtType');
-        $cert = CertificateDetails::fromPem($pem);
-
-        $this->expectException(ParseException::class);
-        $this->expectExceptionMessageMatches('~failed to parse AAGUID extension~i');
-        $cert->getFidoAaguidExtensionValue();
-    }
-
-    public function testFidoExtensionNonCritical()
-    {
-        $pem = $this->getData('fidoCritical');
-        $cert = CertificateDetails::fromPem($pem);
-
-        $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageMatches('~must not be critical~i');
-        $cert->getFidoAaguidExtensionValue();
     }
 
     public function testInvalidPEM()

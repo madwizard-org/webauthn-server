@@ -19,7 +19,7 @@ class AndroidKeyStatementVerifierTest extends TestCase
     {
         $clientResponse = FixtureHelper::getTestPlain('android-key-clientresponse');
         $chains = FixtureHelper::getTestPlain('certChains');
-        $attObj = new AttestationObject(ByteBuffer::fromBase64Url($clientResponse['response']['attestationObject']));
+        $attObj = AttestationObject::parse(ByteBuffer::fromBase64Url($clientResponse['response']['attestationObject']));
 
         $hash = hash('sha256', Base64UrlEncoding::decode($clientResponse['response']['clientDataJSON']), true);
         $statement = new AndroidKeyAttestationStatement($attObj);

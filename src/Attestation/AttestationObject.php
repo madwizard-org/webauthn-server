@@ -10,7 +10,7 @@ use MadWizard\WebAuthn\Format\CborDecoder;
 use MadWizard\WebAuthn\Format\DataValidator;
 use function is_array;
 
-final class AttestationObject implements AttestationObjectInterface
+final class AttestationObject
 {
     /**
      * @var string
@@ -27,7 +27,14 @@ final class AttestationObject implements AttestationObjectInterface
      */
     private $authData;
 
-    public function __construct(ByteBuffer $buffer)
+    public function __construct(string $format, array $statement, ByteBuffer $authData)
+    {
+        $this->format = $format;
+        $this->statement = $statement;
+        $this->authData = $authData;
+    }
+
+    public static function parse(ByteBuffer $buffer)
     {
         try {
             $data = CborDecoder::decode($buffer);
@@ -43,10 +50,7 @@ final class AttestationObject implements AttestationObjectInterface
                     'authData' => ByteBuffer::class,
                 ]
             );
-
-            $this->format = $data['fmt'];
-            $this->statement = $data['attStmt'];
-            $this->authData = $data['authData'];
+            return new self($data['fmt'], $data['attStmt'], $data['authData']);
         } catch (CborException $e) {
             throw new ParseException('Failed to parse CBOR attestation object.', 0, $e);
         }

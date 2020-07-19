@@ -2,14 +2,9 @@
 
 namespace MadWizard\WebAuthn\Pki;
 
-use MadWizard\WebAuthn\Attestation\Identifier\Aaguid;
-use MadWizard\WebAuthn\Format\ByteBuffer;
-
 interface CertificateDetailsInterface
 {
     public function verifySignature(string $data, string $signature, int $coseAlgorithm): bool;
-
-    public function getFidoAaguidExtensionValue(): ?Aaguid;
 
     public function getCertificateVersion(): ?int;
 
@@ -27,7 +22,7 @@ interface CertificateDetailsInterface
 
     public function getPublicKeyDer(): string;
 
-    public function getExtensionData(string $oid): ?ByteBuffer;
+    public function getExtensionData(string $oid): ?CertificateExtension;
 
     /**
      * Returns public key identifier as hexadecimal string, using method 1 in RFC 5280.

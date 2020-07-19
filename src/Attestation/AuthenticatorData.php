@@ -7,12 +7,13 @@ use MadWizard\WebAuthn\Crypto\CoseKey;
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 use MadWizard\WebAuthn\Exception\ByteBufferException;
 use MadWizard\WebAuthn\Exception\CborException;
+use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborDecoder;
 
-class AuthenticatorData implements AuthenticatorDataInterface
+final class AuthenticatorData
 {
     /**
      * User present (UP).
@@ -79,7 +80,7 @@ class AuthenticatorData implements AuthenticatorDataInterface
      * AuthenticatorData constructor.
      *
      * @throws ParseException
-     * @throws \MadWizard\WebAuthn\Exception\DataValidationException
+     * @throws DataValidationException
      */
     public function __construct(ByteBuffer $data)
     {

@@ -2,7 +2,7 @@
 
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
-use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
+use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Verifier\AndroidSafetyNetAttestationVerifier;
@@ -25,7 +25,7 @@ class AndroidSafetyNetAttestationStatement extends AbstractAttestationStatement
      */
     private $version;
 
-    public function __construct(AttestationObjectInterface $attestationObject)
+    public function __construct(AttestationObject $attestationObject)
     {
         parent::__construct($attestationObject, self::FORMAT_ID);
 

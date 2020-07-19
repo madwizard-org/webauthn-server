@@ -3,12 +3,12 @@
 namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
-use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
+use MadWizard\WebAuthn\Format\ByteBuffer;
 use PHPUnit\Framework\TestCase;
 
 class AttestationFormatRegistryTest extends TestCase
@@ -37,16 +37,12 @@ class AttestationFormatRegistryTest extends TestCase
     public function testStatementFormats()
     {
         $registry = $this->getRegistry();
-        $attObj = $this->createMock(AttestationObjectInterface::class);
-        $attObj->method('getFormat')->willReturn('format1');
+        $attObj = new AttestationObject('format1', [], new ByteBuffer(''));
 
-        /* @var AttestationObject $attObj */
         $this->assertInstanceOf('TestFormat1Statement', $registry->createStatement($attObj));
 
-        $attObj2 = $this->createMock(AttestationObjectInterface::class);
-        $attObj2->method('getFormat')->willReturn('format2');
+        $attObj2 = new AttestationObject('format2', [], new ByteBuffer(''));
 
-        /* @var AttestationObject $attObj2 */
         $this->assertInstanceOf('TestFormat2Statement', $registry->createStatement($attObj2));
     }
 
@@ -62,10 +58,7 @@ class AttestationFormatRegistryTest extends TestCase
         $this->expectException(FormatNotSupportedException::class);
 
         $registry = $this->getRegistry();
-        $attObj = $this->createMock(AttestationObjectInterface::class);
-        $attObj->method('getFormat')->willReturn('unsupported');
-
-        /* @var AttestationObject $attObj */
+        $attObj = new AttestationObject('unsupported', [], new ByteBuffer(''));
         $registry->createStatement($attObj);
     }
 

@@ -4,7 +4,6 @@ namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
-use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
@@ -52,7 +51,7 @@ class RegistrationVerifier extends AbstractVerifier
         //    obtain the attestation statement format fmt, the authenticator data authData, and the attestation
         //    statement attStmt.
 
-        $attestation = new AttestationObject($response->getAttestationObject());
+        $attestation = AttestationObject::parse($response->getAttestationObject());
         $authData = new AuthenticatorData($attestation->getAuthenticatorData());
 
         // 9 - 11
@@ -117,7 +116,7 @@ class RegistrationVerifier extends AbstractVerifier
         }
     }
 
-    private function checkAuthenticatorData(AuthenticatorDataInterface $authData, RegistrationContext $context)
+    private function checkAuthenticatorData(AuthenticatorData $authData, RegistrationContext $context)
     {
         if (!$authData->hasAttestedCredentialData()) {
             throw new VerificationException('Authenticator data does not contain attested credential.');

@@ -2,7 +2,7 @@
 
 namespace MadWizard\WebAuthn\Attestation\Registry;
 
-use MadWizard\WebAuthn\Attestation\AttestationObjectInterface;
+use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
 use MadWizard\WebAuthn\Exception\DataValidationException;
@@ -20,7 +20,7 @@ interface AttestationFormatInterface
      *
      * @throws DataValidationException
      */
-    public function createStatement(AttestationObjectInterface $attestationObject): AttestationStatementInterface;
+    public function createStatement(AttestationObject $attestationObject): AttestationStatementInterface;
 
     /**
      * Gets a reference to a verifier that verifies attestation statements of the format supported by this class.

@@ -3,7 +3,8 @@
 namespace MadWizard\WebAuthn\Attestation\Verifier;
 
 use MadWizard\WebAuthn\Attestation\AttestationType;
-use MadWizard\WebAuthn\Attestation\AuthenticatorDataInterface;
+use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\Fido\FidoAaguidExtension;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Statement\TpmAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Tpm\TpmEccParameters;
@@ -22,7 +23,7 @@ use MadWizard\WebAuthn\Pki\CertificateDetailsInterface;
 use MadWizard\WebAuthn\Pki\CertificateParser;
 use MadWizard\WebAuthn\Pki\CertificateParserInterface;
 
-class TpmAttestationVerifier extends AbstractAttestationVerifier
+final class TpmAttestationVerifier implements AttestationVerifierInterface
 {
     /**
      * @var CertificateParserInterface
@@ -45,7 +46,7 @@ class TpmAttestationVerifier extends AbstractAttestationVerifier
         $this->certificateParser = $certificateParser;
     }
 
-    public function verify(AttestationStatementInterface $attStmt, AuthenticatorDataInterface $authenticatorData, string $clientDataHash): VerificationResult
+    public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash): VerificationResult
     {
         // Verification procedure from https://www.w3.org/TR/webauthn/#tpm-attestation
         if (!($attStmt instanceof TpmAttestationStatement)) {
@@ -81,7 +82,7 @@ class TpmAttestationVerifier extends AbstractAttestationVerifier
         throw new UnsupportedException('ECDAA is not supported by this library.');
     }
 
-    private function verifyX5c(array $x5c, ByteBuffer $signature, int $signatureAlgorithm, ByteBuffer $rawCertInfo, AuthenticatorDataInterface $authenticatorData): VerificationResult
+    private function verifyX5c(array $x5c, ByteBuffer $signature, int $signatureAlgorithm, ByteBuffer $rawCertInfo, AuthenticatorData $authenticatorData): VerificationResult
     {
         // Verify the sig is a valid signature over certInfo using the attestation public key in aikCert with the
         // algorithm specified in alg.
@@ -106,13 +107,13 @@ class TpmAttestationVerifier extends AbstractAttestationVerifier
 
         // If aikCert contains an extension with OID 1 3 6 1 4 1 45724 1 1 4 (id-fido-gen-ce-aaguid) verify that the
         // value of this extension matches the aaguid in authenticatorData.
-        $this->checkAaguidExtension($cert, $authenticatorData->getAaguid());
+        FidoAaguidExtension::checkAaguidExtension($cert, $authenticatorData->getAaguid());
 
         // If successful, return attestation type AttCA and attestation trust path x5c.
         return new VerificationResult(AttestationType::ATT_CA, CertificateTrustPath::fromPemList($x5c));
     }
 
-    private function checkTpmPublicKeyMatchesAuthenticatorData(TpmPublic $pubArea, AuthenticatorDataInterface $authData): bool
+    private function checkTpmPublicKeyMatchesAuthenticatorData(TpmPublic $pubArea, AuthenticatorData $authData): bool
     {
         $key = $authData->getKey();
         $params = $pubArea->getParameters();

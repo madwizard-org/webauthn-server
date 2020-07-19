@@ -76,6 +76,7 @@ class Router
                 }
             )
             ->withLogger(new ErrorLogger())
+            ->trustWithoutMetadata(false)
             ->setCredentialStore($this->store)
             ->setCacheDirectory(__DIR__ . '/../../var/conformance');
 
@@ -123,9 +124,15 @@ class Router
         if ($this->debugIdx !== null) {
             $response[1]['_idx'] = $this->debugIdx;
         }
-        //error_log(sprintf("  Out: [%d] %s", $response[0], json_encode($response[1])));
 
-        http_response_code($response[0]);
+        $statusCode = $response[0];
+        if ($statusCode === 200) {
+            error_log('Response: OK');
+        } else {
+            error_log(sprintf('Response: [%d] %s', $statusCode, $response[1]['errorMessage'] ?? '?'));
+        }
+
+        http_response_code($statusCode);
         header('Content-Type: application/json');
         die(json_encode($response[1], JSON_PRETTY_PRINT));
     }
@@ -154,6 +161,7 @@ class Router
             $_SESSION['x'] = $idx;
             $this->debugIdx = $idx;
             file_put_contents($serDir . $idx, \serialize([$_SESSION, $url, $postData]));
+            error_log('--- ' . $idx . ' ---');
         }
 
         switch ($url) {

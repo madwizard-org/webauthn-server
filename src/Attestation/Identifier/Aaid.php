@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Attestation\Identifier;
 
 use MadWizard\WebAuthn\Exception\ParseException;
 
-class Aaid implements IdentifierInterface
+final class Aaid implements IdentifierInterface
 {
     public const TYPE = 'aaid';
 

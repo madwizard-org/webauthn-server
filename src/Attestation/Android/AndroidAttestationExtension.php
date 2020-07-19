@@ -7,7 +7,7 @@ use MadWizard\WebAuthn\Format\ByteBuffer;
 /**
  * @see https://source.android.com/security/keystore/attestation#attestation-extension
  */
-class AndroidAttestationExtension
+final class AndroidAttestationExtension
 {
     public const OID = '1.3.6.1.4.1.11129.2.1.17';
 

@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Attestation\Identifier;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class Aaguid implements IdentifierInterface
+final class Aaguid implements IdentifierInterface
 {
     public const TYPE = 'aaguid';
 

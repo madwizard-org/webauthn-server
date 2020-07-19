@@ -7,7 +7,7 @@ use MadWizard\WebAuthn\Format\ByteBuffer;
 use Sop\ASN1\Type\Constructed\Sequence;
 use Sop\ASN1\Type\UnspecifiedType;
 
-class AndroidExtensionParser implements AndroidExtensionParserInterface
+final class AndroidExtensionParser implements AndroidExtensionParserInterface
 {
     // Sequence indices in KeyDescription. See https://source.android.com/security/keystore/attestation#attestation-extension
     private const IDX_ATTESTATION_CHALLENGE = 4;

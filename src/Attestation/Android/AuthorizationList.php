@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Attestation\Android;
 
 use function in_array;
 
-class AuthorizationList
+final class AuthorizationList
 {
     public const KM_ORIGIN_GENERATED = 0;
 

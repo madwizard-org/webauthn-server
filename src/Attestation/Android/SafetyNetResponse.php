@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Attestation\Android;
 
 use MadWizard\WebAuthn\Pki\X509Certificate;
 
-class SafetyNetResponse implements SafetyNetResponseInterface
+final class SafetyNetResponse implements SafetyNetResponseInterface
 {
     /**
      * @var string

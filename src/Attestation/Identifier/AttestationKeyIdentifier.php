@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Attestation\Identifier;
 
 use MadWizard\WebAuthn\Exception\ParseException;
 
-class AttestationKeyIdentifier implements IdentifierInterface
+final class AttestationKeyIdentifier implements IdentifierInterface
 {
     public const TYPE = 'publickeyid';
 

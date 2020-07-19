@@ -26,9 +26,14 @@ use MadWizard\WebAuthn\Pki\X509Certificate;
 use MadWizard\WebAuthn\Remote\DownloaderInterface;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
-final class MetadataServiceProvider implements MetadataProviderInterface
+final class MetadataServiceProvider implements MetadataProviderInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var DownloaderInterface
      */
@@ -73,6 +78,7 @@ final class MetadataServiceProvider implements MetadataProviderInterface
         $this->downloader = $downloader;
         $this->cacheProvider = $cacheProvider;
         $this->chainValidator = $chainValidator;
+        $this->logger = new NullLogger();
     }
 
     private function getTokenUrl(string $url): string
@@ -97,16 +103,14 @@ final class MetadataServiceProvider implements MetadataProviderInterface
         $toc = $this->getCachedToc();
         $tocItem = $toc->findItem($identifier);
 
-        $str = $identifier->toString();
-
-
+        $this->logger->debug('Searching MDS for identifier {id}.', ['id' => $identifier->toString()]);
 
         if ($tocItem === null) {
             return null;
         }
 
         $url = $tocItem->getUrl();
-        $hash = $tocItem->gethash();
+        $hash = $tocItem->getHash();
         if ($url === null || $hash === null) {
             return null;
         }
@@ -126,11 +130,11 @@ final class MetadataServiceProvider implements MetadataProviderInterface
         if ($item->isHit()) {
             $meta = $item->get();
         } else {
-            $meta = $this->downloader->downloadFile($url); // TODO: $this->getTokenUrl($url));
+            $urlWithToken = $this->getTokenUrl($url);
+            $meta = $this->downloader->downloadFile($urlWithToken);
             $fileHash = hash('sha256', $meta->getData(), true);
             if (!hash_equals($hash->getBinaryString(), $fileHash)) {
-                error_log('Hash mismatch!');
-                return null;
+                throw new VerificationException(sprintf('Hash mismatch for url %s, ignoring metadata entry.', $url));
             }
 
             $item->set($meta);

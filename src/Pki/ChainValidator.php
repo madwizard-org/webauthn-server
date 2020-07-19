@@ -4,6 +4,9 @@
 namespace MadWizard\WebAuthn\Pki;
 
 use DateTimeImmutable;
+
+use Exception;
+use MadWizard\WebAuthn\Exception\VerificationException;
 use Sop\X509\Certificate\Certificate;
 use Sop\X509\CertificationPath\CertificationPath;
 use Sop\X509\CertificationPath\PathValidation\PathValidationConfig;
@@ -29,11 +32,15 @@ final class ChainValidator implements ChainValidatorInterface
 
     private function validateCertificates(X509Certificate... $certificates)
     {
-        $pathCerts = array_map(function (X509Certificate $c) {
-            return Certificate::fromDER($c->asDer());
-        }, $certificates);
-        $path = new CertificationPath(...$pathCerts);
-        $config = new PathValidationConfig($this->getReferenceDate(), self::MAX_VALIDATION_LENGTH);
+        try {
+            $pathCerts = array_map(function (X509Certificate $c) {
+                return Certificate::fromDER($c->asDer());
+            }, $certificates);
+            $path = new CertificationPath(...$pathCerts);
+            $config = new PathValidationConfig($this->getReferenceDate(), self::MAX_VALIDATION_LENGTH);
+        } catch (Exception $e) {
+            throw new VerificationException('Failed to validate certificate: ' . $e->getMessage(), 0, $e);
+        }
         try {
             $path->validate($config);
             return true;

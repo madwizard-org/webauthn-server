@@ -13,6 +13,7 @@ use MadWizard\WebAuthn\Metadata\Source\MetadataSourceInterface;
 use MadWizard\WebAuthn\Metadata\Source\StatementDirectorySource;
 use MadWizard\WebAuthn\Pki\ChainValidatorInterface;
 use MadWizard\WebAuthn\Remote\DownloaderInterface;
+use Psr\Log\LoggerAwareInterface;
 
 trait MetadataProviderFactoryTrait
 {
@@ -32,12 +33,17 @@ trait MetadataProviderFactoryTrait
         $providers = [];
         foreach ($sources as $source) {
             if ($source instanceof StatementDirectorySource) {
-                $providers[] = new FileProvider($source);
+                $provider = new FileProvider($source);
             } elseif ($source instanceof MetadataServiceSource) {
-                $providers[] = new MetadataServiceProvider($source, $this->buildDownloader(), $this->buildCacheProvider(), $this->buildChainValidator());
+                $provider = new MetadataServiceProvider($source, $this->buildDownloader(), $this->buildCacheProvider(), $this->buildChainValidator());
             } else {
                 throw new UnsupportedException(sprintf('No provider available for metadata source of type %s.', get_class($source)));
             }
+
+            if ($provider instanceof LoggerAwareInterface) {
+                $this->assignLogger($provider);
+            }
+            $providers[] = $provider;
         }
         return $providers;
     }

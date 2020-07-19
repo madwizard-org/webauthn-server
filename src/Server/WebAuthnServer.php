@@ -157,9 +157,8 @@ class WebAuthnServer implements ServerInterface
 
         // TODO:check timeout (spec does not mention this?)
 
-        $registration = new CredentialRegistration($registrationResult->getCredentialId(), $registrationResult->getPublicKey(), $context->getUserHandle(), $response->getAttestationObject());
+        $registration = new CredentialRegistration($registrationResult->getCredentialId(), $registrationResult->getPublicKey(), $context->getUserHandle(), $response->getAttestationObject(), $registrationResult->getSignatureCounter());
         $this->credentialStore->registerCredential($registration);
-        $this->credentialStore->updateSignatureCounter($registrationResult->getCredentialId(), $registrationResult->getSignatureCounter());
         return $registrationResult;
     }
 

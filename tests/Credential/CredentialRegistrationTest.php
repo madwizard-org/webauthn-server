@@ -21,10 +21,11 @@ class CredentialRegistrationTest extends TestCase
         $key = $this->createMock(CoseKeyInterface::class);
         $handle = UserHandle::fromString('aabbcc');
         $attObj = ByteBuffer::fromHex('123456');
-        $credential = new CredentialRegistration($id, $key, $handle, $attObj);
+        $credential = new CredentialRegistration($id, $key, $handle, $attObj, 123);
         $this->assertSame($id, $credential->getCredentialId());
         $this->assertSame($key, $credential->getPublicKey());
         $this->assertSame($handle, $credential->getUserHandle());
         $this->assertSame($attObj, $credential->getAttestationObject());
+        $this->assertSame(123, $credential->getSignCounter());
     }
 }

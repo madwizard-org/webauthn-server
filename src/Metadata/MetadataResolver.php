@@ -11,9 +11,14 @@ use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Metadata\Provider\MetadataProviderInterface;
 use MadWizard\WebAuthn\Pki\CertificateParser;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
-final class MetadataResolver implements MetadataResolverInterface
+final class MetadataResolver implements MetadataResolverInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var MetadataProviderInterface[]
      */
@@ -22,6 +27,7 @@ final class MetadataResolver implements MetadataResolverInterface
     public function __construct(array $providers)
     {
         $this->providers = $providers;
+        $this->logger = new NullLogger();
     }
 
     private function determineIdentifier(RegistrationResultInterface $registrationResult) : ?IdentifierInterface
@@ -58,8 +64,8 @@ final class MetadataResolver implements MetadataResolverInterface
                     return $metadata;
                 }
             } catch (WebAuthnException $e) {
-                error_log('IGNORE: ' . $e->getMessage()); // TODO!
-                //throw new WebAuthnException('TODO');
+                $this->logger->warning(sprintf('Error retrieving metadata (%s) - ignoring provider', $e->getMessage()), ['exception' => $e]);
+                continue;
             }
         }
         return null;

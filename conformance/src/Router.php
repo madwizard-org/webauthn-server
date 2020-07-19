@@ -76,6 +76,7 @@ class Router
                     $policy->setUserPresenceRequired(false);
                 }
             )
+            ->withLogger(new ErrorLogger())
             ->setCredentialStore($this->store)
             ->setCacheDirectory(__DIR__ . '/../../var/conformance');
 

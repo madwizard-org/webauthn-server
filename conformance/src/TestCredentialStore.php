@@ -28,7 +28,7 @@ class TestCredentialStore implements CredentialStoreInterface
         $_SESSION['credentials'][$credential->getCredentialId()->toString()] =
             [
                 'credential' => new UserCredential($credential->getCredentialId(), $credential->getPublicKey(), $credential->getUserHandle()),
-                'counter' => null
+                'counter' => $credential->getSignCounter()
             ];
     }
 

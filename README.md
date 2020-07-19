@@ -1,15 +1,15 @@
 WebAuthn Relying Party server library for PHP
 =============================================
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/madwizard-thomas/webauthn-server/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/madwizard-thomas/webauthn-server/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/madwizard-thomas/webauthn-server/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/madwizard-thomas/webauthn-server/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/madwizard-thomas/webauthn-server/badges/build.png?b=master)](https://scrutinizer-ci.com/g/madwizard-thomas/webauthn-server/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/badges/build.png?b=master)](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/build-status/master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Current state
 -------------
-**Work in progress - use for testing purposes only**
-The basic functionality of this library (the registration and authentication ceremonies) is functional but the API interface may change at any time until the first stable release.
+**Beta**
+All basic functionality of this library is functional but the API interface may change at any time until the first stable release.
 
 Goal
 ----

@@ -16,6 +16,7 @@ use MadWizard\WebAuthn\Dom\PublicKeyCredentialRpEntity;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
 use MadWizard\WebAuthn\Exception\CredentialIdExistsException;
 use MadWizard\WebAuthn\Exception\ParseException;
+use MadWizard\WebAuthn\Exception\UntrustedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -118,8 +119,10 @@ class WebAuthnServer implements ServerInterface
         //       Otherwise, use the X.509 certificates returned by the verification procedure to verify that the
         //       attestation public key correctly chains up to an acceptable root certificate.
 
-        if (!$this->policy->getTrustDecisionManager()->isTrusted($registrationResult, $metadata)) {
-            throw new VerificationException('The attestation is not trusted.');
+        try {
+            $this->policy->getTrustDecisionManager()->verifyTrust($registrationResult, $metadata);
+        } catch (UntrustedException $e) {
+            throw new VerificationException('The attestation is not trusted: ' . $e->getReason(), 0, $e);
         }
 
         // 17. Check that the credentialId is not yet registered to any other user. If registration is requested for a

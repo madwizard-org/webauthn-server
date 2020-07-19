@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\TrustPathInterface;
+use MadWizard\WebAuthn\Policy\Trust\TrustVote;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
 
 final class TrustAttestationTypeVoter implements TrustVoterInterface
@@ -29,10 +30,10 @@ final class TrustAttestationTypeVoter implements TrustVoterInterface
         RegistrationResultInterface $registrationResult,
         TrustPathInterface $trustPath,
         ?MetadataInterface $metadata
-    ): string {
+    ): TrustVote {
         if ($registrationResult->getVerificationResult()->getAttestationType() === $this->trustedType) {
-            return self::VOTE_TRUSTED;
+            return TrustVote::trusted();
         }
-        return self::VOTE_ABSTAIN;
+        return TrustVote::abstain();
     }
 }

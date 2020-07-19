@@ -6,6 +6,7 @@ namespace MadWizard\WebAuthn\Policy\Trust\Voter;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\TrustPathValidatorInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\TrustPathInterface;
+use MadWizard\WebAuthn\Policy\Trust\TrustVote;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
 
 final class TrustChainVoter implements TrustVoterInterface
@@ -24,17 +25,17 @@ final class TrustChainVoter implements TrustVoterInterface
         RegistrationResultInterface $registrationResult,
         TrustPathInterface $trustPath,
         ?MetadataInterface $metadata
-    ): string {
+    ): TrustVote {
         if ($metadata === null) {
-            return self::VOTE_ABSTAIN;
+            return TrustVote::abstain();
         }
 
         $trustAnchors = $metadata->getTrustAnchors();
         foreach ($trustAnchors as $anchor) {
             if ($this->pathValidator->validate($trustPath, $anchor)) {
-                return self::VOTE_TRUSTED;
+                return TrustVote::trusted();
             }
         }
-        return self::VOTE_ABSTAIN;
+        return TrustVote::abstain();
     }
 }

@@ -4,6 +4,7 @@
 namespace MadWizard\WebAuthn\Policy\Trust;
 
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
+use MadWizard\WebAuthn\Exception\UntrustedException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Policy\Trust\Voter\TrustVoterInterface;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
@@ -21,22 +22,23 @@ final class TrustDecisionManager implements TrustDecisionManagerInterface
         return $this;
     }
 
-    // TODO: return details in case untrusted?
-    public function isTrusted(RegistrationResultInterface $registrationResult, ?MetadataInterface $metadata): bool
+    public function verifyTrust(RegistrationResultInterface $registrationResult, ?MetadataInterface $metadata): void
     {
         $trusted = false;
         $trustPath = $registrationResult->getVerificationResult()->getTrustPath();
         foreach ($this->voters as $voter) {
-            $vote = $voter->voteOnTrust($registrationResult, $trustPath, $metadata); // todo remove trustpath?? in regresult
-            if ($vote === TrustVoterInterface::VOTE_TRUSTED) {
+            $vote = $voter->voteOnTrust($registrationResult, $trustPath, $metadata);
+            if ($vote->isTrusted()) {
                 $trusted = true;
-            } elseif ($vote === TrustVoterInterface::VOTE_UNTRUSTED) {
-                return false;
-            } elseif ($vote !== TrustVoterInterface::VOTE_ABSTAIN) {
-                throw new WebAuthnException(sprintf("Invalid vote result '%s' (class %s)", $vote, get_class($voter)));
+            } elseif ($vote->isUntrusted()) {
+                throw UntrustedException::createWithReason($vote->getReason());
+            } elseif (!$vote->isAbstain()) {
+                throw new WebAuthnException('Unsupported vote type.');
             }
         }
 
-        return $trusted;
+        if (!$trusted) {
+            throw UntrustedException::createWithReason('No voter trusted the registration.');
+        }
     }
 }

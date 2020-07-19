@@ -42,7 +42,7 @@ Attestation types:
 - Packed
 - TPM
 - Android SafetyNet
-- Android Key 
+- Android Key
 - None
 
 Attestation is not yet verified with trusted anchors (I'm working on this) or the metadata service but the attestation itself is validated for correctness and consistency.
@@ -53,10 +53,10 @@ Usage
 The library is still in development so documentation is limited. The general pattern to follow is:
 
 1. Implement `CredentialStoreInterface` (you will need `UserCredential` or your own implementation of `UserCredentialInterface`)
-2. Create an instance of `WebAuthnServer` with a `WebAuthnConfiguration` object and the credential store.
-3. Use `startRegistration`/`finishRegistration` to register credentials. Be sure to store the temporary `AttestationContext` server side! 
-4. and `startAuthentication`/`finishAuthentication` to authenticate. Be sure to store the temporary `AssertionContext` server side! 
-    
+2. Create an instance of `RelyingParty` and use the `ServerBuilder` class to build a server object.
+3. Use `startRegistration`/`finishRegistration` to register credentials. Be sure to store the temporary `AttestationContext` server side!
+4. and `startAuthentication`/`finishAuthentication` to authenticate. Be sure to store the temporary `AssertionContext` server side!
+
 Resources
 ---------
 [WebAuthn specification](https://www.w3.org/TR/webauthn/)

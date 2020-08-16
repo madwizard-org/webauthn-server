@@ -5,7 +5,6 @@ namespace MadWizard\WebAuthn\Server;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Dom\AuthenticationExtensionsClientInputs;
-use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialDescriptor;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
@@ -95,10 +94,7 @@ class WebAuthnServer implements ServerInterface
         $verifier = new RegistrationVerifier($this->policy->getAttestationFormatRegistry());
         $registrationResult = $verifier->verify($credential, $context);
 
-        /**
-         * @var AuthenticatorAttestationResponseInterface $response
-         */
-        $response = $credential->getResponse();
+        $response = $credential->getResponse()->asAttestationResponse();
 
         // 15. If validation is successful, obtain a list of acceptable trust anchors (attestation root certificates or
         //     ECDAA-Issuer public keys) for that attestation type and attestation statement format fmt, from a trusted
@@ -236,7 +232,7 @@ class WebAuthnServer implements ServerInterface
     private function getCredentialParameters(): array
     {
         $parameters = [];
-        $algorithms = $this->policy->getAllowedAlgorithms();
+        $algorithms = $this->policy->getAllowedAlgorithms();        // TODO: verify server side?
         foreach ($algorithms as $algorithm) {
             $parameters[] = new PublicKeyCredentialParameters($algorithm);
         }

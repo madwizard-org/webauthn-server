@@ -2,10 +2,19 @@
 
 namespace MadWizard\WebAuthn\Builder;
 
+use Closure;
 use GuzzleHttp\Client;
 use MadWizard\WebAuthn\Attestation\AttestationType;
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\TrustPathValidator;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\TrustPathValidatorInterface;
+use MadWizard\WebAuthn\Attestation\Verifier\AndroidKeyAttestationVerifier;
+use MadWizard\WebAuthn\Attestation\Verifier\AndroidSafetyNetAttestationVerifier;
+use MadWizard\WebAuthn\Attestation\Verifier\FidoU2fAttestationVerifier;
+use MadWizard\WebAuthn\Attestation\Verifier\NoneAttestationVerifier;
+use MadWizard\WebAuthn\Attestation\Verifier\PackedAttestationVerifier;
+use MadWizard\WebAuthn\Attestation\Verifier\TpmAttestationVerifier;
 use MadWizard\WebAuthn\Cache\CacheProviderInterface;
 use MadWizard\WebAuthn\Cache\FileCacheProvider;
 use MadWizard\WebAuthn\Config\RelyingParty;
@@ -17,11 +26,11 @@ use MadWizard\WebAuthn\Metadata\MetadataResolver;
 use MadWizard\WebAuthn\Metadata\MetadataResolverInterface;
 use MadWizard\WebAuthn\Metadata\NullMetadataResolver;
 use MadWizard\WebAuthn\Metadata\Provider\FileProvider;
-use MadWizard\WebAuthn\Metadata\Provider\MetadataProviderInterface;
 use MadWizard\WebAuthn\Metadata\Provider\MetadataServiceProvider;
 use MadWizard\WebAuthn\Metadata\Source\MetadataServiceSource;
 use MadWizard\WebAuthn\Metadata\Source\MetadataSourceInterface;
 use MadWizard\WebAuthn\Metadata\Source\StatementDirectorySource;
+use MadWizard\WebAuthn\Pki\CertificateStatusResolver;
 use MadWizard\WebAuthn\Pki\CertificateStatusResolverInterface;
 use MadWizard\WebAuthn\Pki\ChainValidator;
 use MadWizard\WebAuthn\Pki\ChainValidatorInterface;
@@ -41,6 +50,7 @@ use MadWizard\WebAuthn\Server\ServerInterface;
 use MadWizard\WebAuthn\Server\WebAuthnServer;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 final class ServerBuilder
 {
@@ -68,31 +78,6 @@ final class ServerBuilder
      * @var MetadataSourceInterface[]
      */
     private $metadataSources = [];
-
-    /**
-     * @var DownloaderInterface|null
-     */
-    private $downloader;
-
-    /**
-     * @var Client|null
-     */
-    private $httpClient;
-
-    /**
-     * @var CacheProviderInterface|null
-     */
-    private $cacheProvider;
-
-    /**
-     * @var ChainValidatorInterface|null
-     */
-    private $chainValidator;
-
-    /**
-     * @var TrustDecisionManagerInterface|null
-     */
-    private $trustDecisionManager;
 
     /**
      * @var LoggerInterface|null
@@ -123,15 +108,7 @@ final class ServerBuilder
     {
     }
 
-    private function reset()
-    {
-        $this->downloader = null;
-        $this->httpClient = null;
-        $this->cacheProvider = null;
-        $this->chainValidator = null;
-        $this->trustDecisionManager = null;
-    }
-
+    // TODO: conistent set/with methods
     public function setRelyingParty(RelyingParty $rp): self
     {
         $this->rp = $rp;
@@ -154,23 +131,6 @@ final class ServerBuilder
     {
         $this->cacheDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $subDirectory;
         return $this;
-    }
-
-    private function getCacheDirectory(): string
-    {
-        if ($this->cacheDir === null) {
-            throw new ConfigurationException('No cache directory configured. Use useCacheDirectory or useSystemTempCache.');
-        }
-        return $this->cacheDir;
-    }
-
-    private function getCredentialStore(): CredentialStoreInterface
-    {
-        if ($this->store === null) {
-            throw new ConfigurationException('Credential store not configured. Use setCredentialStore.');
-        }
-
-        return $this->store;
     }
 
     /**
@@ -225,9 +185,95 @@ final class ServerBuilder
         }
     }
 
-    private function getPolicy(): PolicyInterface
+    public function build(): ServerInterface
     {
-        $policy = new Policy($this->getRelyingParty(), $this->getMetadataResolver(), $this->getTrustDecisionManager());
+        $c = $this->setupContainer();
+
+        return $c[ServerInterface::class];
+    }
+
+    private function setupContainer(): ServiceContainer
+    {
+        $c = new ServiceContainer();
+
+        $this->setupConfiguredServices($c);
+        $this->setupFormats($c);
+        $this->setupTrustDecisionManager($c);
+
+        $c[TrustPathValidatorInterface::class] = static function (ServiceContainer $c) {
+            return new TrustPathValidator($c[ChainValidatorInterface::class]);
+        };
+
+        $c[ChainValidatorInterface::class] = static function (ServiceContainer $c) {
+            // TODO
+            //return new ChainValidator($c[CertificateStatusResolverInterface::class]);
+            return new ChainValidator(null);
+        };
+
+        // TODO
+//        $c[CertificateStatusResolverInterface::class] = static function (ServiceContainer $c) {
+//            return new CertificateStatusResolver($c[DownloaderInterface::class], $c[CacheProviderInterface::class]);
+//        };
+
+        $c[PolicyInterface::class] = Closure::fromCallable([$this, 'createPolicy']);
+        $c[MetadataResolverInterface::class] = Closure::fromCallable([$this, 'createMetadataResolver']);
+        $c[ServerInterface::class] = Closure::fromCallable([$this, 'createServer']);
+
+        return $c;
+    }
+
+    private function setupDownloader(ServiceContainer $c)
+    {
+        $this->setupCache($c);
+        if (isset($c[DownloaderInterface::class])) {
+            return;
+        }
+        $c[DownloaderInterface::class] = static function (ServiceContainer $c) {
+            return new Downloader($c[Client::class]);
+        };
+        $c[Client::class] = static function (ServiceContainer $c) {
+            $factory = new CachingClientFactory($c[CacheProviderInterface::class]);
+            return $factory->createClient();
+        };
+    }
+
+    private function setupCache(ServiceContainer $c)
+    {
+        if (isset($c[CacheProviderInterface::class])) {
+            return;
+        }
+        if ($this->cacheDir === null) {
+            throw new ConfigurationException('No cache directory configured. Use useCacheDirectory or useSystemTempCache.');
+        }
+        $c[CacheProviderInterface::class] = function (ServiceContainer $c) {
+            return new FileCacheProvider($this->cacheDir);
+        };
+    }
+
+    private function setupConfiguredServices(ServiceContainer $c): void
+    {
+        if ($this->rp === null) {
+            throw new ConfigurationException('Relying party not configured. Use setRelyingParty.');
+        }
+
+        $c[RelyingPartyInterface::class] = function () { return $this->rp; };
+
+        if ($this->store === null) {
+            throw new ConfigurationException('Credential store not configured. Use setCredentialStore.');
+        }
+
+        $c[CredentialStoreInterface::class] = function () { return $this->store; };
+        $c[LoggerInterface::class] = function () { return $this->logger ?? new NullLogger(); };
+    }
+
+    private function createPolicy(ServiceContainer $c): PolicyInterface
+    {
+        $policy = new Policy(
+            $c[RelyingPartyInterface::class],
+            $c[MetadataResolverInterface::class],
+            $c[TrustDecisionManagerInterface::class],
+            $c[AttestationFormatRegistryInterface::class]
+        );
 
         if ($this->policyCallback !== null) {
             ($this->policyCallback)($policy);
@@ -236,22 +282,13 @@ final class ServerBuilder
         return $policy;
     }
 
-    public function build(): ServerInterface
+    private function createServer(ServiceContainer $c): ServerInterface
     {
-        $this->reset();
-        try {
-            return new WebAuthnServer($this->getPolicy(), $this->getCredentialStore());
-        } finally {
-            $this->reset();
-        }
+        return new WebAuthnServer($c[PolicyInterface::class], $c[CredentialStoreInterface::class]);
     }
 
     private function getRelyingParty(): RelyingPartyInterface
     {
-        if ($this->rp === null) {
-            throw new ConfigurationException('Relying party not configured. Use setRelyingParty.');
-        }
-
         return $this->rp;
     }
 
@@ -261,19 +298,17 @@ final class ServerBuilder
         return $this;
     }
 
-    private function getMetadataResolver(): MetadataResolverInterface
+    private function createMetadataResolver(ServiceContainer $c): MetadataResolverInterface
     {
         if (count($this->metadataSources) === 0) {
             return new NullMetadataResolver();
         }
-        $resolver = new MetadataResolver($this->createMetadataProviders($this->metadataSources));
-        $this->assignLogger($resolver);
-        return $resolver;
+        return new MetadataResolver($this->createMetadataProviders($c));
     }
 
-    private function getTrustDecisionManager(): TrustDecisionManagerInterface
+    private function setupTrustDecisionManager(ServiceContainer $c)
     {
-        if ($this->trustDecisionManager === null) {
+        $c[TrustDecisionManagerInterface::class] = function (ServiceContainer $c) {
             $tdm = new TrustDecisionManager();
 
             if ($this->allowNoneAttestation) {
@@ -288,57 +323,21 @@ final class ServerBuilder
             if ($this->useMetadata) {
                 $tdm->addVoter(new SupportedAttestationTypeVoter());
                 $tdm->addVoter(new UndesiredStatusReportVoter());
-                $tdm->addVoter(new TrustChainVoter($this->getTrustPathValidator()));
+                $tdm->addVoter(new TrustChainVoter($c[TrustPathValidatorInterface::class]));
             }
-            $this->trustDecisionManager = $tdm;
-        }
-        return $this->trustDecisionManager;
+            return $tdm;
+        };
     }
 
-    private function getTrustPathValidator(): TrustPathValidatorInterface
-    {
-        return new TrustPathValidator($this->buildChainValidator());
-    }
-
-    private function buildDownloader(): DownloaderInterface
-    {
-        if ($this->downloader === null) {
-            $this->downloader = new Downloader($this->buildHttpClient());
-        }
-        return $this->downloader;
-    }
-
-    private function buildCacheProvider(): CacheProviderInterface
-    {
-        if ($this->cacheProvider === null) {
-            $this->cacheProvider = new FileCacheProvider($this->getCacheDirectory());
-        }
-        return $this->cacheProvider;
-    }
-
-    private function buildChainValidator(): ChainValidatorInterface
-    {
-        if ($this->chainValidator === null) {
-            $this->chainValidator = new ChainValidator($this->buildStatusResolver());
-        }
-        return $this->chainValidator;
-    }
-
-    /**
-     * @param MetadataSourceInterface[] $sources
-     *
-     * @return MetadataProviderInterface[]
-     *
-     * @throws UnsupportedException
-     */
-    private function createMetadataProviders(array $sources): array
+    private function createMetadataProviders(ServiceContainer $c): array
     {
         $providers = [];
-        foreach ($sources as $source) {
+        foreach ($this->metadataSources as $source) {
             if ($source instanceof StatementDirectorySource) {
                 $provider = new FileProvider($source);
             } elseif ($source instanceof MetadataServiceSource) {
-                $provider = new MetadataServiceProvider($source, $this->buildDownloader(), $this->buildCacheProvider(), $this->buildChainValidator());
+                $this->setupDownloader($c);
+                $provider = new MetadataServiceProvider($source, $c[DownloaderInterface::class], $c[CacheProviderInterface::class], $c[ChainValidatorInterface::class]);
             } else {
                 throw new UnsupportedException(sprintf('No provider available for metadata source of type %s.', get_class($source)));
             }
@@ -351,18 +350,38 @@ final class ServerBuilder
         return $providers;
     }
 
-    private function buildHttpClient(): Client
+    private function setupFormats(ServiceContainer $c)
     {
-        if ($this->httpClient === null) {
-            $factory = new CachingClientFactory($this->buildCacheProvider());
-            $this->httpClient = $factory->createClient();
-        }
-        return $this->httpClient;
-    }
+        $c[PackedAttestationVerifier::class] = static function () {
+            return new AndroidSafetyNetAttestationVerifier();
+        };
+        $c[FidoU2fAttestationVerifier::class] = static function () {
+            return new FidoU2fAttestationVerifier();
+        };
+        $c[NoneAttestationVerifier::class] = static function () {
+            return new NoneAttestationVerifier();
+        };
+        $c[TpmAttestationVerifier::class] = static function () {
+            return new TpmAttestationVerifier();
+        };
+        $c[AndroidSafetyNetAttestationVerifier::class] = static function () {
+            return new AndroidSafetyNetAttestationVerifier();
+        };
+        $c[AndroidKeyAttestationVerifier::class] = static function () {
+            return new AndroidKeyAttestationVerifier();
+        };
 
-    private function buildStatusResolver(): ?CertificateStatusResolverInterface
-    {
-        // TODO: IMPLEMENT
-        return null;
+        $c[AttestationFormatRegistryInterface::class] = static function (ServiceContainer $c) {
+            $registry = new AttestationFormatRegistry();
+
+            $registry->addFormat($c[PackedAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[FidoU2fAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[NoneAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[TpmAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[AndroidSafetyNetAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[AndroidKeyAttestationVerifier::class]->getSupportedFormat());
+
+            return $registry;
+        };
     }
 }

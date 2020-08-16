@@ -2,10 +2,7 @@
 
 namespace MadWizard\WebAuthn\Policy;
 
-use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
-use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
-use MadWizard\WebAuthn\Attestation\Registry\BuiltInFormats;
 use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
@@ -20,7 +17,7 @@ final class Policy implements PolicyInterface
     private $relyingParty;
 
     /**
-     * @var AttestationFormatRegistryInterface|null
+     * @var AttestationFormatRegistryInterface
      */
     private $formatRegistry;
 
@@ -62,38 +59,17 @@ final class Policy implements PolicyInterface
      */
     private $algorithms = self::SUPPORTED_ALGORITHMS;
 
-    public function __construct(RelyingPartyInterface $relyingParty, MetadataResolverInterface $metadataResolver, TrustDecisionManagerInterface $trustDecisionManager)
+    public function __construct(RelyingPartyInterface $relyingParty, MetadataResolverInterface $metadataResolver, TrustDecisionManagerInterface $trustDecisionManager, AttestationFormatRegistryInterface $formatRegistry)
     {
         $this->relyingParty = $relyingParty;
         $this->metadataResolver = $metadataResolver;
         $this->trustDecisionManager = $trustDecisionManager;
+        $this->formatRegistry = $formatRegistry;
     }
 
     public function getAttestationFormatRegistry(): AttestationFormatRegistryInterface
     {
-        if ($this->formatRegistry === null) {
-            $this->formatRegistry = $this->createDefaultFormatRegistry();
-        }
-
         return $this->formatRegistry;
-    }
-
-    /**
-     * @return AttestationFormatInterface[]
-     */
-    private function getAttestationFormats(): array
-    {
-        return BuiltInFormats::getSupportedFormats();
-    }
-
-    private function createDefaultFormatRegistry(): AttestationFormatRegistry
-    {
-        $registry = new AttestationFormatRegistry();
-        $formats = $this->getAttestationFormats();
-        foreach ($formats as $format) {
-            $registry->addFormat($format);
-        }
-        return $registry;
     }
 
     public function getTrustDecisionManager(): TrustDecisionManagerInterface

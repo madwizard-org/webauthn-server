@@ -2,6 +2,7 @@
 
 namespace MadWizard\WebAuthn\Tests\Policy;
 
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Config\RelyingParty;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
@@ -19,7 +20,7 @@ class WebAuthnPolicyTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->policy = new Policy(new RelyingParty('rp', 'http://localhost'), new NullMetadataResolver(), new TrustDecisionManager());
+        $this->policy = new Policy(new RelyingParty('rp', 'http://localhost'), new NullMetadataResolver(), new TrustDecisionManager(), new AttestationFormatRegistry());
     }
 
     public function testChallengeLength()

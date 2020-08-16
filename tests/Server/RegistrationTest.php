@@ -2,6 +2,7 @@
 
 namespace MadWizard\WebAuthn\Tests\Server;
 
+use MadWizard\WebAuthn\Builder\ServerBuilder;
 use MadWizard\WebAuthn\Config\RelyingParty;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
@@ -11,10 +12,6 @@ use MadWizard\WebAuthn\Crypto\Ec2Key;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Metadata\NullMetadataResolver;
-use MadWizard\WebAuthn\Policy\Policy;
-use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManager;
-use MadWizard\WebAuthn\Policy\Trust\Voter\AllowEmptyMetadataVoter;
 use MadWizard\WebAuthn\Server\Registration\RegistrationContext;
 use MadWizard\WebAuthn\Server\Registration\RegistrationOptions;
 use MadWizard\WebAuthn\Server\UserIdentity;
@@ -87,11 +84,10 @@ class RegistrationTest extends TestCase
         $rp = new RelyingParty('Example', 'https://example.com');
         $this->store = $this->createMock(CredentialStoreInterface::class);
 
-        $metadataResolver = new NullMetadataResolver();
-        $trustDecisionManager = new TrustDecisionManager();
-        $trustDecisionManager->addVoter(new AllowEmptyMetadataVoter());
-        $policy = new Policy($rp, $metadataResolver, $trustDecisionManager);
-        $this->server = new WebAuthnServer($policy, $this->store);
+        $this->server = (new ServerBuilder())
+            ->setRelyingParty($rp)
+            ->setCredentialStore($this->store)
+            ->build();
     }
 
     private function createCredential(): UserCredentialInterface

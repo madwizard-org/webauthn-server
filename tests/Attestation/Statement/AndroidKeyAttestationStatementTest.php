@@ -39,10 +39,4 @@ class AndroidKeyAttestationStatementTest extends TestCase
         $this->expectExceptionMessageMatches('~invalid .+ attestation statement~i');
         new AndroidKeyAttestationStatement($attObj);
     }
-
-    public function testCreateFormat()
-    {
-        $format = AndroidKeyAttestationStatement::createFormat();
-        $this->assertSame(AndroidKeyAttestationStatement::FORMAT_ID, $format->getFormatId());
-    }
 }

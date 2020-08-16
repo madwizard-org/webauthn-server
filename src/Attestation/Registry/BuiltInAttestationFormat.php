@@ -19,20 +19,18 @@ class BuiltInAttestationFormat implements AttestationFormatInterface
     private $statementClass;
 
     /**
-     * @var string
-     */
-    private $verifierClass;
-
-    /**
-     * @var AttestationVerifierInterface|null
+     * @var AttestationVerifierInterface
      */
     private $verifier;
 
-    public function __construct(string $formatId, string $statementClass, string $verifierClass)
+    /**
+     * @phpstan-param class-string<AttestationStatementInterface> $statementClass
+     */
+    public function __construct(string $formatId, string $statementClass, AttestationVerifierInterface $verifier)
     {
         $this->formatId = $formatId;
         $this->statementClass = $statementClass;
-        $this->verifierClass = $verifierClass;
+        $this->verifier = $verifier;
     }
 
     public function getFormatId(): string
@@ -48,10 +46,6 @@ class BuiltInAttestationFormat implements AttestationFormatInterface
 
     public function getVerifier(): AttestationVerifierInterface
     {
-        $verifierClass = $this->verifierClass;
-        if ($this->verifier === null) {
-            $this->verifier = new $verifierClass();
-        }
         return $this->verifier;
     }
 }

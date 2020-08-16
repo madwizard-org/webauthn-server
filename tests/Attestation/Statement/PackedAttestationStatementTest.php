@@ -70,10 +70,4 @@ class PackedAttestationStatementTest extends TestCase
         $this->expectExceptionMessageMatches('~invalid .+ attestation statement~i');
         new PackedAttestationStatement($attObj);
     }
-
-    public function testCreateFormat()
-    {
-        $format = PackedAttestationStatement::createFormat();
-        $this->assertSame(PackedAttestationStatement::FORMAT_ID, $format->getFormatId());
-    }
 }

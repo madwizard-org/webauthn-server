@@ -63,10 +63,4 @@ class FidoU2fAttestationStatementTest extends TestCase
         $this->expectExceptionMessageMatches('~invalid .+ attestation statement~i');
         new FidoU2fAttestationStatement($attObj);
     }
-
-    public function testCreateFormat()
-    {
-        $format = FidoU2fAttestationStatement::createFormat();
-        $this->assertSame(FidoU2fAttestationStatement::FORMAT_ID, $format->getFormatId());
-    }
 }

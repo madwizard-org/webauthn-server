@@ -13,12 +13,21 @@ use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Pki\CertificateParser;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use function hash;
 
 class PackedStatementVerifierTest extends VerifierTest
 {
+    /**
+     * @var PackedAttestationVerifier
+     */
+    private $verifier;
+
+    protected function setUp(): void
+    {
+        $this->verifier = new PackedAttestationVerifier();
+    }
+
     public function testPacked()
     {
         $plain = FixtureHelper::getFidoTestPlain('challengeResponseAttestationPackedB64UrlMsg');
@@ -27,8 +36,7 @@ class PackedStatementVerifierTest extends VerifierTest
         $hash = hash('sha256', Base64UrlEncoding::decode($plain['response']['clientDataJSON']), true);
         $statement = new PackedAttestationStatement($attObj);
 
-        $verifier = new PackedAttestationVerifier(new CertificateParser());
-        $result = $verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
+        $result = $this->verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
         $this->assertSame(AttestationType::BASIC, $result->getAttestationType());
         // TODO: check trust path
@@ -42,8 +50,7 @@ class PackedStatementVerifierTest extends VerifierTest
         $hash = hash('sha256', Base64UrlEncoding::decode($clientResponse['response']['clientDataJSON']), true);
         $statement = new PackedAttestationStatement($attObj);
 
-        $verifier = new PackedAttestationVerifier();
-        $result = $verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
+        $result = $this->verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
         $this->assertSame(AttestationType::SELF, $result->getAttestationType());
         $this->assertInstanceOf(EmptyTrustPath::class, $result->getTrustPath());
@@ -51,11 +58,9 @@ class PackedStatementVerifierTest extends VerifierTest
 
     public function testWrongType()
     {
-        $verifier = new PackedAttestationVerifier();
-
         $this->expectException(VerificationException::class);
         $this->expectExceptionMessageMatches('~expecting.+packed~i');
-        $verifier->verify(
+        $this->verifier->verify(
             $this->createMock(NoneAttestationStatement::class),
             $this->getTestAuthenticatorData(),
             hash('sha256', '123', true)
@@ -64,16 +69,19 @@ class PackedStatementVerifierTest extends VerifierTest
 
     public function testECDAAUnsupported()
     {
-        $verifier = new PackedAttestationVerifier();
-
         $this->expectException(UnsupportedException::class);
 
         $statement = $this->createMock(PackedAttestationStatement::class);
         $statement->expects($this->once())->method('getEcdaaKeyId')->willReturn(new ByteBuffer('12345678'));
-        $verifier->verify(
+        $this->verifier->verify(
             $statement,
             $this->getTestAuthenticatorData(),
             hash('sha256', '123', true)
         );
+    }
+
+    public function testCreateFormat()
+    {
+        $this->checkFormat($this->verifier, PackedAttestationStatement::class);
     }
 }

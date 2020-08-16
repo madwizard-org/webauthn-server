@@ -3,15 +3,15 @@
 namespace MadWizard\WebAuthn\Attestation\Verifier;
 
 use MadWizard\WebAuthn\Attestation\Android\SafetyNetResponseParser;
-use MadWizard\WebAuthn\Attestation\Android\SafetyNetResponseParserInterface;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
+use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AndroidSafetyNetAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
 use MadWizard\WebAuthn\Exception\VerificationException;
-use MadWizard\WebAuthn\Pki\CertificateParser;
-use MadWizard\WebAuthn\Pki\CertificateParserInterface;
+use MadWizard\WebAuthn\Pki\CertificateDetails;
 use function base64_encode;
 use function hash_equals;
 use function microtime;
@@ -21,25 +21,9 @@ final class AndroidSafetyNetAttestationVerifier implements AttestationVerifierIn
     private const ATTEST_HOSTNAME = 'attest.android.com';
 
     /**
-     * @var CertificateParserInterface
-     */
-    private $certificateParser;
-
-    /**
-     * @var SafetyNetResponseParserInterface
-     */
-    private $responseParser;
-
-    /**
      * @var float|null
      */
-    private $fixedTimestamp = null;
-
-    public function __construct(?CertificateParserInterface $certificateParser = null, ?SafetyNetResponseParserInterface $responseParser = null)
-    {
-        $this->certificateParser = $certificateParser ?? new CertificateParser();
-        $this->responseParser = $responseParser ?? new SafetyNetResponseParser();
-    }
+    private $fixedTimestamp;
 
     private function getMsTimestamp(): float
     {
@@ -67,7 +51,7 @@ final class AndroidSafetyNetAttestationVerifier implements AttestationVerifierIn
         // -> this is done in AndroidSafetyNetAttestationStatement
 
         // Verify that response is a valid SafetyNet response of version ver.
-        $response = $this->responseParser->parse($attStmt->getResponse());
+        $response = SafetyNetResponseParser::parse($attStmt->getResponse());
 
         // Verify that the nonce in the response is identical to the Base64 encoding of the SHA-256 hash of the concatenation of authenticatorData and clientDataHash.
         $expectedNonce = base64_encode(hash('sha256', $authenticatorData->getRaw()->getBinaryString() . $clientDataHash, true));
@@ -84,7 +68,7 @@ final class AndroidSafetyNetAttestationVerifier implements AttestationVerifierIn
         $attCert = $x5c[0];
 
         // Verify that attestationCert is issued to the hostname "attest.android.com" (see SafetyNet online documentation).
-        $certInfo = $this->certificateParser->parsePem($attCert->asPem());
+        $certInfo = CertificateDetails::fromPem($attCert->asPem());
         $cn = $certInfo->getSubjectCommonName();
 
         if ($cn !== self::ATTEST_HOSTNAME) {
@@ -104,5 +88,14 @@ final class AndroidSafetyNetAttestationVerifier implements AttestationVerifierIn
 
         // If successful, return implementation-specific values representing attestation type Basic and attestation trust path attestationCert.
         return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath($x5c));
+    }
+
+    public function getSupportedFormat(): AttestationFormatInterface
+    {
+        return new BuiltInAttestationFormat(
+            AndroidSafetyNetAttestationStatement::FORMAT_ID,
+            AndroidSafetyNetAttestationStatement::class,
+            $this
+        );
     }
 }

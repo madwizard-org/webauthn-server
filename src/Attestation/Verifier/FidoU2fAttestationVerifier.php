@@ -4,6 +4,8 @@ namespace MadWizard\WebAuthn\Attestation\Verifier;
 
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
+use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Statement\FidoU2fAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
@@ -125,5 +127,14 @@ final class FidoU2fAttestationVerifier implements AttestationVerifierInterface
 
         // Let publicKeyU2F be the concatenation 0x04 || x || y. This signifies uncompressed ECC key format.
         return "\x04" . $x->getBinaryString() . $y->getBinaryString();
+    }
+
+    public function getSupportedFormat(): AttestationFormatInterface
+    {
+        return new BuiltInAttestationFormat(
+            FidoU2fAttestationStatement::FORMAT_ID,
+            FidoU2fAttestationStatement::class,
+            $this
+        );
     }
 }

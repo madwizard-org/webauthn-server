@@ -11,10 +11,19 @@ use MadWizard\WebAuthn\Attestation\Verifier\AndroidKeyAttestationVerifier;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
-use PHPUnit\Framework\TestCase;
 
-class AndroidKeyStatementVerifierTest extends TestCase
+class AndroidKeyStatementVerifierTest extends VerifierTest
 {
+    /**
+     * @var AndroidKeyAttestationVerifier
+     */
+    private $verifier;
+
+    protected function setUp(): void
+    {
+        $this->verifier = new AndroidKeyAttestationVerifier();
+    }
+
     public function testAndroidKey()
     {
         $clientResponse = FixtureHelper::getTestPlain('android-key-clientresponse');
@@ -24,8 +33,7 @@ class AndroidKeyStatementVerifierTest extends TestCase
         $hash = hash('sha256', Base64UrlEncoding::decode($clientResponse['response']['clientDataJSON']), true);
         $statement = new AndroidKeyAttestationStatement($attObj);
 
-        $verifier = new AndroidKeyAttestationVerifier();
-        $result = $verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
+        $result = $this->verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
         $this->assertSame(AttestationType::BASIC, $result->getAttestationType());
 
@@ -35,5 +43,10 @@ class AndroidKeyStatementVerifierTest extends TestCase
         $trustPath = $result->getTrustPath();
         $this->assertInstanceOf(CertificateTrustPath::class, $trustPath);
         $this->assertSame($chains['android-key'], $trustPath->asPemList());
+    }
+
+    public function testCreateFormat()
+    {
+        $this->checkFormat($this->verifier, AndroidKeyAttestationStatement::class);
     }
 }

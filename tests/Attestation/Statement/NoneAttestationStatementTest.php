@@ -38,10 +38,4 @@ class NoneAttestationStatementTest extends TestCase
         );
         new NoneAttestationStatement($invalid);
     }
-
-    public function testCreateFormat()
-    {
-        $format = NoneAttestationStatement::createFormat();
-        $this->assertSame(NoneAttestationStatement::FORMAT_ID, $format->getFormatId());
-    }
 }

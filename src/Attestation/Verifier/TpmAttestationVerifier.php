@@ -5,6 +5,8 @@ namespace MadWizard\WebAuthn\Attestation\Verifier;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Fido\FidoAaguidExtension;
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
+use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Statement\TpmAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Tpm\TpmEccParameters;
@@ -20,16 +22,9 @@ use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Pki\CertificateDetails;
 use MadWizard\WebAuthn\Pki\CertificateDetailsInterface;
-use MadWizard\WebAuthn\Pki\CertificateParser;
-use MadWizard\WebAuthn\Pki\CertificateParserInterface;
 
 final class TpmAttestationVerifier implements AttestationVerifierInterface
 {
-    /**
-     * @var CertificateParserInterface
-     */
-    private $certificateParser;
-
     public const OID_TCG_AT_TPM_MANUFACTURER = '2.23.133.2.1';
 
     public const OID_TCG_AT_TPM_MODEL = '2.23.133.2.2';
@@ -37,14 +32,6 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
     public const OID_TCG_AT_TPM_VERSION = '2.23.133.2.3';
 
     public const OID_TCG_KP_AIK_CERTIFICATE = '2.23.133.8.3';
-
-    public function __construct(?CertificateParserInterface $certificateParser = null)
-    {
-        if ($certificateParser === null) {
-            $certificateParser = new CertificateParser();
-        }
-        $this->certificateParser = $certificateParser;
-    }
 
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash): VerificationResult
     {
@@ -91,7 +78,7 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
             throw new VerificationException('Empty X5C in attestation.');
         }
         try {
-            $cert = $this->certificateParser->parsePem($x5c[0]);
+            $cert = CertificateDetails::fromPem($x5c[0]);
 
             $valid = $cert->verifySignature($rawCertInfo->getBinaryString(), $signature->getBinaryString(), $signatureAlgorithm);
         } catch (WebAuthnException $e) {
@@ -220,5 +207,14 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
         // [RFC5280] are both OPTIONAL as the status of many attestation certificates is available through metadata services.
         // See, for example, the FIDO Metadata Service [FIDOMetadataService].
         // -> not handled here.
+    }
+
+    public function getSupportedFormat(): AttestationFormatInterface
+    {
+        return new BuiltInAttestationFormat(
+            TpmAttestationStatement::FORMAT_ID,
+            TpmAttestationStatement::class,
+            $this
+        );
     }
 }

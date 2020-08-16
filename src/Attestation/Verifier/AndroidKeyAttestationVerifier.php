@@ -4,32 +4,22 @@ namespace MadWizard\WebAuthn\Attestation\Verifier;
 
 use MadWizard\WebAuthn\Attestation\Android\AndroidAttestationExtension;
 use MadWizard\WebAuthn\Attestation\Android\AndroidExtensionParser;
-use MadWizard\WebAuthn\Attestation\Android\AndroidExtensionParserInterface;
 use MadWizard\WebAuthn\Attestation\Android\AuthorizationList;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
+use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AndroidKeyAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
+use MadWizard\WebAuthn\Pki\CertificateDetails;
 use MadWizard\WebAuthn\Pki\CertificateDetailsInterface;
-use MadWizard\WebAuthn\Pki\CertificateParser;
-use MadWizard\WebAuthn\Pki\CertificateParserInterface;
 
 final class AndroidKeyAttestationVerifier implements AttestationVerifierInterface
 {
-    private $certificateParser;
-
-    private $extensionParser;
-
-    public function __construct(?CertificateParserInterface $certificateParser = null, ?AndroidExtensionParserInterface $extensionParser = null)
-    {
-        $this->certificateParser = $certificateParser ?? new CertificateParser();
-        $this->extensionParser = $extensionParser ?? new AndroidExtensionParser();
-    }
-
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash): VerificationResult
     {
         if (!($attStmt instanceof AndroidKeyAttestationStatement)) {
@@ -44,7 +34,7 @@ final class AndroidKeyAttestationVerifier implements AttestationVerifierInterfac
         if (count($x5c) === 0) {
             throw new VerificationException('No certificates in chain');
         }
-        $cert = $this->certificateParser->parsePem($x5c[0]);
+        $cert = CertificateDetails::fromPem($x5c[0]);
 
         // Verify that sig is a valid signature over the concatenation of authenticatorData and clientDataHash using
         // the public key in the first certificate in x5c with the algorithm specified in alg.
@@ -63,7 +53,7 @@ final class AndroidKeyAttestationVerifier implements AttestationVerifierInterfac
         if ($extension === null) {
             throw new VerificationException('Missing Android attestation extension.');
         }
-        $ext = $this->extensionParser->parseAttestationExtension($extension->getValue());
+        $ext = AndroidExtensionParser::parseAttestationExtension($extension->getValue());
 
         $this->checkAndroidKeyExtension($ext, $clientDataHash);
 
@@ -118,5 +108,14 @@ final class AndroidKeyAttestationVerifier implements AttestationVerifierInterfac
         $certKeyDer = $cert->getPublicKeyDer();
         $keyDer = $key->asDer();
         return hash_equals($certKeyDer, $keyDer);
+    }
+
+    public function getSupportedFormat(): AttestationFormatInterface
+    {
+        return new BuiltInAttestationFormat(
+            AndroidKeyAttestationStatement::FORMAT_ID,
+            AndroidKeyAttestationStatement::class,
+            $this
+        );
     }
 }

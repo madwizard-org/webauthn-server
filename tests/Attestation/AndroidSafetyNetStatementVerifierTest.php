@@ -12,10 +12,19 @@ use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
-use PHPUnit\Framework\TestCase;
 
-class AndroidSafetyNetStatementVerifierTest extends TestCase
+class AndroidSafetyNetStatementVerifierTest extends VerifierTest
 {
+    /**
+     * @var AndroidSafetyNetAttestationVerifier
+     */
+    private $verifier;
+
+    protected function setUp(): void
+    {
+        $this->verifier = new AndroidSafetyNetAttestationVerifier();
+    }
+
     public function testSafetyNet()
     {
         $clientResponse = FixtureHelper::getTestPlain('android-safetynet-clientresponse');
@@ -25,11 +34,9 @@ class AndroidSafetyNetStatementVerifierTest extends TestCase
         $hash = hash('sha256', Base64UrlEncoding::decode($clientResponse['response']['clientDataJSON']), true);
         $statement = new AndroidSafetyNetAttestationStatement($attObj);
 
-        $verifier = new AndroidSafetyNetAttestationVerifier();
+        $this->verifier->useFixedTimestamp(1541336750000);
 
-        $verifier->useFixedTimestamp(1541336750000);
-
-        $result = $verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
+        $result = $this->verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
         $this->assertSame(AttestationType::BASIC, $result->getAttestationType());
 
@@ -49,11 +56,15 @@ class AndroidSafetyNetStatementVerifierTest extends TestCase
         $hash = hash('sha256', Base64UrlEncoding::decode($plain['response']['clientDataJSON']), true);
         $statement = new AndroidSafetyNetAttestationStatement($attObj);
 
-        $verifier = new AndroidSafetyNetAttestationVerifier();
-        $verifier->useFixedTimestamp(1532716642000); // Overide current time to pass validation
+        $this->verifier->useFixedTimestamp(1532716642000); // Overide current time to pass validation
 
         $this->expectException(VerificationException::class);
         $this->expectExceptionMessageMatches('~Attestation should have ctsProfileMatch set to true~i');
-        $verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
+        $this->verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
+    }
+
+    public function testCreateFormat()
+    {
+        $this->checkFormat($this->verifier, AndroidSafetyNetAttestationStatement::class);
     }
 }

@@ -7,7 +7,7 @@ use MadWizard\WebAuthn\Format\ByteBuffer;
 use Sop\ASN1\Type\Constructed\Sequence;
 use Sop\ASN1\Type\UnspecifiedType;
 
-final class AndroidExtensionParser implements AndroidExtensionParserInterface
+final class AndroidExtensionParser
 {
     // Sequence indices in KeyDescription. See https://source.android.com/security/keystore/attestation#attestation-extension
     private const IDX_ATTESTATION_CHALLENGE = 4;
@@ -23,7 +23,7 @@ final class AndroidExtensionParser implements AndroidExtensionParserInterface
 
     private const TAG_ORIGIN = 702;
 
-    private function parseAuthorizationList(Sequence $seq): AuthorizationList
+    private static function parseAuthorizationList(Sequence $seq): AuthorizationList
     {
         $authList = new AuthorizationList();
 
@@ -52,7 +52,11 @@ final class AndroidExtensionParser implements AndroidExtensionParserInterface
         return $authList;
     }
 
-    public function parseAttestationExtension(ByteBuffer $data): AndroidAttestationExtension
+    /**
+     * @param ByteBuffer $data The raw value of the octet string inside the X509 extension, that is the actual data bytes
+     *                         from the extension's octet-string, representing an ASN.1 sequence.
+     */
+    public static function parseAttestationExtension(ByteBuffer $data): AndroidAttestationExtension
     {
         try {
             $der = $data->getBinaryString();
@@ -60,8 +64,8 @@ final class AndroidExtensionParser implements AndroidExtensionParserInterface
 
             $challenge = $seq->at(self::IDX_ATTESTATION_CHALLENGE)->asOctetString()->string();
 
-            $software = $this->parseAuthorizationList($seq->at(self::IDX_SOFTWARE_ENFORCED)->asSequence());
-            $tee = $this->parseAuthorizationList($seq->at(self::IDX_TEE_INFORCED)->asSequence());
+            $software = self::parseAuthorizationList($seq->at(self::IDX_SOFTWARE_ENFORCED)->asSequence());
+            $tee = self::parseAuthorizationList($seq->at(self::IDX_TEE_INFORCED)->asSequence());
         } catch (\Exception $e) {
             throw new ParseException('Failed to parse Android attestation extension.', 0, $e);
         }

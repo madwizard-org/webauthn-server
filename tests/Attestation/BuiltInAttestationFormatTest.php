@@ -16,18 +16,17 @@ class BuiltInAttestationFormatTest extends TestCase
         $this->getMockBuilder(AttestationStatementInterface::class)
             ->setMockClassName('TestStatement')
             ->getMock();
-        $this->getMockBuilder(AttestationVerifierInterface::class)
+        $verifier = $this->getMockBuilder(AttestationVerifierInterface::class)
             ->setMockClassName('TestVerifier')
             ->getMock();
 
-        $format = new BuiltInAttestationFormat('testformat', 'TestStatement', 'TestVerifier');
+        $format = new BuiltInAttestationFormat('testformat', 'TestStatement', $verifier);
         $this->assertSame('testformat', $format->getFormatId());
 
         $attObj = new AttestationObject('dummy', [], new ByteBuffer(''));
 
         $statement = $format->createStatement($attObj);
         $this->assertInstanceOf('TestStatement', $statement);
-        $verifier = $format->getVerifier();
-        $this->assertInstanceOf('TestVerifier', $verifier);
+        $this->assertSame($verifier, $format->getVerifier());
     }
 }

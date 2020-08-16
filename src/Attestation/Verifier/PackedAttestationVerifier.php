@@ -5,6 +5,8 @@ namespace MadWizard\WebAuthn\Attestation\Verifier;
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Fido\FidoAaguidExtension;
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
+use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
@@ -16,24 +18,9 @@ use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Pki\CertificateDetails;
 use MadWizard\WebAuthn\Pki\CertificateDetailsInterface;
-use MadWizard\WebAuthn\Pki\CertificateParser;
-use MadWizard\WebAuthn\Pki\CertificateParserInterface;
 
 final class PackedAttestationVerifier implements AttestationVerifierInterface
 {
-    /**
-     * @var CertificateParserInterface
-     */
-    private $certificateParser;
-
-    public function __construct(?CertificateParserInterface $certificateParser = null)
-    {
-        if ($certificateParser === null) {
-            $certificateParser = new CertificateParser();
-        }
-        $this->certificateParser = $certificateParser;
-    }
-
     public function verify(AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash): VerificationResult
     {
         // Verification procedure from https://www.w3.org/TR/webauthn/#packed-attestation
@@ -72,7 +59,7 @@ final class PackedAttestationVerifier implements AttestationVerifierInterface
             throw new VerificationException('Empty X5C in attestation.');
         }
         try {
-            $cert = $this->certificateParser->parsePem($x5c[0]);
+            $cert = CertificateDetails::fromPem($x5c[0]);
             $verificationData = $authenticatorData->getRaw()->getBinaryString() . $clientDataHash;
             $valid = $cert->verifySignature($verificationData, $signature->getBinaryString(), $signatureAlgorithm);
         } catch (WebAuthnException $e) {
@@ -165,5 +152,14 @@ final class PackedAttestationVerifier implements AttestationVerifierInterface
         // [RFC5280] are both OPTIONAL as the status of many attestation certificates is available through authenticator
         // metadata services. See, for example, the FIDO Metadata Service [FIDOMetadataService].
         // -> not handled here.
+    }
+
+    public function getSupportedFormat(): AttestationFormatInterface
+    {
+        return new BuiltInAttestationFormat(
+            PackedAttestationStatement::FORMAT_ID,
+            PackedAttestationStatement::class,
+            $this
+        );
     }
 }

@@ -13,6 +13,16 @@ use MadWizard\WebAuthn\Exception\VerificationException;
 
 class FidoU2fVerifierTest extends VerifierTest
 {
+    /**
+     * @var FidoU2fAttestationVerifier
+     */
+    private $verifier;
+
+    protected function setUp(): void
+    {
+        $this->verifier = new FidoU2fAttestationVerifier();
+    }
+
     public function testFidoU2f()
     {
         $response = $this->getFidoResponse('challengeResponseAttestationU2fMsgB64Url');
@@ -20,9 +30,8 @@ class FidoU2fVerifierTest extends VerifierTest
 
         $att = AttestationObject::parse($buffer);
         $statement = new FidoU2fAttestationStatement($att);
-        $verifier = new FidoU2fAttestationVerifier();
 
-        $result = $verifier->verify(
+        $result = $this->verifier->verify(
             $statement,
             new AuthenticatorData($att->getAuthenticatorData()),
             hash('sha256', $response->getClientDataJson(), true)
@@ -45,9 +54,8 @@ class FidoU2fVerifierTest extends VerifierTest
 
         $att = AttestationObject::parse($buffer);
         $statement = new FidoU2fAttestationStatement($att);
-        $verifier = new FidoU2fAttestationVerifier();
 
-        $result = $verifier->verify(
+        $result = $this->verifier->verify(
             $statement,
             new AuthenticatorData($att->getAuthenticatorData()),
             hash('sha256', $response->getClientDataJson(), true)
@@ -70,23 +78,25 @@ class FidoU2fVerifierTest extends VerifierTest
 
         $att = AttestationObject::parse($buffer);
         $statement = new FidoU2fAttestationStatement($att);
-        $verifier = new FidoU2fAttestationVerifier();
 
         $this->expectException(VerificationException::class);
         $this->expectExceptionMessageMatches('~signature~i');
-        $verifier->verify($statement, new AuthenticatorData($att->getAuthenticatorData()), hash('sha256', '123', true));
+        $this->verifier->verify($statement, new AuthenticatorData($att->getAuthenticatorData()), hash('sha256', '123', true));
     }
 
     public function testFidoWrongType()
     {
-        $verifier = new FidoU2fAttestationVerifier();
-
         $this->expectException(VerificationException::class);
         $this->expectExceptionMessageMatches('~expecting.+fido~i');
-        $verifier->verify(
+        $this->verifier->verify(
             $this->createMock(NoneAttestationStatement::class),
             $this->getTestAuthenticatorData(),
             hash('sha256', '123', true)
         );
+    }
+
+    public function testCreateFormat()
+    {
+        $this->checkFormat($this->verifier, FidoU2fAttestationStatement::class);
     }
 }

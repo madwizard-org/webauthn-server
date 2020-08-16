@@ -4,6 +4,8 @@ namespace MadWizard\WebAuthn\Attestation\Verifier;
 
 use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
+use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
 use MadWizard\WebAuthn\Attestation\TrustPath\EmptyTrustPath;
@@ -17,5 +19,14 @@ final class NoneAttestationVerifier implements AttestationVerifierInterface
             throw new VerificationException('Expecting NoneAttestationStatement.');
         }
         return new VerificationResult(AttestationType::NONE, new EmptyTrustPath());
+    }
+
+    public function getSupportedFormat(): AttestationFormatInterface
+    {
+        return new BuiltInAttestationFormat(
+            NoneAttestationStatement::FORMAT_ID,
+            NoneAttestationStatement::class,
+            $this
+        );
     }
 }

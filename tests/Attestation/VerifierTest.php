@@ -3,6 +3,7 @@
 namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
 use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Json\JsonConverter;
@@ -17,11 +18,8 @@ abstract class VerifierTest extends TestCase
         $message = $json[$name];
         $message['type'] = 'public-key';
         $credential = JsonConverter::decodeAttestationCredential(json_encode($message));
-        $response = $credential->getResponse();
-        /*
-         * @var AuthenticatorAttestationResponseInterface $response
-         */
-        return $response;
+
+        return $credential->getResponse()->asAttestationResponse();
     }
 
     protected function getTestAuthenticatorData(): AuthenticatorData
@@ -29,5 +27,12 @@ abstract class VerifierTest extends TestCase
         return new AuthenticatorData(
             new ByteBuffer(str_repeat('x', 32) . "\x01" . "\x11\x22\x33\x44")
         );
+    }
+
+    protected function checkFormat(AttestationVerifierInterface $verifier, string $attestationClass)
+    {
+        $format = $verifier->getSupportedFormat();
+        $this->assertSame($attestationClass::FORMAT_ID, $format->getFormatId());
+        $this->assertSame($verifier, $format->getVerifier());
     }
 }

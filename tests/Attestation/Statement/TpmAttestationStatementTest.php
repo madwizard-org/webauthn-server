@@ -65,10 +65,4 @@ class TpmAttestationStatementTest extends TestCase
         $this->expectExceptionMessageMatches('~ecdaaKeyId and x5c cannot both~i');
         new TpmAttestationStatement($attObj);
     }
-
-    public function testCreateFormat()
-    {
-        $format = TpmAttestationStatement::createFormat();
-        $this->assertSame(TpmAttestationStatement::FORMAT_ID, $format->getFormatId());
-    }
 }

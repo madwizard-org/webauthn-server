@@ -7,12 +7,20 @@ use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Statement\TpmAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Verifier\TpmAttestationVerifier;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
-use MadWizard\WebAuthn\Pki\CertificateParser;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
-use PHPUnit\Framework\TestCase;
 
-class TpmStatementVerifierTest extends TestCase
+class TpmStatementVerifierTest extends VerifierTest
 {
+    /**
+     * @var TpmAttestationVerifier
+     */
+    private $verifier;
+
+    protected function setUp(): void
+    {
+        $this->verifier = new TpmAttestationVerifier();
+    }
+
     public function testTpm()
     {
         $plain = FixtureHelper::getFidoTestPlain('challengeResponseAttestationTpmB64UrlMsg');
@@ -21,10 +29,14 @@ class TpmStatementVerifierTest extends TestCase
         $hash = hash('sha256', Base64UrlEncoding::decode($plain['response']['clientDataJSON']), true);
         $statement = new TpmAttestationStatement($attObj);
 
-        $verifier = new TpmAttestationVerifier(new CertificateParser());
-        $result = $verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
+        $result = $this->verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
         $this->assertSame(AttestationType::ATT_CA, $result->getAttestationType());
         // TODO: check trust path
+    }
+
+    public function testCreateFormat()
+    {
+        $this->checkFormat($this->verifier, TpmAttestationStatement::class);
     }
 }

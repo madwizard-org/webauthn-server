@@ -3,9 +3,6 @@
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
-use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatInterface;
-use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
-use MadWizard\WebAuthn\Attestation\Verifier\AndroidKeyAttestationVerifier;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -73,14 +70,5 @@ class AndroidKeyAttestationStatement extends AbstractAttestationStatement
     public function getCertificates(): array
     {
         return $this->certificates;
-    }
-
-    public static function createFormat(): AttestationFormatInterface
-    {
-        return new BuiltInAttestationFormat(
-            self::FORMAT_ID,
-            self::class,
-            AndroidKeyAttestationVerifier::class
-        );
     }
 }

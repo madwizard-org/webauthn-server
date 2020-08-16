@@ -13,21 +13,27 @@ use PHPUnit\Framework\TestCase;
 
 class AttestationFormatRegistryTest extends TestCase
 {
+    private $verifier1;
+
+    private $verifier2;
+
     private function getRegistry(): AttestationFormatRegistry
     {
         $registry = new AttestationFormatRegistry();
 
+        $this->verifier1 = $this->createMock(AttestationVerifierInterface::class);
+        $this->verifier2 = $this->createMock(AttestationVerifierInterface::class);
         $format1 = new BuiltInAttestationFormat(
             'format1',
             $this->getMockClass(AttestationStatementInterface::class, [], [], 'TestFormat1Statement'),
-            $this->getMockClass(AttestationVerifierInterface::class, [], [], 'TestFormat1Verifier')
+            $this->verifier1
         );
         $registry->addFormat($format1);
 
         $format2 = new BuiltInAttestationFormat(
             'format2',
             $this->getMockClass(AttestationStatementInterface::class, [], [], 'TestFormat2Statement'),
-            $this->getMockClass(AttestationVerifierInterface::class, [], [], 'TestFormat2Verifier')
+            $this->verifier2
         );
         $registry->addFormat($format2);
 
@@ -49,8 +55,8 @@ class AttestationFormatRegistryTest extends TestCase
     public function testVerifierFormats()
     {
         $registry = $this->getRegistry();
-        $this->assertInstanceOf('TestFormat1Verifier', $registry->getVerifier('format1'));
-        $this->assertInstanceOf('TestFormat2Verifier', $registry->getVerifier('format2'));
+        $this->assertSame($this->verifier1, $registry->getVerifier('format1'));
+        $this->assertSame($this->verifier2, $registry->getVerifier('format2'));
     }
 
     public function testNotSupportedStatement()

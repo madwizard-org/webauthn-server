@@ -10,9 +10,9 @@ use MadWizard\WebAuthn\Pki\Jwt\ValidationContext;
 use MadWizard\WebAuthn\Pki\Jwt\X5cParameterReader;
 use function is_float;
 
-final class SafetyNetResponseParser implements SafetyNetResponseParserInterface
+final class SafetyNetResponseParser
 {
-    public function parse(string $response): SafetyNetResponseInterface
+    public static function parse(string $response): SafetyNetResponseInterface
     {
         try {
             $jwt = new Jwt($response);

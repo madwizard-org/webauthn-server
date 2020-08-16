@@ -30,10 +30,7 @@ class AuthenticationVerifier extends AbstractVerifier
     {
         // SPEC 7.2 Verifying an authentication assertion
 
-        $response = $credential->getResponse();
-        if (!($response instanceof AuthenticatorAssertionResponseInterface)) {
-            throw new VerificationException('Expecting authenticator assertion response.');
-        }
+        $response = $credential->getResponse()->asAssertionResponse();
         $authData = new AuthenticatorData($response->getAuthenticatorData());
 
         // 1. If the allowCredentials option was given when this authentication ceremony was initiated, verify that

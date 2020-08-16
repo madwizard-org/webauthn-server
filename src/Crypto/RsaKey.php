@@ -110,7 +110,7 @@ class RsaKey extends CoseKey
     public function asDer(): string
     {
         // DER encoded RSA key
-        $der =
+        return
             Der::sequence(
                 Der::sequence(
                     Der::oid("\x2A\x86\x48\x86\xF7\x0D\x01\x01\x01") . // OID 1.2.840.113549.1.1.1 rsaEncryption
@@ -123,8 +123,6 @@ class RsaKey extends CoseKey
                     )
                 )
             );
-
-        return $der;
     }
 
     public function asPem(): string

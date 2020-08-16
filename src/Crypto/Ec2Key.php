@@ -148,7 +148,7 @@ class Ec2Key extends CoseKey // TODO exceptions
     public function asDer(): string
     {
         // DER encoded P256 curve
-        $der =
+        return
             Der::sequence(
                 Der::sequence(
                     Der::oid("\x2A\x86\x48\xCE\x3D\x02\x01") . // OID 1.2.840.10045.2.1 ecPublicKey
@@ -158,8 +158,6 @@ class Ec2Key extends CoseKey // TODO exceptions
                     $this->getUncompressedCoordinates()->getBinaryString()
                 )
             );
-
-        return $der;
     }
 
     public function asPem(): string

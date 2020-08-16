@@ -21,4 +21,9 @@ class AuthenticatorAttestationResponse extends AbstractAuthenticatorResponse imp
     {
         return $this->attestationObject;
     }
+
+    public function asAttestationResponse(): AuthenticatorAttestationResponseInterface
+    {
+        return $this;
+    }
 }

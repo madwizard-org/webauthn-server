@@ -68,15 +68,11 @@ class CertificateDetails implements CertificateDetailsInterface
     {
         switch ($coseAlgorithm) {
             case CoseAlgorithm::ES256:
-                return new ECDSAWithSHA256AlgorithmIdentifier();
             case CoseAlgorithm::ES384:
-                return new ECDSAWithSHA256AlgorithmIdentifier();
             case CoseAlgorithm::ES512:
                 return new ECDSAWithSHA256AlgorithmIdentifier();
             case CoseAlgorithm::RS256:
-                return new SHA256WithRSAEncryptionAlgorithmIdentifier();
             case CoseAlgorithm::RS384:
-                return new SHA256WithRSAEncryptionAlgorithmIdentifier();
             case CoseAlgorithm::RS512:
                 return new SHA256WithRSAEncryptionAlgorithmIdentifier();
             case CoseAlgorithm::RS1:

@@ -8,7 +8,7 @@ use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Metadata\Provider\MetadataProviderInterface;
-use MadWizard\WebAuthn\Pki\CertificateParser;
+use MadWizard\WebAuthn\Pki\CertificateDetails;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -71,8 +71,7 @@ final class MetadataResolver implements MetadataResolverInterface, LoggerAwareIn
 
     private static function pkIdFromPemCertificate(string $pem): IdentifierInterface
     {
-        $parser = new CertificateParser();
-        $cert = $parser->parsePem($pem);
+        $cert = CertificateDetails::fromPem($pem);
         return new AttestationKeyIdentifier($cert->getPublicKeyIdentifier());
     }
 }

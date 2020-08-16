@@ -10,4 +10,8 @@ interface AuthenticatorResponseInterface
     public function getClientDataJson(): string;
 
     public function getParsedClientData(): array;
+
+    public function asAttestationResponse(): AuthenticatorAttestationResponseInterface;
+
+    public function asAssertionResponse(): AuthenticatorAssertionResponseInterface;
 }

@@ -120,7 +120,7 @@ class AssertionDataHelper
             throw new RuntimeException('Failed to generate signature');
         }
 
-        $credentialJson = json_encode(
+        return json_encode(
             [
                 'rawId' => $client['credentialId'],
                 'id' => $client['credentialId'],
@@ -134,8 +134,6 @@ class AssertionDataHelper
                 'getClientExtensionResults' => new stdClass(),
             ]
         );
-
-        return $credentialJson;
     }
 
     public function getContext(): AuthenticationContext

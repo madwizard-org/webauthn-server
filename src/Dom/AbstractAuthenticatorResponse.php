@@ -3,6 +3,7 @@
 namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Exception\ParseException;
+use MadWizard\WebAuthn\Exception\WebAuthnException;
 use function json_last_error;
 
 abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInterface
@@ -42,5 +43,15 @@ abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInt
     public function getParsedClientData(): array
     {
         return $this->parsedJson;
+    }
+
+    public function asAttestationResponse(): AuthenticatorAttestationResponseInterface
+    {
+        throw new WebAuthnException('Response is not an attestation response.');
+    }
+
+    public function asAssertionResponse(): AuthenticatorAssertionResponseInterface
+    {
+        throw new WebAuthnException('Response is not an assertion response.');
     }
 }

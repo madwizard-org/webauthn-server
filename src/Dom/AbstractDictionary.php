@@ -15,7 +15,7 @@ abstract class AbstractDictionary implements DictionaryInterface
 
     protected static function removeNullValues(array $map): array
     {
-        return array_filter($map, function ($value) {
+        return array_filter($map, static function ($value) {
             return $value !== null;
         });
     }

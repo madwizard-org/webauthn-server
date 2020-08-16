@@ -178,7 +178,7 @@ class MetadataStatement implements MetadataInterface
     private static function validateKeyIdentifiers(?array $list): ?array
     {
         if ($list === null) {
-            return $list;
+            return null;
         }
 
         $result = [];

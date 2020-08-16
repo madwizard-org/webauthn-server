@@ -3,7 +3,6 @@
 namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
-use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Json\JsonConverter;
@@ -109,10 +108,7 @@ class AttestationObjectTest extends TestCase
             $cred->getResponse()->getClientDataJson()
         );
 
-        /**
-         * @var AuthenticatorAttestationResponseInterface $response
-         */
-        $response = $cred->getResponse();
+        $response = $cred->getResponse()->asAttestationResponse();
         $buffer = $response->getAttestationObject();
 
         $decoded = AttestationObject::parse($buffer);

@@ -6,7 +6,6 @@ use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Credential\CredentialId;
-use MadWizard\WebAuthn\Dom\AuthenticatorAttestationResponseInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
@@ -32,11 +31,7 @@ class RegistrationVerifier extends AbstractVerifier
     public function verify(PublicKeyCredentialInterface $credential, RegistrationContext $context): RegistrationResult
     {
         // SPEC 7.1 Registering a new credential
-
-        $response = $credential->getResponse();
-        if (!($response instanceof AuthenticatorAttestationResponseInterface)) {
-            throw new VerificationException('Expecting authenticator attestation response.');
-        }
+        $response = $credential->getResponse()->asAttestationResponse();
 
         // 1. Let JSONtext be the result of running UTF-8 decode on the value of response.clientDataJSON.
         // 2. Let C, the client data claimed as collected during the credential creation, be the result of running an

@@ -43,4 +43,9 @@ class AuthenticatorAssertionResponse extends AbstractAuthenticatorResponse imple
     {
         return $this->userHandle;
     }
+
+    public function asAssertionResponse(): AuthenticatorAssertionResponseInterface
+    {
+        return $this;
+    }
 }

@@ -42,7 +42,7 @@ final class ChainValidator implements ChainValidatorInterface
         try {
             $path->validate($config);
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }

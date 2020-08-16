@@ -200,11 +200,11 @@ final class ServerBuilder
         $this->setupFormats($c);
         $this->setupTrustDecisionManager($c);
 
-        $c[TrustPathValidatorInterface::class] = static function (ServiceContainer $c) {
+        $c[TrustPathValidatorInterface::class] = static function (ServiceContainer $c): TrustPathValidatorInterface {
             return new TrustPathValidator($c[ChainValidatorInterface::class]);
         };
 
-        $c[ChainValidatorInterface::class] = static function (ServiceContainer $c) {
+        $c[ChainValidatorInterface::class] = static function (ServiceContainer $c): ChainValidatorInterface {
             // TODO
             //return new ChainValidator($c[CertificateStatusResolverInterface::class]);
             return new ChainValidator(null);
@@ -228,10 +228,10 @@ final class ServerBuilder
         if (isset($c[DownloaderInterface::class])) {
             return;
         }
-        $c[DownloaderInterface::class] = static function (ServiceContainer $c) {
+        $c[DownloaderInterface::class] = static function (ServiceContainer $c): DownloaderInterface {
             return new Downloader($c[Client::class]);
         };
-        $c[Client::class] = static function (ServiceContainer $c) {
+        $c[Client::class] = static function (ServiceContainer $c): Client {
             $factory = new CachingClientFactory($c[CacheProviderInterface::class]);
             return $factory->createClient();
         };
@@ -242,11 +242,13 @@ final class ServerBuilder
         if (isset($c[CacheProviderInterface::class])) {
             return;
         }
-        if ($this->cacheDir === null) {
+
+        $cacheDir = $this->cacheDir;
+        if ($cacheDir === null) {
             throw new ConfigurationException('No cache directory configured. Use useCacheDirectory or useSystemTempCache.');
         }
-        $c[CacheProviderInterface::class] = function (ServiceContainer $c) {
-            return new FileCacheProvider($this->cacheDir);
+        $c[CacheProviderInterface::class] = static function (ServiceContainer $c) use ($cacheDir) {
+            return new FileCacheProvider($cacheDir);
         };
     }
 
@@ -285,11 +287,6 @@ final class ServerBuilder
     private function createServer(ServiceContainer $c): ServerInterface
     {
         return new WebAuthnServer($c[PolicyInterface::class], $c[CredentialStoreInterface::class]);
-    }
-
-    private function getRelyingParty(): RelyingPartyInterface
-    {
-        return $this->rp;
     }
 
     public function addMetadataSource(MetadataSourceInterface $metadataSource): self
@@ -353,7 +350,7 @@ final class ServerBuilder
     private function setupFormats(ServiceContainer $c)
     {
         $c[PackedAttestationVerifier::class] = static function () {
-            return new AndroidSafetyNetAttestationVerifier();
+            return new PackedAttestationVerifier();
         };
         $c[FidoU2fAttestationVerifier::class] = static function () {
             return new FidoU2fAttestationVerifier();

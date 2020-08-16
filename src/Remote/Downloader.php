@@ -13,7 +13,7 @@ class Downloader implements DownloaderInterface
      */
     private $client;
 
-    public function __construct(Client $client)     // TODO use clientfactory
+    public function __construct(Client $client)     // TODO use clientfactory and ClientInterface
     {
         $this->client = $client;
     }

@@ -29,8 +29,6 @@ class AuthenticationContext extends AbstractContext implements RequestContext
 
     /**
      * @internal TODO: do not include here?
-     *
-     * @return static
      */
     public static function create(PublicKeyCredentialRequestOptions $options, PolicyInterface $policy): self
     {

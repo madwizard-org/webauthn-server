@@ -19,7 +19,7 @@ Installation
 ------------
 Installation via composer:
 ```bash
-composer require madwizard/webauthn:^0.2.2
+composer require madwizard/webauthn:^0.3
 ```
 
 Library reference
@@ -53,7 +53,13 @@ Usage
 The library is still in development so documentation is limited. The general pattern to follow is:
 
 1. Implement `CredentialStoreInterface` (you will need `UserCredential` or your own implementation of `UserCredentialInterface`)
-2. Create an instance of `RelyingParty` and use the `ServerBuilder` class to build a server object.
+2. Create an instance of `RelyingParty` and use the `ServerBuilder` class to build a server object:
+```php
+$server = (new ServerBuilder())
+    ->setRelyingParty($rp)
+    ->setCredentialStore($store)
+    ->build();
+```
 3. Use `startRegistration`/`finishRegistration` to register credentials. Be sure to store the temporary `AttestationContext` server side!
 4. and `startAuthentication`/`finishAuthentication` to authenticate. Be sure to store the temporary `AssertionContext` server side!
 

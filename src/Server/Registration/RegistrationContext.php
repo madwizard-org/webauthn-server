@@ -3,10 +3,7 @@
 namespace MadWizard\WebAuthn\Server\Registration;
 
 use MadWizard\WebAuthn\Credential\UserHandle;
-use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
-use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Policy\PolicyInterface;
 use MadWizard\WebAuthn\Server\AbstractContext;
 use MadWizard\WebAuthn\Server\RequestContext;
 use MadWizard\WebAuthn\Web\Origin;
@@ -22,29 +19,6 @@ class RegistrationContext extends AbstractContext implements RequestContext
     {
         parent::__construct($challenge, $origin, $rpId);
         $this->userHandle = $userHandle;
-    }
-
-    /**
-     * @internal TODO: do not include heree?
-     *
-     * @return static
-     */
-    public static function create(PublicKeyCredentialCreationOptions $options, PolicyInterface $policy): self
-    {
-        $relyingParty = $policy->getRelyingParty();
-        $origin = $relyingParty->getOrigin();
-        $rpId = $relyingParty->getEffectiveId();
-
-        // TODO: mismatch $rp and rp in $options? Check?
-        $context = new self($options->getChallenge(), $origin, $rpId, UserHandle::fromBuffer($options->getUserEntity()->getId()));
-
-        $context->setUserPresenceRequired($policy->isUserPresenceRequired());
-        $authSel = $options->getAuthenticatorSelection();
-        if ($authSel !== null && $authSel->getUserVerification() === UserVerificationRequirement::REQUIRED) {
-            $context->setUserVerificationRequired(true);
-        }
-
-        return $context;
     }
 
     public function getUserHandle(): UserHandle

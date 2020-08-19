@@ -30,8 +30,6 @@ use MadWizard\WebAuthn\Metadata\Provider\MetadataServiceProvider;
 use MadWizard\WebAuthn\Metadata\Source\MetadataServiceSource;
 use MadWizard\WebAuthn\Metadata\Source\MetadataSourceInterface;
 use MadWizard\WebAuthn\Metadata\Source\StatementDirectorySource;
-use MadWizard\WebAuthn\Pki\CertificateStatusResolver;
-use MadWizard\WebAuthn\Pki\CertificateStatusResolverInterface;
 use MadWizard\WebAuthn\Pki\ChainValidator;
 use MadWizard\WebAuthn\Pki\ChainValidatorInterface;
 use MadWizard\WebAuthn\Policy\Policy;
@@ -143,10 +141,6 @@ final class ServerBuilder
         $this->policyCallback = $policyCallback;
         return $this;
     }
-
-//    public function withTrustPreset(string $preset)
-//    {
-//    }
 
     public function allowNoneAttestation(bool $allow): self
     {
@@ -270,12 +264,7 @@ final class ServerBuilder
 
     private function createPolicy(ServiceContainer $c): PolicyInterface
     {
-        $policy = new Policy(
-            $c[RelyingPartyInterface::class],
-            $c[MetadataResolverInterface::class],
-            $c[TrustDecisionManagerInterface::class],
-            $c[AttestationFormatRegistryInterface::class]
-        );
+        $policy = new Policy();
 
         if ($this->policyCallback !== null) {
             ($this->policyCallback)($policy);
@@ -286,7 +275,13 @@ final class ServerBuilder
 
     private function createServer(ServiceContainer $c): ServerInterface
     {
-        return new WebAuthnServer($c[PolicyInterface::class], $c[CredentialStoreInterface::class]);
+        return new WebAuthnServer(
+            $c[RelyingPartyInterface::class],
+            $c[PolicyInterface::class],
+            $c[CredentialStoreInterface::class],
+            $c[AttestationFormatRegistryInterface::class],
+            $c[MetadataResolverInterface::class],
+            $c[TrustDecisionManagerInterface::class]);
     }
 
     public function addMetadataSource(MetadataSourceInterface $metadataSource): self

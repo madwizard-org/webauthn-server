@@ -2,45 +2,26 @@
 
 namespace MadWizard\WebAuthn\Policy;
 
-use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
-use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
-use MadWizard\WebAuthn\Metadata\MetadataResolverInterface;
-use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManagerInterface;
 
 final class Policy implements PolicyInterface
 {
-    /**
-     * @var RelyingPartyInterface
-     */
-    private $relyingParty;
-
-    /**
-     * @var AttestationFormatRegistryInterface
-     */
-    private $formatRegistry;
-
-    /**
-     * @var TrustDecisionManagerInterface
-     */
-    private $trustDecisionManager;
-
-    /**
-     * @var MetadataResolverInterface
-     */
-    private $metadataResolver;
-
-    /**
-     * @var bool
-     */
-    private $userPresenceRequired = true;
-
     public const DEFAULT_CHALLENGE_LENGTH = 64;
 
     private const MIN_CHALLENGE_LENGTH = 32;
 
-    private const SUPPORTED_ALGORITHMS = [ // TODO MOVE?
+    private const SUPPORTED_ALGORITHMS = [
+        CoseAlgorithm::ES256,
+        CoseAlgorithm::ES384,
+        CoseAlgorithm::ES512,
+        CoseAlgorithm::RS256,
+        CoseAlgorithm::RS384,
+        CoseAlgorithm::RS512,
+        CoseAlgorithm::RS1,
+    ];
+
+    private const DEFAULT_ALGORITHMS = [
         CoseAlgorithm::ES256,
         CoseAlgorithm::ES384,
         CoseAlgorithm::ES512,
@@ -50,6 +31,11 @@ final class Policy implements PolicyInterface
     ];
 
     /**
+     * @var bool
+     */
+    private $userPresenceRequired = true;
+
+    /**
      * @var int
      */
     private $challengeLength = self::DEFAULT_CHALLENGE_LENGTH;
@@ -57,34 +43,10 @@ final class Policy implements PolicyInterface
     /**
      * @var int[]
      */
-    private $algorithms = self::SUPPORTED_ALGORITHMS;
+    private $algorithms = self::DEFAULT_ALGORITHMS;
 
-    public function __construct(RelyingPartyInterface $relyingParty, MetadataResolverInterface $metadataResolver, TrustDecisionManagerInterface $trustDecisionManager, AttestationFormatRegistryInterface $formatRegistry)
+    public function __construct()
     {
-        $this->relyingParty = $relyingParty;
-        $this->metadataResolver = $metadataResolver;
-        $this->trustDecisionManager = $trustDecisionManager;
-        $this->formatRegistry = $formatRegistry;
-    }
-
-    public function getAttestationFormatRegistry(): AttestationFormatRegistryInterface
-    {
-        return $this->formatRegistry;
-    }
-
-    public function getTrustDecisionManager(): TrustDecisionManagerInterface
-    {
-        return $this->trustDecisionManager;
-    }
-
-    public function getMetadataResolver(): MetadataResolverInterface
-    {
-        return $this->metadataResolver;
-    }
-
-    public function getRelyingParty(): RelyingPartyInterface
-    {
-        return $this->relyingParty;
     }
 
     public function isUserPresenceRequired(): bool

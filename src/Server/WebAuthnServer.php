@@ -2,8 +2,11 @@
 
 namespace MadWizard\WebAuthn\Server;
 
+use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
+use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
+use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\AuthenticationExtensionsClientInputs;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialDescriptor;
@@ -12,6 +15,7 @@ use MadWizard\WebAuthn\Dom\PublicKeyCredentialParameters;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRpEntity;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
+use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\CredentialIdExistsException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\UntrustedException;
@@ -19,7 +23,9 @@ use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Json\JsonConverter;
+use MadWizard\WebAuthn\Metadata\MetadataResolverInterface;
 use MadWizard\WebAuthn\Policy\PolicyInterface;
+use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManagerInterface;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationContext;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationRequest;
@@ -34,19 +40,49 @@ use MadWizard\WebAuthn\Server\Registration\RegistrationVerifier;
 class WebAuthnServer implements ServerInterface
 {
     /**
-     * @var CredentialStoreInterface
+     * @var RelyingPartyInterface
      */
-    private $credentialStore;
+    private $relyingParty;
 
     /**
      * @var PolicyInterface
      */
     private $policy;
 
-    public function __construct(PolicyInterface $policy, CredentialStoreInterface $credentialStore)
-    {
+    /**
+     * @var CredentialStoreInterface
+     */
+    private $credentialStore;
+
+    /**
+     * @var AttestationFormatRegistryInterface
+     */
+    private $formatRegistry;
+
+    /**
+     * @var MetadataResolverInterface
+     */
+    private $metadataResolver;
+
+    /**
+     * @var TrustDecisionManagerInterface
+     */
+    private $trustDecisionManager;
+
+    public function __construct(
+        RelyingPartyInterface $relyingParty,
+        PolicyInterface $policy,
+        CredentialStoreInterface $credentialStore,
+        AttestationFormatRegistryInterface $formatRegistry,
+        MetadataResolverInterface $metadataResolver,
+        TrustDecisionManagerInterface $trustDecisionManager
+    ) {
+        $this->relyingParty = $relyingParty;
         $this->policy = $policy;
         $this->credentialStore = $credentialStore;
+        $this->formatRegistry = $formatRegistry;
+        $this->metadataResolver = $metadataResolver;
+        $this->trustDecisionManager = $trustDecisionManager;
     }
 
     public function startRegistration(RegistrationOptions $options): RegistrationRequest
@@ -54,7 +90,7 @@ class WebAuthnServer implements ServerInterface
         $challenge = $this->createChallenge();
 
         $creationOptions = new PublicKeyCredentialCreationOptions(
-            PublicKeyCredentialRpEntity::fromRelyingParty($this->policy->getRelyingParty()),
+            PublicKeyCredentialRpEntity::fromRelyingParty($this->relyingParty),
             $this->createUserEntity($options->getUser()),
             $challenge,
             $this->getCredentialParameters()
@@ -78,8 +114,25 @@ class WebAuthnServer implements ServerInterface
             }
         }
 
-        $context = RegistrationContext::create($creationOptions, $this->policy);
+        $context = $this->createRegistrationContext($creationOptions);
         return new RegistrationRequest($creationOptions, $context);
+    }
+
+    private function createRegistrationContext(PublicKeyCredentialCreationOptions $options): RegistrationContext
+    {
+        $origin = $this->relyingParty->getOrigin();
+        $rpId = $this->relyingParty->getEffectiveId();
+
+        // TODO: mismatch $rp and rp in $options? Check?
+        $context = new RegistrationContext($options->getChallenge(), $origin, $rpId, UserHandle::fromBuffer($options->getUserEntity()->getId()));
+
+        $context->setUserPresenceRequired($this->policy->isUserPresenceRequired());
+        $authSel = $options->getAuthenticatorSelection();
+        if ($authSel !== null && $authSel->getUserVerification() === UserVerificationRequirement::REQUIRED) {
+            $context->setUserVerificationRequired(true);
+        }
+
+        return $context;
     }
 
     /**
@@ -91,7 +144,7 @@ class WebAuthnServer implements ServerInterface
     {
         $credential = $this->convertAttestationCredential($credential);
 
-        $verifier = new RegistrationVerifier($this->policy->getAttestationFormatRegistry());
+        $verifier = new RegistrationVerifier($this->formatRegistry);
         $registrationResult = $verifier->verify($credential, $context);
 
         $response = $credential->getResponse()->asAttestationResponse();
@@ -100,7 +153,7 @@ class WebAuthnServer implements ServerInterface
         //     ECDAA-Issuer public keys) for that attestation type and attestation statement format fmt, from a trusted
         //     source or from policy.
 
-        $metadata = $this->policy->getMetadataResolver()->getMetadata($registrationResult);
+        $metadata = $this->metadataResolver->getMetadata($registrationResult);
         $registrationResult = $registrationResult->withMetadata($metadata);
 
         // 16. Assess the attestation trustworthiness using the outputs of the verification procedure in step 14,
@@ -112,7 +165,7 @@ class WebAuthnServer implements ServerInterface
         //       attestation public key correctly chains up to an acceptable root certificate.
 
         try {
-            $this->policy->getTrustDecisionManager()->verifyTrust($registrationResult, $metadata);
+            $this->trustDecisionManager->verifyTrust($registrationResult, $metadata);
         } catch (UntrustedException $e) {
             throw new VerificationException('The attestation is not trusted: ' . $e->getReason(), 0, $e);
         }
@@ -121,16 +174,14 @@ class WebAuthnServer implements ServerInterface
         //     credential that is already registered to a different user, the Relying Party SHOULD fail this
         //     registration ceremony, or it MAY decide to accept the registration, e.g. while deleting the older
         //     registration.
-
-        // TODO
+        if ($this->credentialStore->findCredential($registrationResult->getCredentialId())) {
+            throw new CredentialIdExistsException('Credential is already registered.');
+        }
 
         // 18. If the attestation statement attStmt verified successfully and is found to be trustworthy, then register
         //     the new credential with the account that was denoted in the options.user passed to create(), by
         //     associating it with the credentialId and credentialPublicKey in the attestedCredentialData in authData,
         //     as appropriate for the Relying Party's system.
-
-        // TODO
-
         // 19. If the attestation statement attStmt successfully verified but is not trustworthy per step 16 above,
         //     the Relying Party SHOULD fail the registration ceremony.
         //
@@ -148,7 +199,13 @@ class WebAuthnServer implements ServerInterface
 
         // TODO:check timeout (spec does not mention this?)
 
-        $registration = new CredentialRegistration($registrationResult->getCredentialId(), $registrationResult->getPublicKey(), $context->getUserHandle(), $response->getAttestationObject(), $registrationResult->getSignatureCounter());
+        $registration = new CredentialRegistration(
+            $registrationResult->getCredentialId(),
+            $registrationResult->getPublicKey(),
+            $context->getUserHandle(),
+            $response->getAttestationObject(),
+            $registrationResult->getSignatureCounter()
+        );
         $this->credentialStore->registerCredential($registration);
         return $registrationResult;
     }
@@ -158,7 +215,7 @@ class WebAuthnServer implements ServerInterface
         $challenge = $this->createChallenge();
 
         $requestOptions = new PublicKeyCredentialRequestOptions($challenge);
-        $requestOptions->setRpId($this->policy->getRelyingParty()->getId());
+        $requestOptions->setRpId($this->relyingParty->getId());
         $requestOptions->setUserVerification($options->getUserVerification());
         $requestOptions->setTimeout($options->getTimeout());
 
@@ -171,8 +228,31 @@ class WebAuthnServer implements ServerInterface
             );
         }
 
-        $context = AuthenticationContext::create($requestOptions, $this->policy);
+        $context = $this->createAuthenticationContext($requestOptions);
         return new AuthenticationRequest($requestOptions, $context);
+    }
+
+    private function createAuthenticationContext(PublicKeyCredentialRequestOptions $options): AuthenticationContext
+    {
+        $origin = $this->relyingParty->getOrigin();
+        $rpId = $this->relyingParty->getEffectiveId();
+
+        // TODO: mismatch $rp and rp in $policy? Check?
+        $context = new AuthenticationContext($options->getChallenge(), $origin, $rpId);
+
+        if ($options->getUserVerification() === UserVerificationRequirement::REQUIRED) {
+            $context->setUserVerificationRequired(true);
+        }
+
+        $context->setUserPresenceRequired($this->policy->isUserPresenceRequired());
+
+        $allowCredentials = $options->getAllowCredentials();
+        if ($allowCredentials !== null) {
+            foreach ($allowCredentials as $credential) {
+                $context->addAllowCredentialId($credential->getId());
+            }
+        }
+        return $context;
     }
 
     /**

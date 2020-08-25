@@ -1,0 +1,27 @@
+name: check
+
+on: ["push", "pull_request"]
+
+jobs:
+    check:
+        runs-on: ubuntu-latest
+        name: PHPstan
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Install PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 7.4
+                  coverage: none
+                  extensions: mbstring, gmp
+                  tools: composer:v2
+
+            - name: Install composer dependencies
+              run: composer install --ansi --no-progress --no-scripts --no-suggest --prefer-dist
+
+            - name: Run PHPstan
+              run: |
+                  php -v
+                  vendor/bin/phpstan analyse src

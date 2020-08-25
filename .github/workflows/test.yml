@@ -1,0 +1,41 @@
+name: test
+
+on: ["push", "pull_request"]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        continue-on-error: ${{ matrix.experimental }}
+        strategy:
+            fail-fast: true
+            matrix:
+                php: ['7.2', '7.3', '7.4']
+                stability: [prefer-lowest, prefer-stable]
+                experimental: [false]
+                include:
+                    - php: 8.0
+                      stability: ignore-platform-req=php
+                      experimental: true
+        name: Test php ${{ matrix.php }} ${{ matrix.stability }}
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Install PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  coverage: none
+                  extensions: mbstring, gmp
+                  tools: composer:v2
+
+            - name: Setup problem matchers for PHPUnit
+              run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+            - name: Install composer dependencies ${{ matrix.composer_flags }}
+              run: composer update --ansi --no-progress --no-scripts --no-suggest --prefer-dist --${{ matrix.stability }}
+
+            - name: Run phpunit
+              run: |
+                php -v
+                vendor/bin/phpunit --verbose

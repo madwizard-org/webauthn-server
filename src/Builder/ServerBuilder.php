@@ -102,6 +102,11 @@ final class ServerBuilder
      */
     private $useMetadata = true;
 
+    /**
+     * @var bool
+     */
+    private $strictSupportedFormats = false;
+
     public function __construct()
     {
     }
@@ -142,30 +147,54 @@ final class ServerBuilder
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function allowNoneAttestation(bool $allow): self
     {
         $this->allowNoneAttestation = $allow;
         return $this;
     }
 
+    /**
+     * @return $this
+     */
+    public function strictSupportedFormats(bool $strict): self
+    {
+        $this->strictSupportedFormats = $strict;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     public function useMetadata(bool $use): self
     {
         $this->useMetadata = $use;
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function allowSelfAttestation(bool $allow): self
     {
         $this->allowSelfAttestation = $allow;
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function trustWithoutMetadata(bool $trust): self
     {
         $this->trustWithoutMetadata = $trust;
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function withLogger(LoggerInterface $logger): self
     {
         $this->logger = $logger;
@@ -363,8 +392,10 @@ final class ServerBuilder
             return new AndroidKeyAttestationVerifier();
         };
 
-        $c[AttestationFormatRegistryInterface::class] = static function (ServiceContainer $c) {
+        $c[AttestationFormatRegistryInterface::class] = function (ServiceContainer $c) {
             $registry = new AttestationFormatRegistry();
+
+            $registry->strictSupportedFormats($this->strictSupportedFormats);
 
             $registry->addFormat($c[PackedAttestationVerifier::class]->getSupportedFormat());
             $registry->addFormat($c[FidoU2fAttestationVerifier::class]->getSupportedFormat());

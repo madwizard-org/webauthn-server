@@ -30,11 +30,12 @@ use MadWizard\WebAuthn\Server\Authentication\AuthenticationContext;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationRequest;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationResult;
+use MadWizard\WebAuthn\Server\Authentication\AuthenticationResultInterface;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationVerifier;
 use MadWizard\WebAuthn\Server\Registration\RegistrationContext;
 use MadWizard\WebAuthn\Server\Registration\RegistrationOptions;
 use MadWizard\WebAuthn\Server\Registration\RegistrationRequest;
-use MadWizard\WebAuthn\Server\Registration\RegistrationResult;
+use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
 use MadWizard\WebAuthn\Server\Registration\RegistrationVerifier;
 
 class WebAuthnServer implements ServerInterface
@@ -141,7 +142,7 @@ class WebAuthnServer implements ServerInterface
      * @throws CredentialIdExistsException
      * @throws VerificationException
      */
-    public function finishRegistration(PublicKeyCredentialInterface $credential, RegistrationContext $context): RegistrationResult
+    public function finishRegistration(PublicKeyCredentialInterface $credential, RegistrationContext $context): RegistrationResultInterface
     {
         $verifier = new RegistrationVerifier($this->formatRegistry);
         $registrationResult = $verifier->verify($credential, $context);
@@ -195,8 +196,6 @@ class WebAuthnServer implements ServerInterface
         //    have access to certificate status information for the intermediate CA certificates. The Relying Party MUST
         //    also be able to build the attestation certificate chain if the client did not provide this chain in the
         //    attestation information.
-
-        // TODO:check timeout (spec does not mention this?)
 
         $registration = new CredentialRegistration(
             $registrationResult->getCredentialId(),
@@ -260,7 +259,7 @@ class WebAuthnServer implements ServerInterface
      *
      * @throws VerificationException
      */
-    public function finishAuthentication(PublicKeyCredentialInterface $credential, AuthenticationContext $context): AuthenticationResult
+    public function finishAuthentication(PublicKeyCredentialInterface $credential, AuthenticationContext $context): AuthenticationResultInterface
     {
         $verifier = new AuthenticationVerifier($this->credentialStore);
 

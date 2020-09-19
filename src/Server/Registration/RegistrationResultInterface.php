@@ -2,6 +2,7 @@
 
 namespace MadWizard\WebAuthn\Server\Registration;
 
+use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
@@ -15,6 +16,8 @@ interface RegistrationResultInterface
     public function getPublicKey(): CoseKeyInterface;
 
     public function getVerificationResult(): VerificationResult;
+
+    public function getAttestationObject(): AttestationObject;
 
     public function getSignatureCounter(): int;
 

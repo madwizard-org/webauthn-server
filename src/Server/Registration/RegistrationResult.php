@@ -2,6 +2,7 @@
 
 namespace MadWizard\WebAuthn\Server\Registration;
 
+use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
@@ -23,19 +24,25 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
     /**
      * @var VerificationResult
      */
-    private $attestation;
+    private $verificationResult;
 
     /**
      * @var MetadataInterface|null
      */
     private $metadata;
 
-    public function __construct(CredentialId $credentialId, AuthenticatorData $authenticatorData, VerificationResult $attestation, ?MetadataInterface $metadata = null)
+    /**
+     * @var AttestationObject
+     */
+    private $attestationObject;
+
+    public function __construct(CredentialId $credentialId, AuthenticatorData $authenticatorData, AttestationObject $attestationObject, VerificationResult $verificationResult, ?MetadataInterface $metadata = null)
     {
         $this->credentialId = $credentialId;
         $this->authenticatorData = $authenticatorData;
-        $this->attestation = $attestation;
+        $this->verificationResult = $verificationResult;
         $this->metadata = $metadata;
+        $this->attestationObject = $attestationObject;
     }
 
     public function getCredentialId(): CredentialId
@@ -50,7 +57,7 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
 
     public function getVerificationResult(): VerificationResult
     {
-        return $this->attestation;
+        return $this->verificationResult;
     }
 
     public function getSignatureCounter(): int
@@ -58,19 +65,14 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
         return $this->authenticatorData->getSignCount();
     }
 
+    public function getAttestationObject(): AttestationObject
+    {
+        return $this->attestationObject;
+    }
+
     public function getAuthenticatorData(): AuthenticatorData
     {
         return $this->authenticatorData;
-    }
-
-    public function getAttestation(): VerificationResult
-    {
-        return $this->attestation;
-    }
-
-    public function setAttestation(VerificationResult $attestation): void
-    {
-        $this->attestation = $attestation;
     }
 
     public function getMetadata(): ?MetadataInterface
@@ -80,6 +82,6 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
 
     public function withMetadata(?MetadataInterface $metadata): RegistrationResult
     {
-        return new RegistrationResult($this->credentialId, $this->authenticatorData, $this->attestation, $metadata);
+        return new RegistrationResult($this->credentialId, $this->authenticatorData, $this->attestationObject, $this->verificationResult, $metadata);
     }
 }

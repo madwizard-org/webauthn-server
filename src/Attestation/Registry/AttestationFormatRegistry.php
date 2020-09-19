@@ -4,7 +4,9 @@ namespace MadWizard\WebAuthn\Attestation\Registry;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
+use MadWizard\WebAuthn\Attestation\Statement\UnsupportedAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
+use MadWizard\WebAuthn\Attestation\Verifier\UnsupportedAttestationVerifier;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
 
 final class AttestationFormatRegistry implements AttestationFormatRegistryInterface
@@ -14,8 +16,23 @@ final class AttestationFormatRegistry implements AttestationFormatRegistryInterf
      */
     private $formats = [];
 
+    /**
+     * @var bool
+     */
+    private $allowUnsupportedFormats = false;
+
+    /**
+     * @var bool
+     */
+    private $strictSupportedFormats = true;
+
     public function __construct()
     {
+    }
+
+    public function setAllowUnsupportedFormats(bool $allowed): void
+    {
+        $this->allowUnsupportedFormats = $allowed;
     }
 
     public function addFormat(AttestationFormatInterface $format)
@@ -28,7 +45,10 @@ final class AttestationFormatRegistry implements AttestationFormatRegistryInterf
         $formatId = $attestationObject->getFormat();
         $format = $this->formats[$formatId] ?? null;
         if ($format === null) {
-            throw new FormatNotSupportedException(sprintf('Format "%s" is not supported.', $formatId));
+            if ($this->strictSupportedFormats) {
+                throw new FormatNotSupportedException(sprintf('Format "%s" is not supported.', $formatId));
+            }
+            return new UnsupportedAttestationStatement($attestationObject);
         }
         return $format->createStatement($attestationObject);
     }
@@ -37,8 +57,16 @@ final class AttestationFormatRegistry implements AttestationFormatRegistryInterf
     {
         $format = $this->formats[$formatId] ?? null;
         if ($format === null) {
-            throw new FormatNotSupportedException(sprintf('Format "%s" is not supported.', $formatId));
+            if ($this->strictSupportedFormats) {
+                throw new FormatNotSupportedException(sprintf('Format "%s" is not supported.', $formatId));
+            }
+            return new UnsupportedAttestationVerifier();
         }
         return $format->getVerifier();
+    }
+
+    public function strictSupportedFormats(bool $strict)
+    {
+        $this->strictSupportedFormats = $strict;
     }
 }

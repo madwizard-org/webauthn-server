@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Server\Authentication;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
 
-final class AuthenticationResult
+final class AuthenticationResult implements AuthenticationResultInterface
 {
     /**
      * @var UserCredentialInterface

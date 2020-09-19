@@ -3,8 +3,9 @@
 namespace MadWizard\WebAuthn\Server\Authentication;
 
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
+use MadWizard\WebAuthn\Credential\UserHandle;
 
-class AuthenticationResult
+final class AuthenticationResult
 {
     /**
      * @var UserCredentialInterface
@@ -19,5 +20,10 @@ class AuthenticationResult
     public function getUserCredential(): UserCredentialInterface
     {
         return $this->userCredential;
+    }
+
+    public function getUserHandle(): UserHandle
+    {
+        return $this->userCredential->getUserHandle();
     }
 }

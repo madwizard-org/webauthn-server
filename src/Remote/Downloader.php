@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Remote;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use MadWizard\WebAuthn\Exception\RemoteException;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class Downloader implements DownloaderInterface
 {
@@ -26,7 +27,16 @@ class Downloader implements DownloaderInterface
         try {
             $response = $this->client->get($uri);
         } catch (RequestException $e) {
-            throw new RemoteException('Failed to download URL.', 0, $e);
+            $message = 'Failed to download URL';
+            $errorResponse = $e->getResponse();
+            if ($errorResponse) {
+                $message = sprintf('Error response while downloading URL: %d %s', $errorResponse->getStatusCode(), $errorResponse->getReasonPhrase());
+            } else {
+                $message = sprintf('Failed to download URL: %s', $e->getMessage());
+            }
+            throw new RemoteException($message, 0, $e);
+        } catch (ClientExceptionInterface $e) {
+            throw new RemoteException(sprintf('Failed to download URL: %s', $e->getMessage()), 0, $e);
         }
 
         $content = $response->getBody()->getContents();

@@ -16,7 +16,7 @@ class UntrustedException extends VerificationException
 
     public static function createWithReason(?string $reason): self
     {
-        $e = new UntrustedException($reason === null ? 'Not trusted' : sprintf('Not trusted: %s', $reason));
+        $e = new self($reason === null ? 'Not trusted' : sprintf('Not trusted: %s', $reason));
         $e->reason = $reason;
         return $e;
     }

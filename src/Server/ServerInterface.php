@@ -18,16 +18,16 @@ interface ServerInterface
     public function startRegistration(RegistrationOptions $options): RegistrationRequest;
 
     /**
-     * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
+     * @param PublicKeyCredentialInterface $credential Attestation credential response from the client
      *
      * @throws CredentialIdExistsException
      */
-    public function finishRegistration($credential, RegistrationContext $context): RegistrationResult;
+    public function finishRegistration(PublicKeyCredentialInterface $credential, RegistrationContext $context): RegistrationResult;
 
     public function startAuthentication(AuthenticationOptions $options): AuthenticationRequest;
 
     /**
-     * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
+     * @param PublicKeyCredentialInterface $credential Assertion credential response from the client
      */
-    public function finishAuthentication($credential, AuthenticationContext $context): AuthenticationResult;
+    public function finishAuthentication(PublicKeyCredentialInterface $credential, AuthenticationContext $context): AuthenticationResult;
 }

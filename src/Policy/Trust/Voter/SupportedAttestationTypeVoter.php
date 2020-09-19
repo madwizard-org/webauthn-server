@@ -2,6 +2,7 @@
 
 namespace MadWizard\WebAuthn\Policy\Trust\Voter;
 
+use MadWizard\WebAuthn\Attestation\AttestationType;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\TrustPathInterface;
 use MadWizard\WebAuthn\Policy\Trust\TrustVote;
@@ -18,7 +19,10 @@ final class SupportedAttestationTypeVoter implements TrustVoterInterface
             return TrustVote::abstain();
         }
 
-        if (!$metadata->supportsAttestationType($registrationResult->getVerificationResult()->getAttestationType())) {
+        $type = $registrationResult->getVerificationResult()->getAttestationType();
+        // 'None' attestation is not specified in metadata so ignore that case, otherwise authenticator should support
+        // this type.
+        if ($type !== AttestationType::NONE && !$metadata->supportsAttestationType($type)) {
             return TrustVote::untrusted();
         }
         return TrustVote::abstain();

@@ -3,7 +3,6 @@
 namespace MadWizard\WebAuthn\Metadata\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationType;
-use Psr\Log\InvalidArgumentException;
 
 final class AttestationConstant
 {
@@ -40,15 +39,10 @@ final class AttestationConstant
 
     /**
      * Converts AttestationType style constant to numerical constant.
-     *
-     * @throws InvalidArgumentException Invalid type
+     * Returns null if there is no equivalent.
      */
-    public static function convertType(string $type): int
+    public static function convertType(string $type): ?int
     {
-        $code = self::MAP[$type] ?? null;
-        if ($code === null) {
-            throw new \InvalidArgumentException(sprintf('Attestation type %s could not be converted.', $type));
-        }
-        return $code;
+        return self::MAP[$type] ?? null;
     }
 }

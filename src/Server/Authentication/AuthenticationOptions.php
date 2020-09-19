@@ -8,7 +8,7 @@ use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Extension\ExtensionInputInterface;
 
-class AuthenticationOptions
+final class AuthenticationOptions
 {
     /**
      * @var CredentialId[]
@@ -31,24 +31,30 @@ class AuthenticationOptions
     private $extensions;
 
     /**
-     * User handle to load credentials from.
+     * User handle to load credentials from, or null for client side discoverable.
      *
      * @var UserHandle|null
      */
-    private $allowUserHandle;
+    private $userHandle;
 
-    public function __construct()
+    private function __construct(?UserHandle $userHandle)
     {
+        $this->userHandle = $userHandle;
     }
 
-    public function allowUserHandle(UserHandle $userHandle)
+    public static function createForUser(UserHandle $userHandle): self
     {
-        $this->allowUserHandle = $userHandle;
+        return new self($userHandle);
     }
 
-    public function getAllowUserHandle(): ?UserHandle
+    public static function createForAnyUser(): self
     {
-        return $this->allowUserHandle;
+        return new self(null);
+    }
+
+    public function getUserHandle(): ?UserHandle
+    {
+        return $this->userHandle;
     }
 
     public function addAllowCredential(CredentialId $credential)

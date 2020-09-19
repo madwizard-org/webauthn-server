@@ -4,6 +4,7 @@ namespace MadWizard\WebAuthn\Server;
 
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Config\RelyingPartyInterface;
+use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
@@ -17,12 +18,11 @@ use MadWizard\WebAuthn\Dom\PublicKeyCredentialRpEntity;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\CredentialIdExistsException;
-use MadWizard\WebAuthn\Exception\ParseException;
+use MadWizard\WebAuthn\Exception\NoCredentialsException;
 use MadWizard\WebAuthn\Exception\UntrustedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Json\JsonConverter;
 use MadWizard\WebAuthn\Metadata\MetadataResolverInterface;
 use MadWizard\WebAuthn\Policy\PolicyInterface;
 use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManagerInterface;
@@ -105,7 +105,7 @@ class WebAuthnServer implements ServerInterface
             );
         }
 
-        if ($options->getExcludeExistingCredentials()) {   // TODO default?
+        if ($options->getExcludeExistingCredentials()) {
             $credentialIds = $this->credentialStore->getUserCredentialIds($options->getUser()->getUserHandle());
             foreach ($credentialIds as $credential) {
                 $creationOptions->addExcludeCredential(
@@ -136,14 +136,13 @@ class WebAuthnServer implements ServerInterface
     }
 
     /**
-     * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
+     * @param PublicKeyCredentialInterface $credential Attestation credential response from the client
      *
      * @throws CredentialIdExistsException
+     * @throws VerificationException
      */
-    public function finishRegistration($credential, RegistrationContext $context): RegistrationResult
+    public function finishRegistration(PublicKeyCredentialInterface $credential, RegistrationContext $context): RegistrationResult
     {
-        $credential = $this->convertAttestationCredential($credential);
-
         $verifier = new RegistrationVerifier($this->formatRegistry);
         $registrationResult = $verifier->verify($credential, $context);
 
@@ -228,17 +227,17 @@ class WebAuthnServer implements ServerInterface
             );
         }
 
-        $context = $this->createAuthenticationContext($requestOptions);
+        $context = $this->createAuthenticationContext($options, $requestOptions);
         return new AuthenticationRequest($requestOptions, $context);
     }
 
-    private function createAuthenticationContext(PublicKeyCredentialRequestOptions $options): AuthenticationContext
+    private function createAuthenticationContext(AuthenticationOptions $authOptions, PublicKeyCredentialRequestOptions $options): AuthenticationContext
     {
         $origin = $this->relyingParty->getOrigin();
         $rpId = $this->relyingParty->getEffectiveId();
 
         // TODO: mismatch $rp and rp in $policy? Check?
-        $context = new AuthenticationContext($options->getChallenge(), $origin, $rpId);
+        $context = new AuthenticationContext($options->getChallenge(), $origin, $rpId, $authOptions->getUserHandle());
 
         if ($options->getUserVerification() === UserVerificationRequirement::REQUIRED) {
             $context->setUserVerificationRequired(true);
@@ -249,22 +248,29 @@ class WebAuthnServer implements ServerInterface
         $allowCredentials = $options->getAllowCredentials();
         if ($allowCredentials !== null) {
             foreach ($allowCredentials as $credential) {
-                $context->addAllowCredentialId($credential->getId());
+                $context->addAllowCredentialId(CredentialId::fromBuffer($credential->getId()));
             }
         }
+
         return $context;
     }
 
     /**
-     * @param PublicKeyCredentialInterface|string $credential object or JSON serialized representation from the client.
+     * @param PublicKeyCredentialInterface|string $credential Assertion credential response from the client
+     *
+     * @throws VerificationException
      */
-    public function finishAuthentication($credential, AuthenticationContext $context): AuthenticationResult
+    public function finishAuthentication(PublicKeyCredentialInterface $credential, AuthenticationContext $context): AuthenticationResult
     {
-        $credential = $this->convertAssertionCredential($credential);
-
         $verifier = new AuthenticationVerifier($this->credentialStore);
 
         $userCredential = $verifier->verifyAuthenticatonAssertion($credential, $context);
+
+        // Ensure credential belongs to user being authenticated
+        $userHandle = $context->getUserHandle();
+        if ($userHandle !== null && !$userHandle->equals($userCredential->getUserHandle())) {
+            throw new VerificationException('Credential does not belong to the user currently being authenticated.');
+        }
 
         return new AuthenticationResult($userCredential);
     }
@@ -274,9 +280,12 @@ class WebAuthnServer implements ServerInterface
      */
     private function addAllowCredentials(AuthenticationOptions $options, PublicKeyCredentialRequestOptions $requestOptions): void
     {
-        $userHandle = $options->getAllowUserHandle();
+        $userHandle = $options->getUserHandle();
         if ($userHandle !== null) {
             $credentialIds = $this->credentialStore->getUserCredentialIds($userHandle);
+            if (count($credentialIds) === 0) {
+                throw new NoCredentialsException('User being authenticated has no credentials.');
+            }
             foreach ($credentialIds as $credentialId) {
                 $descriptor = new PublicKeyCredentialDescriptor($credentialId->toBuffer());
                 $requestOptions->addAllowedCredential($descriptor);
@@ -322,35 +331,5 @@ class WebAuthnServer implements ServerInterface
     private function createChallenge(): ByteBuffer
     {
         return ByteBuffer::randomBuffer($this->policy->getChallengeLength());
-    }
-
-    private function convertAttestationCredential($credential): PublicKeyCredentialInterface
-    {
-        if (\is_string($credential)) {
-            return JsonConverter::decodeAttestationCredential($credential);
-        }
-
-        if ($credential instanceof PublicKeyCredentialInterface) {
-            return $credential;
-        }
-
-        throw new WebAuthnException('Parameter credential should be of type string or PublicKeyCredentialInterface.');
-    }
-
-    private function convertAssertionCredential($credential): PublicKeyCredentialInterface
-    {
-        if (\is_string($credential)) {
-            try {
-                return JsonConverter::decodeAssertionCredential($credential);
-            } catch (ParseException $e) {
-                throw new VerificationException('Failed to parse JSON client data', 0, $e);
-            }
-        }
-
-        if ($credential instanceof PublicKeyCredentialInterface) {
-            return $credential;
-        }
-
-        throw new WebAuthnException('Parameter credential should be of type string or PublicKeyCredentialInterface.');
     }
 }

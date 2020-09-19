@@ -278,7 +278,11 @@ class MetadataStatement implements MetadataInterface
      */
     public function supportsAttestationType(string $type): bool
     {
-        return in_array(AttestationConstant::convertType($type), $this->attestationTypes, true);
+        $intType = AttestationConstant::convertType($type);
+        if ($intType === null) {
+            return false;
+        }
+        return in_array($intType, $this->attestationTypes, true);
     }
 
     public function getDescription(): string

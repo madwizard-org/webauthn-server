@@ -10,9 +10,11 @@ use MadWizard\WebAuthn\Credential\UserCredentialInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Crypto\Ec2Key;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
+use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Json\JsonConverter;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\WebAuthnServer;
 use MadWizard\WebAuthn\Tests\Helper\AssertionDataHelper;
@@ -34,7 +36,7 @@ class AuthenticationTest extends TestCase
 
     public function testStartAuthentication()
     {
-        $options = new AuthenticationOptions();
+        $options = AuthenticationOptions::createForAnyUser();
         $userCredential = $this->createCredential();
         $options->addAllowCredential($userCredential->getCredentialId());
         $request = $this->server->startAuthentication($options);
@@ -68,7 +70,7 @@ class AuthenticationTest extends TestCase
             ->with($credential->getCredentialId())
             ->willReturn($credential);
 
-        return $this->server->finishAuthentication($helper->getCredentialJson(), $helper->getContext())->getUserCredential();
+        return $this->server->finishAuthentication(JsonConverter::decodeAssertionString($helper->getCredentialJson()), $helper->getContext())->getUserCredential();
     }
 
     public function testValidAssertion()
@@ -132,8 +134,8 @@ class AuthenticationTest extends TestCase
 
         $helper->setClientOptions(['makeWrongClientJson' => true]);
 
-        $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageMatches('~failed to parse json~i');
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessageMatches('~Unparseable client data JSON~i');
 
         $this->runAuth($helper);
     }

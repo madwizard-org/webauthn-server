@@ -8,7 +8,7 @@ use MadWizard\WebAuthn\Server\AbstractContext;
 use MadWizard\WebAuthn\Server\RequestContext;
 use MadWizard\WebAuthn\Web\Origin;
 
-class RegistrationContext extends AbstractContext implements RequestContext
+final class RegistrationContext extends AbstractContext implements RequestContext
 {
     /**
      * @var UserHandle

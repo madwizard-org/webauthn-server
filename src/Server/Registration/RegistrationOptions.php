@@ -8,7 +8,7 @@ use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Extension\ExtensionInputInterface;
 use MadWizard\WebAuthn\Server\UserIdentityInterface;
 
-class RegistrationOptions
+final class RegistrationOptions
 {
     /**
      * @var string|null
@@ -31,13 +31,18 @@ class RegistrationOptions
     private $extensions;
 
     /**
-     * @var bool|null
+     * @var bool
      */
-    private $excludeExistingCredentials;
+    private $excludeExistingCredentials = false;
 
-    public function __construct(UserIdentityInterface $user)
+    private function __construct(UserIdentityInterface $userIdentity)
     {
-        $this->user = $user;
+        $this->user = $userIdentity;
+    }
+
+    public static function createForUser(UserIdentityInterface $userIdentity): self
+    {
+        return new RegistrationOptions($userIdentity);
     }
 
     public function getUser(): UserIdentityInterface
@@ -76,15 +81,12 @@ class RegistrationOptions
         $this->extensions[] = $input;
     }
 
-    public function getExcludeExistingCredentials(): ?bool
+    public function getExcludeExistingCredentials(): bool
     {
         return $this->excludeExistingCredentials;
     }
 
-    /**
-     * @param bool|null $excludeExistingCredentials // TODO not null?
-     */
-    public function setExcludeExistingCredentials(?bool $excludeExistingCredentials): void
+    public function setExcludeExistingCredentials(bool $excludeExistingCredentials): void
     {
         $this->excludeExistingCredentials = $excludeExistingCredentials;
     }

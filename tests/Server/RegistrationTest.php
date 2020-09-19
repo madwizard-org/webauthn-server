@@ -12,6 +12,7 @@ use MadWizard\WebAuthn\Crypto\Ec2Key;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Json\JsonConverter;
 use MadWizard\WebAuthn\Server\Registration\RegistrationContext;
 use MadWizard\WebAuthn\Server\Registration\RegistrationOptions;
 use MadWizard\WebAuthn\Server\UserIdentity;
@@ -20,7 +21,6 @@ use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use MadWizard\WebAuthn\Web\Origin;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use function json_encode;
 
 class RegistrationTest extends TestCase
 {
@@ -39,7 +39,7 @@ class RegistrationTest extends TestCase
     public function testStartRegistration()
     {
         $user = new UserIdentity(UserHandle::fromHex('123456'), 'demo', 'Demo user');
-        $options = new RegistrationOptions($user);
+        $options = RegistrationOptions::createForUser($user);
         $request = $this->server->startRegistration($options);
 
         $clientOptions = $request->getClientOptions();
@@ -56,7 +56,6 @@ class RegistrationTest extends TestCase
         $json = FixtureHelper::getJsonFixture('fido2-helpers/attestation.json');
 
         $credential = $json['challengeResponseAttestationU2fMsgB64Url'];
-        $credentialJson = json_encode($credential);
 
         $this->store
             ->expects($this->once())
@@ -73,7 +72,7 @@ class RegistrationTest extends TestCase
 
         $challenge = new ByteBuffer(Base64UrlEncoding::decode('Vu8uDqnkwOjd83KLj6Scn2BgFNLFbGR7Kq_XJJwQnnatztUR7XIBL7K8uMPCIaQmKw1MCVQ5aazNJFk7NakgqA'));
         $context = new RegistrationContext($challenge, Origin::parse('https://localhost:8443'), 'localhost', UserHandle::fromHex('00112233'));
-        $result = $this->server->finishRegistration($credentialJson, $context);
+        $result = $this->server->finishRegistration(JsonConverter::decodeAttestation($credential), $context);
 
         $this->assertSame(self::CREDENTIAL_ID, $result->getCredentialId()->toString());
         $this->assertSame('Basic', $result->getVerificationResult()->getAttestationType());  // TODO:ugly

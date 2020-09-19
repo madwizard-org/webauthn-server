@@ -98,7 +98,7 @@ class AttestationObjectTest extends TestCase
         $json = FixtureHelper::getJsonFixture('fido2-helpers/attestation.json');
         $message = $json['challengeResponseAttestationU2fMsgB64Url'];
         $message['type'] = 'public-key';
-        $cred = JsonConverter::decodeAttestationCredential(json_encode($message));
+        $cred = JsonConverter::decodeAttestation($message);
 
         $this->assertSame('Bo-VjHOkJZy8DjnCJnIc0Oxt9QAz5upMdSJxNbd-GyAo6MNIvPBb9YsUlE0ZJaaWXtWH5FQyPS6bT_e698IirQ', $cred->getId());
 

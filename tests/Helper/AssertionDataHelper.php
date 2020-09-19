@@ -2,6 +2,8 @@
 
 namespace MadWizard\WebAuthn\Tests\Helper;
 
+use MadWizard\WebAuthn\Credential\CredentialId;
+use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationContext;
@@ -140,10 +142,10 @@ class AssertionDataHelper
     {
         $ctx = $this->contextOptions;
 
-        $context = new AuthenticationContext(ByteBuffer::fromBase64Url($ctx['challenge']), Origin::parse($ctx['origin']), $ctx['rpId']);
+        $context = new AuthenticationContext(ByteBuffer::fromBase64Url($ctx['challenge']), Origin::parse($ctx['origin']), $ctx['rpId'], UserHandle::fromHex('123456'));
 
         foreach ($ctx['allowedCredentials'] as $allowed) {
-            $context->addAllowCredentialId(ByteBuffer::fromBase64Url($allowed));
+            $context->addAllowCredentialId(CredentialId::fromString($allowed));
         }
 
         return $context;

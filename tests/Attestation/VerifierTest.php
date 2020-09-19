@@ -17,7 +17,7 @@ abstract class VerifierTest extends TestCase
         $json = FixtureHelper::getJsonFixture('fido2-helpers/attestation.json');
         $message = $json[$name];
         $message['type'] = 'public-key';
-        $credential = JsonConverter::decodeAttestationCredential(json_encode($message));
+        $credential = JsonConverter::decodeAttestation($message);
 
         return $credential->getResponse()->asAttestationResponse();
     }

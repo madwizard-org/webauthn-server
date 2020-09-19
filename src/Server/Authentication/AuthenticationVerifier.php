@@ -13,7 +13,7 @@ use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Server\AbstractVerifier;
 
-class AuthenticationVerifier extends AbstractVerifier
+final class AuthenticationVerifier extends AbstractVerifier
 {
     /**
      * @var CredentialStoreInterface
@@ -98,7 +98,7 @@ class AuthenticationVerifier extends AbstractVerifier
     }
 
     /**
-     * @param ByteBuffer[]|null $allowCredentialIds
+     * @param CredentialId[]|null $allowCredentialIds
      */
     private function checkAllowCredentials(PublicKeyCredentialInterface $credential, ?array $allowCredentialIds): bool
     {
@@ -106,9 +106,9 @@ class AuthenticationVerifier extends AbstractVerifier
             return true;
         }
 
-        $rawId = $credential->getRawId();
+        $credentialId = CredentialId::fromBuffer($credential->getRawId());
         foreach ($allowCredentialIds as $allowCredentialId) {
-            if ($allowCredentialId->equals($rawId)) {
+            if ($allowCredentialId->equals($credentialId)) {
                 return true;
             }
         }

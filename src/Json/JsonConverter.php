@@ -19,16 +19,6 @@ use function is_string;
 final class JsonConverter
 {
     /**
-     * Prefix keys of ByteBuffers with `#prefix#`.
-     */
-    public const ENCODE_PREFIX = 1;
-
-    /**
-     * Encode ByteBuffers as base64 strings instead of base64url.
-     */
-    public const ENCODE_BASE64 = 4;
-
-    /**
      * @codeCoverageIgnore
      */
     private function __construct()
@@ -69,6 +59,7 @@ final class JsonConverter
      * }
      * ```
      *
+     * @param array  $json         Json data (with objects as associative arrays)
      * @param string $responseType Expected type of response in the public key's response field.
      *                             Either 'attestation' for attestation responses or 'assertion' for assertion responses.
      *
@@ -76,28 +67,23 @@ final class JsonConverter
      *
      * @see https://www.w3.org/TR/webauthn/#publickeycredential
      */
-    public static function decodeCredential(string $json, string $responseType): PublicKeyCredentialInterface
+    public static function decodeCredential(array $json, string $responseType): PublicKeyCredentialInterface
     {
-        $decoded = json_decode($json, true, 10);
-        if ($decoded === null) {
-            throw new ParseException('Failed to decode PublicKeyCredential Json');
-        }
-
-        if (($decoded['type'] ?? null) !== PublicKeyCredentialType::PUBLIC_KEY) {
+        if (($json['type'] ?? null) !== PublicKeyCredentialType::PUBLIC_KEY) {
             throw new ParseException("Expecting type 'public-key'");
         }
 
-        if (empty($decoded['id'])) {
+        if (empty($json['id'])) {
             throw new ParseException('Missing id in json data');
         }
-        $id = $decoded['id'];
+        $id = $json['id'];
         if (!is_string($id)) {
             throw new ParseException('Id in json data should be a string');
         }
 
         $rawId = Base64UrlEncoding::decode($id);
 
-        $responseData = $decoded['response'] ?? null;
+        $responseData = $json['response'] ?? null;
         if (!is_array($responseData)) {
             throw new ParseException('Expecting array data for response');
         }
@@ -109,12 +95,31 @@ final class JsonConverter
         return new PublicKeyCredential(new ByteBuffer($rawId), $response);
     }
 
-    public static function decodeAttestationCredential(string $json): PublicKeyCredentialInterface
+    private static function jsonFromString(string $json): array
+    {
+        $decoded = json_decode($json, true, 10);
+        if (!is_array($decoded)) {
+            throw new ParseException('Failed to decode PublicKeyCredential Json');
+        }
+        return $decoded;
+    }
+
+    public static function decodeAttestationString(string $json): PublicKeyCredentialInterface
+    {
+        return self::decodeCredential(self::jsonFromString($json), 'attestation');
+    }
+
+    public static function decodeAssertionString(string $json): PublicKeyCredentialInterface
+    {
+        return self::decodeCredential(self::jsonFromString($json), 'assertion');
+    }
+
+    public static function decodeAttestation(array $json): PublicKeyCredentialInterface
     {
         return self::decodeCredential($json, 'attestation');
     }
 
-    public static function decodeAssertionCredential(string $json): PublicKeyCredentialInterface
+    public static function decodeAssertion(array $json): PublicKeyCredentialInterface
     {
         return self::decodeCredential($json, 'assertion');
     }

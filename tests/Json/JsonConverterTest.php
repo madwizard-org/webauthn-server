@@ -19,69 +19,63 @@ class JsonConverterTest extends TestCase
     public function testInvalidJson()
     {
         $this->expectException(ParseException::class);
-        JsonConverter::decodeCredential(']', 'assertion');
+        JsonConverter::decodeAssertionString(']');
     }
 
     public function testNotPublicKey()
     {
         $this->expectException(ParseException::class);
         $this->expectExceptionMessageMatches('~public-key~i');
-        JsonConverter::decodeCredential('{}', 'assertion');
+        JsonConverter::decodeAssertionString('{}');
     }
 
     public function testMissingId()
     {
         $this->expectException(ParseException::class);
         $this->expectExceptionMessageMatches('~missing id~i');
-        JsonConverter::decodeCredential('{"type":"public-key"}', 'assertion');
+        JsonConverter::decodeAssertionString('{"type":"public-key"}');
     }
 
     public function testNonStringId()
     {
         $this->expectException(ParseException::class);
         $this->expectExceptionMessageMatches('~should be a string~i');
-        JsonConverter::decodeCredential('{"type":"public-key","id":333}', 'assertion');
+        JsonConverter::decodeAssertionString('{"type":"public-key","id":333}');
     }
 
     public function testInvalidEncodedId()
     {
         $this->expectException(ParseException::class);
         $this->expectExceptionMessageMatches('~base64url~i');
-        JsonConverter::decodeCredential('{"type":"public-key","id":"%%%"}', 'assertion');
+        JsonConverter::decodeAssertionString('{"type":"public-key","id":"%%%"}');
     }
 
     public function testInvalidType()
     {
         $this->expectException(WebAuthnException::class);
         $this->expectExceptionMessageMatches('~Unknown or missing type~i');
-        JsonConverter::decodeCredential(json_encode($this->getResponse()), 'invalid');
+        JsonConverter::decodeCredential($this->getResponse(), 'invalid');
     }
 
     public function testInvalidResponse()
     {
         $this->expectException(WebAuthnException::class);
         $this->expectExceptionMessageMatches('~expecting array~i');
-        $json =
-            json_encode(
-                array_merge(
-                    $this->getResponse(),
-                    ['response' => 5]
-                )
+        $json = array_merge(
+                $this->getResponse(),
+                ['response' => 5]
             );
 
-        JsonConverter::decodeCredential($json, 'attestation');
+        JsonConverter::decodeAttestation($json);
     }
 
     public function testInvalidClientDataType()
     {
         $this->expectException(ParseException::class);
         $this->expectExceptionMessageMatches('~client data json~i');
-        $json =
-            json_encode(
-                array_merge(
-                    $this->getResponse(),
-                    ['response' => ['clientDataJSON' => 123]]
-                )
+        $json = array_merge(
+                $this->getResponse(),
+                ['response' => ['clientDataJSON' => 123]]
             );
 
         JsonConverter::decodeCredential($json, 'attestation');

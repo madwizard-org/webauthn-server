@@ -9,6 +9,7 @@ use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Extension\UnknownExtensionInput;
+use MadWizard\WebAuthn\Json\JsonConverter;
 use MadWizard\WebAuthn\Metadata\Source\MetadataServiceSource;
 use MadWizard\WebAuthn\Metadata\Source\StatementDirectorySource;
 use MadWizard\WebAuthn\Policy\Policy;
@@ -200,7 +201,7 @@ class Router
 
         $att = $req['attestation'] ?? 'none';
 
-        $opts = new RegistrationOptions($userIdentity);
+        $opts = RegistrationOptions::createForUser($userIdentity);
 
         $opts->setAttestation($att);
         $opts->setAuthenticatorSelection($crit);
@@ -221,7 +222,7 @@ class Router
         if (!($context instanceof  RegistrationContext)) {
             return [500, ['status' => 'error', 'errorMessage' => $req]];
         }
-        $this->server->finishRegistration($req, $context);
+        $this->server->finishRegistration(JsonConverter::decodeAttestationString($req), $context);
 
         return [200, ['status' => 'ok', 'errorMessage' => '']];
     }
@@ -230,12 +231,11 @@ class Router
     {
         $req = $this->getPostJson($postData);
 
-        $opts = new AuthenticationOptions();
+        $opts = AuthenticationOptions::createForUser(UserHandle::fromBinary($req['username']));
         foreach ($req['extensions'] ?? [] as $identifier => $ext) {
             $opts->addExtensionInput(new UnknownExtensionInput($identifier, $ext));
         }
 
-        $opts->allowUserHandle(UserHandle::fromBinary($req['username']));
         $opts->setUserVerification($req['userVerification'] ?? 'preferred');
 
         $regReq = $this->server->startAuthentication($opts);
@@ -248,7 +248,7 @@ class Router
     {
         $context = $_SESSION['context'];
 
-        $this->server->finishAuthentication($req, $context);
+        $this->server->finishAuthentication(JsonConverter::decodeAssertionString($req), $context);
 
         return [200, ['status' => 'ok', 'errorMessage' => '']];
     }

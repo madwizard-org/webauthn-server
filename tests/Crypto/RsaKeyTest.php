@@ -7,6 +7,7 @@ use MadWizard\WebAuthn\Crypto\RsaKey;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Format\CborMap;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
 use PHPUnit\Framework\TestCase;
 
@@ -86,7 +87,7 @@ class RsaKeyTest extends TestCase
     public function testInvalidCbor()
     {
         $this->expectException(WebAuthnException::class);
-        RsaKey::fromCborData([]);
+        RsaKey::fromCborData(new CborMap());
     }
 
     public function testRemoveLeadingZeroes()
@@ -104,7 +105,7 @@ class RsaKeyTest extends TestCase
         // Example key from webauthn spec
         $cbor = HexData::buf(
             sprintf(
-                'A4        
+                'A4
              01  03          #   1:   3,    ; kty: RSA   key type
              03  39 0100     #   3:  -257,  ; alg: RS256 signature algorithm
              20  59 0100 %s  #  -1:   m,    ; modulus

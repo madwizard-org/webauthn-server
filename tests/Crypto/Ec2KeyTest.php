@@ -7,6 +7,7 @@ use MadWizard\WebAuthn\Crypto\Ec2Key;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Format\CborMap;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
 use PHPUnit\Framework\TestCase;
 
@@ -78,13 +79,13 @@ class Ec2KeyTest extends TestCase
     public function testInvalidCbor()
     {
         $this->expectException(WebAuthnException::class);
-        Ec2Key::fromCborData([]);
+        Ec2Key::fromCborData(new CborMap());
     }
 
     public function testInvalidType()
     {
         $this->expectException(WebAuthnException::class);
-        Ec2Key::fromCborData([-1 => 'a', -2 => 1, -3 => 2]);
+        Ec2Key::fromCborData(CborMap::fromArray([-1 => 'a', -2 => 1, -3 => 2]));
     }
 
     public function testCbor()

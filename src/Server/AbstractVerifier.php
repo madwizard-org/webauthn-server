@@ -57,7 +57,7 @@ class AbstractVerifier
     protected function validateClientData(array $clientData)
     {
         try {
-            DataValidator::checkTypes(
+            DataValidator::checkArray(
                 $clientData,
                 [
                     'type' => 'string',
@@ -75,7 +75,7 @@ class AbstractVerifier
     protected function checkTokenBinding(array $tokenBinding)
     {
         try {
-            DataValidator::checkTypes(
+            DataValidator::checkArray(
                 $tokenBinding,
                 [
                     'status' => 'string',

@@ -5,14 +5,15 @@ namespace MadWizard\WebAuthn\Tests\Format;
 use DateTime;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
-use MadWizard\WebAuthn\Format\DataValidator;
 use PHPUnit\Framework\TestCase;
 
-class DataValidatorTest extends TestCase
+abstract class AbstractDataValidatorTest extends TestCase
 {
+    abstract protected function check(array $data, array $types, bool $complete = true): void;
+
     public function testCheckTypes()
     {
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
                 'b' => 'ab',
@@ -39,7 +40,7 @@ class DataValidatorTest extends TestCase
     {
         $this->expectException(DataValidationException::class);
         $this->expectExceptionMessageMatches('~expecting.+type~i');
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
                 'b' => 'ab',
@@ -58,7 +59,7 @@ class DataValidatorTest extends TestCase
     {
         $this->expectException(DataValidationException::class);
         $this->expectExceptionMessageMatches('~expecting.+DateTime~i');
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => new ByteBuffer(''),
                 'b' => new ByteBuffer(''),
@@ -78,7 +79,7 @@ class DataValidatorTest extends TestCase
         $this->expectException(DataValidationException::class);
         $this->expectExceptionMessageMatches('~missing~i');
 
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
                 'b' => 'ab',
@@ -103,7 +104,7 @@ class DataValidatorTest extends TestCase
         $this->expectException(DataValidationException::class);
         $this->expectExceptionMessageMatches('~unexpected~i');
 
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
                 'b' => 'ab',
@@ -118,7 +119,7 @@ class DataValidatorTest extends TestCase
 
     public function testCheckTypesAdditionalAllowed()
     {
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
                 'b' => 'ab',
@@ -137,7 +138,7 @@ class DataValidatorTest extends TestCase
 
     public function testCheckTypesOptional()
     {
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
                 'c' => [1, 2, 3],
@@ -156,7 +157,7 @@ class DataValidatorTest extends TestCase
 
     public function testCheckTypesOptionalPresent()
     {
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
                 'b' => 'test',
@@ -177,7 +178,7 @@ class DataValidatorTest extends TestCase
 
     public function testCheckTypesNullable()
     {
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
                 'c' => null,
@@ -199,7 +200,7 @@ class DataValidatorTest extends TestCase
         $this->expectException(DataValidationException::class);
         $this->expectExceptionMessageMatches('~string~i');
 
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
                 'c' => 5,
@@ -215,7 +216,7 @@ class DataValidatorTest extends TestCase
     {
         $this->expectException(DataValidationException::class);
         $this->expectExceptionMessageMatches('~required key "c"~i');
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
             ],
@@ -228,7 +229,7 @@ class DataValidatorTest extends TestCase
 
     public function testCheckTypesNullableOptional()
     {
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
                 // b missing
@@ -252,7 +253,7 @@ class DataValidatorTest extends TestCase
         $this->expectException(DataValidationException::class);
         $this->expectExceptionMessageMatches('~invalid type~i');
 
-        DataValidator::checkTypes(
+        $this->check(
             [
                 'a' => 4,
                 'b' => 'ab',

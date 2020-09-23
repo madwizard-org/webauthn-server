@@ -67,7 +67,7 @@ class AttestationObjectTest extends TestCase
         );
 
         $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageMatches('~expecting.+attStmt.+array~i');
+        $this->expectExceptionMessageMatches('~Expecting key "attStmt".+CborMap~i');
         AttestationObject::parse($buf);
     }
 

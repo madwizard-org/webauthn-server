@@ -9,6 +9,7 @@ use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Format\CborMap;
 use PHPUnit\Framework\TestCase;
 
 class AttestationFormatRegistryTest extends TestCase
@@ -43,11 +44,11 @@ class AttestationFormatRegistryTest extends TestCase
     public function testStatementFormats()
     {
         $registry = $this->getRegistry();
-        $attObj = new AttestationObject('format1', [], new ByteBuffer(''));
+        $attObj = new AttestationObject('format1', new CborMap(), new ByteBuffer(''));
 
         $this->assertInstanceOf('TestFormat1Statement', $registry->createStatement($attObj));
 
-        $attObj2 = new AttestationObject('format2', [], new ByteBuffer(''));
+        $attObj2 = new AttestationObject('format2', new CborMap(), new ByteBuffer(''));
 
         $this->assertInstanceOf('TestFormat2Statement', $registry->createStatement($attObj2));
     }
@@ -64,7 +65,7 @@ class AttestationFormatRegistryTest extends TestCase
         $this->expectException(FormatNotSupportedException::class);
 
         $registry = $this->getRegistry();
-        $attObj = new AttestationObject('unsupported', [], new ByteBuffer(''));
+        $attObj = new AttestationObject('unsupported', new CborMap(), new ByteBuffer(''));
         $registry->createStatement($attObj);
     }
 

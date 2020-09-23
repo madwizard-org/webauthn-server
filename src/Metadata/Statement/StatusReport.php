@@ -62,7 +62,7 @@ class StatusReport
 
     public static function fromArray(array $report): self
     {
-        DataValidator::checkTypes($report, [
+        DataValidator::checkArray($report, [
             'status' => 'string',
             'effectiveDate' => '?string',
             'certificate' => '?string',

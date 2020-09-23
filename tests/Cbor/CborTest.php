@@ -6,6 +6,7 @@ use MadWizard\WebAuthn\Exception\CborException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborDecoder;
 use MadWizard\WebAuthn\Format\CborEncoder;
+use MadWizard\WebAuthn\Format\CborMap;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
 use PHPUnit\Framework\TestCase;
@@ -17,16 +18,24 @@ use const PHP_INT_SIZE;
 
 class CborTest extends TestCase
 {
-    private function convertByteBuffers($value)
+    private function convertObjects($value)
     {
         if ($value instanceof ByteBuffer) {
             return 'HEX:' . bin2hex($value->getBinaryString());
         }
+        if ($value instanceof CborMap) {
+            $c = [];
+            foreach ($value->getEntries() as [$k, $v]) {
+                $c[$k] = $v;
+            }
+            $value = $c;
+        }
+
         if (!is_array($value)) {
             return $value;
         }
 
-        return array_map([$this, 'convertByteBuffers'], $value);
+        return array_map([$this, 'convertObjects'], $value);
     }
 
     public function testVectors()
@@ -40,7 +49,8 @@ class CborTest extends TestCase
 
             $errorMessage = null;
             try {
-                $result = CborDecoder::decode($buffer);
+                $result = $this->convertObjects(CborDecoder::decode($buffer));
+
                 if (isset($test['decoded'])) {
                     $this->assertSame($test['decoded'], $result, $message);
                 }
@@ -57,7 +67,6 @@ class CborTest extends TestCase
 
     private function dumpValue($result): string
     {
-        $result = $this->convertByteBuffers($result);
         ob_start();
         var_dump($result);
         return rtrim(ob_get_clean());

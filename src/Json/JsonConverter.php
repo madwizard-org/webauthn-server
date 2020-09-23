@@ -69,7 +69,7 @@ final class JsonConverter
      */
     public static function decodeCredential(array $json, string $responseType): PublicKeyCredentialInterface
     {
-        DataValidator::checkTypes($json,
+        DataValidator::checkArray($json,
             [
                 'type' => 'string',
                 'id' => 'string',
@@ -145,7 +145,7 @@ final class JsonConverter
 
     private static function decodeAssertionResponse(string $clientDataJson, array $response): AuthenticatorAssertionResponse
     {
-        DataValidator::checkTypes(
+        DataValidator::checkArray(
             $response,
             [
                 'authenticatorData' => 'string',
@@ -170,7 +170,7 @@ final class JsonConverter
 
     private static function decodeAttestationResponse(string $clientDataJson, array $response): AuthenticatorAttestationResponse
     {
-        DataValidator::checkTypes(
+        DataValidator::checkArray(
             $response,
             [
                 'attestationObject' => 'string',

@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Crypto;
 use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborEncoder;
+use MadWizard\WebAuthn\Format\CborMap;
 use MadWizard\WebAuthn\Format\DataValidator;
 
 class RsaKey extends CoseKey
@@ -51,9 +52,9 @@ class RsaKey extends CoseKey
         $this->exponent = $this->compactIntegerBuffer($exponent);
     }
 
-    public static function fromCborData(array $data): RsaKey
+    public static function fromCborData(CborMap $data): RsaKey
     {
-        DataValidator::checkTypes(
+        DataValidator::checkMap(
             $data,
             [
                 self::COSE_KEY_PARAM_KTY => 'integer',

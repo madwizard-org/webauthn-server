@@ -6,8 +6,8 @@ use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborDecoder;
+use MadWizard\WebAuthn\Format\CborMap;
 use MadWizard\WebAuthn\Format\DataValidator;
-use function is_array;
 
 abstract class CoseKey implements CoseKeyInterface
 {
@@ -71,11 +71,11 @@ abstract class CoseKey implements CoseKeyInterface
     {
         $data = CborDecoder::decodeInPlace($buffer, $offset, $endOffset);
 
-        if (!is_array($data)) {
+        if (!$data instanceof CborMap) {
             throw new DataValidationException('Failed to decode CBOR encoded COSE key'); // TODO: change exceptions
         }
 
-        DataValidator::checkTypes(
+        DataValidator::checkMap(
             $data,
             [
                 self::COSE_KEY_PARAM_KTY => 'integer',
@@ -92,7 +92,7 @@ abstract class CoseKey implements CoseKeyInterface
         return self::parseCbor(ByteBuffer::fromBase64Url($key));
     }
 
-    private static function createKey(int $keyType, array $data): CoseKey
+    private static function createKey(int $keyType, CborMap $data): CoseKey
     {
         if ($keyType === self::COSE_KTY_EC2) {
             return Ec2Key::fromCborData($data);

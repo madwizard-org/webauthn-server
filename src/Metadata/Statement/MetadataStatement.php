@@ -114,7 +114,7 @@ class MetadataStatement implements MetadataInterface
         if (is_string($data['isSecondFactorOnly'] ?? null)) {
             $data['isSecondFactorOnly'] = (bool) $data['isSecondFactorOnly']; // TODO
         }
-        DataValidator::checkTypes(
+        DataValidator::checkArray(
             $data,
             [
                 'aaid' => '?string',   // !!!!

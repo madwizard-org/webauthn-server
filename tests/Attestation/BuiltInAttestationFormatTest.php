@@ -7,6 +7,7 @@ use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Verifier\AttestationVerifierInterface;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use MadWizard\WebAuthn\Format\CborMap;
 use PHPUnit\Framework\TestCase;
 
 class BuiltInAttestationFormatTest extends TestCase
@@ -23,7 +24,7 @@ class BuiltInAttestationFormatTest extends TestCase
         $format = new BuiltInAttestationFormat('testformat', 'TestStatement', $verifier);
         $this->assertSame('testformat', $format->getFormatId());
 
-        $attObj = new AttestationObject('dummy', [], new ByteBuffer(''));
+        $attObj = new AttestationObject('dummy', new CborMap(), new ByteBuffer(''));
 
         $statement = $format->createStatement($attObj);
         $this->assertInstanceOf('TestStatement', $statement);

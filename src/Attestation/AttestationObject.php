@@ -7,8 +7,8 @@ use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborDecoder;
+use MadWizard\WebAuthn\Format\CborMap;
 use MadWizard\WebAuthn\Format\DataValidator;
-use function is_array;
 
 final class AttestationObject
 {
@@ -18,7 +18,7 @@ final class AttestationObject
     private $format;
 
     /**
-     * @var array
+     * @var CborMap
      */
     private $statement;
 
@@ -27,7 +27,7 @@ final class AttestationObject
      */
     private $authData;
 
-    public function __construct(string $format, array $statement, ByteBuffer $authData)
+    public function __construct(string $format, CborMap $statement, ByteBuffer $authData)
     {
         $this->format = $format;
         $this->statement = $statement;
@@ -38,15 +38,15 @@ final class AttestationObject
     {
         try {
             $data = CborDecoder::decode($buffer);
-            if (!is_array($data)) {
+            if (!$data instanceof CborMap) {
                 throw new WebAuthnException('Expecting attestation object to be a CBOR map.');
             }
 
-            DataValidator::checkTypes(
+            DataValidator::checkMap(
                 $data,
                 [
                     'fmt' => 'string',
-                    'attStmt' => 'array',
+                    'attStmt' => CborMap::class,
                     'authData' => ByteBuffer::class,
                 ]
             );
@@ -61,7 +61,7 @@ final class AttestationObject
         return $this->format;
     }
 
-    public function getStatement(): array
+    public function getStatement(): CborMap
     {
         return $this->statement;
     }

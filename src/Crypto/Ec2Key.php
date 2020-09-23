@@ -7,6 +7,7 @@ use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborEncoder;
+use MadWizard\WebAuthn\Format\CborMap;
 use MadWizard\WebAuthn\Format\DataValidator;
 
 class Ec2Key extends CoseKey // TODO exceptions
@@ -107,11 +108,11 @@ class Ec2Key extends CoseKey // TODO exceptions
         $this->curve = $curve;
     }
 
-    public static function fromCborData(array $data): Ec2Key
+    public static function fromCborData(CborMap $data): Ec2Key
     {
         // Note: leading zeroes in X and Y coordinates are preserved in CBOR
         // See RFC8152 13.1.1. Double Coordinate Curves
-        DataValidator::checkTypes(
+        DataValidator::checkMap(
             $data,
             [
                 self::COSE_KEY_PARAM_KTY => 'integer',

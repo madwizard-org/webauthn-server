@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Format;
 
 use MadWizard\WebAuthn\Exception\CborException;
 
-class CborEncoder
+final class CborEncoder
 {
     public static function encodeInteger(int $i): string
     {

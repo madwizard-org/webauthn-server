@@ -29,7 +29,7 @@ class FidoU2fAttestationStatement extends AbstractAttestationStatement
         $statement = $attestationObject->getStatement();
 
         try {
-            DataValidator::checkTypes(
+            DataValidator::checkMap(
                 $statement,
                 [
                     'x5c' => 'array',

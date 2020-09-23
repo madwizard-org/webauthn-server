@@ -37,7 +37,7 @@ class AndroidKeyAttestationStatement extends AbstractAttestationStatement
         $statement = $attestationObject->getStatement();
 
         try {
-            DataValidator::checkTypes(
+            DataValidator::checkMap(
                 $statement,
                 [
                     'alg' => 'integer',

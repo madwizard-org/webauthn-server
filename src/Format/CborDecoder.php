@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Format;
 use MadWizard\WebAuthn\Exception\ByteBufferException;
 use MadWizard\WebAuthn\Exception\CborException;
 
-class CborDecoder
+final class CborDecoder
 {
     /**
      * @return mixed
@@ -167,9 +167,9 @@ class CborDecoder
         throw new CborException(sprintf('Unknown major type %d.', $type));
     }
 
-    private static function parseMap(ByteBuffer $buf, int &$offset, int $count): array
+    private static function parseMap(ByteBuffer $buf, int &$offset, int $count): CborMap
     {
-        $map = [];
+        $map = new CborMap();
 
         for ($i = 0; $i < $count; $i++) {
             $mapKey = self::parseItem($buf, $offset);
@@ -177,10 +177,10 @@ class CborDecoder
             if (!\is_int($mapKey) && !\is_string($mapKey)) {
                 throw new CborException('Can only use strings or integers as map keys');
             }
-            if (isset($map[$mapKey])) {
+            if ($map->has($mapKey)) {
                 throw new CborException('Maps cannot contain duplicate keys');
             }
-            $map[$mapKey] = $mapVal;
+            $map->set($mapKey, $mapVal);
         }
         return $map;
     }

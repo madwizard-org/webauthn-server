@@ -29,7 +29,7 @@ class AndroidSafetyNetAttestationStatement extends AbstractAttestationStatement
         $statement = $attestationObject->getStatement();
 
         try {
-            DataValidator::checkTypes(
+            DataValidator::checkMap(
                 $statement,
                 [
                     'ver' => 'string',

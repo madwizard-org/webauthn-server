@@ -32,7 +32,7 @@ class MetadataToc implements Serializable
     public static function fromJson(array $json): self
     {
         try {
-            DataValidator::checkTypes($json, [
+            DataValidator::checkArray($json, [
                 'nextUpdate' => 'string',
                 'entries' => 'array',
             ], false);
@@ -76,7 +76,7 @@ class MetadataToc implements Serializable
             return null;
         }
 
-        DataValidator::checkTypes($entry, [
+        DataValidator::checkArray($entry, [
             'url' => '?string',
             'hash' => '?string',
             'statusReports' => '?array',

@@ -15,7 +15,6 @@ class CborDecoder
     public static function decode(ByteBuffer $buf)
     {
         try {
-            // TODO: wrap exceptions from bytebuffer
             $offset = 0;
             $result = self::parseItem($buf, $offset);
             if ($offset !== $buf->getLength()) {

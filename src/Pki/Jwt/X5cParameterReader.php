@@ -75,12 +75,12 @@ final class X5cParameterReader
     private static function keyFromCert(X509Certificate $cert, string $algorithm): CoseKeyInterface
     {
         $pkey = openssl_pkey_get_public($cert->asPem());
-        if (!$pkey) {
+        if ($pkey === false) {
             throw new ParseException('Failed to parse X5C certificate.');
         }
         $details = openssl_pkey_get_details($pkey);
         openssl_free_key($pkey);
-        if (!$details) {
+        if ($details === false) {
             throw new ParseException('Failed to get X5C key details.');
         }
 

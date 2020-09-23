@@ -85,7 +85,7 @@ final class AndroidKeyAttestationVerifier implements AttestationVerifierInterfac
         $seValid = ($seAuth->hasPurpose(AuthorizationList::KM_PURPOSE_SIGN) && $seAuth->getOrigin() === AuthorizationList::KM_ORIGIN_GENERATED);
         $teeValid = ($teeAuth->hasPurpose(AuthorizationList::KM_PURPOSE_SIGN) && $teeAuth->getOrigin() === AuthorizationList::KM_ORIGIN_GENERATED);
 
-        // TODO: how to provide this as an option?
+        // TODO:LOW how to provide this as an option?
         if (!($seValid || $teeValid)) {
             throw new VerificationException('Invalid Android attestation extension: no acceptable authorization lists.');
         }

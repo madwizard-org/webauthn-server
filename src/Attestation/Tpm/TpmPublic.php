@@ -74,8 +74,6 @@ class TpmPublic extends AbstractTpmStructure
 
         $offset = 8;
 
-        // TODO: check key bits with actual key length
-
         // Auth policy
         $this->readLengthPrefixed($data, $offset);
 

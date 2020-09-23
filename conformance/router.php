@@ -15,5 +15,3 @@ $varDir = dirname(__DIR__) . '/var';
 $router = new Router($metadataDir, $varDir);
 
 $router->run($_SERVER['REQUEST_URI']);
-
-// TODO: https://github.com/fido-alliance/conformance-tools-issues/issues/387

@@ -154,8 +154,6 @@ class MetadataStatement implements MetadataInterface
         $statement->description = $data['description'];
         $statement->authenticationAlgorithm = $data['authenticationAlgorithm'];
         $statement->attestationRootCertificates = self::parseRootCertificates($data['attestationRootCertificates']);
-
-        // TODO:check at least one of aaid, aaguid or keyidentifiers set
         return $statement;
     }
 

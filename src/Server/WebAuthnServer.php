@@ -214,7 +214,10 @@ class WebAuthnServer implements ServerInterface
 
         $requestOptions = new PublicKeyCredentialRequestOptions($challenge);
         $requestOptions->setRpId($this->relyingParty->getId());
-        $requestOptions->setUserVerification($options->getUserVerification());
+        $uv = $options->getUserVerification();
+        if ($uv !== UserVerificationRequirement::DEFAULT) {
+            $requestOptions->setUserVerification($uv);
+        }
         $requestOptions->setTimeout($options->getTimeout());
 
         $this->addAllowCredentials($options, $requestOptions);

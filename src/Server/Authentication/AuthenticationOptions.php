@@ -16,9 +16,9 @@ final class AuthenticationOptions
     private $allowCredentials = [];
 
     /**
-     * @var string|null
+     * @var string
      */
-    private $userVerification;
+    private $userVerification = UserVerificationRequirement::DEFAULT;
 
     /**
      * @var int|null
@@ -70,14 +70,14 @@ final class AuthenticationOptions
         return $this->allowCredentials;
     }
 
-    public function getUserVerification(): ?string
+    public function getUserVerification(): string
     {
         return $this->userVerification;
     }
 
-    public function setUserVerification(?string $value): void
+    public function setUserVerification(string $value): void
     {
-        if ($value !== null && !UserVerificationRequirement::isValidValue($value)) {
+        if (!UserVerificationRequirement::isValidValue($value)) {
             throw new WebAuthnException(sprintf('Value %s is not a valid UserVerificationRequirement', $value));
         }
 

@@ -59,6 +59,9 @@ class ByteBuffer implements Serializable
         return new ByteBuffer(\random_bytes($length));
     }
 
+    /**
+     * @throws ByteBufferException
+     */
     public function getBytes(int $offset, int $length): string
     {
         if ($offset < 0 || $length < 0 || ($offset + $length > $this->length)) {
@@ -67,6 +70,9 @@ class ByteBuffer implements Serializable
         return \substr($this->data, $offset, $length);
     }
 
+    /**
+     * @throws ByteBufferException
+     */
     public function getByteVal(int $offset): int
     {
         if ($offset < 0 || $offset >= $this->length) {
@@ -75,6 +81,9 @@ class ByteBuffer implements Serializable
         return \ord($this->data[$offset]);
     }
 
+    /**
+     * @throws ByteBufferException
+     */
     public function getUint16Val(int $offset): int
     {
         if ($offset < 0 || ($offset + 2) > $this->length) {
@@ -83,6 +92,9 @@ class ByteBuffer implements Serializable
         return unpack('n', $this->data, $offset)[1];
     }
 
+    /**
+     * @throws ByteBufferException
+     */
     public function getUint32Val(int $offset): int
     {
         if ($offset < 0 || ($offset + 4) > $this->length) {
@@ -96,6 +108,9 @@ class ByteBuffer implements Serializable
         return $val;
     }
 
+    /**
+     * @throws ByteBufferException
+     */
     public function getUint64Val(int $offset): int
     {
         if (PHP_INT_SIZE < 8) {
@@ -133,7 +148,9 @@ class ByteBuffer implements Serializable
         return ($half & 0x8000) ? -$val : $val;
     }
 
-    // TODO: float fixed size?
+    /**
+     * @throws ByteBufferException
+     */
     public function getFloatVal(int $offset): float
     {
         if ($offset < 0 || ($offset + 4) > $this->length) {
@@ -142,7 +159,9 @@ class ByteBuffer implements Serializable
         return unpack('G', $this->data, $offset)[1];
     }
 
-    // TODO: float fixed size?
+    /**
+     * @throws ByteBufferException
+     */
     public function getDoubleVal(int $offset): float
     {
         if ($offset < 0 || ($offset + 8) > $this->length) {

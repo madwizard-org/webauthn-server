@@ -46,7 +46,7 @@ class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
         return $map;
     }
 
-    public static function fromRelyingParty(RelyingPartyInterface $rp): self     // TODO move?
+    public static function fromRelyingParty(RelyingPartyInterface $rp): self
     {
         $rpEntity = new self($rp->getName(), $rp->getId());
         $rpEntity->setIcon($rp->getIconUrl());

@@ -111,7 +111,6 @@ final class ServerBuilder
     {
     }
 
-    // TODO: conistent set/with methods
     public function setRelyingParty(RelyingParty $rp): self
     {
         $this->rp = $rp;
@@ -195,7 +194,7 @@ final class ServerBuilder
     /**
      * @return $this
      */
-    public function withLogger(LoggerInterface $logger): self
+    public function setLogger(LoggerInterface $logger): self
     {
         $this->logger = $logger;
         return $this;

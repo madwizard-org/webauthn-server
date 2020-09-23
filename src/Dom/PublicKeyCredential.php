@@ -2,7 +2,6 @@
 
 namespace MadWizard\WebAuthn\Dom;
 
-use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
 class PublicKeyCredential implements PublicKeyCredentialInterface
@@ -16,6 +15,11 @@ class PublicKeyCredential implements PublicKeyCredentialInterface
      * @var AuthenticatorResponseInterface
      */
     private $response;
+
+    /**
+     * @var array
+     */
+    private $clientExtensionResults;
 
     public function __construct(ByteBuffer $rawCredentialId, AuthenticatorResponseInterface $response)
     {
@@ -46,9 +50,16 @@ class PublicKeyCredential implements PublicKeyCredentialInterface
         return $this->response;
     }
 
-    // TODO
+    public function setClientExtensionResults(array $extensionResults): void
+    {
+        $this->clientExtensionResults = $extensionResults;
+    }
+
+    /**
+     * @return array Array of client extensions as provided by the client (no parsing done yet)
+     */
     public function getClientExtensionResults(): array
     {
-        throw new UnsupportedException('Client extensions are not supported yet');
+        return $this->clientExtensionResults;
     }
 }

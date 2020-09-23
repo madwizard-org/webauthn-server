@@ -40,7 +40,7 @@ final class JsonConverter
      *   "type": "public-key",
      *   "id": "base64url encoded ArrayBuffer",
      *   "response" : << authenticator response >>,
-     *   "getClientExtensionResults" : << output of credential.getClientExtensionResults() >>
+     *   "clientExtensionResults" : << output of credential.getClientExtensionResults() >>
      * }
      * ```
      *
@@ -69,30 +69,31 @@ final class JsonConverter
      */
     public static function decodeCredential(array $json, string $responseType): PublicKeyCredentialInterface
     {
+        DataValidator::checkTypes($json,
+            [
+                'type' => 'string',
+                'id' => 'string',
+                'response' => 'array',
+                'clientExtensionResults' => '?array',
+            ], false);
         if (($json['type'] ?? null) !== PublicKeyCredentialType::PUBLIC_KEY) {
             throw new ParseException("Expecting type 'public-key'");
         }
 
-        if (empty($json['id'])) {
+        if ($json['id'] === '') {
             throw new ParseException('Missing id in json data');
         }
-        $id = $json['id'];
-        if (!is_string($id)) {
-            throw new ParseException('Id in json data should be a string');
+
+        $rawId = Base64UrlEncoding::decode($json['id']);
+
+        $response = self::decodeResponse($json['response'], $responseType);
+        $credential = new PublicKeyCredential(new ByteBuffer($rawId), $response);
+
+        if (isset($json['clientExtensionResults'])) {
+            $credential->setClientExtensionResults($json['clientExtensionResults']);
         }
 
-        $rawId = Base64UrlEncoding::decode($id);
-
-        $responseData = $json['response'] ?? null;
-        if (!is_array($responseData)) {
-            throw new ParseException('Expecting array data for response');
-        }
-
-        $response = self::decodeResponse($responseData, $responseType);
-
-        // TODO: clientExtensionResults
-
-        return new PublicKeyCredential(new ByteBuffer($rawId), $response);
+        return $credential;
     }
 
     private static function jsonFromString(string $json): array

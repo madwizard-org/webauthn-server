@@ -33,16 +33,16 @@ final class JwtValidator implements JwtValidatorInterface
         if (!$context->getKey()->verifySignature($token->getSignedData(), $asn1Sig)) {
             throw new VerificationException('Invalid signature.');
         }
-/* TODO
-        $now = $context->getReferenceUnixTime();
+        /* TODO
+                $now = $context->getReferenceUnixTime();
 
-        $exp = $header['exp'] ?? null;
-        if ($exp !== null) {
-            if (!is_int($exp)) {
-                throw new VerificationException('Invalid "exp" header value.');
-            }
-        }
-*/
+                $exp = $header['exp'] ?? null;
+                if ($exp !== null) {
+                    if (!is_int($exp)) {
+                        throw new VerificationException('Invalid "exp" header value.');
+                    }
+                }
+        */
         return $token->getBody();
     }
 

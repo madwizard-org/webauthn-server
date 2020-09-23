@@ -2,6 +2,7 @@
 
 namespace MadWizard\WebAuthn\Tests\Json;
 
+use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Json\JsonConverter;
@@ -24,22 +25,22 @@ class JsonConverterTest extends TestCase
 
     public function testNotPublicKey()
     {
-        $this->expectException(ParseException::class);
-        $this->expectExceptionMessageMatches('~public-key~i');
-        JsonConverter::decodeAssertionString('{}');
+        $this->expectException(DataValidationException::class);
+        $this->expectExceptionMessageMatches('~Required key "type"~i');
+        JsonConverter::decodeAssertionString('{"id":"YWE","response":{}}');
     }
 
     public function testMissingId()
     {
-        $this->expectException(ParseException::class);
-        $this->expectExceptionMessageMatches('~missing id~i');
+        $this->expectException(DataValidationException::class);
+        $this->expectExceptionMessageMatches('~Required key "id"~i');
         JsonConverter::decodeAssertionString('{"type":"public-key"}');
     }
 
     public function testNonStringId()
     {
-        $this->expectException(ParseException::class);
-        $this->expectExceptionMessageMatches('~should be a string~i');
+        $this->expectException(DataValidationException::class);
+        $this->expectExceptionMessageMatches('~Expecting key "id" to be of type "string" ~i');
         JsonConverter::decodeAssertionString('{"type":"public-key","id":333}');
     }
 
@@ -47,7 +48,7 @@ class JsonConverterTest extends TestCase
     {
         $this->expectException(ParseException::class);
         $this->expectExceptionMessageMatches('~base64url~i');
-        JsonConverter::decodeAssertionString('{"type":"public-key","id":"%%%"}');
+        JsonConverter::decodeAssertionString('{"type":"public-key","response":{},"id":"%%%"}');
     }
 
     public function testInvalidType()
@@ -59,8 +60,8 @@ class JsonConverterTest extends TestCase
 
     public function testInvalidResponse()
     {
-        $this->expectException(WebAuthnException::class);
-        $this->expectExceptionMessageMatches('~expecting array~i');
+        $this->expectException(DataValidationException::class);
+        $this->expectExceptionMessageMatches('~Expecting key "response" to be of type "array"~i');
         $json = array_merge(
                 $this->getResponse(),
                 ['response' => 5]

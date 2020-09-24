@@ -123,10 +123,10 @@ class Ec2Key extends CoseKey // TODO exceptions
             ]
         );
 
-        $curve = $data[self::KTP_CRV];
-        $x = $data[self::KTP_X];
-        $y = $data[self::KTP_Y];
-        $alorithm = $data[self::COSE_KEY_PARAM_ALG];
+        $curve = $data->get(self::KTP_CRV);
+        $x = $data->get(self::KTP_X);
+        $y = $data->get(self::KTP_Y);
+        $alorithm = $data->get(self::COSE_KEY_PARAM_ALG);
 
         return new Ec2Key($x, $y, $curve, $alorithm);
     }

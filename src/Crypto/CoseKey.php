@@ -83,7 +83,7 @@ abstract class CoseKey implements CoseKeyInterface
             false
         );
 
-        $keyType = $data[self::COSE_KEY_PARAM_KTY];
+        $keyType = $data->get(self::COSE_KEY_PARAM_KTY);
         return self::createKey($keyType, $data);
     }
 

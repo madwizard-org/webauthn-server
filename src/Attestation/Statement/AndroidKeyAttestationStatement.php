@@ -49,9 +49,9 @@ class AndroidKeyAttestationStatement extends AbstractAttestationStatement
             throw new ParseException('Invalid Android key attestation statement.', 0, $e);
         }
 
-        $this->signature = $statement['sig'];
-        $this->algorithm = $statement['alg'];
-        $this->certificates = $this->buildPEMCertificateArray($statement['x5c']);
+        $this->signature = $statement->get('sig');
+        $this->algorithm = $statement->get('alg');
+        $this->certificates = $this->buildPEMCertificateArray($statement->get('x5c'));
     }
 
     public function getAlgorithm(): int

@@ -40,15 +40,13 @@ class AndroidSafetyNetAttestationStatement extends AbstractAttestationStatement
             throw new ParseException('Invalid Android SafetyNet attestation statement.', 0, $e);
         }
 
-        $this->version = $statement['ver'];
+        $this->version = $statement->get('ver');
         if ($this->version === '') {
             throw new ParseException('Android SafetyNet version is empty.');
         }
 
-        /**
-         * @var ByteBuffer $res
-         */
-        $res = $statement['response'];
+        $res = $statement->get('response');
+        assert($res instanceof ByteBuffer);
         $this->response = $res->getBinaryString();
     }
 

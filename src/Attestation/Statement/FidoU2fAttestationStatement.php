@@ -40,8 +40,8 @@ class FidoU2fAttestationStatement extends AbstractAttestationStatement
             throw new ParseException('Invalid FIDO U2F attestation statement.', 0, $e);
         }
 
-        $sig = $statement['sig'];
-        $x5c = $statement['x5c'];
+        $sig = $statement->get('sig');
+        $x5c = $statement->get('x5c');
 
         $this->signature = $sig;
         $this->certificates = $this->buildPEMCertificateArray($x5c);

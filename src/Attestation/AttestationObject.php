@@ -50,7 +50,7 @@ final class AttestationObject
                     'authData' => ByteBuffer::class,
                 ]
             );
-            return new self($data['fmt'], $data['attStmt'], $data['authData']);
+            return new self($data->get('fmt'), $data->get('attStmt'), $data->get('authData'));
         } catch (CborException $e) {
             throw new ParseException('Failed to parse CBOR attestation object.', 0, $e);
         }

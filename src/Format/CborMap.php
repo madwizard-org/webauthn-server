@@ -2,12 +2,11 @@
 
 namespace MadWizard\WebAuthn\Format;
 
-use ArrayAccess;
 use ArrayObject;
 use JsonSerializable;
 use MadWizard\WebAuthn\Exception\CborException;
 
-final class CborMap implements ArrayAccess, JsonSerializable
+final class CborMap implements JsonSerializable
 {
     /**
      * @var array[]
@@ -46,6 +45,11 @@ final class CborMap implements ArrayAccess, JsonSerializable
             throw new CborException("Key $internalKey is not present in CBOR map.");
         }
         return $this->entries[$internalKey][1];
+    }
+
+    public function getDefault($key, $default)
+    {
+        return $this->has($key) ? $this->get($key) : $default;
     }
 
     public function remove($key)
@@ -87,26 +91,6 @@ final class CborMap implements ArrayAccess, JsonSerializable
             $map->set($k, $v);
         }
         return $map;
-    }
-
-    public function offsetExists($offset)
-    {
-        return $this->has($offset);
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->get($offset);
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        $this->set($offset, $value);
-    }
-
-    public function offsetUnset($offset)
-    {
-        $this->remove($offset);
     }
 
     public function jsonSerialize()

@@ -72,15 +72,15 @@ class TpmAttestationStatement extends AbstractAttestationStatement
             throw new ParseException('Invalid TPM attestation statement.', 0, $e);
         }
 
-        $this->algorithm = $statement['alg'];
-        $this->signature = $statement['sig'];
+        $this->algorithm = $statement->get('alg');
+        $this->signature = $statement->get('sig');
 
-        if ($statement['ver'] !== '2.0') {
+        if ($statement->get('ver') !== '2.0') {
             throw new ParseException('Only TPM version 2.0 is supported.');
         }
 
-        $this->ecdaaKeyId = $statement['ecdaaKeyId'] ?? null;
-        $x5c = $statement['x5c'] ?? null;
+        $this->ecdaaKeyId = $statement->getDefault('ecdaaKeyId', null);
+        $x5c = $statement->getDefault('x5c', null);
 
         if ($this->ecdaaKeyId === null && $x5c === null) {
             throw new ParseException('Either ecdaaKeyId or x5c must be set.');
@@ -90,9 +90,9 @@ class TpmAttestationStatement extends AbstractAttestationStatement
         }
         $this->certificates = $x5c === null ? null : $this->buildPEMCertificateArray($x5c);
 
-        $this->attest = new TpmAttest($statement['certInfo']);
-        $this->public = new TpmPublic($statement['pubArea']);
-        $this->certInfo = $statement['certInfo'];
+        $this->attest = new TpmAttest($statement->get('certInfo'));
+        $this->public = new TpmPublic($statement->get('pubArea'));
+        $this->certInfo = $statement->get('certInfo');
     }
 
     public function getSignature(): ByteBuffer

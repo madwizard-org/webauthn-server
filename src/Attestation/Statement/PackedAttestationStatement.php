@@ -52,11 +52,11 @@ class PackedAttestationStatement extends AbstractAttestationStatement
             throw new ParseException('Invalid packed attestation statement.', 0, $e);
         }
 
-        $this->algorithm = $statement['alg'];
-        $this->signature = $statement['sig'];
+        $this->algorithm = $statement->get('alg');
+        $this->signature = $statement->get('sig');
 
-        $this->ecdaaKeyId = $statement['ecdaaKeyId'] ?? null;
-        $x5c = $statement['x5c'] ?? null;
+        $this->ecdaaKeyId = $statement->getDefault('ecdaaKeyId', null);
+        $x5c = $statement->getDefault('x5c', null);
 
         if ($this->ecdaaKeyId !== null && $x5c !== null) {
             throw new ParseException('ecdaaKeyId and x5c cannot both be set.');

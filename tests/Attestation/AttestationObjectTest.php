@@ -129,6 +129,6 @@ class AttestationObjectTest extends TestCase
         );
         self::assertSame(bin2hex($authData), $decoded->getAuthenticatorData()->getHex());
         $statement = $decoded->getStatement();
-        self::assertArrayHasKey('x5c', $statement);
+        self::assertTrue($statement->has('x5c'));
     }
 }

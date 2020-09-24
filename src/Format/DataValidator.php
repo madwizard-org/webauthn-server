@@ -107,7 +107,7 @@ final class DataValidator
             $optional = true;
             $type = substr($type, 1);
         }
-        if ($type[0] === ':') {  // TODO tests
+        if ($type[0] === ':') {
             $nullable = true;
             $type = substr($type, 1);
         }

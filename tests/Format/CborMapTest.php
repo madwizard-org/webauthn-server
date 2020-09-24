@@ -149,35 +149,4 @@ class CborMapTest extends TestCase
         self::assertSame(1, $copy->count());
         self::assertSame(2, $map->count());
     }
-
-    public function testArrayAccess()
-    {
-        $map = new CborMap();
-
-        $map[-1] = 'int -1';
-        $map['-1'] = 'string -1';
-        $map[''] = 'empty';
-        $map['00'] = 'string 00';
-        $map['0'] = 'string 0';
-        $map[0] = 'int 00';
-        $map[5] = 'int 5';
-        $map['test'] = 'hello';
-
-        self::assertSame('int -1', $map[-1]);
-        self::assertSame('string -1', $map['-1']);
-        self::assertSame('empty', $map['']);
-        self::assertSame('string 00', $map['00']);
-        self::assertSame('string 0', $map['0']);
-        self::assertSame('int 00', $map[0]);
-        self::assertSame('int 5', $map[5]);
-        self::assertSame('hello', $map['test']);
-
-        self::assertTrue(isset($map[0]));
-        self::assertTrue(isset($map[5]));
-        self::assertFalse(isset($map['5']));
-
-        self::assertTrue(isset($map['test']));
-        unset($map['test']);
-        self::assertFalse(isset($map['test']));
-    }
 }

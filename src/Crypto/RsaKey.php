@@ -64,9 +64,9 @@ class RsaKey extends CoseKey
             ]
         );
 
-        $alorithm = $data[self::COSE_KEY_PARAM_ALG];
-        $modulus = $data[self::KTP_N];
-        $exponent = $data[self::KTP_E];
+        $alorithm = $data->get(self::COSE_KEY_PARAM_ALG);
+        $modulus = $data->get(self::KTP_N);
+        $exponent = $data->get(self::KTP_E);
 
         return new RsaKey($modulus, $exponent, $alorithm);
     }

@@ -22,6 +22,7 @@ use MadWizard\WebAuthn\Exception\NoCredentialsException;
 use MadWizard\WebAuthn\Exception\UntrustedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
+use MadWizard\WebAuthn\Extension\ExtensionRegistryInterface;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Metadata\MetadataResolverInterface;
 use MadWizard\WebAuthn\Policy\PolicyInterface;
@@ -29,7 +30,6 @@ use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManagerInterface;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationContext;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationRequest;
-use MadWizard\WebAuthn\Server\Authentication\AuthenticationResult;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationResultInterface;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationVerifier;
 use MadWizard\WebAuthn\Server\Registration\RegistrationContext;
@@ -70,13 +70,19 @@ class WebAuthnServer implements ServerInterface
      */
     private $trustDecisionManager;
 
+    /**
+     * @var ExtensionRegistryInterface
+     */
+    private $extensionRegistry;
+
     public function __construct(
         RelyingPartyInterface $relyingParty,
         PolicyInterface $policy,
         CredentialStoreInterface $credentialStore,
         AttestationFormatRegistryInterface $formatRegistry,
         MetadataResolverInterface $metadataResolver,
-        TrustDecisionManagerInterface $trustDecisionManager
+        TrustDecisionManagerInterface $trustDecisionManager,
+        ExtensionRegistryInterface $extensionRegistry
     ) {
         $this->relyingParty = $relyingParty;
         $this->policy = $policy;
@@ -84,6 +90,7 @@ class WebAuthnServer implements ServerInterface
         $this->formatRegistry = $formatRegistry;
         $this->metadataResolver = $metadataResolver;
         $this->trustDecisionManager = $trustDecisionManager;
+        $this->extensionRegistry = $extensionRegistry;
     }
 
     public function startRegistration(RegistrationOptions $options): RegistrationRequest
@@ -100,7 +107,9 @@ class WebAuthnServer implements ServerInterface
         $creationOptions->setAttestation($options->getAttestation());
         $creationOptions->setAuthenticatorSelection($options->getAuthenticatorSelection());
         $extensions = $options->getExtensionInputs();
-        if ($extensions !== null) {
+        if (count($extensions) > 0) {
+            // TODO: check if supported extension + check operation supported
+            // TODO: reuse same code for authentication?
             $creationOptions->setExtensions(
                 AuthenticationExtensionsClientInputs::fromArray($extensions)
             );
@@ -115,11 +124,11 @@ class WebAuthnServer implements ServerInterface
             }
         }
 
-        $context = $this->createRegistrationContext($creationOptions);
+        $context = $this->createRegistrationContext($options, $creationOptions);
         return new RegistrationRequest($creationOptions, $context);
     }
 
-    private function createRegistrationContext(PublicKeyCredentialCreationOptions $options): RegistrationContext
+    private function createRegistrationContext(RegistrationOptions $regOptions, PublicKeyCredentialCreationOptions $options): RegistrationContext
     {
         $origin = $this->relyingParty->getOrigin();
         $rpId = $this->relyingParty->getEffectiveId();
@@ -133,6 +142,9 @@ class WebAuthnServer implements ServerInterface
             $context->setUserVerificationRequired(true);
         }
 
+        foreach ($regOptions->getExtensionInputs() as $input) {
+            $context->addExtensionInput($input);
+        }
         return $context;
     }
 
@@ -144,7 +156,7 @@ class WebAuthnServer implements ServerInterface
      */
     public function finishRegistration(PublicKeyCredentialInterface $credential, RegistrationContext $context): RegistrationResultInterface
     {
-        $verifier = new RegistrationVerifier($this->formatRegistry);
+        $verifier = new RegistrationVerifier($this->formatRegistry, $this->extensionRegistry);
         $registrationResult = $verifier->verify($credential, $context);
 
         $response = $credential->getResponse()->asAttestationResponse();
@@ -223,7 +235,7 @@ class WebAuthnServer implements ServerInterface
         $this->addAllowCredentials($options, $requestOptions);
 
         $extensions = $options->getExtensionInputs();
-        if ($extensions !== null) {
+        if (count($extensions) > 0) {
             $requestOptions->setExtensions(
                 AuthenticationExtensionsClientInputs::fromArray($extensions)
             );
@@ -253,28 +265,24 @@ class WebAuthnServer implements ServerInterface
                 $context->addAllowCredentialId(CredentialId::fromBuffer($credential->getId()));
             }
         }
-
+        foreach ($authOptions->getExtensionInputs() as $input) {
+            $context->addExtensionInput($input);
+        }
         return $context;
     }
 
     /**
-     * @param PublicKeyCredentialInterface|string $credential Assertion credential response from the client
+     * @param PublicKeyCredentialInterface $credential Assertion credential response from the client
      *
      * @throws VerificationException
      */
     public function finishAuthentication(PublicKeyCredentialInterface $credential, AuthenticationContext $context): AuthenticationResultInterface
     {
-        $verifier = new AuthenticationVerifier($this->credentialStore);
+        $verifier = new AuthenticationVerifier($this->credentialStore, $this->extensionRegistry);
 
-        $userCredential = $verifier->verifyAuthenticatonAssertion($credential, $context);
+        $authenticationResult = $verifier->verifyAuthenticatonAssertion($credential, $context);
 
-        // Ensure credential belongs to user being authenticated
-        $userHandle = $context->getUserHandle();
-        if ($userHandle !== null && !$userHandle->equals($userCredential->getUserHandle())) {
-            throw new VerificationException('Credential does not belong to the user currently being authenticated.');
-        }
-
-        return new AuthenticationResult($userCredential);
+        return $authenticationResult;
     }
 
     /**

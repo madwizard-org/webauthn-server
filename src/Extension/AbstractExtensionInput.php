@@ -3,17 +3,20 @@
 namespace MadWizard\WebAuthn\Extension;
 
 use MadWizard\WebAuthn\Exception\WebAuthnException;
+use MadWizard\WebAuthn\Format\SerializableTrait;
 use function sprintf;
 
 abstract class AbstractExtensionInput implements ExtensionInputInterface
 {
+    use SerializableTrait;
+
     /**
      * @var string
      */
     private $identifier;
 
     /**
-     * @var mixed
+     * @var mixed // TODO stricter type?
      */
     protected $input;
 
@@ -37,5 +40,16 @@ abstract class AbstractExtensionInput implements ExtensionInputInterface
     public function getInput()
     {
         return $this->input;
+    }
+
+    public function __serialize(): array
+    {
+        return ['id' => $this->identifier, 'input' => $this->input];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->identifier = $data['id'];
+        $this->input = $data['input'];
     }
 }

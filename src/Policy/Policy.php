@@ -59,7 +59,7 @@ final class Policy implements PolicyInterface
      * NOTE: setting this to false violates the WebAuthn specs but this option is needed to pass FIDO2 conformance, which
      * includes silent operations.
      */
-    public function setUserPresenceRequired(bool $required)
+    public function setUserPresenceRequired(bool $required): void
     {
         $this->userPresenceRequired = $required;
     }

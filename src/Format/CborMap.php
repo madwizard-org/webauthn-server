@@ -101,7 +101,7 @@ final class CborMap implements ArrayAccess, JsonSerializable
 
     public function offsetSet($offset, $value)
     {
-        return $this->set($offset, $value);
+        $this->set($offset, $value);
     }
 
     public function offsetUnset($offset)

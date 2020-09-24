@@ -11,7 +11,7 @@ class AuthenticationExtensionsClientInputs extends AbstractDictionary
     /**
      * @var ExtensionInputInterface[]
      */
-    private $inputs;
+    private $inputs = [];
 
     public function __construct()
     {

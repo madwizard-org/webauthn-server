@@ -9,18 +9,22 @@ use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
+use MadWizard\WebAuthn\Extension\ExtensionInterface;
+use MadWizard\WebAuthn\Extension\ExtensionProcessingContext;
+use MadWizard\WebAuthn\Extension\ExtensionRegistryInterface;
 use MadWizard\WebAuthn\Server\AbstractVerifier;
 
-class RegistrationVerifier extends AbstractVerifier
+final class RegistrationVerifier extends AbstractVerifier
 {
     /**
      * @var AttestationFormatRegistryInterface
      */
-    private $registry;
+    private $formatRegistry;
 
-    public function __construct(AttestationFormatRegistryInterface $registry)
+    public function __construct(AttestationFormatRegistryInterface $registry, ExtensionRegistryInterface $extensionRegistry)
     {
-        $this->registry = $registry;
+        parent::__construct($extensionRegistry);
+        $this->formatRegistry = $registry;
     }
 
     /**
@@ -49,8 +53,10 @@ class RegistrationVerifier extends AbstractVerifier
         $attestation = AttestationObject::parse($response->getAttestationObject());
         $authData = new AuthenticatorData($attestation->getAuthenticatorData());
 
+        $extensionContext = $this->processExtensions($credential, $authData, $context, ExtensionInterface::OPERATION_REGISTRATION);
+
         // 9 - 11
-        $this->checkAuthenticatorData($authData, $context);
+        $this->checkAuthenticatorData($authData, $context, $extensionContext);
 
         // 12. Verify that the values of the client extension outputs in clientExtensionResults and the authenticator
         //     extension outputs in the extensions in authData are as expected, considering the client extension input
@@ -61,15 +67,17 @@ class RegistrationVerifier extends AbstractVerifier
         //     Relying Party and which extensions are in use.
         //     Note: Since all extensions are OPTIONAL for both the client and the authenticator, the Relying Party MUST
         //     be prepared to handle cases where none or not all of the requested extensions were acted upon.
-        // TODO:not supported yet.
+
+        // -> This is already checked in processExtensions above, the extensions need to be processed earlier because
+        // extensions such as appid affect the effective rpId
 
         // 13. Determine the attestation statement format by performing a USASCII case-sensitive match on fmt against
         //     the set of supported WebAuthn Attestation Statement Format Identifier values.
         $format = $attestation->getFormat();
 
         try {
-            $statement = $this->registry->createStatement($attestation);
-            $verifier = $this->registry->getVerifier($attestation->getFormat());
+            $statement = $this->formatRegistry->createStatement($attestation);
+            $verifier = $this->formatRegistry->getVerifier($attestation->getFormat());
         } catch (FormatNotSupportedException $e) {
             throw new VerificationException(sprintf("Attestation format '%s' not supported", $format), 0, $e);
         }
@@ -82,7 +90,7 @@ class RegistrationVerifier extends AbstractVerifier
         return new RegistrationResult(CredentialId::fromBuffer($credential->getRawId()), $authData, $attestation, $verificationResult);
     }
 
-    private function checkClientData(array $clientData, RegistrationContext $context)
+    private function checkClientData(array $clientData, RegistrationContext $context)   // TODO tls context?
     {
         $this->validateClientData($clientData);
 
@@ -111,14 +119,14 @@ class RegistrationVerifier extends AbstractVerifier
         }
     }
 
-    private function checkAuthenticatorData(AuthenticatorData $authData, RegistrationContext $context)
+    private function checkAuthenticatorData(AuthenticatorData $authData, RegistrationContext $context, ExtensionProcessingContext $extensionContext)
     {
         if (!$authData->hasAttestedCredentialData()) {
             throw new VerificationException('Authenticator data does not contain attested credential.');
         }
 
         // 9. Verify that the RP ID hash in authData is indeed the SHA-256 hash of the RP ID expected by the RP.
-        if (!$this->verifyRpIdHash($authData, $context)) {
+        if (!$this->verifyRpIdHash($authData, $context, $extensionContext)) {
             throw new VerificationException('RP ID hash in authData does not match.');
         }
 

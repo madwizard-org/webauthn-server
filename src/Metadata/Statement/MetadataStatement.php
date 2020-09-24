@@ -202,7 +202,7 @@ class MetadataStatement implements MetadataInterface
             if (!is_string($item)) {
                 throw new ParseException('Expecting string in attestationRootCertificates.');
             }
-            if (@base64_decode($item) === false) {
+            if (@base64_decode($item, true) === false) {
                 throw new ParseException('Invalid base64 encoded string in attestationRootCertificates.');
             }
         }

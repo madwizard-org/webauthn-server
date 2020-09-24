@@ -6,10 +6,6 @@ final class ExtensionHelper
 {
     public const MAX_IDENTIFIER_LENGHT = 32;
 
-    public const OPERATION_REGISTRATION = 'registration';
-
-    public const OPERATION_AUTHENTICATION = 'authentication';
-
     public static function validExtensionIdentifier(string $identifier): bool
     {
         // SPEC 9.1

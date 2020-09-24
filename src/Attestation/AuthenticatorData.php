@@ -8,10 +8,11 @@ use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 use MadWizard\WebAuthn\Exception\ByteBufferException;
 use MadWizard\WebAuthn\Exception\CborException;
 use MadWizard\WebAuthn\Exception\DataValidationException;
+use MadWizard\WebAuthn\Exception\NotAvailableException;
 use MadWizard\WebAuthn\Exception\ParseException;
-use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborDecoder;
+use MadWizard\WebAuthn\Format\CborMap;
 
 final class AuthenticatorData
 {
@@ -72,6 +73,11 @@ final class AuthenticatorData
      */
     private $raw;
 
+    /**
+     * @var CborMap|null Authenticator extension output
+     */
+    private $extensionData;
+
     private const LENGTH_RP_ID_HASH = 32;
 
     private const LENGTH_AAGUID = 16;
@@ -110,9 +116,10 @@ final class AuthenticatorData
             if ($this->hasExtensionData()) {
                 $extensionData = CborDecoder::decodeInPlace($data, $offset, $endOffset);
                 $offset = $endOffset;
-                if (!is_array($extensionData)) {
+                if (!$extensionData instanceof CborMap) {
                     throw new ParseException('Expected CBOR map for extension data in authenticator data.');
                 }
+                $this->extensionData = $extensionData;
             }
             if ($offset !== $data->getLength()) {
                 throw new ParseException('Unexpected bytes at end of AuthenticatorData.');
@@ -160,14 +167,14 @@ final class AuthenticatorData
     }
 
     /**
-     * @throws WebAuthnException when authenticator data does not contain a key.
+     * @throws NotAvailableException when authenticator data does not contain a key.
      *
      * @see hasKey
      */
     public function getKey(): CoseKeyInterface
     {
         if ($this->key === null) {
-            throw new WebAuthnException('AuthenticatorData does not contain a key.');
+            throw new NotAvailableException('AuthenticatorData does not contain a key.');
         }
         return $this->key;
     }
@@ -185,9 +192,21 @@ final class AuthenticatorData
     public function getAaguid(): Aaguid
     {
         if ($this->aaguid === null) {
-            throw new WebAuthnException('AuthenticatorData does not contain an AAGUID.');
+            throw new NotAvailableException('AuthenticatorData does not contain an AAGUID.');
         }
         return new Aaguid($this->aaguid);
+    }
+
+    /**
+     * Returns the authenticator extension data output.
+     */
+    public function getExtensionData(): CborMap
+    {
+        if ($this->extensionData === null) {
+            throw new NotAvailableException('AuthenticatorData does not contain extension data.');
+        }
+
+        return $this->extensionData;
     }
 
     public function getRaw(): ByteBuffer

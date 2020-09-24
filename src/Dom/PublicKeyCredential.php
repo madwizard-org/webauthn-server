@@ -19,7 +19,7 @@ class PublicKeyCredential implements PublicKeyCredentialInterface
     /**
      * @var array
      */
-    private $clientExtensionResults;
+    private $clientExtensionResults = [];
 
     public function __construct(ByteBuffer $rawCredentialId, AuthenticatorResponseInterface $response)
     {

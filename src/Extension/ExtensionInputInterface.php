@@ -2,7 +2,9 @@
 
 namespace MadWizard\WebAuthn\Extension;
 
-interface ExtensionInputInterface
+use Serializable;
+
+interface ExtensionInputInterface extends Serializable
 {
     public function getIdentifier(): string;
 

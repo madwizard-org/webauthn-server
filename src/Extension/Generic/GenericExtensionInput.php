@@ -1,8 +1,10 @@
 <?php
 
-namespace MadWizard\WebAuthn\Extension;
+namespace MadWizard\WebAuthn\Extension\Generic;
 
-class UnknownExtensionInput extends AbstractExtensionInput
+use MadWizard\WebAuthn\Extension\AbstractExtensionInput;
+
+class GenericExtensionInput extends AbstractExtensionInput
 {
     public function __construct(string $identifier, $input = null)
     {

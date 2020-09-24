@@ -114,14 +114,11 @@ final class MetadataServiceProvider implements MetadataProviderInterface, Logger
         }
 
         $meta = $this->getMetadataItem($url, $hash);
-        if ($meta === null) {
-            return null;
-        }
         $meta->setStatusReports($tocItem->getStatusReports());
         return $meta;
     }
 
-    private function getMetadataItem(string $url, ByteBuffer $hash): ?MetadataStatement    // TODO exception?
+    private function getMetadataItem(string $url, ByteBuffer $hash): MetadataStatement    // TODO exception?
     {
         $item = $this->cachePool->getItem($hash->getHex());
 

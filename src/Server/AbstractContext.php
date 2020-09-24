@@ -2,6 +2,7 @@
 
 namespace MadWizard\WebAuthn\Server;
 
+use MadWizard\WebAuthn\Extension\ExtensionInputInterface;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\SerializableTrait;
 use MadWizard\WebAuthn\Web\Origin;
@@ -34,6 +35,11 @@ abstract class AbstractContext
      * @var Origin
      */
     private $origin;
+
+    /**
+     * @var ExtensionInputInterface[]
+     */
+    private $extensionInputs = [];
 
     public function __construct(ByteBuffer $challenge, Origin $origin, string $rpId)
     {
@@ -77,6 +83,19 @@ abstract class AbstractContext
         return $this->origin;
     }
 
+    public function addExtensionInput(ExtensionInputInterface $input)
+    {
+        $this->extensionInputs[] = $input;
+    }
+
+    /**
+     * @return ExtensionInputInterface[]
+     */
+    public function getExtensionInputs(): array
+    {
+        return $this->extensionInputs;
+    }
+
     public function __serialize(): array
     {
         return [
@@ -85,6 +104,7 @@ abstract class AbstractContext
             'userVerificationRequired' => $this->userVerificationRequired,
             'origin' => $this->origin,
             'userPresenceRequired' => $this->userPresenceRequired,
+            'extensionInputs' => $this->extensionInputs,
         ];
     }
 
@@ -95,5 +115,6 @@ abstract class AbstractContext
         $this->userVerificationRequired = $data['userVerificationRequired'];
         $this->origin = $data['origin'];
         $this->userPresenceRequired = $data['userPresenceRequired'];
+        $this->extensionInputs = $data['extensionInputs'];
     }
 }

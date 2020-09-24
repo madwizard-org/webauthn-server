@@ -10,6 +10,8 @@ use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 use MadWizard\WebAuthn\Dom\AuthenticatorAssertionResponseInterface;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
 use MadWizard\WebAuthn\Exception\VerificationException;
+use MadWizard\WebAuthn\Extension\ExtensionInterface;
+use MadWizard\WebAuthn\Extension\ExtensionRegistryInterface;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Server\AbstractVerifier;
 
@@ -20,18 +22,19 @@ final class AuthenticationVerifier extends AbstractVerifier
      */
     private $credentialCollection;
 
-    // add policy
-    public function __construct(CredentialStoreInterface $credentialCollection)
+    public function __construct(CredentialStoreInterface $credentialCollection, ExtensionRegistryInterface $extensionRegistry)
     {
+        parent::__construct($extensionRegistry);
         $this->credentialCollection = $credentialCollection;
     }
 
-    public function verifyAuthenticatonAssertion(PublicKeyCredentialInterface $credential, AuthenticationContext $context): UserCredentialInterface
+    public function verifyAuthenticatonAssertion(PublicKeyCredentialInterface $credential, AuthenticationContext $context): AuthenticationResult
     {
         // SPEC 7.2 Verifying an authentication assertion
 
         $response = $credential->getResponse()->asAssertionResponse();
         $authData = new AuthenticatorData($response->getAuthenticatorData());
+        $extensionContext = $this->processExtensions($credential, $authData, $context, ExtensionInterface::OPERATION_AUTHENTICATION);
 
         // 1. If the allowCredentials option was given when this authentication ceremony was initiated, verify that
         //    credential.id identifies one of the public key credentials that were listed in allowCredentials.
@@ -62,7 +65,7 @@ final class AuthenticationVerifier extends AbstractVerifier
         $this->checkClientData($response->getParsedClientData(), $context);
 
         // 11. Verify that the rpIdHash in aData is the SHA-256 hash of the RP ID expected by the Relying Party.
-        if (!$this->verifyRpIdHash($authData, $context)) {
+        if (!$this->verifyRpIdHash($authData, $context, $extensionContext)) {
             throw new VerificationException('rpIdHash was not correct.');
         }
 
@@ -81,7 +84,8 @@ final class AuthenticationVerifier extends AbstractVerifier
         //     Note: Since all extensions are OPTIONAL for both the client and the authenticator, the Relying Party MUST
         //     be prepared to handle cases where none or not all of the requested extensions were acted upon.
 
-        // TODO: not yet supported
+        // -> This is already checked in processExtensions above, the extensions need to be processed earlier because
+        // extensions such as appid affect the effective rpId
 
         // 15 and 16
         if (!$this->verifySignature($response, $accountCredential->getPublicKey())) {
@@ -94,7 +98,15 @@ final class AuthenticationVerifier extends AbstractVerifier
         }
 
         // If all the above steps are successful, continue with the authentication ceremony as appropriate. Otherwise, fail the authentication ceremony.
-        return $accountCredential;
+
+        // Additional custom checks:
+        // Ensure credential belongs to user being authenticated
+        $userHandle = $context->getUserHandle();
+        if ($userHandle !== null && !$userHandle->equals($accountCredential->getUserHandle())) {
+            throw new VerificationException('Credential does not belong to the user currently being authenticated.');
+        }
+
+        return new AuthenticationResult($accountCredential);
     }
 
     /**

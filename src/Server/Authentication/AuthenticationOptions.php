@@ -6,10 +6,12 @@ use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
-use MadWizard\WebAuthn\Extension\ExtensionInputInterface;
+use MadWizard\WebAuthn\Server\Common\ExtensionInputsTrait;
 
 final class AuthenticationOptions
 {
+    use ExtensionInputsTrait;
+
     /**
      * @var CredentialId[]
      */
@@ -24,11 +26,6 @@ final class AuthenticationOptions
      * @var int|null
      */
     private $timeout;
-
-    /**
-     * @var ExtensionInputInterface[]|null
-     */
-    private $extensions;
 
     /**
      * User handle to load credentials from, or null for client side discoverable.
@@ -92,21 +89,5 @@ final class AuthenticationOptions
     public function setTimeout(?int $timeout): void
     {
         $this->timeout = $timeout;
-    }
-
-    public function addExtensionInput(ExtensionInputInterface $input) // TODO move to trait? shared with Registration
-    {
-        if ($this->extensions === null) {
-            $this->extensions = [];
-        }
-        $this->extensions[] = $input;
-    }
-
-    /**
-     * @return ExtensionInputInterface[]|null
-     */
-    public function getExtensionInputs(): ?array
-    {
-        return $this->extensions;
     }
 }

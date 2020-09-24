@@ -8,7 +8,9 @@ use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
-use MadWizard\WebAuthn\Extension\UnknownExtensionInput;
+use MadWizard\WebAuthn\Extension\ExtensionInterface;
+use MadWizard\WebAuthn\Extension\Generic\GenericExtension;
+use MadWizard\WebAuthn\Extension\Generic\GenericExtensionInput;
 use MadWizard\WebAuthn\Json\JsonConverter;
 use MadWizard\WebAuthn\Metadata\Source\MetadataServiceSource;
 use MadWizard\WebAuthn\Metadata\Source\StatementDirectorySource;
@@ -20,6 +22,7 @@ use MadWizard\WebAuthn\Server\ServerInterface;
 use MadWizard\WebAuthn\Server\UserIdentity;
 use MadWizard\WebAuthn\Server\WebAuthnServer;
 use RuntimeException;
+use Throwable;
 
 class Router
 {
@@ -78,6 +81,8 @@ class Router
             )
             ->setLogger(new ErrorLogger())
             ->trustWithoutMetadata(false)
+            ->strictSupportedFormats(true)
+            ->addCustomExtension(new GenericExtension('example.extension', [ExtensionInterface::OPERATION_REGISTRATION, ExtensionInterface::OPERATION_AUTHENTICATION]))
             ->setCredentialStore($this->store)
             ->setCacheDirectory(__DIR__ . '/../../var/conformance');
 
@@ -116,6 +121,9 @@ class Router
         } catch (WebAuthnException $e) {
             $prefix = $this->debugIdx === null ? '' : ($this->debugIdx . ' ');
             $response = [400, ['status' => 'failed', 'errorMessage' => $prefix . $e->getMessage() . PHP_EOL . $e->getTraceAsString()]];
+        } catch (Throwable $e) {
+            $prefix = $this->debugIdx === null ? '' : ($this->debugIdx . ' ');
+            $response = [500, ['status' => 'failed', 'errorMessage' => $prefix . $e->getMessage() . PHP_EOL . $e->getTraceAsString()]];
         }
 
         if ($response === null) {
@@ -206,7 +214,7 @@ class Router
         $opts->setAttestation($att);
         $opts->setAuthenticatorSelection($crit);
         foreach ($req['extensions'] ?? [] as $identifier => $ext) {
-            $opts->addExtensionInput(new UnknownExtensionInput($identifier, $ext));
+            $opts->addExtensionInput(new GenericExtensionInput($identifier, $ext));
         }
         $opts->setExcludeExistingCredentials(true);
         $regReq = $this->server->startRegistration($opts);
@@ -233,7 +241,7 @@ class Router
 
         $opts = AuthenticationOptions::createForUser(UserHandle::fromBinary($req['username']));
         foreach ($req['extensions'] ?? [] as $identifier => $ext) {
-            $opts->addExtensionInput(new UnknownExtensionInput($identifier, $ext));
+            $opts->addExtensionInput(new GenericExtensionInput($identifier, $ext));
         }
 
         $opts->setUserVerification($req['userVerification'] ?? 'preferred');

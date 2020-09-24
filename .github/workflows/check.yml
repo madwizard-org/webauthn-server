@@ -24,4 +24,4 @@ jobs:
             - name: Run PHPstan
               run: |
                   php -v
-                  vendor/bin/phpstan analyse src
+                  vendor/bin/phpstan analyse src -l 5

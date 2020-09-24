@@ -32,6 +32,7 @@ final class CborEncoder
         return chr((Cbor::MAJOR_BYTE_STRING << 5) | $minorVal) . $lengthBytes . $bytes->getBinaryString();
     }
 
+    // TODO: use CborMap?
     public static function encodeMapValues(array $map): string
     {
         // Use canonical sorting. Shorter keys (as CBOR bytes) always go before longer keys. When length is the same

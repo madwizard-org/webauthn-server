@@ -22,6 +22,10 @@ use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Exception\UnsupportedException;
+use MadWizard\WebAuthn\Extension\AppId\AppIdExtension;
+use MadWizard\WebAuthn\Extension\ExtensionInterface;
+use MadWizard\WebAuthn\Extension\ExtensionRegistry;
+use MadWizard\WebAuthn\Extension\ExtensionRegistryInterface;
 use MadWizard\WebAuthn\Metadata\MetadataResolver;
 use MadWizard\WebAuthn\Metadata\MetadataResolverInterface;
 use MadWizard\WebAuthn\Metadata\NullMetadataResolver;
@@ -106,6 +110,20 @@ final class ServerBuilder
      * @var bool
      */
     private $strictSupportedFormats = false;
+
+    /**
+     * @var string[]
+     */
+    private $enabledExtensions = [];
+
+    /**
+     * @var ExtensionInterface[]
+     */
+    private $customExtensions = [];
+
+    private const SUPPORTED_EXTENSIONS = [
+        'appid' => AppIdExtension::class,
+    ];
 
     public function __construct()
     {
@@ -194,6 +212,29 @@ final class ServerBuilder
     /**
      * @return $this
      */
+    public function enableExtensions(string ...$extensions): self
+    {
+        foreach ($extensions as $ext) {
+            if (!isset(self::SUPPORTED_EXTENSIONS[$ext])) {
+                throw new ConfigurationException(sprintf('Extension %s is not supported.', $ext));
+            }
+        }
+        $this->enabledExtensions = array_merge($this->enabledExtensions, $extensions);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function addCustomExtension(ExtensionInterface $extension): self
+    {
+        $this->customExtensions[] = $extension;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     public function setLogger(LoggerInterface $logger): self
     {
         $this->logger = $logger;
@@ -221,6 +262,7 @@ final class ServerBuilder
         $this->setupConfiguredServices($c);
         $this->setupFormats($c);
         $this->setupTrustDecisionManager($c);
+        $this->setupExtensions($c);
 
         $c[TrustPathValidatorInterface::class] = static function (ServiceContainer $c): TrustPathValidatorInterface {
             return new TrustPathValidator($c[ChainValidatorInterface::class]);
@@ -269,7 +311,7 @@ final class ServerBuilder
         if ($cacheDir === null) {
             throw new ConfigurationException('No cache directory configured. Use useCacheDirectory or useSystemTempCache.');
         }
-        $c[CacheProviderInterface::class] = static function (ServiceContainer $c) use ($cacheDir) {
+        $c[CacheProviderInterface::class] = static function (ServiceContainer $c) use ($cacheDir): CacheProviderInterface {
             return new FileCacheProvider($cacheDir);
         };
     }
@@ -280,14 +322,14 @@ final class ServerBuilder
             throw new ConfigurationException('Relying party not configured. Use setRelyingParty.');
         }
 
-        $c[RelyingPartyInterface::class] = function () { return $this->rp; };
+        $c[RelyingPartyInterface::class] = function (): RelyingPartyInterface { return $this->rp; };
 
         if ($this->store === null) {
             throw new ConfigurationException('Credential store not configured. Use setCredentialStore.');
         }
 
-        $c[CredentialStoreInterface::class] = function () { return $this->store; };
-        $c[LoggerInterface::class] = function () { return $this->logger ?? new NullLogger(); };
+        $c[CredentialStoreInterface::class] = function (): CredentialStoreInterface { return $this->store; };
+        $c[LoggerInterface::class] = function (): LoggerInterface { return $this->logger ?? new NullLogger(); };
     }
 
     private function createPolicy(ServiceContainer $c): PolicyInterface
@@ -309,7 +351,8 @@ final class ServerBuilder
             $c[CredentialStoreInterface::class],
             $c[AttestationFormatRegistryInterface::class],
             $c[MetadataResolverInterface::class],
-            $c[TrustDecisionManagerInterface::class]);
+            $c[TrustDecisionManagerInterface::class],
+            $c[ExtensionRegistryInterface::class]);
     }
 
     public function addMetadataSource(MetadataSourceInterface $metadataSource): self
@@ -328,7 +371,7 @@ final class ServerBuilder
 
     private function setupTrustDecisionManager(ServiceContainer $c)
     {
-        $c[TrustDecisionManagerInterface::class] = function (ServiceContainer $c) {
+        $c[TrustDecisionManagerInterface::class] = function (ServiceContainer $c): TrustDecisionManagerInterface {
             $tdm = new TrustDecisionManager();
 
             if ($this->allowNoneAttestation) {
@@ -372,26 +415,26 @@ final class ServerBuilder
 
     private function setupFormats(ServiceContainer $c)
     {
-        $c[PackedAttestationVerifier::class] = static function () {
+        $c[PackedAttestationVerifier::class] = static function (): PackedAttestationVerifier {
             return new PackedAttestationVerifier();
         };
-        $c[FidoU2fAttestationVerifier::class] = static function () {
+        $c[FidoU2fAttestationVerifier::class] = static function (): FidoU2fAttestationVerifier {
             return new FidoU2fAttestationVerifier();
         };
-        $c[NoneAttestationVerifier::class] = static function () {
+        $c[NoneAttestationVerifier::class] = static function (): NoneAttestationVerifier {
             return new NoneAttestationVerifier();
         };
-        $c[TpmAttestationVerifier::class] = static function () {
+        $c[TpmAttestationVerifier::class] = static function (): TpmAttestationVerifier {
             return new TpmAttestationVerifier();
         };
-        $c[AndroidSafetyNetAttestationVerifier::class] = static function () {
+        $c[AndroidSafetyNetAttestationVerifier::class] = static function (): AndroidSafetyNetAttestationVerifier {
             return new AndroidSafetyNetAttestationVerifier();
         };
-        $c[AndroidKeyAttestationVerifier::class] = static function () {
+        $c[AndroidKeyAttestationVerifier::class] = static function (): AndroidKeyAttestationVerifier {
             return new AndroidKeyAttestationVerifier();
         };
 
-        $c[AttestationFormatRegistryInterface::class] = function (ServiceContainer $c) {
+        $c[AttestationFormatRegistryInterface::class] = function (ServiceContainer $c): AttestationFormatRegistryInterface {
             $registry = new AttestationFormatRegistry();
 
             $registry->strictSupportedFormats($this->strictSupportedFormats);
@@ -403,6 +446,23 @@ final class ServerBuilder
             $registry->addFormat($c[AndroidSafetyNetAttestationVerifier::class]->getSupportedFormat());
             $registry->addFormat($c[AndroidKeyAttestationVerifier::class]->getSupportedFormat());
 
+            return $registry;
+        };
+    }
+
+    private function setupExtensions(ServiceContainer $c): void
+    {
+        $c[AppIdExtension::class] = static function (ServiceContainer $c): AppIdExtension {
+            return new AppIdExtension();
+        };
+        $c[ExtensionRegistryInterface::class] = function (ServiceContainer $c): ExtensionRegistryInterface {
+            $registry = new ExtensionRegistry();
+            foreach (array_unique($this->enabledExtensions) as $ext) {
+                $registry->addExtension($c[self::SUPPORTED_EXTENSIONS[$ext]]);
+            }
+            foreach ($this->customExtensions as $ext) {
+                $registry->addExtension($ext);
+            }
             return $registry;
         };
     }

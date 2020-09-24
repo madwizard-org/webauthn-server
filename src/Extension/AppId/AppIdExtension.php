@@ -33,7 +33,7 @@ class AppIdExtension extends AbstractExtension
             throw new ExtensionException('Expecting appid extension input to be AppIdExtensionInput.');
         }
         if (!$output instanceof AppIdExtensionOutput) {
-            throw new ExtensionException('Expecting appid extension input to be AppIdExtensionInput.');
+            throw new ExtensionException('Expecting appid extension output to be AppIdExtensionOutput.');
         }
         // SPEC: Client extension output: If true, the AppID was used and thus, when verifying an assertion,
         // the Relying Party MUST expect the rpIdHash to be the hash of the AppID, not the RP ID.

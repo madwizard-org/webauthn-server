@@ -20,7 +20,7 @@ class CreationOptionsTest extends TestCase
         $options->setPublicKeyOptions($pkOptions);
 
         $arr = $options->getJsonData();
-        $this->assertSame(
+        self::assertSame(
             [
                 'publicKey' => [
                         'rp' => [

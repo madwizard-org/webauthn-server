@@ -25,14 +25,14 @@ class FidoAaguidExtensionTest extends TestCase
 
         // no extension - no check
         FidoAaguidExtension::checkAaguidExtension($cert, new Aaguid(ByteBuffer::fromHex('00000000000000000000000000000000')));
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testPacked()
     {
         $cert = $this->getData('packedAttestation');
         FidoAaguidExtension::checkAaguidExtension($cert, new Aaguid(ByteBuffer::fromHex('42383245443733433846423445354132')));
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testNoMatch()
@@ -41,7 +41,7 @@ class FidoAaguidExtensionTest extends TestCase
         $this->expectException(VerificationException::class);
         $this->expectExceptionMessageMatches('~does not match the AAGUID~i');
         FidoAaguidExtension::checkAaguidExtension($cert, new Aaguid(ByteBuffer::fromHex('22222222222222222246423445354132')));
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testWrongFidoExtensionType()

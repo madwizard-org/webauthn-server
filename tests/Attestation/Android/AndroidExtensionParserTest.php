@@ -40,20 +40,20 @@ class AndroidExtensionParserTest extends TestCase
         );
 
         $ext = $this->parser->parseAttestationExtension($test);
-        $this->assertSame('2a4382d7bbd89d8b5bdf1772cfecca14392487b9fd571f2eb72bdf97de06d4b6', $ext->getChallenge()->getHex());
+        self::assertSame('2a4382d7bbd89d8b5bdf1772cfecca14392487b9fd571f2eb72bdf97de06d4b6', $ext->getChallenge()->getHex());
 
         $list = $ext->getSoftwareEnforcedAuthList();
-        $this->assertNull($list->getOrigin());
-        $this->assertSame(false, $list->hasAllApplications());
-        $this->assertFalse($list->hasPurpose(AuthorizationList::KM_PURPOSE_SIGN));
-        $this->assertSame([], $list->getPurposeList());
+        self::assertNull($list->getOrigin());
+        self::assertFalse($list->hasAllApplications());
+        self::assertFalse($list->hasPurpose(AuthorizationList::KM_PURPOSE_SIGN));
+        self::assertSame([], $list->getPurposeList());
 
         $list = $ext->getTeeEnforcedAuthList();
-        $this->assertSame(AuthorizationList::KM_ORIGIN_GENERATED, $list->getOrigin());
-        $this->assertSame(false, $list->hasAllApplications());
-        $this->assertTrue($list->hasPurpose(AuthorizationList::KM_PURPOSE_SIGN));
-        $this->assertFalse($list->hasPurpose(5));
-        $this->assertSame([AuthorizationList::KM_PURPOSE_SIGN], $list->getPurposeList());
+        self::assertSame(AuthorizationList::KM_ORIGIN_GENERATED, $list->getOrigin());
+        self::assertFalse($list->hasAllApplications());
+        self::assertTrue($list->hasPurpose(AuthorizationList::KM_PURPOSE_SIGN));
+        self::assertFalse($list->hasPurpose(5));
+        self::assertSame([AuthorizationList::KM_PURPOSE_SIGN], $list->getPurposeList());
     }
 
 //    public function testMinimal()

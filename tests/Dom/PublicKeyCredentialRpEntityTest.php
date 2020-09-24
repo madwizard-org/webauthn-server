@@ -13,10 +13,10 @@ class PublicKeyCredentialRpEntityTest extends TestCase
     {
         $rp = new RelyingParty('Relying party', 'http://localhost');
         $rpEntity = PublicKeyCredentialRpEntity::fromRelyingParty($rp);
-        $this->assertNull($rpEntity->getIcon());
-        $this->assertNull($rpEntity->getId());
-        $this->assertSame('Relying party', $rpEntity->getName());
-        $this->assertSame([
+        self::assertNull($rpEntity->getIcon());
+        self::assertNull($rpEntity->getId());
+        self::assertSame('Relying party', $rpEntity->getName());
+        self::assertSame([
                 'name' => 'Relying party',
         ], $rpEntity->getAsArray());
     }
@@ -29,10 +29,10 @@ class PublicKeyCredentialRpEntityTest extends TestCase
         $rp->setId('localhost');
 
         $rpEntity = PublicKeyCredentialRpEntity::fromRelyingParty($rp);
-        $this->assertSame($imgUrl, $rpEntity->getIcon());
-        $this->assertSame('localhost', $rpEntity->getId());
-        $this->assertSame('Relying party', $rpEntity->getName());
-        $this->assertSame([
+        self::assertSame($imgUrl, $rpEntity->getIcon());
+        self::assertSame('localhost', $rpEntity->getId());
+        self::assertSame('Relying party', $rpEntity->getName());
+        self::assertSame([
             'name' => 'Relying party',
             'icon' => $imgUrl,
             'id' => 'localhost',
@@ -42,10 +42,10 @@ class PublicKeyCredentialRpEntityTest extends TestCase
     public function testCreateMinimal()
     {
         $rpEntity = new PublicKeyCredentialRpEntity('Testing');
-        $this->assertNull($rpEntity->getId());
-        $this->assertNull($rpEntity->getIcon());
-        $this->assertSame('Testing', $rpEntity->getName());
-        $this->assertSame([
+        self::assertNull($rpEntity->getId());
+        self::assertNull($rpEntity->getIcon());
+        self::assertSame('Testing', $rpEntity->getName());
+        self::assertSame([
             'name' => 'Testing',
         ], $rpEntity->getAsArray());
     }
@@ -55,10 +55,10 @@ class PublicKeyCredentialRpEntityTest extends TestCase
         $imgUrl = 'data:image/png;base64,YWJj';
         $rpEntity = new PublicKeyCredentialRpEntity('Relying party', 'localhost');
         $rpEntity->setIcon($imgUrl);
-        $this->assertSame($imgUrl, $rpEntity->getIcon());
-        $this->assertSame('localhost', $rpEntity->getId());
-        $this->assertSame('Relying party', $rpEntity->getName());
-        $this->assertSame([
+        self::assertSame($imgUrl, $rpEntity->getIcon());
+        self::assertSame('localhost', $rpEntity->getId());
+        self::assertSame('Relying party', $rpEntity->getName());
+        self::assertSame([
             'name' => 'Relying party',
             'icon' => $imgUrl,
             'id' => 'localhost',

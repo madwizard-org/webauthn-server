@@ -13,9 +13,9 @@ class PublicKeyCredentialUserEntityTest extends TestCase
     public function testSimple()
     {
         $user = new PublicKeyCredentialUserEntity('eddy', ByteBuffer::fromHex('aabb4455'), 'Eddy Wally');
-        $this->assertSame('eddy', $user->getName());
-        $this->assertSame('Eddy Wally', $user->getDisplayName());
-        $this->assertSame('aabb4455', $user->getId()->getHex());
+        self::assertSame('eddy', $user->getName());
+        self::assertSame('Eddy Wally', $user->getDisplayName());
+        self::assertSame('aabb4455', $user->getId()->getHex());
     }
 
     public function testEmptyID()

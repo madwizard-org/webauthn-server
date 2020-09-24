@@ -42,12 +42,12 @@ class AuthenticationTest extends TestCase
         $request = $this->server->startAuthentication($options);
         $clientOptions = $request->getClientOptions();
         $allowCredentials = $clientOptions->getAllowCredentials();
-        $this->assertCount(1, $allowCredentials);
-        $this->assertSame($userCredential->getCredentialId()->toString(), $allowCredentials[0]->getId()->getBase64Url());
-        $this->assertNull($allowCredentials[0]->getTransports());
-        $this->assertNull($clientOptions->getRpId());
+        self::assertCount(1, $allowCredentials);
+        self::assertSame($userCredential->getCredentialId()->toString(), $allowCredentials[0]->getId()->getBase64Url());
+        self::assertNull($allowCredentials[0]->getTransports());
+        self::assertNull($clientOptions->getRpId());
 
-        $this->assertSame(
+        self::assertSame(
             [
                 'challenge' => $request->getContext()->getChallenge()->getBase64Url(),
                 'allowCredentials' => [
@@ -78,12 +78,12 @@ class AuthenticationTest extends TestCase
         $helper = new AssertionDataHelper();
 
         $userCred = $this->runAuth($helper);
-        $this->assertSame(AssertionDataHelper::DEFAULT_CREDENTIAL_ID, $userCred->getCredentialId()->toString());
+        self::assertSame(AssertionDataHelper::DEFAULT_CREDENTIAL_ID, $userCred->getCredentialId()->toString());
         /** @var Ec2Key $pubKey */
         $pubKey = $userCred->getPublicKey();
 
-        $this->assertSame(AssertionDataHelper::KEY_A_X, $pubKey->getX()->getHex());
-        $this->assertSame(AssertionDataHelper::KEY_A_Y, $pubKey->getY()->getHex());
+        self::assertSame(AssertionDataHelper::KEY_A_X, $pubKey->getX()->getHex());
+        self::assertSame(AssertionDataHelper::KEY_A_Y, $pubKey->getY()->getHex());
     }
 
     public function testAllowedCredentials()
@@ -109,7 +109,7 @@ class AuthenticationTest extends TestCase
 
         $helper->setClientOptions(['userHandle' => $userHandle]);
         $userCred = $this->runAuth($helper);
-        $this->assertSame('123456', $userCred->getUserHandle()->toHex());
+        self::assertSame('123456', $userCred->getUserHandle()->toHex());
     }
 
     public function testUserHandleNotOwner()
@@ -162,7 +162,7 @@ class AuthenticationTest extends TestCase
         $this->runAuth($helper);
 
         // Check no exceptions
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testCredentialType()
@@ -263,7 +263,7 @@ class AuthenticationTest extends TestCase
         $this->runAuth($helper);
 
         // Check no exceptions
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     protected function setUp(): void

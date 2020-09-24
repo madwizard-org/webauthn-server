@@ -32,7 +32,7 @@ abstract class VerifierTest extends TestCase
     protected function checkFormat(AttestationVerifierInterface $verifier, string $attestationClass)
     {
         $format = $verifier->getSupportedFormat();
-        $this->assertSame($attestationClass::FORMAT_ID, $format->getFormatId());
-        $this->assertSame($verifier, $format->getVerifier());
+        self::assertSame($attestationClass::FORMAT_ID, $format->getFormatId());
+        self::assertSame($verifier, $format->getVerifier());
     }
 }

@@ -35,10 +35,10 @@ class Ec2KeyTest extends TestCase
         $key = $this->getKey();
 
         $valid = $key->verifySignature($message, $signature);
-        $this->assertTrue($valid);
+        self::assertTrue($valid);
 
         $valid = $key->verifySignature($message, $wrongSignature);
-        $this->assertFalse($valid);
+        self::assertFalse($valid);
     }
 
     public function testInvalidData()
@@ -57,7 +57,7 @@ class Ec2KeyTest extends TestCase
     {
         $pem = $this->getKey()->asPem();
 
-        $this->assertSame(
+        self::assertSame(
             "-----BEGIN PUBLIC KEY-----\n" .
             "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEPHA1+PpLIslwkuFmpwIe4cXkqDwo\n" .
             "dYg6EQ/CnvZqag3wQaHUOVoGkUn8fP3dfgvFx3QRti9Gu78ffR/FF0/UkA==\n" .
@@ -70,10 +70,10 @@ class Ec2KeyTest extends TestCase
     {
         $key = $this->getKey();
 
-        $this->assertSame(self::TEST_KEY_X, $key->getX()->getHex());
-        $this->assertSame(self::TEST_KEY_Y, $key->getY()->getHex());
-        $this->assertSame(Ec2Key::CURVE_P256, $key->getCurve());
-        $this->assertSame(CoseAlgorithm::ES256, $key->getAlgorithm());
+        self::assertSame(self::TEST_KEY_X, $key->getX()->getHex());
+        self::assertSame(self::TEST_KEY_Y, $key->getY()->getHex());
+        self::assertSame(Ec2Key::CURVE_P256, $key->getCurve());
+        self::assertSame(CoseAlgorithm::ES256, $key->getAlgorithm());
     }
 
     public function testInvalidCbor()
@@ -101,18 +101,18 @@ class Ec2KeyTest extends TestCase
         );
 
         $key = CoseKey::parseCbor($cbor);
-        $this->assertInstanceOf(Ec2Key::class, $key);
+        self::assertInstanceOf(Ec2Key::class, $key);
         /* @var Ec2Key $key */
 
-        $this->assertSame(Ec2Key::CURVE_P256, $key->getCurve());
-        $this->assertSame(CoseAlgorithm::ES256, $key->getAlgorithm());
-        $this->assertSame('65eda5a12577c2bae829437fe338701a10aaa375e1bb5b5de108de439c08551d', $key->getX()->getHex());
-        $this->assertSame('1e52ed75701163f7f9e40ddf9f341b3dc9ba860af7e0ca7ca7e9eecd0084d19c', $key->getY()->getHex());
+        self::assertSame(Ec2Key::CURVE_P256, $key->getCurve());
+        self::assertSame(CoseAlgorithm::ES256, $key->getAlgorithm());
+        self::assertSame('65eda5a12577c2bae829437fe338701a10aaa375e1bb5b5de108de439c08551d', $key->getX()->getHex());
+        self::assertSame('1e52ed75701163f7f9e40ddf9f341b3dc9ba860af7e0ca7ca7e9eecd0084d19c', $key->getY()->getHex());
 
         // Transform back
         $output = $key->getCbor();
 
-        $this->assertSame($cbor->getHex(), $output->getHex());
+        self::assertSame($cbor->getHex(), $output->getHex());
     }
 
     private function getKey(): Ec2Key

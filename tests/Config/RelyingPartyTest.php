@@ -12,37 +12,37 @@ class RelyingPartyTest extends TestCase
     {
         $rp = new RelyingParty('Relying party', 'https://localhost');
 
-        $this->assertSame('Relying party', $rp->getName());
-        $this->assertSame('https://localhost', $rp->getOrigin()->toString());
-        $this->assertNull($rp->getId());
-        $this->assertSame('localhost', $rp->getEffectiveId());
-        $this->assertNull($rp->getIconUrl());
+        self::assertSame('Relying party', $rp->getName());
+        self::assertSame('https://localhost', $rp->getOrigin()->toString());
+        self::assertNull($rp->getId());
+        self::assertSame('localhost', $rp->getEffectiveId());
+        self::assertNull($rp->getIconUrl());
 
         $rp->setOrigin('https://www.example.com');
 
-        $this->assertNull($rp->getId());
-        $this->assertSame('www.example.com', $rp->getEffectiveId());
-        $this->assertSame('https://www.example.com', $rp->getOrigin()->toString());
-        $this->assertNull($rp->getIconUrl());
+        self::assertNull($rp->getId());
+        self::assertSame('www.example.com', $rp->getEffectiveId());
+        self::assertSame('https://www.example.com', $rp->getOrigin()->toString());
+        self::assertNull($rp->getIconUrl());
 
         $imgUrl = 'data:image/png;base64,YWJj';
         $rp->setIconUrl($imgUrl);
-        $this->assertSame($imgUrl, $rp->getIconUrl());
+        self::assertSame($imgUrl, $rp->getIconUrl());
     }
 
     public function testRelyingPartyId()
     {
         $rp = new RelyingParty('Example', 'https://example.com');
-        $this->assertNull($rp->getId());
+        self::assertNull($rp->getId());
         $rp->setId('example.com');
-        $this->assertSame('example.com', $rp->getId());
-        $this->assertSame('example.com', $rp->getEffectiveId());
+        self::assertSame('example.com', $rp->getId());
+        self::assertSame('example.com', $rp->getEffectiveId());
     }
 
     public function testRelyingPartyOrigin()
     {
         $rp = new RelyingParty('Example', 'https://www.example.com');
-        $this->assertSame('www.example.com', $rp->getOrigin()->getHost());
+        self::assertSame('www.example.com', $rp->getOrigin()->getHost());
     }
 
     public function testInvalidEffectiveRelyingPartyId()
@@ -55,12 +55,12 @@ class RelyingPartyTest extends TestCase
     public function testEffectiveRelyingPartyId()
     {
         $rp = new RelyingParty('Example', 'https://www.example.com');
-        $this->assertSame('www.example.com', $rp->getEffectiveId());
+        self::assertSame('www.example.com', $rp->getEffectiveId());
         $rp->setId('test.example');
-        $this->assertSame('test.example', $rp->getEffectiveId());
+        self::assertSame('test.example', $rp->getEffectiveId());
         $rp->setId(null);
-        $this->assertNull($rp->getId());
-        $this->assertSame('www.example.com', $rp->getEffectiveId());
+        self::assertNull($rp->getId());
+        self::assertSame('www.example.com', $rp->getEffectiveId());
     }
 
     public function testInvalidRelyingPartyOrigin()

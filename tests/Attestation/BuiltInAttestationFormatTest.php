@@ -22,12 +22,12 @@ class BuiltInAttestationFormatTest extends TestCase
             ->getMock();
 
         $format = new BuiltInAttestationFormat('testformat', 'TestStatement', $verifier);
-        $this->assertSame('testformat', $format->getFormatId());
+        self::assertSame('testformat', $format->getFormatId());
 
         $attObj = new AttestationObject('dummy', new CborMap(), new ByteBuffer(''));
 
         $statement = $format->createStatement($attObj);
-        $this->assertInstanceOf('TestStatement', $statement);
-        $this->assertSame($verifier, $format->getVerifier());
+        self::assertInstanceOf('TestStatement', $statement);
+        self::assertSame($verifier, $format->getVerifier());
     }
 }

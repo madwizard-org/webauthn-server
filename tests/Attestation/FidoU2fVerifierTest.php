@@ -37,14 +37,14 @@ class FidoU2fVerifierTest extends VerifierTest
             hash('sha256', $response->getClientDataJson(), true)
         );
 
-        $this->assertSame(AttestationType::BASIC, $result->getAttestationType());
-        $this->assertInstanceOf(CertificateTrustPath::class, $result->getTrustPath());
+        self::assertSame(AttestationType::BASIC, $result->getAttestationType());
+        self::assertInstanceOf(CertificateTrustPath::class, $result->getTrustPath());
         $path = $result->getTrustPath();
         /*
          * @var CertificateTrustPath $path
          */
-        $this->assertCount(1, $path->getCertificates());
-        $this->assertStringContainsString('XPyTKmyvroUpl3LtsCeCAgPNQUHT7rb2os6Z45V4AyY6urjW', $path->asPemList()[0]);
+        self::assertCount(1, $path->getCertificates());
+        self::assertStringContainsString('XPyTKmyvroUpl3LtsCeCAgPNQUHT7rb2os6Z45V4AyY6urjW', $path->asPemList()[0]);
     }
 
     public function testFidoU2fHypersecu()
@@ -61,14 +61,14 @@ class FidoU2fVerifierTest extends VerifierTest
             hash('sha256', $response->getClientDataJson(), true)
         );
 
-        $this->assertSame(AttestationType::BASIC, $result->getAttestationType());
-        $this->assertInstanceOf(CertificateTrustPath::class, $result->getTrustPath());
+        self::assertSame(AttestationType::BASIC, $result->getAttestationType());
+        self::assertInstanceOf(CertificateTrustPath::class, $result->getTrustPath());
         $path = $result->getTrustPath();
         /*
          * @var CertificateTrustPath $path
          */
-        $this->assertCount(1, $path->getCertificates());
-        $this->assertStringContainsString('AAIjLWZXR95+CztkDiGfPlfcJLrt5RaAwBJnOnAodXJuiGGmkoYD', $path->asPemList()[0]);
+        self::assertCount(1, $path->getCertificates());
+        self::assertStringContainsString('AAIjLWZXR95+CztkDiGfPlfcJLrt5RaAwBJnOnAodXJuiGGmkoYD', $path->asPemList()[0]);
     }
 
     public function testFidoU2fWrongHash()

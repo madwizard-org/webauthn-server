@@ -21,8 +21,6 @@ class AssertionDataHelper
 
     private $contextOptions;
 
-    private $signKey;
-
     public const KEY_A_PRIVATE =
         "-----BEGIN EC PRIVATE KEY-----\n" .
         "MHcCAQEEICduMtuMBf2EYNDms1aQbDdcKLg6JjGwTcjzkHH+wQJ6oAoGCCqGSM49\n" .
@@ -40,8 +38,6 @@ class AssertionDataHelper
     {
         $credentialId = self::DEFAULT_CREDENTIAL_ID;
         $challenge = Base64UrlEncoding::encode('test_challenge_data_123456789012');
-
-        $this->signKey = self::KEY_A_PRIVATE;
 
         $this->clientOptions =
             [

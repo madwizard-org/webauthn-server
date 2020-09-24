@@ -35,14 +35,14 @@ class AndroidKeyStatementVerifierTest extends VerifierTest
 
         $result = $this->verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
-        $this->assertSame(AttestationType::BASIC, $result->getAttestationType());
+        self::assertSame(AttestationType::BASIC, $result->getAttestationType());
 
         /**
          * @var CertificateTrustPath $trustPath
          */
         $trustPath = $result->getTrustPath();
-        $this->assertInstanceOf(CertificateTrustPath::class, $trustPath);
-        $this->assertSame($chains['android-key'], $trustPath->asPemList());
+        self::assertInstanceOf(CertificateTrustPath::class, $trustPath);
+        self::assertSame($chains['android-key'], $trustPath->asPemList());
     }
 
     public function testCreateFormat()

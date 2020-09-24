@@ -46,18 +46,18 @@ class AttestationFormatRegistryTest extends TestCase
         $registry = $this->getRegistry();
         $attObj = new AttestationObject('format1', new CborMap(), new ByteBuffer(''));
 
-        $this->assertInstanceOf('TestFormat1Statement', $registry->createStatement($attObj));
+        self::assertInstanceOf('TestFormat1Statement', $registry->createStatement($attObj));
 
         $attObj2 = new AttestationObject('format2', new CborMap(), new ByteBuffer(''));
 
-        $this->assertInstanceOf('TestFormat2Statement', $registry->createStatement($attObj2));
+        self::assertInstanceOf('TestFormat2Statement', $registry->createStatement($attObj2));
     }
 
     public function testVerifierFormats()
     {
         $registry = $this->getRegistry();
-        $this->assertSame($this->verifier1, $registry->getVerifier('format1'));
-        $this->assertSame($this->verifier2, $registry->getVerifier('format2'));
+        self::assertSame($this->verifier1, $registry->getVerifier('format1'));
+        self::assertSame($this->verifier2, $registry->getVerifier('format2'));
     }
 
     public function testNotSupportedStatement()

@@ -28,9 +28,9 @@ class X5cParameterReaderTest extends TestCase
 
         // TODO: actually compare result
         if ($hasResult) {
-            $this->assertNotNull($param);
+            self::assertNotNull($param);
         } else {
-            $this->assertNull($param);
+            self::assertNull($param);
         }
     }
 

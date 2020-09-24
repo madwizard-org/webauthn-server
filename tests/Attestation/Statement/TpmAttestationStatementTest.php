@@ -38,14 +38,14 @@ class TpmAttestationStatementTest extends TestCase
 
         $statement = new TpmAttestationStatement($attObj);
 
-        $this->assertSame('tpm', $statement->getFormatId());
-        $this->assertSame(CoseAlgorithm::RS1, $statement->getAlgorithm());
-        $this->assertSame(HexData::hex(self::RAW_CERTINFO), $statement->getRawCertInfo()->getHex());
-        $this->assertSame(HexData::hex(self::RAW_SIG), $statement->getSignature()->getHex());
-        $this->assertNull($statement->getEcdaaKeyId());
-        $this->assertSame($chains['tpm'], $statement->getCertificates());
-        $this->assertSame(TpmPublic::TPM_ALG_RSA, $statement->getPubArea()->getType());
-        $this->assertSame('000b7121aebfa6b9afd07032f42f0925e0ec67408dd599a57bfa0f80c7f15601084f', $statement->getCertInfo()->getAttName()->getHex());
+        self::assertSame('tpm', $statement->getFormatId());
+        self::assertSame(CoseAlgorithm::RS1, $statement->getAlgorithm());
+        self::assertSame(HexData::hex(self::RAW_CERTINFO), $statement->getRawCertInfo()->getHex());
+        self::assertSame(HexData::hex(self::RAW_SIG), $statement->getSignature()->getHex());
+        self::assertNull($statement->getEcdaaKeyId());
+        self::assertSame($chains['tpm'], $statement->getCertificates());
+        self::assertSame(TpmPublic::TPM_ALG_RSA, $statement->getPubArea()->getType());
+        self::assertSame('000b7121aebfa6b9afd07032f42f0925e0ec67408dd599a57bfa0f80c7f15601084f', $statement->getCertInfo()->getAttName()->getHex());
     }
 
     public function testMissingFields()

@@ -20,7 +20,7 @@ class NoneAttestationStatementTest extends TestCase
 
         // Valid when no exceptions thrown
 
-        $this->assertSame('none', $statement->getFormatId());
+        self::assertSame('none', $statement->getFormatId());
     }
 
     public function testInvalidStatement()

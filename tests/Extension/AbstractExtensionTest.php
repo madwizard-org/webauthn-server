@@ -18,8 +18,8 @@ class AbstractExtensionTest extends TestCase
             'validIdentifier',
         ]);
 
-        $this->assertNull($ext->getInput());
-        $this->assertSame('validIdentifier', $ext->getIdentifier());
+        self::assertNull($ext->getInput());
+        self::assertSame('validIdentifier', $ext->getIdentifier());
     }
 
     public function testInvalidIdentifierInput()
@@ -40,8 +40,7 @@ class AbstractExtensionTest extends TestCase
             'validIdentifier',
         ]);
 
-        $this->assertNull($ext->getOutput());
-        $this->assertSame('validIdentifier', $ext->getIdentifier());
+        self::assertSame('validIdentifier', $ext->getIdentifier());
     }
 
     public function testInvalidIdentifierOutput()

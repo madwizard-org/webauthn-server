@@ -30,23 +30,23 @@ class AuthenticatorDataTest extends TestCase
 
         $data = new AuthenticatorData($buf);
 
-        $this->assertSame('1194228da8fdbdeefd261bd7b6595cfd70a50d70c6407bcf013de96d4efb17de', $data->getRpIdHash()->getHex());
-        $this->assertTrue($data->isUserPresent());
-        $this->assertFalse($data->isUserVerified());
-        $this->assertTrue($data->hasAttestedCredentialData());
-        $this->assertFalse($data->hasExtensionData());
-        $this->assertSame(0, $data->getSignCount());
-        $this->assertTrue($data->getCredentialId()->equals(ByteBuffer::fromHex('3ebd89bf77ec509755ee9c2635efaaac7b2b9c5cef1736c3717da48534c8c6b654d7ff945f50b5cc4e78055bdd396b64f78da2c5f96200ccd415cd08fe420038')));
+        self::assertSame('1194228da8fdbdeefd261bd7b6595cfd70a50d70c6407bcf013de96d4efb17de', $data->getRpIdHash()->getHex());
+        self::assertTrue($data->isUserPresent());
+        self::assertFalse($data->isUserVerified());
+        self::assertTrue($data->hasAttestedCredentialData());
+        self::assertFalse($data->hasExtensionData());
+        self::assertSame(0, $data->getSignCount());
+        self::assertTrue($data->getCredentialId()->equals(ByteBuffer::fromHex('3ebd89bf77ec509755ee9c2635efaaac7b2b9c5cef1736c3717da48534c8c6b654d7ff945f50b5cc4e78055bdd396b64f78da2c5f96200ccd415cd08fe420038')));
 
-        $this->assertTrue($data->hasKey());
+        self::assertTrue($data->hasKey());
         $key = $data->getKey();
-        $this->assertInstanceOf(Ec2Key::class, $key);
+        self::assertInstanceOf(Ec2Key::class, $key);
         /*
          * @var Ec2Key $key
          */
-        $this->assertEquals(CoseAlgorithm::ES256, $key->getAlgorithm());
-        $this->assertEquals(Ec2Key::CURVE_P256, $key->getCurve());
-        $this->assertSame('e87625896ee4e46dc032766e8087962f36df9dfe8b567f3763015b1990a60e14', $key->getX()->getHex());
-        $this->assertSame('27de612d66418bda1950581ebc5c8c1dad710cb14c22f8c97045f4612fb20c91', $key->getY()->getHex());
+        self::assertEquals(CoseAlgorithm::ES256, $key->getAlgorithm());
+        self::assertEquals(Ec2Key::CURVE_P256, $key->getCurve());
+        self::assertSame('e87625896ee4e46dc032766e8087962f36df9dfe8b567f3763015b1990a60e14', $key->getX()->getHex());
+        self::assertSame('27de612d66418bda1950581ebc5c8c1dad710cb14c22f8c97045f4612fb20c91', $key->getY()->getHex());
     }
 }

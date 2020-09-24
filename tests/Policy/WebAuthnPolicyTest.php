@@ -25,10 +25,10 @@ class WebAuthnPolicyTest extends TestCase
 
     public function testChallengeLength()
     {
-        $this->assertSame(Policy::DEFAULT_CHALLENGE_LENGTH, $this->policy->getChallengeLength());
+        self::assertSame(Policy::DEFAULT_CHALLENGE_LENGTH, $this->policy->getChallengeLength());
 
         $this->policy->setChallengeLength(128);
-        $this->assertSame(128, $this->policy->getChallengeLength());
+        self::assertSame(128, $this->policy->getChallengeLength());
     }
 
     public function testShortChallenge()
@@ -40,15 +40,15 @@ class WebAuthnPolicyTest extends TestCase
     public function testDefaultAlgorithms()
     {
         $default = $this->policy->getAllowedAlgorithms();
-        $this->assertContains(CoseAlgorithm::ES256, $default);
-        $this->assertContains(CoseAlgorithm::RS256, $default);
+        self::assertContains(CoseAlgorithm::ES256, $default);
+        self::assertContains(CoseAlgorithm::RS256, $default);
     }
 
     public function testSetAlgorithms()
     {
         $algorithms = [CoseAlgorithm::ES256];
         $this->policy->setAllowedAlgorithms($algorithms);
-        $this->assertSame($algorithms, $this->policy->getAllowedAlgorithms());
+        self::assertSame($algorithms, $this->policy->getAllowedAlgorithms());
     }
 
     public function testInvalidAlgorithms()

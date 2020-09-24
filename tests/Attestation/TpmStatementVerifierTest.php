@@ -31,7 +31,7 @@ class TpmStatementVerifierTest extends VerifierTest
 
         $result = $this->verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
-        $this->assertSame(AttestationType::ATT_CA, $result->getAttestationType());
+        self::assertSame(AttestationType::ATT_CA, $result->getAttestationType());
         // TODO: check trust path
     }
 

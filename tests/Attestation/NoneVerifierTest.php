@@ -30,8 +30,8 @@ class NoneVerifierTest extends VerifierTest
 
         $statement = new NoneAttestationStatement($attObject);
         $result = $this->verifier->verify($statement, $this->getTestAuthenticatorData(), hash('sha256', '123', true));
-        $this->assertSame(AttestationType::NONE, $result->getAttestationType());
-        $this->assertInstanceOf(EmptyTrustPath::class, $result->getTrustPath());
+        self::assertSame(AttestationType::NONE, $result->getAttestationType());
+        self::assertInstanceOf(EmptyTrustPath::class, $result->getTrustPath());
     }
 
     public function testCreateFormat()

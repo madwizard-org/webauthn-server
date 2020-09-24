@@ -12,9 +12,9 @@ class AuthenticatorSelectionCriteriaTest extends TestCase
     public function testDefault()
     {
         $criteria = new AuthenticatorSelectionCriteria();
-        $this->assertNull($criteria->getAuthenticatorAttachment());
-        $this->assertNull($criteria->getRequireResidentKey());
-        $this->assertNull($criteria->getUserVerification());
+        self::assertNull($criteria->getAuthenticatorAttachment());
+        self::assertNull($criteria->getRequireResidentKey());
+        self::assertNull($criteria->getUserVerification());
     }
 
     public function testWrongAttachment()
@@ -37,8 +37,8 @@ class AuthenticatorSelectionCriteriaTest extends TestCase
         $criteria->setUserVerification(UserVerificationRequirement::DISCOURAGED);
         $criteria->setAuthenticatorAttachment(AuthenticatorAttachment::CROSS_PLATFORM);
         $criteria->setRequireResidentKey(true);
-        $this->assertSame(UserVerificationRequirement::DISCOURAGED, $criteria->getUserVerification());
-        $this->assertSame(AuthenticatorAttachment::CROSS_PLATFORM, $criteria->getAuthenticatorAttachment());
-        $this->assertTrue($criteria->getRequireResidentKey());
+        self::assertSame(UserVerificationRequirement::DISCOURAGED, $criteria->getUserVerification());
+        self::assertSame(AuthenticatorAttachment::CROSS_PLATFORM, $criteria->getAuthenticatorAttachment());
+        self::assertTrue($criteria->getRequireResidentKey());
     }
 }

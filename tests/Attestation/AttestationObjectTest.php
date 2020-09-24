@@ -100,9 +100,9 @@ class AttestationObjectTest extends TestCase
         $message['type'] = 'public-key';
         $cred = JsonConverter::decodeAttestation($message);
 
-        $this->assertSame('Bo-VjHOkJZy8DjnCJnIc0Oxt9QAz5upMdSJxNbd-GyAo6MNIvPBb9YsUlE0ZJaaWXtWH5FQyPS6bT_e698IirQ', $cred->getId());
+        self::assertSame('Bo-VjHOkJZy8DjnCJnIc0Oxt9QAz5upMdSJxNbd-GyAo6MNIvPBb9YsUlE0ZJaaWXtWH5FQyPS6bT_e698IirQ', $cred->getId());
 
-        $this->assertSame(
+        self::assertSame(
             '{"challenge":"Vu8uDqnkwOjd83KLj6Scn2BgFNLFbGR7Kq_XJJwQnnatztUR7XIBL7K8uMPCIaQmKw1MCVQ5aazNJFk7NakgqA",' .
             '"clientExtensions":{},"hashAlgorithm":"SHA-256","origin":"https://localhost:8443","type":"webauthn.create"}',
             $cred->getResponse()->getClientDataJson()
@@ -113,7 +113,7 @@ class AttestationObjectTest extends TestCase
 
         $decoded = AttestationObject::parse($buffer);
 
-        $this->assertSame('fido-u2f', $decoded->getFormat());
+        self::assertSame('fido-u2f', $decoded->getFormat());
         $authData = HexData::bin(
             '49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763
              41
@@ -127,8 +127,8 @@ class AttestationObjectTest extends TestCase
              dec0494fda9ec58f4f09cf68f21993
             '
         );
-        $this->assertSame(bin2hex($authData), $decoded->getAuthenticatorData()->getHex());
+        self::assertSame(bin2hex($authData), $decoded->getAuthenticatorData()->getHex());
         $statement = $decoded->getStatement();
-        $this->assertArrayHasKey('x5c', $statement);
+        self::assertArrayHasKey('x5c', $statement);
     }
 }

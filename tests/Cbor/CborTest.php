@@ -52,15 +52,15 @@ class CborTest extends TestCase
                 $result = $this->convertObjects(CborDecoder::decode($buffer));
 
                 if (isset($test['decoded'])) {
-                    $this->assertSame($test['decoded'], $result, $message);
+                    self::assertSame($test['decoded'], $result, $message);
                 }
                 $vardump = $this->dumpValue($result);
-                $this->assertSame($test['vardump'], $vardump, $message);
+                self::assertSame($test['vardump'], $vardump, $message);
 
-                $this->assertArrayNotHasKey('error', $test, $message);
+                self::assertArrayNotHasKey('error', $test, $message);
             } catch (CborException $exception) {
-                $this->assertArrayHasKey('error', $test, $message);
-                $this->assertStringContainsString($test['error'], $exception->getMessage(), $message);
+                self::assertArrayHasKey('error', $test, $message);
+                self::assertStringContainsString($test['error'], $exception->getMessage(), $message);
             }
         }
     }
@@ -86,8 +86,8 @@ class CborTest extends TestCase
             $endOffset
         );
 
-        $this->assertSame([1, 2, 3], $result);
-        $this->assertEquals(8, $endOffset);
+        self::assertSame([1, 2, 3], $result);
+        self::assertEquals(8, $endOffset);
     }
 
     public function testCorruptArray()
@@ -190,44 +190,44 @@ class CborTest extends TestCase
 
     public function testEncodeInteger()
     {
-        $this->assertSame('00', bin2hex(CborEncoder::encodeInteger(0)));
+        self::assertSame('00', bin2hex(CborEncoder::encodeInteger(0)));
 
-        $this->assertSame('01', bin2hex(CborEncoder::encodeInteger(1)));
-        $this->assertSame('17', bin2hex(CborEncoder::encodeInteger(23)));
-        $this->assertSame('1818', bin2hex(CborEncoder::encodeInteger(24)));
-        $this->assertSame('18ff', bin2hex(CborEncoder::encodeInteger(255)));
-        $this->assertSame('190100', bin2hex(CborEncoder::encodeInteger(256)));
-        $this->assertSame('19ffff', bin2hex(CborEncoder::encodeInteger(65535)));
-        $this->assertSame('1a00010000', bin2hex(CborEncoder::encodeInteger(65536)));
+        self::assertSame('01', bin2hex(CborEncoder::encodeInteger(1)));
+        self::assertSame('17', bin2hex(CborEncoder::encodeInteger(23)));
+        self::assertSame('1818', bin2hex(CborEncoder::encodeInteger(24)));
+        self::assertSame('18ff', bin2hex(CborEncoder::encodeInteger(255)));
+        self::assertSame('190100', bin2hex(CborEncoder::encodeInteger(256)));
+        self::assertSame('19ffff', bin2hex(CborEncoder::encodeInteger(65535)));
+        self::assertSame('1a00010000', bin2hex(CborEncoder::encodeInteger(65536)));
         if (PHP_INT_SIZE > 4) {
-            $this->assertSame('1affffffff', bin2hex(CborEncoder::encodeInteger(4294967295)));
-            $this->assertSame('1b0000000100000000', bin2hex(CborEncoder::encodeInteger(4294967296)));
+            self::assertSame('1affffffff', bin2hex(CborEncoder::encodeInteger(4294967295)));
+            self::assertSame('1b0000000100000000', bin2hex(CborEncoder::encodeInteger(4294967296)));
         }
 
-        $this->assertSame('20', bin2hex(CborEncoder::encodeInteger(-1)));
-        $this->assertSame('37', bin2hex(CborEncoder::encodeInteger(-24)));
-        $this->assertSame('3818', bin2hex(CborEncoder::encodeInteger(-25)));
-        $this->assertSame('38ff', bin2hex(CborEncoder::encodeInteger(-256)));
-        $this->assertSame('390100', bin2hex(CborEncoder::encodeInteger(-257)));
-        $this->assertSame('39ffff', bin2hex(CborEncoder::encodeInteger(-65536)));
+        self::assertSame('20', bin2hex(CborEncoder::encodeInteger(-1)));
+        self::assertSame('37', bin2hex(CborEncoder::encodeInteger(-24)));
+        self::assertSame('3818', bin2hex(CborEncoder::encodeInteger(-25)));
+        self::assertSame('38ff', bin2hex(CborEncoder::encodeInteger(-256)));
+        self::assertSame('390100', bin2hex(CborEncoder::encodeInteger(-257)));
+        self::assertSame('39ffff', bin2hex(CborEncoder::encodeInteger(-65536)));
         if (PHP_INT_SIZE > 4) {
-            $this->assertSame('3affffffff', bin2hex(CborEncoder::encodeInteger(-4294967296)));
-            $this->assertSame('3b0000000100000000', bin2hex(CborEncoder::encodeInteger(-4294967297)));
+            self::assertSame('3affffffff', bin2hex(CborEncoder::encodeInteger(-4294967296)));
+            self::assertSame('3b0000000100000000', bin2hex(CborEncoder::encodeInteger(-4294967297)));
         }
     }
 
     public function testEncodeText()
     {
-        $this->assertSame('60', bin2hex(CborEncoder::encodeTextString('')));
-        $this->assertSame('6174', bin2hex(CborEncoder::encodeTextString('t')));
-        $this->assertSame('6a74657374737472696e67', bin2hex(CborEncoder::encodeTextString('teststring')));
+        self::assertSame('60', bin2hex(CborEncoder::encodeTextString('')));
+        self::assertSame('6174', bin2hex(CborEncoder::encodeTextString('t')));
+        self::assertSame('6a74657374737472696e67', bin2hex(CborEncoder::encodeTextString('teststring')));
     }
 
     public function testEncodeBytes()
     {
-        $this->assertSame('40', bin2hex(CborEncoder::encodeByteString(new ByteBuffer(''))));
-        $this->assertSame('421234', bin2hex(CborEncoder::encodeByteString(ByteBuffer::fromHex('1234'))));
-        $this->assertSame('481234567890123456', bin2hex(CborEncoder::encodeByteString(ByteBuffer::fromHex('1234567890123456'))));
+        self::assertSame('40', bin2hex(CborEncoder::encodeByteString(new ByteBuffer(''))));
+        self::assertSame('421234', bin2hex(CborEncoder::encodeByteString(ByteBuffer::fromHex('1234'))));
+        self::assertSame('481234567890123456', bin2hex(CborEncoder::encodeByteString(ByteBuffer::fromHex('1234567890123456'))));
     }
 
     public function testEncodeMapValues()
@@ -258,7 +258,7 @@ class CborTest extends TestCase
 
             ');
 
-        $this->assertSame(bin2hex($validCbor), bin2hex(CborEncoder::encodeMapValues($vals)));
+        self::assertSame(bin2hex($validCbor), bin2hex(CborEncoder::encodeMapValues($vals)));
     }
 
     public function testEncodeMap()
@@ -272,7 +272,7 @@ class CborTest extends TestCase
              'a' => 'b',
         ];
 
-        $this->assertSame('a51702181901616161626164421234626363626464', bin2hex(CborEncoder::encodeMap($map)));
+        self::assertSame('a51702181901616161626164421234626363626464', bin2hex(CborEncoder::encodeMap($map)));
     }
 
     public function testDuplicateMapKey()

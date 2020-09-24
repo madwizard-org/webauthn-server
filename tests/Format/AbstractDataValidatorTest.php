@@ -33,7 +33,7 @@ abstract class AbstractDataValidatorTest extends TestCase
         );
 
         // Assert when no exceptions thrown
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testCheckTypesWrong()
@@ -52,7 +52,7 @@ abstract class AbstractDataValidatorTest extends TestCase
         );
 
         // Assert when no exceptions thrown
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testCheckTypesWrongClass()
@@ -71,7 +71,7 @@ abstract class AbstractDataValidatorTest extends TestCase
         );
 
         // Assert when no exceptions thrown
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testCheckTypesMissing()
@@ -133,7 +133,7 @@ abstract class AbstractDataValidatorTest extends TestCase
         );
 
         // Assert when no exceptions thrown
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testCheckTypesOptional()
@@ -152,7 +152,7 @@ abstract class AbstractDataValidatorTest extends TestCase
         );
 
         // Assert when no exceptions thrown
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testCheckTypesOptionalPresent()
@@ -173,7 +173,7 @@ abstract class AbstractDataValidatorTest extends TestCase
         );
 
         // Assert when no exceptions thrown
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testCheckTypesNullable()
@@ -192,7 +192,7 @@ abstract class AbstractDataValidatorTest extends TestCase
         );
 
         // Assert when no exceptions thrown
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testCheckTypesNullableInvalid()
@@ -245,7 +245,7 @@ abstract class AbstractDataValidatorTest extends TestCase
         );
 
         // Assert when no exceptions thrown
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testCheckTypesWrongParameters()

@@ -10,12 +10,12 @@ class AttestationConstantTest extends TestCase
 {
     public function testConvertType()
     {
-        $this->assertSame(AttestationConstant::TAG_ATTESTATION_BASIC_FULL, AttestationConstant::convertType(AttestationType::BASIC));
-        $this->assertNull(AttestationConstant::convertType(AttestationType::NONE));
+        self::assertSame(AttestationConstant::TAG_ATTESTATION_BASIC_FULL, AttestationConstant::convertType(AttestationType::BASIC));
+        self::assertNull(AttestationConstant::convertType(AttestationType::NONE));
     }
 
     public function testUnknownType()
     {
-        $this->assertNull(AttestationConstant::convertType('invalid'));
+        self::assertNull(AttestationConstant::convertType('invalid'));
     }
 }

@@ -46,25 +46,25 @@ class TpmPublicTest extends TestCase
 
         $public = new TpmPublic($raw);
 
-        $this->assertSame(TpmPublic::TPM_ALG_RSA, $public->getType());
-        $this->assertSame(TpmPublic::TPM_ALG_SHA256, $public->getNameAlg());
-        $this->assertSame(0x00060472, $public->getObjectAttributes());
-        $this->assertTrue(
+        self::assertSame(TpmPublic::TPM_ALG_RSA, $public->getType());
+        self::assertSame(TpmPublic::TPM_ALG_SHA256, $public->getNameAlg());
+        self::assertSame(0x00060472, $public->getObjectAttributes());
+        self::assertTrue(
             $public->isValidPubInfoName(
                 ByteBuffer::fromHex('000b7121aebfa6b9afd07032f42f0925e0ec67408dd599a57bfa0f80c7f15601084f')
             )
         );
 
-        $this->assertSame(HexData::buf(self::RSA_KEY_BITS)->getHex(), $public->getUnique()->getHex());
+        self::assertSame(HexData::buf(self::RSA_KEY_BITS)->getHex(), $public->getUnique()->getHex());
 
         /** @var TpmRsaParameters $parameters */
         $parameters = $public->getParameters();
-        $this->assertInstanceOf(TpmRsaParameters::class, $parameters);
+        self::assertInstanceOf(TpmRsaParameters::class, $parameters);
 
-        $this->assertSame(65537, $parameters->getExponent());
-        $this->assertSame(TpmPublic::TPM_ALG_NULL, $parameters->getSymmetric());
-        $this->assertSame(TpmPublic::TPM_ALG_NULL, $parameters->getScheme());
-        $this->assertSame(2048, $parameters->getKeyBits());
+        self::assertSame(65537, $parameters->getExponent());
+        self::assertSame(TpmPublic::TPM_ALG_NULL, $parameters->getSymmetric());
+        self::assertSame(TpmPublic::TPM_ALG_NULL, $parameters->getScheme());
+        self::assertSame(2048, $parameters->getKeyBits());
     }
 
     public function testExtra()

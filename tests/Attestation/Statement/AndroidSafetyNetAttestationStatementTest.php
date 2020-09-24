@@ -15,7 +15,7 @@ class AndroidSafetyNetAttestationStatementTest extends TestCase
 
         $statement = new AndroidSafetyNetAttestationStatement($attObj);
 
-        $this->assertSame('android-safetynet', $statement->getFormatId());
-        $this->assertSame($jwsText, $statement->getResponse());
+        self::assertSame('android-safetynet', $statement->getFormatId());
+        self::assertSame($jwsText, $statement->getResponse());
     }
 }

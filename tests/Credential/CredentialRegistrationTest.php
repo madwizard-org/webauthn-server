@@ -21,10 +21,10 @@ class CredentialRegistrationTest extends TestCase
         $handle = UserHandle::fromString('aabbcc');
         $attObj = ByteBuffer::fromHex('123456');
         $credential = new CredentialRegistration($id, $key, $handle, $attObj, 123);
-        $this->assertSame($id, $credential->getCredentialId());
-        $this->assertSame($key, $credential->getPublicKey());
-        $this->assertSame($handle, $credential->getUserHandle());
-        $this->assertSame($attObj, $credential->getAttestationObject());
-        $this->assertSame(123, $credential->getSignCounter());
+        self::assertSame($id, $credential->getCredentialId());
+        self::assertSame($key, $credential->getPublicKey());
+        self::assertSame($handle, $credential->getUserHandle());
+        self::assertSame($attObj, $credential->getAttestationObject());
+        self::assertSame(123, $credential->getSignCounter());
     }
 }

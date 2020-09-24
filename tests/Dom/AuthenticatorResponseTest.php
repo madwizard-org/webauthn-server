@@ -19,10 +19,10 @@ class AuthenticatorResponseTest extends TestCase
             null
         );
 
-        $this->assertSame('{"a": 123}', $assertion->getClientDataJson());
-        $this->assertSame('123456', $assertion->getAuthenticatorData()->getHex());
-        $this->assertSame('789abc', $assertion->getSignature()->getHex());
-        $this->assertNull($assertion->getUserHandle());
+        self::assertSame('{"a": 123}', $assertion->getClientDataJson());
+        self::assertSame('123456', $assertion->getAuthenticatorData()->getHex());
+        self::assertSame('789abc', $assertion->getSignature()->getHex());
+        self::assertNull($assertion->getUserHandle());
     }
 
     public function testAssertionWithUser()
@@ -34,10 +34,10 @@ class AuthenticatorResponseTest extends TestCase
             ByteBuffer::fromHex('0099aabbcc')
         );
 
-        $this->assertSame('{"a": 123}', $assertion->getClientDataJson());
-        $this->assertSame('123456', $assertion->getAuthenticatorData()->getHex());
-        $this->assertSame('789abc', $assertion->getSignature()->getHex());
-        $this->assertSame('0099aabbcc', $assertion->getUserHandle()->getHex());
+        self::assertSame('{"a": 123}', $assertion->getClientDataJson());
+        self::assertSame('123456', $assertion->getAuthenticatorData()->getHex());
+        self::assertSame('789abc', $assertion->getSignature()->getHex());
+        self::assertSame('0099aabbcc', $assertion->getUserHandle()->getHex());
     }
 
     public function testAssertionUnparseableJson()
@@ -57,8 +57,8 @@ class AuthenticatorResponseTest extends TestCase
             ByteBuffer::fromHex('123456')
         );
 
-        $this->assertSame('{"a": 123}', $assertion->getClientDataJson());
-        $this->assertSame('123456', $assertion->getAttestationObject()->getHex());
+        self::assertSame('{"a": 123}', $assertion->getClientDataJson());
+        self::assertSame('123456', $assertion->getAttestationObject()->getHex());
     }
 
     public function testAttestationUnparseableJson()

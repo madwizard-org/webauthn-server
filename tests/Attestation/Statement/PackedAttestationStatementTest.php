@@ -17,20 +17,20 @@ class PackedAttestationStatementTest extends TestCase
 
         $statement = new PackedAttestationStatement($attObj);
 
-        $this->assertSame('packed', $statement->getFormatId());
+        self::assertSame('packed', $statement->getFormatId());
 
-        $this->assertNull($statement->getEcdaaKeyId());
+        self::assertNull($statement->getEcdaaKeyId());
         $certChain = $statement->getCertificates();
 
-        $this->assertSame($chains['packed'], $certChain);
+        self::assertSame($chains['packed'], $certChain);
 
-        $this->assertSame(
+        self::assertSame(
             '30460221008b0ad16afdb66b9dfb0688628430db45168bb0cbfe00f1fcf346dcf079ede1' .
             'cb022100b51c9dfb8248da90955fe743cf899b1dcfc092f0b777fe2a9c105ade7d88fe15',
             $statement->getSignature()->getHex()
         );
 
-        $this->assertSame(CoseAlgorithm::ES256, $statement->getAlgorithm());
+        self::assertSame(CoseAlgorithm::ES256, $statement->getAlgorithm());
     }
 
     public function testEcdaaKey()
@@ -39,9 +39,9 @@ class PackedAttestationStatementTest extends TestCase
 
         $statement = new PackedAttestationStatement($attObj);
 
-        $this->assertSame('packed', $statement->getFormatId());
-        $this->assertSame('aabbccdd', $statement->getEcdaaKeyId()->getHex());
-        $this->assertNull($statement->getCertificates());
+        self::assertSame('packed', $statement->getFormatId());
+        self::assertSame('aabbccdd', $statement->getEcdaaKeyId()->getHex());
+        self::assertNull($statement->getCertificates());
     }
 
     public function testNoKeyNoX5C()
@@ -49,8 +49,8 @@ class PackedAttestationStatementTest extends TestCase
         $attObj = FixtureHelper::getFidoTestObject('dummyPackedNoKeyNoX5C');
 
         $statement = new PackedAttestationStatement($attObj);
-        $this->assertNull($statement->getEcdaaKeyId());
-        $this->assertNull($statement->getCertificates());
+        self::assertNull($statement->getEcdaaKeyId());
+        self::assertNull($statement->getCertificates());
     }
 
     public function testBothKeyAndX5C()

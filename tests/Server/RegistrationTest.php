@@ -43,12 +43,12 @@ class RegistrationTest extends TestCase
         $request = $this->server->startRegistration($options);
 
         $clientOptions = $request->getClientOptions();
-        $this->assertSame('123456', $clientOptions->getUserEntity()->getId()->getHex());
-        $this->assertSame('demo', $clientOptions->getUserEntity()->getName());
-        $this->assertSame('Demo user', $clientOptions->getUserEntity()->getDisplayName());
-        $this->assertSame('example.com', $request->getContext()->getRpId());
-        $this->assertSame(64, $clientOptions->getChallenge()->getLength());
-        $this->assertNull($clientOptions->getAttestation());
+        self::assertSame('123456', $clientOptions->getUserEntity()->getId()->getHex());
+        self::assertSame('demo', $clientOptions->getUserEntity()->getName());
+        self::assertSame('Demo user', $clientOptions->getUserEntity()->getDisplayName());
+        self::assertSame('example.com', $request->getContext()->getRpId());
+        self::assertSame(64, $clientOptions->getChallenge()->getLength());
+        self::assertNull($clientOptions->getAttestation());
     }
 
     public function testFinishRegistration()
@@ -74,8 +74,8 @@ class RegistrationTest extends TestCase
         $context = new RegistrationContext($challenge, Origin::parse('https://localhost:8443'), 'localhost', UserHandle::fromHex('00112233'));
         $result = $this->server->finishRegistration(JsonConverter::decodeAttestation($credential), $context);
 
-        $this->assertSame(self::CREDENTIAL_ID, $result->getCredentialId()->toString());
-        $this->assertSame('Basic', $result->getVerificationResult()->getAttestationType());  // TODO:ugly
+        self::assertSame(self::CREDENTIAL_ID, $result->getCredentialId()->toString());
+        self::assertSame('Basic', $result->getVerificationResult()->getAttestationType());  // TODO:ugly
     }
 
     protected function setUp(): void

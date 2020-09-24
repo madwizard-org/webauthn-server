@@ -17,41 +17,41 @@ class ByteBufferTest extends TestCase
     {
         $empty = new ByteBuffer('');
         $notEmpty = new ByteBuffer('a');
-        $this->assertTrue($empty->isEmpty());
-        $this->assertFalse($notEmpty->isEmpty());
+        self::assertTrue($empty->isEmpty());
+        self::assertFalse($notEmpty->isEmpty());
     }
 
     public function testGetLength()
     {
         $empty = new ByteBuffer('');
         $len4 = new ByteBuffer('abcd');
-        $this->assertSame(0, $empty->getLength());
-        $this->assertSame(4, $len4->getLength());
+        self::assertSame(0, $empty->getLength());
+        self::assertSame(4, $len4->getLength());
     }
 
     public function testRandomBuffer()
     {
         $buf = ByteBuffer::randomBuffer(100);
-        $this->assertSame(100, strlen($buf->getBinaryString()));
+        self::assertSame(100, strlen($buf->getBinaryString()));
     }
 
     public function testFromHex()
     {
         $buf = ByteBuffer::fromHex('abcdef0102');
-        $this->assertSame(hex2bin('abcdef0102'), $buf->getBinaryString());
+        self::assertSame(hex2bin('abcdef0102'), $buf->getBinaryString());
 
         $buf = ByteBuffer::fromHex('ABCDEF0102');
-        $this->assertSame(hex2bin('ABCDEF0102'), $buf->getBinaryString());
+        self::assertSame(hex2bin('ABCDEF0102'), $buf->getBinaryString());
     }
 
     public function testGetBytes()
     {
         $binaryString = 'abc' . hex2bin('00010203') . 'efg';
         $data = new ByteBuffer($binaryString);
-        $this->assertSame("abc\x00", $data->getBytes(0, 4));
-        $this->assertSame("\x00\x01", $data->getBytes(3, 2));
-        $this->assertSame('', $data->getBytes(3, 0));
-        $this->assertSame("\x02\x03ef", $data->getBytes(5, 4));
+        self::assertSame("abc\x00", $data->getBytes(0, 4));
+        self::assertSame("\x00\x01", $data->getBytes(3, 2));
+        self::assertSame('', $data->getBytes(3, 0));
+        self::assertSame("\x02\x03ef", $data->getBytes(5, 4));
     }
 
     public function testGetBytesBoundsOffset()
@@ -74,8 +74,8 @@ class ByteBufferTest extends TestCase
     {
         $buf = new ByteBuffer('ABCDEF');
 
-        $this->assertSame(ord('A'), $buf->getByteVal(0));
-        $this->assertSame(ord('E'), $buf->getByteVal(4));
+        self::assertSame(ord('A'), $buf->getByteVal(0));
+        self::assertSame(ord('E'), $buf->getByteVal(4));
     }
 
     public function testGetByteValBounds()
@@ -89,7 +89,7 @@ class ByteBufferTest extends TestCase
     {
         $buf = new ByteBuffer("a\x12\x34");
 
-        $this->assertSame(0x1234, $buf->getUint16Val(1));
+        self::assertSame(0x1234, $buf->getUint16Val(1));
     }
 
     public function testGetUint16ValBoundsOffset()
@@ -110,7 +110,7 @@ class ByteBufferTest extends TestCase
     {
         $buf = new ByteBuffer('a' . hex2bin('12345678'));
 
-        $this->assertSame(0x12345678, $buf->getUint32Val(1));
+        self::assertSame(0x12345678, $buf->getUint32Val(1));
     }
 
     public function testGetUint32ValBoundsOffset()
@@ -148,7 +148,7 @@ class ByteBufferTest extends TestCase
         }
         $buf = new ByteBuffer('a' . hex2bin('12345678ABCDEF00'));
 
-        $this->assertSame(0x12345678ABCDEF00, $buf->getUint64Val(1));
+        self::assertSame(0x12345678ABCDEF00, $buf->getUint64Val(1));
     }
 
     public function testGetUint64ValLimits()
@@ -182,13 +182,13 @@ class ByteBufferTest extends TestCase
     public function testGetFloatVal()
     {
         $buf = new ByteBuffer("a\x40\x49\x0f\xdb");
-        $this->assertEquals(3.14159274102, $buf->getFloatVal(1));
+        self::assertEquals(3.14159274102, $buf->getFloatVal(1));
 
         $buf = new ByteBuffer("a\x7f\x80\x00\x00");
 
         $result = $buf->getFloatVal(1);
-        $this->assertInfinite($result);
-        $this->assertGreaterThan(0, $result);
+        self::assertInfinite($result);
+        self::assertGreaterThan(0, $result);
     }
 
     public function testGetFloatValBoundsOffset()
@@ -209,12 +209,12 @@ class ByteBufferTest extends TestCase
     public function testGetDoubleVal()
     {
         $buf = new ByteBuffer("a\x40\xa4\x0f\x1e\xff\x89\x92\x83");
-        $this->assertSame(2567.56054334558, $buf->getDoubleVal(1));
+        self::assertSame(2567.56054334558, $buf->getDoubleVal(1));
 
         $buf = new ByteBuffer("a\xff\xf0\x00\x00\x00\x00\x00\x00"); // -INF
         $result = $buf->getDoubleVal(1);
-        $this->assertInfinite($result);
-        $this->assertLessThan(0, $result);
+        self::assertInfinite($result);
+        self::assertLessThan(0, $result);
     }
 
     public function testGetDoubleValBoundsOffset()
@@ -239,29 +239,29 @@ class ByteBufferTest extends TestCase
         };
 
         // Test vectors from wikipedia Half-precision_floating-point_format
-        $this->assertSame(1.0, $testHalf('3C00'));
+        self::assertSame(1.0, $testHalf('3C00'));
 
-        $this->assertSame(1.0009765625, $testHalf('3C01')); // next smallest float after 1
-        $this->assertSame(-2.0, $testHalf('C000'));
-        $this->assertSame(65504.0, $testHalf('7BFF')); // max half precision
+        self::assertSame(1.0009765625, $testHalf('3C01')); // next smallest float after 1
+        self::assertSame(-2.0, $testHalf('C000'));
+        self::assertSame(65504.0, $testHalf('7BFF')); // max half precision
 
-        $this->assertSame(6.10352e-5, $testHalf('0400')); // minimum positive normal
-        $this->assertSame(6.097562e-5, $testHalf('03FF')); // maximum subnormal
-        $this->assertSame(5.96046e-8, $testHalf('0001')); // minimum positive subnormal
+        self::assertSame(6.10352e-5, $testHalf('0400')); // minimum positive normal
+        self::assertSame(6.097562e-5, $testHalf('03FF')); // maximum subnormal
+        self::assertSame(5.96046e-8, $testHalf('0001')); // minimum positive subnormal
 
-        $this->assertSame(0.0, $testHalf('0000')); // 0
-        $this->assertSame(-0.0, $testHalf('8000')); // -0
+        self::assertSame(0.0, $testHalf('0000')); // 0
+        self::assertSame(-0.0, $testHalf('8000')); // -0
 
-        $this->assertNan($testHalf('7E00')); // NaN
+        self::assertNan($testHalf('7E00')); // NaN
         $inf = $testHalf('7C00');
-        $this->assertInfinite($inf);
-        $this->assertGreaterThan(0, $inf);
+        self::assertInfinite($inf);
+        self::assertGreaterThan(0, $inf);
 
         $negInf = $testHalf('FC00');
-        $this->assertInfinite($negInf);
-        $this->assertLessThan(0, $negInf);
+        self::assertInfinite($negInf);
+        self::assertLessThan(0, $negInf);
 
-        $this->assertSame(0.333251953125, $testHalf('3555')); // 0.333251953125 ≈ 1/3
+        self::assertSame(0.333251953125, $testHalf('3555')); // 0.333251953125 ≈ 1/3
     }
 
     public function testGetHalfFloatValBoundsOffset()
@@ -282,19 +282,19 @@ class ByteBufferTest extends TestCase
     {
         $binaryString = "abc\x00\x01\x02\x03efg";
         $data = new ByteBuffer($binaryString);
-        $this->assertSame($binaryString, $data->getBinaryString());
+        self::assertSame($binaryString, $data->getBinaryString());
     }
 
     public function testGetHex()
     {
         $data = ByteBuffer::fromHex('12ab09cf');
-        $this->assertSame('12ab09cf', $data->getHex());
+        self::assertSame('12ab09cf', $data->getHex());
     }
 
     public function testEquals()
     {
-        $this->assertTrue(ByteBuffer::fromHex('aabb00cc')->equals(ByteBuffer::fromHex('aabb00cc')));
-        $this->assertFalse(ByteBuffer::fromHex('aabb00cc')->equals(ByteBuffer::fromHex('aabb11cc')));
+        self::assertTrue(ByteBuffer::fromHex('aabb00cc')->equals(ByteBuffer::fromHex('aabb00cc')));
+        self::assertFalse(ByteBuffer::fromHex('aabb00cc')->equals(ByteBuffer::fromHex('aabb11cc')));
     }
 
     public function testSerialize()
@@ -306,8 +306,8 @@ class ByteBufferTest extends TestCase
          * @var ByteBuffer $result
          */
         $result = unserialize($serialized);
-        $this->assertTrue($result->equals($buffer));
-        $this->assertSame($buffer->getLength(), $result->getLength());
+        self::assertTrue($result->equals($buffer));
+        self::assertSame($buffer->getLength(), $result->getLength());
     }
 
     public function testInvalidHex()
@@ -324,13 +324,13 @@ class ByteBufferTest extends TestCase
 
     public function testFromBase64Url()
     {
-        $this->assertSame(bin2hex('abcd'), ByteBuffer::fromBase64Url('YWJjZA')->getHex());
-        $this->assertSame('', ByteBuffer::fromBase64Url('')->getHex());
+        self::assertSame(bin2hex('abcd'), ByteBuffer::fromBase64Url('YWJjZA')->getHex());
+        self::assertSame('', ByteBuffer::fromBase64Url('')->getHex());
     }
 
     public function testGetBase64Url()
     {
-        $this->assertSame('YWJjZA', (new ByteBuffer('abcd'))->getBase64Url());
-        $this->assertSame('', (new ByteBuffer(''))->getBase64Url());
+        self::assertSame('YWJjZA', (new ByteBuffer('abcd'))->getBase64Url());
+        self::assertSame('', (new ByteBuffer(''))->getBase64Url());
     }
 }

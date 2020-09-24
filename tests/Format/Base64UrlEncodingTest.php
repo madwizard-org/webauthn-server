@@ -12,24 +12,24 @@ class Base64UrlEncodingTest extends TestCase
 {
     public function testEncode()
     {
-        $this->assertSame('', b64::encode(''));
-        $this->assertSame('YQ', b64::encode('a'));
-        $this->assertSame('YWI', b64::encode('ab'));
-        $this->assertSame('YWJj', b64::encode('abc'));
-        $this->assertSame('YWJjZA', b64::encode('abcd'));
-        $this->assertSame('YWJjZGVmZ2hpag', b64::encode('abcdefghij'));
-        $this->assertSame('PE-_CA', b64::encode(hex2bin('3c4fbf08')));
+        self::assertSame('', b64::encode(''));
+        self::assertSame('YQ', b64::encode('a'));
+        self::assertSame('YWI', b64::encode('ab'));
+        self::assertSame('YWJj', b64::encode('abc'));
+        self::assertSame('YWJjZA', b64::encode('abcd'));
+        self::assertSame('YWJjZGVmZ2hpag', b64::encode('abcdefghij'));
+        self::assertSame('PE-_CA', b64::encode(hex2bin('3c4fbf08')));
     }
 
     public function testDecode()
     {
-        $this->assertSame('', b64::decode(''));
-        $this->assertSame('a', b64::decode('YQ'));
-        $this->assertSame('ab', b64::decode('YWI'));
-        $this->assertSame('abc', b64::decode('YWJj'));
-        $this->assertSame('abcd', b64::decode('YWJjZA'));
-        $this->assertSame('abcdefghij', b64::decode('YWJjZGVmZ2hpag'));
-        $this->assertSame('3c4fbf08', bin2hex(b64::decode('PE-_CA')));
+        self::assertSame('', b64::decode(''));
+        self::assertSame('a', b64::decode('YQ'));
+        self::assertSame('ab', b64::decode('YWI'));
+        self::assertSame('abc', b64::decode('YWJj'));
+        self::assertSame('abcd', b64::decode('YWJjZA'));
+        self::assertSame('abcdefghij', b64::decode('YWJjZGVmZ2hpag'));
+        self::assertSame('3c4fbf08', bin2hex(b64::decode('PE-_CA')));
     }
 
     public function testInvalid()

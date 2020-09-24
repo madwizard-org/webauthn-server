@@ -50,17 +50,17 @@ class RsaKeyTest extends TestCase
         $key = $this->getKey();
 
         $valid = $key->verifySignature($message, $signature);
-        $this->assertTrue($valid);
+        self::assertTrue($valid);
 
         $valid = $key->verifySignature($message, $wrongSignature);
-        $this->assertFalse($valid);
+        self::assertFalse($valid);
     }
 
     public function testPEM()
     {
         $pem = $this->getKey()->asPem();
 
-        $this->assertSame(
+        self::assertSame(
             "-----BEGIN PUBLIC KEY-----\n" .
             "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqtE6H6gx+r3XVWaevL90\n" .
             "Pi4fciHIihNtYH6sXqdq1DG7QDrFw2zSiekM5k/HA0crtyWZauFdSIOr2MeDZaKT\n" .
@@ -78,10 +78,10 @@ class RsaKeyTest extends TestCase
     {
         $key = $this->getKey();
 
-        $this->assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());
-        $this->assertSame(self::TEST_KEY_EXPONENT, $key->getExponent()->getHex());
+        self::assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());
+        self::assertSame(self::TEST_KEY_EXPONENT, $key->getExponent()->getHex());
 
-        $this->assertSame(CoseAlgorithm::RS256, $key->getAlgorithm());
+        self::assertSame(CoseAlgorithm::RS256, $key->getAlgorithm());
     }
 
     public function testInvalidCbor()
@@ -96,8 +96,8 @@ class RsaKeyTest extends TestCase
         $exp = ByteBuffer::fromHex('000000000000' . self::TEST_KEY_EXPONENT);
         $key = new RsaKey($mod, $exp, CoseAlgorithm::RS256);
 
-        $this->assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());
-        $this->assertSame(self::TEST_KEY_EXPONENT, $key->getExponent()->getHex());
+        self::assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());
+        self::assertSame(self::TEST_KEY_EXPONENT, $key->getExponent()->getHex());
     }
 
     public function testCbor()
@@ -116,17 +116,17 @@ class RsaKeyTest extends TestCase
         );
 
         $key = CoseKey::parseCbor($cbor);
-        $this->assertInstanceOf(RsaKey::class, $key);
+        self::assertInstanceOf(RsaKey::class, $key);
         /* @var $key RsaKey */
 
-        $this->assertSame(CoseAlgorithm::RS256, $key->getAlgorithm());
-        $this->assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());
-        $this->assertSame(self::TEST_KEY_EXPONENT, $key->getExponent()->getHex());
+        self::assertSame(CoseAlgorithm::RS256, $key->getAlgorithm());
+        self::assertSame(self::TEST_KEY_MODULUS, $key->getModulus()->getHex());
+        self::assertSame(self::TEST_KEY_EXPONENT, $key->getExponent()->getHex());
 
         // Transform back
         $output = $key->getCbor();
 
-        $this->assertSame($cbor->getHex(), $output->getHex());
+        self::assertSame($cbor->getHex(), $output->getHex());
     }
 
     private function getKey(): RsaKey

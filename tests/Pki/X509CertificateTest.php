@@ -35,28 +35,28 @@ class X509CertificateTest extends TestCase
     public function testPem()
     {
         $cert = X509Certificate::fromPem(self::PEM);
-        $this->assertSame(self::PEM, $cert->asPem());
-        $this->assertSame(base64_decode(self::BASE64), $cert->asDer());
+        self::assertSame(self::PEM, $cert->asPem());
+        self::assertSame(base64_decode(self::BASE64), $cert->asDer());
     }
 
     public function testDer()
     {
         $cert = X509Certificate::fromDer(base64_decode(self::BASE64));
-        $this->assertSame(self::PEM, $cert->asPem());
-        $this->assertSame(base64_decode(self::BASE64), $cert->asDer());
+        self::assertSame(self::PEM, $cert->asPem());
+        self::assertSame(base64_decode(self::BASE64), $cert->asDer());
     }
 
     public function testBase64()
     {
         $cert = X509Certificate::fromBase64(self::BASE64);
-        $this->assertSame(self::PEM, $cert->asPem());
-        $this->assertSame(base64_decode(self::BASE64), $cert->asDer());
+        self::assertSame(self::PEM, $cert->asPem());
+        self::assertSame(base64_decode(self::BASE64), $cert->asDer());
     }
 
     public function testSerialize()
     {
         $cert = X509Certificate::fromPem(self::PEM);
         $cert = unserialize(serialize($cert));
-        $this->assertSame(self::PEM, $cert->asPem());
+        self::assertSame(self::PEM, $cert->asPem());
     }
 }

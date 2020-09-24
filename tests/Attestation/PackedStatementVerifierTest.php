@@ -38,7 +38,7 @@ class PackedStatementVerifierTest extends VerifierTest
 
         $result = $this->verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
-        $this->assertSame(AttestationType::BASIC, $result->getAttestationType());
+        self::assertSame(AttestationType::BASIC, $result->getAttestationType());
         // TODO: check trust path
     }
 
@@ -52,8 +52,8 @@ class PackedStatementVerifierTest extends VerifierTest
 
         $result = $this->verifier->verify($statement, new AuthenticatorData($attObj->getAuthenticatorData()), $hash);
 
-        $this->assertSame(AttestationType::SELF, $result->getAttestationType());
-        $this->assertInstanceOf(EmptyTrustPath::class, $result->getTrustPath());
+        self::assertSame(AttestationType::SELF, $result->getAttestationType());
+        self::assertInstanceOf(EmptyTrustPath::class, $result->getTrustPath());
     }
 
     public function testWrongType()

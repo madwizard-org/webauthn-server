@@ -12,10 +12,10 @@ class UserHandleTest extends TestCase
 {
     private function checkId(UserHandle $id)
     {
-        $this->assertSame('3c4fbf08', bin2hex($id->toBinary()));
-        $this->assertSame('3c4fbf08', $id->toHex());
-        $this->assertSame('PE-_CA', $id->toString());
-        $this->assertTrue(ByteBuffer::fromHex('3c4fbf08')->equals($id->toBuffer()));
+        self::assertSame('3c4fbf08', bin2hex($id->toBinary()));
+        self::assertSame('3c4fbf08', $id->toHex());
+        self::assertSame('PE-_CA', $id->toString());
+        self::assertTrue(ByteBuffer::fromHex('3c4fbf08')->equals($id->toBuffer()));
     }
 
     public function testString()
@@ -59,8 +59,8 @@ class UserHandleTest extends TestCase
         $id1 = UserHandle::fromHex('3c4fbf08');
         $id2 = UserHandle::fromHex('3c4fbf08');
         $id3 = UserHandle::fromHex('3c4fbf09');
-        $this->assertTrue($id1->equals($id1));
-        $this->assertTrue($id1->equals($id2));
-        $this->assertFalse($id2->equals($id3));
+        self::assertTrue($id1->equals($id1));
+        self::assertTrue($id1->equals($id2));
+        self::assertFalse($id2->equals($id3));
     }
 }

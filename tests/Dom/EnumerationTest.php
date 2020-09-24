@@ -14,54 +14,54 @@ class EnumerationTest extends TestCase
 {
     public function testAttestationPreference()
     {
-        $this->assertTrue(AttestationConveyancePreference::isValidValue(AttestationConveyancePreference::NONE));
-        $this->assertTrue(AttestationConveyancePreference::isValidValue(AttestationConveyancePreference::DIRECT));
-        $this->assertTrue(AttestationConveyancePreference::isValidValue(AttestationConveyancePreference::INDRECT));
+        self::assertTrue(AttestationConveyancePreference::isValidValue(AttestationConveyancePreference::NONE));
+        self::assertTrue(AttestationConveyancePreference::isValidValue(AttestationConveyancePreference::DIRECT));
+        self::assertTrue(AttestationConveyancePreference::isValidValue(AttestationConveyancePreference::INDRECT));
 
-        $this->assertFalse(AttestationConveyancePreference::isValidValue('xyz'));
+        self::assertFalse(AttestationConveyancePreference::isValidValue('xyz'));
     }
 
     public function testPublicKeyCredentialType()
     {
-        $this->assertTrue(PublicKeyCredentialType::isValidType(PublicKeyCredentialType::PUBLIC_KEY));
-        $this->assertFalse(PublicKeyCredentialType::isValidType('xyz'));
+        self::assertTrue(PublicKeyCredentialType::isValidType(PublicKeyCredentialType::PUBLIC_KEY));
+        self::assertFalse(PublicKeyCredentialType::isValidType('xyz'));
     }
 
     public function testUserVerificationRequirement()
     {
-        $this->assertTrue(UserVerificationRequirement::isValidValue(UserVerificationRequirement::REQUIRED));
-        $this->assertTrue(UserVerificationRequirement::isValidValue(UserVerificationRequirement::PREFERRED));
-        $this->assertTrue(UserVerificationRequirement::isValidValue(UserVerificationRequirement::DISCOURAGED));
+        self::assertTrue(UserVerificationRequirement::isValidValue(UserVerificationRequirement::REQUIRED));
+        self::assertTrue(UserVerificationRequirement::isValidValue(UserVerificationRequirement::PREFERRED));
+        self::assertTrue(UserVerificationRequirement::isValidValue(UserVerificationRequirement::DISCOURAGED));
 
-        $this->assertFalse(UserVerificationRequirement::isValidValue('xyz'));
+        self::assertFalse(UserVerificationRequirement::isValidValue('xyz'));
     }
 
     public function testTransports()
     {
         $known = AuthenticatorTransport::allKnownTransports();
-        $this->assertContains(AuthenticatorTransport::USB, $known);
-        $this->assertContains(AuthenticatorTransport::NFC, $known);
-        $this->assertContains(AuthenticatorTransport::BLE, $known);
-        // $this->assertContains(AuthenticatorTransport::INTERNAL, $known);
+        self::assertContains(AuthenticatorTransport::USB, $known);
+        self::assertContains(AuthenticatorTransport::NFC, $known);
+        self::assertContains(AuthenticatorTransport::BLE, $known);
+        // self::assertContains(AuthenticatorTransport::INTERNAL, $known);
     }
 
     public function testAttachment()
     {
-        $this->assertTrue(AuthenticatorAttachment::isValidValue(AuthenticatorAttachment::PLATFORM));
-        $this->assertTrue(AuthenticatorAttachment::isValidValue(AuthenticatorAttachment::CROSS_PLATFORM));
-        $this->assertFalse(AuthenticatorAttachment::isValidValue('xyz'));
+        self::assertTrue(AuthenticatorAttachment::isValidValue(AuthenticatorAttachment::PLATFORM));
+        self::assertTrue(AuthenticatorAttachment::isValidValue(AuthenticatorAttachment::CROSS_PLATFORM));
+        self::assertFalse(AuthenticatorAttachment::isValidValue('xyz'));
     }
 
     public function testTokenBindingStatus()
     {
-        $this->assertTrue(TokenBindingStatus::isValidValue(TokenBindingStatus::SUPPORTED));
-        $this->assertTrue(TokenBindingStatus::isValidValue(TokenBindingStatus::PRESENT));
-        $this->assertFalse(TokenBindingStatus::isValidValue('xyz'));
+        self::assertTrue(TokenBindingStatus::isValidValue(TokenBindingStatus::SUPPORTED));
+        self::assertTrue(TokenBindingStatus::isValidValue(TokenBindingStatus::PRESENT));
+        self::assertFalse(TokenBindingStatus::isValidValue('xyz'));
     }
 
     public function testAuthenticatorTransport()
     {
-        $this->assertTrue(AuthenticatorTransport::isValidValue(AuthenticatorTransport::USB));
-        $this->assertFalse(AuthenticatorTransport::isValidValue('xyz'));
+        self::assertTrue(AuthenticatorTransport::isValidValue(AuthenticatorTransport::USB));
+        self::assertFalse(AuthenticatorTransport::isValidValue('xyz'));
     }
 }

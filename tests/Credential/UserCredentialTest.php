@@ -19,8 +19,8 @@ class UserCredentialTest extends TestCase
         $key = $this->createMock(CoseKeyInterface::class);
         $handle = UserHandle::fromString('aabbcc');
         $credential = new UserCredential($id, $key, $handle);
-        $this->assertSame($id, $credential->getCredentialId());
-        $this->assertSame($key, $credential->getPublicKey());
-        $this->assertSame($handle, $credential->getUserHandle());
+        self::assertSame($id, $credential->getCredentialId());
+        self::assertSame($key, $credential->getPublicKey());
+        self::assertSame($handle, $credential->getUserHandle());
     }
 }

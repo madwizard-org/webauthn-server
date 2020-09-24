@@ -22,24 +22,24 @@ class CertificateDetailsTest extends TestCase
     {
         $pem = $this->getData('v1Certificate');
         $cert = CertificateDetails::fromPem($pem);
-        $this->assertSame(CertificateDetails::VERSION_1, $cert->getCertificateVersion());
-        $this->assertNull($cert->isCA());
+        self::assertSame(CertificateDetails::VERSION_1, $cert->getCertificateVersion());
+        self::assertNull($cert->isCA());
     }
 
     public function testRSASignature()
     {
         $pem = $this->getData('v1Certificate');
         $cert = CertificateDetails::fromPem($pem);
-        $this->assertTrue($cert->verifySignature('testdata', hex2bin($this->getData('v1SignedData')), CoseAlgorithm::RS256));
-        $this->assertFalse($cert->verifySignature('testfail', hex2bin($this->getData('v1SignedData')), CoseAlgorithm::RS256));
+        self::assertTrue($cert->verifySignature('testdata', hex2bin($this->getData('v1SignedData')), CoseAlgorithm::RS256));
+        self::assertFalse($cert->verifySignature('testfail', hex2bin($this->getData('v1SignedData')), CoseAlgorithm::RS256));
     }
 
     public function testECSignature()
     {
         $pem = $this->getData('ecCertificate');
         $cert = CertificateDetails::fromPem($pem);
-        $this->assertTrue($cert->verifySignature('testmessage', hex2bin($this->getData('ecSignedData')), CoseAlgorithm::ES256));
-        $this->assertFalse($cert->verifySignature('testfail', hex2bin($this->getData('ecSignedData')), CoseAlgorithm::ES256));
+        self::assertTrue($cert->verifySignature('testmessage', hex2bin($this->getData('ecSignedData')), CoseAlgorithm::ES256));
+        self::assertFalse($cert->verifySignature('testfail', hex2bin($this->getData('ecSignedData')), CoseAlgorithm::ES256));
     }
 
     public function testUnsupportedAlgorithm()
@@ -81,9 +81,9 @@ class CertificateDetailsTest extends TestCase
         $pem = $this->getData('example.com');
         $cert = CertificateDetails::fromPem($pem);
 
-        $this->assertSame(CertificateDetails::VERSION_3, $cert->getCertificateVersion());
-        $this->assertFalse($cert->isCA());
-        $this->assertSame('Technology', $cert->getOrganizationalUnit());
+        self::assertSame(CertificateDetails::VERSION_3, $cert->getCertificateVersion());
+        self::assertFalse($cert->isCA());
+        self::assertSame('Technology', $cert->getOrganizationalUnit());
     }
 
     public function testPacked()
@@ -91,9 +91,9 @@ class CertificateDetailsTest extends TestCase
         $pem = $this->getData('packedAttestation');
         $cert = CertificateDetails::fromPem($pem);
 
-        $this->assertSame(CertificateDetails::VERSION_3, $cert->getCertificateVersion());
-        $this->assertFalse($cert->isCA());
-        $this->assertSame('Authenticator Attestation', $cert->getOrganizationalUnit());
+        self::assertSame(CertificateDetails::VERSION_3, $cert->getCertificateVersion());
+        self::assertFalse($cert->isCA());
+        self::assertSame('Authenticator Attestation', $cert->getOrganizationalUnit());
     }
 
     public function testInvalidPEM()

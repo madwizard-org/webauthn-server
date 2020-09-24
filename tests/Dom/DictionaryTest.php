@@ -24,7 +24,7 @@ class DictionaryTest extends TestCase
     {
         $dict = $this->createDictionary($data);
 
-        $this->assertSame($check === null ? $data : $check, JsonConverter::encodeDictionary($dict));
+        self::assertSame($check === null ? $data : $check, JsonConverter::encodeDictionary($dict));
     }
 
     public function testSimple()

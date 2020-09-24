@@ -16,19 +16,19 @@ class PublicKeyCredentialDescriptorTest extends TestCase
         $credId = ByteBuffer::fromHex('11223344556677');
         $key = new PublicKeyCredentialDescriptor($credId, PublicKeyCredentialType::PUBLIC_KEY);
 
-        $this->assertTrue($key->getId()->equals($credId));
-        $this->assertSame(PublicKeyCredentialType::PUBLIC_KEY, $key->getType());
+        self::assertTrue($key->getId()->equals($credId));
+        self::assertSame(PublicKeyCredentialType::PUBLIC_KEY, $key->getType());
         $key->addTransport(AuthenticatorTransport::USB);
         $key->addTransport(AuthenticatorTransport::NFC);
 
-        $this->assertSame(
+        self::assertSame(
             [AuthenticatorTransport::USB, AuthenticatorTransport::NFC],
             $key->getTransports()
         );
 
         $data = $key->getJsonData();
 
-        $this->assertSame(
+        self::assertSame(
             [
                 'type' => 'public-key',
                 'id' => 'ESIzRFVmdw',

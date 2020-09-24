@@ -30,7 +30,7 @@ class TpmAttestTest extends TestCase
         $raw = HexData::buf(self::TPMT_ATTEST_EXAMPLE);
         $attest = new TpmAttest($raw);
 
-        $this->assertSame('000b7121aebfa6b9afd07032f42f0925e0ec67408dd599a57bfa0f80c7f15601084f', $attest->getAttName()->getHex());
+        self::assertSame('000b7121aebfa6b9afd07032f42f0925e0ec67408dd599a57bfa0f80c7f15601084f', $attest->getAttName()->getHex());
     }
 
     public function testExtra()

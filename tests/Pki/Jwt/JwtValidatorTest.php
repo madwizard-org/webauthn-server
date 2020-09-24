@@ -34,7 +34,7 @@ class JwtValidatorTest extends TestCase
         $jwt = new Jwt($token);
 
         $ctx = new ValidationContext(['ES256', 'ES384', 'ES512'], $key);
-        $this->assertSame(['test' => 'data', 'hello' => true], $validator->validate($jwt, $ctx));
+        self::assertSame(['test' => 'data', 'hello' => true], $validator->validate($jwt, $ctx));
     }
 
     public function invalidTokensData()

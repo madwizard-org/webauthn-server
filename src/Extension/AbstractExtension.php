@@ -11,28 +11,17 @@ abstract class AbstractExtension implements ExtensionInterface
      */
     private $identifier;
 
-    /**
-     * @var string[]
-     */
-    private $supportedOperations;
-
-    public function __construct(string $identifier, array $supportedOperations)
+    public function __construct(string $identifier)
     {
         $this->identifier = $identifier;
 
         if (!ExtensionHelper::validExtensionIdentifier($identifier)) {
             throw new WebAuthnException(sprintf("Invalid extension identifier '%s'.", $identifier));
         }
-        $this->supportedOperations = $supportedOperations;
     }
 
     public function getIdentifier(): string
     {
         return $this->identifier;
-    }
-
-    public function getSupportedOperations(): array
-    {
-        return $this->supportedOperations;
     }
 }

@@ -3,8 +3,9 @@
 namespace MadWizard\WebAuthn\Extension\AppId;
 
 use MadWizard\WebAuthn\Extension\AbstractExtensionInput;
+use MadWizard\WebAuthn\Extension\AuthenticationExtensionInputInterface;
 
-class AppIdExtensionInput extends AbstractExtensionInput
+class AppIdExtensionInput extends AbstractExtensionInput implements AuthenticationExtensionInputInterface
 {
     public function __construct(string $appId)
     {

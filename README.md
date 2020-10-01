@@ -25,17 +25,20 @@ composer require madwizard/webauthn:^0.3
 Support
 -------
 
-This library is still in development! Currently supported features are:
+- Attestation types:
+    - FIDO U2F
+    - Packed
+    - TPM
+    - Android SafetyNet
+    - Android Key
+    - None
+- Metadata service
+- Validating metadata
+- Extensions:
+    - appid
 
-Attestation types:
-- FIDO U2F
-- Packed
-- TPM
-- Android SafetyNet
-- Android Key
-- None
 
-Attestation is not yet verified with trusted anchors (I'm working on this) or the metadata service but the attestation itself is validated for correctness and consistency.
+
 
 Usage
 -----

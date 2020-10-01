@@ -14,7 +14,7 @@ class AppIdExtension extends AbstractExtension
 {
     public function __construct()
     {
-        parent::__construct('appid', [self::OPERATION_AUTHENTICATION]);
+        parent::__construct('appid');
     }
 
     public function parseResponse(ExtensionResponseInterface $extensionResponse): ExtensionOutputInterface

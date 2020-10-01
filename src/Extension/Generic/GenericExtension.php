@@ -10,11 +10,6 @@ use MadWizard\WebAuthn\Extension\ExtensionResponseInterface;
 
 class GenericExtension extends AbstractExtension
 {
-    public function __construct(string $identifier, array $supportedOperations)
-    {
-        parent::__construct($identifier, $supportedOperations);
-    }
-
     public function parseResponse(ExtensionResponseInterface $extensionResponse): ExtensionOutputInterface
     {
         return new GenericExtensionOutput($extensionResponse);

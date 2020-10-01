@@ -40,12 +40,6 @@ class AppIdExtensionTest extends TestCase
         self::assertSame('appid', $output->getIdentifier());
     }
 
-    public function testOperationSupport()
-    {
-        $ext = new AppIdExtension();
-        self::assertSame([ExtensionInterface::OPERATION_AUTHENTICATION], $ext->getSupportedOperations());
-    }
-
     public function testParsing()
     {
         $response = new ExtensionResponse('appid');

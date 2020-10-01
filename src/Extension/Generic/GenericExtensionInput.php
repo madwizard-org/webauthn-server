@@ -3,8 +3,10 @@
 namespace MadWizard\WebAuthn\Extension\Generic;
 
 use MadWizard\WebAuthn\Extension\AbstractExtensionInput;
+use MadWizard\WebAuthn\Extension\AuthenticationExtensionInputInterface;
+use MadWizard\WebAuthn\Extension\RegistrationExtensionInputInterface;
 
-class GenericExtensionInput extends AbstractExtensionInput
+class GenericExtensionInput extends AbstractExtensionInput implements RegistrationExtensionInputInterface, AuthenticationExtensionInputInterface
 {
     public function __construct(string $identifier, $input = null)
     {

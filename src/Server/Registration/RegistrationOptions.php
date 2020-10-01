@@ -5,13 +5,11 @@ namespace MadWizard\WebAuthn\Server\Registration;
 use MadWizard\WebAuthn\Dom\AttestationConveyancePreference;
 use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
-use MadWizard\WebAuthn\Server\Common\ExtensionInputsTrait;
+use MadWizard\WebAuthn\Extension\RegistrationExtensionInputInterface;
 use MadWizard\WebAuthn\Server\UserIdentityInterface;
 
 final class RegistrationOptions     // TODO: add timeout (via trait?)
 {
-    use ExtensionInputsTrait;
-
     /**
      * @var string|null
      */
@@ -31,6 +29,11 @@ final class RegistrationOptions     // TODO: add timeout (via trait?)
      * @var bool
      */
     private $excludeExistingCredentials = false;
+
+    /**
+     * @var RegistrationExtensionInputInterface[]
+     */
+    private $extensions = [];
 
     private function __construct(UserIdentityInterface $userIdentity)
     {
@@ -78,5 +81,18 @@ final class RegistrationOptions     // TODO: add timeout (via trait?)
     public function setExcludeExistingCredentials(bool $excludeExistingCredentials): void
     {
         $this->excludeExistingCredentials = $excludeExistingCredentials;
+    }
+
+    public function addExtensionInput(RegistrationExtensionInputInterface $input): void
+    {
+        $this->extensions[] = $input;
+    }
+
+    /**
+     * @return RegistrationExtensionInputInterface[]
+     */
+    public function getExtensionInputs(): array
+    {
+        return $this->extensions;
     }
 }

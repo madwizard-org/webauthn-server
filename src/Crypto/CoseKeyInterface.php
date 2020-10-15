@@ -2,7 +2,6 @@
 
 namespace MadWizard\WebAuthn\Crypto;
 
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
 interface CoseKeyInterface

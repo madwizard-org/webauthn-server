@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Dom;
 
 use InvalidArgumentException;
 
-class AuthenticatorSelectionCriteria extends AbstractDictionary
+final class AuthenticatorSelectionCriteria extends AbstractDictionary
 {
     /**
      * Platform attachment value from the AuthenticatorAttachment enumeration.

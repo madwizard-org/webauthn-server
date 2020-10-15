@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Dom;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class PublicKeyCredentialRequestOptions extends AbstractDictionary
+final class PublicKeyCredentialRequestOptions extends AbstractDictionary
 {
     /**
      * @var ByteBuffer

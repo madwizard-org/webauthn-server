@@ -2,9 +2,9 @@
 
 namespace MadWizard\WebAuthn\Tests\Crypto;
 
+use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Crypto\CoseKey;
 use MadWizard\WebAuthn\Crypto\RsaKey;
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborMap;

@@ -2,10 +2,10 @@
 
 namespace MadWizard\WebAuthn\Pki\Jwt;
 
+use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 use MadWizard\WebAuthn\Crypto\Ec2Key;
 use MadWizard\WebAuthn\Crypto\RsaKey;
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Format\ByteBuffer;

@@ -2,7 +2,6 @@
 
 namespace MadWizard\WebAuthn\Crypto;
 
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\UnsupportedException;
 
 class CoseHash

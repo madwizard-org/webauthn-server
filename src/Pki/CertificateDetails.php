@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Pki;
 
 use Exception;
 use LogicException;
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
+use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;

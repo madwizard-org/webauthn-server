@@ -2,7 +2,7 @@
 
 namespace MadWizard\WebAuthn\Dom;
 
-class TokenBindingStatus
+final class TokenBindingStatus
 {
     /**
      * Token binding was used when communicating with the Relying Party.

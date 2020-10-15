@@ -3,8 +3,8 @@
 namespace MadWizard\WebAuthn\Tests\Attestation;
 
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
+use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Crypto\Ec2Key;
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
 use PHPUnit\Framework\TestCase;

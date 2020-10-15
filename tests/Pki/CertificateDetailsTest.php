@@ -2,7 +2,7 @@
 
 namespace MadWizard\WebAuthn\Tests\Pki;
 
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
+use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Pki\CertificateDetails;

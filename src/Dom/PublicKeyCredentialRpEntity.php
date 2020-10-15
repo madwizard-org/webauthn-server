@@ -6,7 +6,7 @@ use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use const FILTER_VALIDATE_DOMAIN;
 
-class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
+final class PublicKeyCredentialRpEntity extends PublicKeyCredentialEntity
 {
     /**
      * @var string|null

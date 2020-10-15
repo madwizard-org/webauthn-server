@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Tests\Policy;
 
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Config\RelyingParty;
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
+use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 use MadWizard\WebAuthn\Metadata\NullMetadataResolver;
 use MadWizard\WebAuthn\Policy\Policy;

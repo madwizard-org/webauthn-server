@@ -3,7 +3,7 @@
 namespace MadWizard\WebAuthn\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\AttestationObject;
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
+use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;

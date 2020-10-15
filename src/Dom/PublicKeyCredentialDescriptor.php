@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Dom;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class PublicKeyCredentialDescriptor extends AbstractDictionary // TODO serializable
+final class PublicKeyCredentialDescriptor extends AbstractDictionary // TODO serializable
 {
     /**
      * @var string

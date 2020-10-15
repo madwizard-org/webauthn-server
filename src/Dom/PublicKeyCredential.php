@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class PublicKeyCredential implements PublicKeyCredentialInterface
+final class PublicKeyCredential implements PublicKeyCredentialInterface
 {
     /**
      * @var ByteBuffer

@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 
-class PublicKeyCredentialParameters extends AbstractDictionary
+final class PublicKeyCredentialParameters extends AbstractDictionary
 {
     /**
      * Algorithm from COSE.

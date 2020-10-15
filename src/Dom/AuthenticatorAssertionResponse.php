@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class AuthenticatorAssertionResponse extends AbstractAuthenticatorResponse implements AuthenticatorAssertionResponseInterface
+final class AuthenticatorAssertionResponse extends AbstractAuthenticatorResponse implements AuthenticatorAssertionResponseInterface
 {
     /**
      * @var ByteBuffer

@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Tests\Attestation\Statement;
 
 use MadWizard\WebAuthn\Attestation\Statement\TpmAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Tpm\TpmPublic;
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
+use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use MadWizard\WebAuthn\Tests\Helper\HexData;

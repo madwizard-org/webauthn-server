@@ -6,7 +6,7 @@ use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
+final class PublicKeyCredentialUserEntity extends PublicKeyCredentialEntity
 {
     /**
      * @var ByteBuffer Binary user handle of the account (max MAX_USER_HANDLE_BYTES)

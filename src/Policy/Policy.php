@@ -2,7 +2,7 @@
 
 namespace MadWizard\WebAuthn\Policy;
 
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
+use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ConfigurationException;
 
 final class Policy implements PolicyInterface

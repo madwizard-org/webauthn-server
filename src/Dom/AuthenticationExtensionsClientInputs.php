@@ -6,7 +6,7 @@ namespace MadWizard\WebAuthn\Dom;
 
 use MadWizard\WebAuthn\Extension\ExtensionInputInterface;
 
-class AuthenticationExtensionsClientInputs extends AbstractDictionary
+final class AuthenticationExtensionsClientInputs extends AbstractDictionary
 {
     /**
      * @var ExtensionInputInterface[]

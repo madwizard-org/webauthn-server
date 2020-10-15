@@ -2,7 +2,7 @@
 
 namespace MadWizard\WebAuthn\Dom;
 
-class CredentialRequestOptions extends AbstractDictionary
+final class CredentialRequestOptions extends AbstractDictionary
 {
     /**
      * @var PublicKeyCredentialRequestOptions|null

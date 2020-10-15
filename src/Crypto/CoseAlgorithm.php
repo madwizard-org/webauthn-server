@@ -1,6 +1,6 @@
 <?php
 
-namespace MadWizard\WebAuthn\Dom;
+namespace MadWizard\WebAuthn\Crypto;
 
 /**
  * Enumeration for COSE algorithm identifiers.

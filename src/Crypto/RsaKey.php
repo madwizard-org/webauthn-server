@@ -2,7 +2,6 @@
 
 namespace MadWizard\WebAuthn\Crypto;
 
-use MadWizard\WebAuthn\Dom\CoseAlgorithm;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborEncoder;
 use MadWizard\WebAuthn\Format\CborMap;

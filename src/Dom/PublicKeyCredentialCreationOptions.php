@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Dom;
 use InvalidArgumentException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class PublicKeyCredentialCreationOptions extends AbstractDictionary
+final class PublicKeyCredentialCreationOptions extends AbstractDictionary
 {
     /**
      * @var PublicKeyCredentialRpEntity

@@ -51,9 +51,15 @@ class Router
      */
     private $debugIdx;
 
+    /**
+     * @var ErrorLogger
+     */
+    private $logger;
+
     public function __construct(string $metadataDir, string $varDir)
     {
         $this->store = new TestCredentialStore();
+        $this->logger = new ErrorLogger();
         $this->server = $this->createServer($metadataDir);
         $this->varDir = $varDir;
         $this->debug = (bool) ($_ENV['DEBUG'] ?? false);
@@ -79,7 +85,7 @@ class Router
                     $policy->setUserPresenceRequired(false);
                 }
             )
-            ->setLogger(new ErrorLogger())
+            ->setLogger($this->logger)
             ->trustWithoutMetadata(false)
             ->strictSupportedFormats(true)
             ->addCustomExtension(new GenericExtension('example.extension', [ExtensionInterface::OPERATION_REGISTRATION, ExtensionInterface::OPERATION_AUTHENTICATION]))
@@ -120,10 +126,12 @@ class Router
             $response = [500, ['status' => 'failed', 'errorMessage' => $prefix . $e->getMessage()]];
         } catch (WebAuthnException $e) {
             $prefix = $this->debugIdx === null ? '' : ($this->debugIdx . ' ');
-            $response = [400, ['status' => 'failed', 'errorMessage' => $prefix . $e->getMessage() . PHP_EOL . $e->getTraceAsString()]];
+            $suffix = $this->debug ? (PHP_EOL . $e->getTraceAsString()) : '';
+            $response = [400, ['status' => 'failed', 'errorMessage' => $prefix . $e->getMessage() . $suffix]];
         } catch (Throwable $e) {
             $prefix = $this->debugIdx === null ? '' : ($this->debugIdx . ' ');
-            $response = [500, ['status' => 'failed', 'errorMessage' => $prefix . $e->getMessage() . PHP_EOL . $e->getTraceAsString()]];
+            $suffix = $this->debug ? (PHP_EOL . $e->getTraceAsString()) : '';
+            $response = [500, ['status' => 'failed', 'errorMessage' => $prefix . $e->getMessage() . $suffix]];
         }
 
         if ($response === null) {
@@ -136,9 +144,9 @@ class Router
 
         $statusCode = $response[0];
         if ($statusCode === 200) {
-            error_log('Response: OK');
+            $this->logger->info('Response: OK');
         } else {
-            error_log(sprintf('Response: [%d] %s', $statusCode, $response[1]['errorMessage'] ?? '?'));
+            $this->logger->info(sprintf('Response: [%d] %s', $statusCode, $response[1]['errorMessage'] ?? '?'));
         }
 
         http_response_code($statusCode);

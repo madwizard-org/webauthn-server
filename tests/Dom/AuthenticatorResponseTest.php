@@ -10,16 +10,20 @@ use PHPUnit\Framework\TestCase;
 
 class AuthenticatorResponseTest extends TestCase
 {
+    private const GET_CLIENT_DATA = '{"type":"get","challenge":"Vu8uDqnkwOjd83KLj6Scn2BgFNLFbGR7Kq_XJJwQnnatztUR7XIBL7K8uMPCIaQmKw1MCVQ5aazNJFk7NakgqA","origin":"https://localhost"}';
+
+    private const CREATE_CLIENT_DATA = '{"type":"create","challenge":"Vu8uDqnkwOjd83KLj6Scn2BgFNLFbGR7Kq_XJJwQnnatztUR7XIBL7K8uMPCIaQmKw1MCVQ5aazNJFk7NakgqA","origin":"https://localhost"}';
+
     public function testAssertion()
     {
         $assertion = new AuthenticatorAssertionResponse(
-            '{"a": 123}',
+            self::GET_CLIENT_DATA,
             ByteBuffer::fromHex('123456'),
             ByteBuffer::fromHex('789ABC'),
             null
         );
 
-        self::assertSame('{"a": 123}', $assertion->getClientDataJson());
+        self::assertSame(self::GET_CLIENT_DATA, $assertion->getClientDataJson());
         self::assertSame('123456', $assertion->getAuthenticatorData()->getHex());
         self::assertSame('789abc', $assertion->getSignature()->getHex());
         self::assertNull($assertion->getUserHandle());
@@ -28,13 +32,13 @@ class AuthenticatorResponseTest extends TestCase
     public function testAssertionWithUser()
     {
         $assertion = new AuthenticatorAssertionResponse(
-            '{"a": 123}',
+            self::GET_CLIENT_DATA,
             ByteBuffer::fromHex('123456'),
             ByteBuffer::fromHex('789abc'),
             ByteBuffer::fromHex('0099aabbcc')
         );
 
-        self::assertSame('{"a": 123}', $assertion->getClientDataJson());
+        self::assertSame(self::GET_CLIENT_DATA, $assertion->getClientDataJson());
         self::assertSame('123456', $assertion->getAuthenticatorData()->getHex());
         self::assertSame('789abc', $assertion->getSignature()->getHex());
         self::assertSame('0099aabbcc', $assertion->getUserHandle()->getHex());
@@ -53,11 +57,11 @@ class AuthenticatorResponseTest extends TestCase
     public function testAttestation()
     {
         $assertion = new AuthenticatorAttestationResponse(
-            '{"a": 123}',
+            self::CREATE_CLIENT_DATA,
             ByteBuffer::fromHex('123456')
         );
 
-        self::assertSame('{"a": 123}', $assertion->getClientDataJson());
+        self::assertSame(self::CREATE_CLIENT_DATA, $assertion->getClientDataJson());
         self::assertSame('123456', $assertion->getAttestationObject()->getHex());
     }
 
@@ -67,5 +71,17 @@ class AuthenticatorResponseTest extends TestCase
         $this->expectExceptionMessageMatches('~Unparseable~i');
 
         new AuthenticatorAttestationResponse('{{123', ByteBuffer::fromHex('123456'));
+    }
+
+    public function testParsedClientData()
+    {
+        $assertion = new AuthenticatorAssertionResponse(
+            self::GET_CLIENT_DATA,
+            ByteBuffer::fromHex('123456'),
+            ByteBuffer::fromHex('789ABC'),
+            null
+        );
+
+        self::assertSame('get', $assertion->getParsedClientData()->getType());
     }
 }

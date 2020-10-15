@@ -7,7 +7,7 @@ use MadWizard\WebAuthn\Format\SerializableTrait;
 use Serializable;
 use function mb_strtolower;
 
-class Origin implements Serializable
+final class Origin implements Serializable
 {
     use SerializableTrait;
 

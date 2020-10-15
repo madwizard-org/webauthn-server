@@ -6,8 +6,11 @@ use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Attestation\AuthenticatorData;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Credential\CredentialId;
+use MadWizard\WebAuthn\Dom\CollectedClientData;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
+use MadWizard\WebAuthn\Dom\TokenBindingStatus;
 use MadWizard\WebAuthn\Exception\FormatNotSupportedException;
+use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Extension\ExtensionInterface;
 use MadWizard\WebAuthn\Extension\ExtensionProcessingContext;
@@ -41,7 +44,8 @@ final class RegistrationVerifier extends AbstractVerifier
         // 2. Let C, the client data claimed as collected during the credential creation, be the result of running an
         //    implementation-specific JSON parser on JSONtext.
         // 3 - 6
-        $this->checkClientData($response->getParsedClientData(), $context);
+        $clientData = $response->getParsedClientData();
+        $this->checkClientData($clientData, $context);
 
         // 7. Compute the hash of response.clientDataJSON using SHA-256.
         $clientDataHash = $this->getClientDataHash($response);
@@ -90,32 +94,30 @@ final class RegistrationVerifier extends AbstractVerifier
         return new RegistrationResult(CredentialId::fromBuffer($credential->getRawId()), $authData, $attestation, $verificationResult);
     }
 
-    private function checkClientData(array $clientData, RegistrationContext $context)   // TODO tls context?
+    private function checkClientData(CollectedClientData $clientData, RegistrationContext $context): void
     {
-        $this->validateClientData($clientData);
-
         // 3. Verify that the value of C.type is webauthn.create.
-        if ($clientData['type'] !== 'webauthn.create') {
+        if ($clientData->getType() !== 'webauthn.create') {
             throw new VerificationException('Expecting type in clientDataJSON to be webauthn.create.');
         }
 
         // 4. Verify that the value of C.challenge matches the challenge that was sent to the authenticator
         //    in the create() call.
-        if (!hash_equals($context->getChallenge()->getBase64Url(), $clientData['challenge'])) {
+        if (!hash_equals($context->getChallenge()->getBase64Url(), $clientData->getChallenge())) {
             throw new VerificationException('Challenge in clientDataJSON does not match the challenge in the request.');
         }
 
         // 5. Verify that the value of C.origin matches the Relying Party's origin.
-        if (!$this->verifyOrigin($clientData['origin'], $context->getOrigin())) {
-            throw new VerificationException(sprintf("Origin '%s' does not match relying party origin.", $clientData['origin']));
+        if (!$this->verifyOrigin($clientData->getOrigin(), $context->getOrigin())) {
+            throw new VerificationException(sprintf("Origin '%s' does not match relying party origin.", $clientData->getOrigin()));
         }
 
         // 6. Verify that the value of C.tokenBinding.status matches the state of Token Binding for the TLS connection
         //    over which the assertion was obtained. If Token Binding was used on that TLS connection, also verify that
         //    C.tokenBinding.id matches the base64url encoding of the Token Binding ID for the connection.
-        $tokenBinding = $clientData['tokenBinding'] ?? null;
-        if ($tokenBinding !== null) {
-            $this->checkTokenBinding($tokenBinding);
+        $tokenBinding = $clientData->getTokenBinding();
+        if ($tokenBinding !== null && $tokenBinding->getStatus() === TokenBindingStatus::PRESENT) {
+            throw new UnsupportedException('Token binding is not yet supported by this library.');
         }
     }
 

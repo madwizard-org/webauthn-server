@@ -193,4 +193,9 @@ final class MetadataServiceProvider implements MetadataProviderInterface, Logger
         }
         return MetadataToc::fromJson($claims);
     }
+
+    public function getDescription(): string
+    {
+        return sprintf('Metadata service url=%s', $this->mdsSource->getUrl());
+    }
 }

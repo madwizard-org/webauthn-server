@@ -11,6 +11,7 @@ use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Crypto\Ec2Key;
 use MadWizard\WebAuthn\Exception\ParseException;
+use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -224,8 +225,8 @@ class AuthenticationTest extends TestCase
 
         $helper->setClientOptions(['tokenBinding' => ['status' => 'present', 'id' => '123456']]);
 
-        $this->expectException(VerificationException::class);
-        $this->expectExceptionMessageMatches('~token binding is not supported~i');
+        $this->expectException(UnsupportedException::class);
+        $this->expectExceptionMessageMatches('~token binding is not yet supported~i');
 
         $this->runAuth($helper);
     }

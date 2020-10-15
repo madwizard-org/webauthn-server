@@ -11,7 +11,7 @@ use MadWizard\WebAuthn\Metadata\Statement\MetadataStatement;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
 use SplFileInfo;
 
-class FileProvider implements MetadataProviderInterface
+final class FileProvider implements MetadataProviderInterface
 {
     /**
      * @var StatementDirectorySource
@@ -46,5 +46,10 @@ class FileProvider implements MetadataProviderInterface
             }
         }
         return null;
+    }
+
+    public function getDescription(): string
+    {
+        return sprintf('Metadata files directory=%s', $this->source->getMetadataDir());
     }
 }

@@ -8,7 +8,10 @@ use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 use MadWizard\WebAuthn\Dom\AuthenticatorAssertionResponseInterface;
+use MadWizard\WebAuthn\Dom\CollectedClientData;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
+use MadWizard\WebAuthn\Dom\TokenBindingStatus;
+use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Exception\VerificationException;
 use MadWizard\WebAuthn\Extension\ExtensionInterface;
 use MadWizard\WebAuthn\Extension\ExtensionRegistryInterface;
@@ -62,7 +65,8 @@ final class AuthenticationVerifier extends AbstractVerifier
         // 6. Let C, the client data claimed as used for the signature, be the result of running an
         //    implementation-specific JSON parser on JSONtext.
         // 7 - 10
-        $this->checkClientData($response->getParsedClientData(), $context);
+        $clientData = $response->getParsedClientData();
+        $this->checkClientData($clientData, $context);
 
         // 11. Verify that the rpIdHash in aData is the SHA-256 hash of the RP ID expected by the Relying Party.
         if (!$this->verifyRpIdHash($authData, $context, $extensionContext)) {
@@ -178,32 +182,30 @@ final class AuthenticationVerifier extends AbstractVerifier
         }
     }
 
-    private function checkClientData(array $clientData, AuthenticationContext $context)
+    private function checkClientData(CollectedClientData $clientData, AuthenticationContext $context): void
     {
-        $this->validateClientData($clientData);
-
         // 7. Verify that the value of C.type is the string webauthn.get.
-        if ($clientData['type'] !== 'webauthn.get') {
+        if ($clientData->getType() !== 'webauthn.get') {
             throw new VerificationException('Expecting type in clientDataJSON to be webauthn.get.');
         }
 
         // 8. Verify that the value of C.challenge matches the challenge that was sent to the authenticator in the
         //    PublicKeyCredentialRequestOptions passed to the get() call.
-        if (!\hash_equals($context->getChallenge()->getBase64Url(), $clientData['challenge'])) {
+        if (!\hash_equals($context->getChallenge()->getBase64Url(), $clientData->getChallenge())) {
             throw new VerificationException('Challenge in clientDataJSON does not match the challenge in the request.');
         }
 
         // 9. Verify that the value of C.origin matches the Relying Party's origin.
-        if (!$this->verifyOrigin($clientData['origin'], $context->getOrigin())) {
-            throw new VerificationException(sprintf("Origin '%s' does not match relying party origin.", $clientData['origin']));
+        if (!$this->verifyOrigin($clientData->getOrigin(), $context->getOrigin())) {
+            throw new VerificationException(sprintf("Origin '%s' does not match relying party origin.", $clientData->getOrigin()));
         }
 
         // 10. Verify that the value of C.tokenBinding.status matches the state of Token Binding for the TLS connection
         //     over which the attestation was obtained. If Token Binding was used on that TLS connection, also verify
         //     that C.tokenBinding.id matches the base64url encoding of the Token Binding ID for the connection.
-        $tokenBinding = $clientData['tokenBinding'] ?? null;
-        if ($tokenBinding !== null) {
-            $this->checkTokenBinding($tokenBinding);
+        $tokenBinding = $clientData->getTokenBinding();
+        if ($tokenBinding !== null && $tokenBinding->getStatus() === TokenBindingStatus::PRESENT) {
+            throw new UnsupportedException('Token binding is not yet supported by this library.');
         }
     }
 }

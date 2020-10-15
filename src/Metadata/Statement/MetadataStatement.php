@@ -15,7 +15,7 @@ use MadWizard\WebAuthn\Pki\X509Certificate;
 use function base64_decode;
 use function in_array;
 
-class MetadataStatement implements MetadataInterface
+final class MetadataStatement implements MetadataInterface
 {
     /** @var Aaid|null */
     private $aaid;

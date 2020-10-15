@@ -15,7 +15,10 @@ abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInt
      */
     private $clientDataJson;
 
-    private $parsedJson;
+    /**
+     * @var CollectedClientData
+     */
+    private $clientData;
 
     public function __construct(string $clientDataJson)
     {
@@ -32,7 +35,7 @@ abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInt
         if (!\is_array($data)) {
             throw new ParseException('Expected object for client data');
         }
-        $this->parsedJson = $data;
+        $this->clientData = CollectedClientData::fromJson($data);
     }
 
     public function getClientDataJson(): string
@@ -40,9 +43,9 @@ abstract class AbstractAuthenticatorResponse implements AuthenticatorResponseInt
         return $this->clientDataJson;
     }
 
-    public function getParsedClientData(): array
+    public function getParsedClientData(): CollectedClientData
     {
-        return $this->parsedJson;
+        return $this->clientData;
     }
 
     public function asAttestationResponse(): AuthenticatorAttestationResponseInterface

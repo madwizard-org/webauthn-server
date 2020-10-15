@@ -13,4 +13,6 @@ interface MetadataProviderInterface
      * @throws WebAuthnException
      */
     public function getMetadata(IdentifierInterface $identifier, RegistrationResultInterface $registrationResult): ?MetadataInterface;
+
+    public function getDescription(): string;
 }

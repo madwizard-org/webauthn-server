@@ -173,4 +173,9 @@ final class PublicKeyCredentialCreationOptions extends AbstractDictionary
     {
         $this->extensions = $extensions;
     }
+
+    public function setTimeout(?int $timeout): void
+    {
+        $this->timeout = $timeout;
+    }
 }

@@ -6,9 +6,8 @@ use MadWizard\WebAuthn\Builder\ServerBuilder;
 use MadWizard\WebAuthn\Config\RelyingParty;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
-use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
+use MadWizard\WebAuthn\Dom\ResidentKeyRequirement;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
-use MadWizard\WebAuthn\Extension\ExtensionInterface;
 use MadWizard\WebAuthn\Extension\Generic\GenericExtension;
 use MadWizard\WebAuthn\Extension\Generic\GenericExtensionInput;
 use MadWizard\WebAuthn\Json\JsonConverter;
@@ -88,7 +87,7 @@ class Router
             ->setLogger($this->logger)
             ->trustWithoutMetadata(false)
             ->strictSupportedFormats(true)
-            ->addCustomExtension(new GenericExtension('example.extension', [ExtensionInterface::OPERATION_REGISTRATION, ExtensionInterface::OPERATION_AUTHENTICATION]))
+            ->addCustomExtension(new GenericExtension('example.extension'))
             ->setCredentialStore($this->store)
             ->setCacheDirectory(__DIR__ . '/../../var/conformance');
 
@@ -203,24 +202,20 @@ class Router
             $req['displayName']
         );
 
-        $sel = $req['authenticatorSelection'] ?? [];
-        $crit = new AuthenticatorSelectionCriteria();
-        if (($v = $sel['authenticatorAttachment'] ?? null) !== null) {
-            $crit->setAuthenticatorAttachment($v);
-        }
-        if (($v = $sel['requireResidentKey'] ?? null) !== null) {
-            $crit->setRequireResidentKey($v);
-        }
-        if (($v = $sel['userVerification'] ?? null) !== null) {
-            $crit->setUserVerification($v);
-        }
-
-        $att = $req['attestation'] ?? 'none';
-
         $opts = RegistrationOptions::createForUser($userIdentity);
 
+        $att = $req['attestation'] ?? 'none';
         $opts->setAttestation($att);
-        $opts->setAuthenticatorSelection($crit);
+
+        $sel = $req['authenticatorSelection'] ?? [];
+
+        $opts->setAuthenticatorAttachment($sel['authenticatorAttachment'] ?? null);
+
+        if (($v = $sel['requireResidentKey'] ?? null) !== null) {
+            $opts->setResidentKey($v ? ResidentKeyRequirement::REQUIRED : ResidentKeyRequirement::DISCOURAGED);
+        }
+        $opts->setUserVerification($sel['userVerification'] ?? null);
+
         foreach ($req['extensions'] ?? [] as $identifier => $ext) {
             $opts->addExtensionInput(new GenericExtensionInput($identifier, $ext));
         }
@@ -235,7 +230,7 @@ class Router
     {
         $context = $_SESSION['context'];
 
-        if (!($context instanceof  RegistrationContext)) {
+        if (!($context instanceof RegistrationContext)) {
             return [500, ['status' => 'error', 'errorMessage' => $req]];
         }
         $this->server->finishRegistration(JsonConverter::decodeAttestationString($req), $context);

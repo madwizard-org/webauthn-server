@@ -5,10 +5,10 @@ namespace MadWizard\WebAuthn\Server\Registration;
 use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Server\AbstractContext;
-use MadWizard\WebAuthn\Server\RequestContext;
 use MadWizard\WebAuthn\Web\Origin;
+use Serializable;
 
-final class RegistrationContext extends AbstractContext implements RequestContext
+final class RegistrationContext extends AbstractContext implements Serializable
 {
     /**
      * @var UserHandle

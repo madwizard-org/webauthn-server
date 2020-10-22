@@ -22,7 +22,7 @@ final class UserVerificationRequirement
      */
     public const DISCOURAGED = 'discouraged';
 
-    public const DEFAULT = self::DISCOURAGED;
+    public const DEFAULT = self::PREFERRED;
 
     /**
      * @codeCoverageIgnore

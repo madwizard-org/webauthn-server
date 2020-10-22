@@ -6,10 +6,10 @@ use MadWizard\WebAuthn\Credential\CredentialId;
 use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Server\AbstractContext;
-use MadWizard\WebAuthn\Server\RequestContext;
 use MadWizard\WebAuthn\Web\Origin;
+use Serializable;
 
-final class AuthenticationContext extends AbstractContext implements RequestContext
+final class AuthenticationContext extends AbstractContext implements Serializable
 {
     /**
      * @var CredentialId[]

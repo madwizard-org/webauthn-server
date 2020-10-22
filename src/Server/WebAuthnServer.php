@@ -9,6 +9,7 @@ use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\AuthenticationExtensionsClientInputs;
+use MadWizard\WebAuthn\Dom\AuthenticatorSelectionCriteria;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialCreationOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialDescriptor;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialInterface;
@@ -16,6 +17,7 @@ use MadWizard\WebAuthn\Dom\PublicKeyCredentialParameters;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRequestOptions;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialRpEntity;
 use MadWizard\WebAuthn\Dom\PublicKeyCredentialUserEntity;
+use MadWizard\WebAuthn\Dom\ResidentKeyRequirement;
 use MadWizard\WebAuthn\Dom\UserVerificationRequirement;
 use MadWizard\WebAuthn\Exception\CredentialIdExistsException;
 use MadWizard\WebAuthn\Exception\NoCredentialsException;
@@ -105,11 +107,13 @@ class WebAuthnServer implements ServerInterface
         );
 
         $creationOptions->setAttestation($options->getAttestation());
-        $creationOptions->setAuthenticatorSelection($options->getAuthenticatorSelection());
+        $creationOptions->setTimeout($options->getTimeout());
+
+        $selection = $this->createAuthenticatorSelection($options);
+
+        $creationOptions->setAuthenticatorSelection($selection);
         $extensions = $options->getExtensionInputs();
         if (count($extensions) > 0) {
-            // TODO: check if supported extension + check operation supported
-            // TODO: reuse same code for authentication?
             $creationOptions->setExtensions(
                 AuthenticationExtensionsClientInputs::fromArray($extensions)
             );
@@ -126,6 +130,29 @@ class WebAuthnServer implements ServerInterface
 
         $context = $this->createRegistrationContext($options, $creationOptions);
         return new RegistrationRequest($creationOptions, $context);
+    }
+
+    private function createAuthenticatorSelection(RegistrationOptions $options): ?AuthenticatorSelectionCriteria
+    {
+        $criteria = null;
+        $attachment = $options->getAuthenticatorAttachment();
+        if ($attachment !== null) {
+            $criteria = new AuthenticatorSelectionCriteria();
+            $criteria->setAuthenticatorAttachment($attachment);
+        }
+
+        $userVerification = $options->getUserVerification();
+        if ($userVerification !== null) {
+            $criteria = $criteria ?? new AuthenticatorSelectionCriteria();
+            $criteria->setUserVerification($userVerification);
+        }
+
+        $residentKey = $options->getResidentKey();
+        if ($residentKey !== null) {
+            $criteria = $criteria ?? new AuthenticatorSelectionCriteria();
+            $criteria->setRequireResidentKey($residentKey === ResidentKeyRequirement::REQUIRED);
+        }
+        return $criteria;
     }
 
     private function createRegistrationContext(RegistrationOptions $regOptions, PublicKeyCredentialCreationOptions $options): RegistrationContext
@@ -303,11 +330,11 @@ class WebAuthnServer implements ServerInterface
         }
 
         $credentialIds = $options->getAllowCredentials();
-//        $transports = AuthenticatorTransport::allKnownTransports(); // TODO: from config
         if (count($credentialIds) > 0) {
             foreach ($credentialIds as $credential) {
                 $credentialId = $credential->toBuffer();
                 $descriptor = new PublicKeyCredentialDescriptor($credentialId);
+                // TODO
 //                foreach ($transports as $transport) {
 //                    $descriptor->addTransport($transport);
 //                }

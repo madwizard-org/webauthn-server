@@ -3,7 +3,6 @@
 namespace MadWizard\WebAuthn\Metadata\Provider;
 
 use DateTimeImmutable;
-use MadWizard\WebAuthn\Attestation\Identifier\IdentifierInterface;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Cache\CacheProviderInterface;
 use MadWizard\WebAuthn\Exception\ParseException;
@@ -96,8 +95,12 @@ final class MetadataServiceProvider implements MetadataProviderInterface, Logger
         return $url;
     }
 
-    public function getMetadata(IdentifierInterface $identifier, RegistrationResultInterface $registrationResult): ?MetadataInterface
+    public function getMetadata(RegistrationResultInterface $registrationResult): ?MetadataInterface
     {
+        $identifier = $registrationResult->getIdentifier();
+        if ($identifier === null) {
+            return null;
+        }
         $toc = $this->getCachedToc();
         $tocItem = $toc->findItem($identifier);
 
@@ -118,7 +121,7 @@ final class MetadataServiceProvider implements MetadataProviderInterface, Logger
         return $meta;
     }
 
-    private function getMetadataItem(string $url, ByteBuffer $hash): MetadataStatement    // TODO exception?
+    private function getMetadataItem(string $url, ByteBuffer $hash): MetadataStatement
     {
         $item = $this->cachePool->getItem($hash->getHex());
 
@@ -171,8 +174,6 @@ final class MetadataServiceProvider implements MetadataProviderInterface, Logger
             throw new ParseException('Unexpected mime type.');
         }
 
-        //error_log( md5($url) . " " . $url);
-        //file_put_contents(__DIR__ . "/" . md5($url), $a->getData());
         $jwt = new Jwt($a->getData());
 
         $x5cParam = X5cParameterReader::getX5cParameter($jwt);

@@ -28,7 +28,6 @@ final class AndroidExtensionParser
         $authList = new AuthorizationList();
 
         // purpose [1] EXPLICIT SET OF INTEGER OPTIONAL
-        //file_put_contents('derrr', ($seq->toDER()));
         if ($seq->hasTagged(self::TAG_PURPOSE)) {
             $set = $seq->getTagged(self::TAG_PURPOSE)->asExplicit()->asSet();
             foreach ($set->elements() as $element) {

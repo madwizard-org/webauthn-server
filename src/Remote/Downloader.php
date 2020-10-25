@@ -6,9 +6,14 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use MadWizard\WebAuthn\Exception\RemoteException;
 use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
-class Downloader implements DownloaderInterface
+class Downloader implements DownloaderInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var Client
      */
@@ -17,17 +22,15 @@ class Downloader implements DownloaderInterface
     public function __construct(Client $client)     // TODO use clientfactory and ClientInterface
     {
         $this->client = $client;
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * @throws RemoteException
-     */
     public function downloadFile(string $uri): FileContents
     {
+        // TODO: remove token in logging?
         try {
             $response = $this->client->get($uri);
         } catch (RequestException $e) {
-            $message = 'Failed to download URL';
             $errorResponse = $e->getResponse();
             if ($errorResponse) {
                 $message = sprintf('Error response while downloading URL: %d %s', $errorResponse->getStatusCode(), $errorResponse->getReasonPhrase());

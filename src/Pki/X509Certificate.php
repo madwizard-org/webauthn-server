@@ -6,7 +6,7 @@ use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\SerializableTrait;
 use Serializable;
 
-class X509Certificate implements Serializable
+final class X509Certificate implements Serializable
 {
     use SerializableTrait;
 

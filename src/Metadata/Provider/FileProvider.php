@@ -3,7 +3,6 @@
 namespace MadWizard\WebAuthn\Metadata\Provider;
 
 use GlobIterator;
-use MadWizard\WebAuthn\Attestation\Identifier\IdentifierInterface;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Metadata\Source\StatementDirectorySource;
@@ -23,8 +22,13 @@ final class FileProvider implements MetadataProviderInterface
         $this->source = $source;
     }
 
-    public function getMetadata(IdentifierInterface $identifier, RegistrationResultInterface $registrationResult): ?MetadataInterface
+    public function getMetadata(RegistrationResultInterface $registrationResult): ?MetadataInterface
     {
+        $identifier = $registrationResult->getIdentifier();
+        if ($identifier === null) {
+            return null;
+        }
+
         $iterator = new GlobIterator($this->source->getMetadataDir() . DIRECTORY_SEPARATOR . '*.json');
 
         /**

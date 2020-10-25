@@ -18,6 +18,11 @@ final class CborMap implements JsonSerializable
     {
     }
 
+    /**
+     * @param mixed $key
+     *
+     * @throws CborException
+     */
     private function getInternalKey($key): string
     {
         $keyType = gettype($key);
@@ -27,11 +32,22 @@ final class CborMap implements JsonSerializable
         return sprintf('%s:%s', $keyType, (string) $key);
     }
 
+    /**
+     * @param mixed $key
+     * @param mixed $value
+     *
+     * @throws CborException
+     */
     public function set($key, $value): void
     {
         $this->entries[$this->getInternalKey($key)] = [$key, $value];
     }
 
+    /**
+     * @param mixed $key
+     *
+     * @throws CborException
+     */
     public function has($key): bool
     {
         $internalKey = $this->getInternalKey($key);

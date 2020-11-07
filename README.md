@@ -1,30 +1,33 @@
-WebAuthn Relying Party server library for PHP
-=============================================
+# WebAuthn Relying Party server library for PHP
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/badges/build.png?b=master)](https://scrutinizer-ci.com/g/madwizard-org/webauthn-server/build-status/master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Current state
--------------
-**Beta**
-All basic functionality of this library is functional but the API interface may change at any time until the first stable release.
+## Current state
 
-Goal
-----
-This library aims to implement the relying party server of the WebAuthn specification in PHP.
+Pretty stable but the API may still change slightly until the 1.0 release.
 
-Installation
-------------
+## Goal
+
+This library aims to implement the relying party server of the WebAuthn specification in PHP. Important goals are:
+
+- Implement the level 1 WebAuthn specification
+- Good quality, secure and maintainable code
+- Easy to use for the end-user
+
+
+## Installation
+
 Installation via composer:
 ```bash
-composer require madwizard/webauthn:^0.3
+composer require madwizard/webauthn
 ```
 
-Support
--------
+## Supported features
 
+- FIDO conformant library
 - Attestation types:
     - FIDO U2F
     - Packed
@@ -32,16 +35,14 @@ Support
     - Android SafetyNet
     - Android Key
     - None
-- Metadata service
+    - Optional 'unsupported' type to handle future types
+- Metadata service support
 - Validating metadata
 - Extensions:
     - appid
 
 
-
-
-Usage
------
+## Usage
 
 The library is still in development so documentation is limited. The general pattern to follow is:
 
@@ -56,6 +57,6 @@ $server = (new ServerBuilder())
 3. Use `startRegistration`/`finishRegistration` to register credentials. Be sure to store the temporary `AttestationContext` server side!
 4. and `startAuthentication`/`finishAuthentication` to authenticate. Be sure to store the temporary `AssertionContext` server side!
 
-Resources
----------
+## Resources
+
 [WebAuthn specification](https://www.w3.org/TR/webauthn/)

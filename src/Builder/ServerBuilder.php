@@ -98,7 +98,7 @@ final class ServerBuilder
     /**
      * @var bool
      */
-    private $useMetadata = true;
+    private $validateUsingMetadata = true;
 
     /**
      * @var bool
@@ -189,9 +189,9 @@ final class ServerBuilder
     /**
      * @return $this
      */
-    public function useMetadata(bool $use): self
+    public function validateUsingMetadata(bool $use): self
     {
-        $this->useMetadata = $use;
+        $this->validateUsingMetadata = $use;
         return $this;
     }
 
@@ -201,10 +201,10 @@ final class ServerBuilder
      */
     public function enableCrl(bool $enable, bool $silentFailure = true)
     {
-        if (!class_exists(\phpseclib3\File\X509::class)) {
+        if ($enable && !class_exists(\phpseclib3\File\X509::class)) {
             throw new UnsupportedException('CRL support is experimental and requires a (not yet stable) phpseclib v3. Use composer require phpseclib/phpseclib 3.0.x-dev.');
         }
-        $this->enableCrl = true;
+        $this->enableCrl = $enable;
         $this->crlSilentFailure = $silentFailure;
         return $this;
     }
@@ -293,7 +293,7 @@ final class ServerBuilder
                 return new CrlCertificateStatusResolver($c[DownloaderInterface::class], $c[CacheProviderInterface::class], $this->crlSilentFailure);
             };
         } else {
-            $c[CertificateStatusResolverInterface::class] = static function (ServiceContainer $c): CertificateStatusResolverInterface {
+            $c[CertificateStatusResolverInterface::class] = static function (): CertificateStatusResolverInterface {
                 return new NullCertificateStatusResolver();
             };
         }
@@ -406,7 +406,7 @@ final class ServerBuilder
             if ($this->trustWithoutMetadata) {
                 $tdm->addVoter(new Voter\AllowEmptyMetadataVoter());
             }
-            if ($this->useMetadata) {
+            if ($this->validateUsingMetadata) {
                 $tdm->addVoter(new Voter\SupportedAttestationTypeVoter());
                 $tdm->addVoter(new Voter\UndesiredStatusReportVoter());
                 $tdm->addVoter(new Voter\TrustChainVoter($c[TrustPathValidatorInterface::class]));

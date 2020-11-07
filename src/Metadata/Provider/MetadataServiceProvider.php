@@ -169,6 +169,7 @@ final class MetadataServiceProvider implements MetadataProviderInterface, Logger
 
     private function downloadToc($url): MetadataToc
     {
+        $this->logger->debug('Dowloading TOC {url}', ['url' => $url]);   // TODO: remove token from logging
         $a = $this->downloader->downloadFile($url);
         if (!in_array(strtolower($a->getContentType()), ['application/octet-stream', 'application/jose'])) {
             throw new ParseException('Unexpected mime type.');

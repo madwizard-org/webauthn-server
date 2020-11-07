@@ -61,7 +61,11 @@ class CertificateDetails implements CertificateDetailsInterface
 
     public function getPublicKeyDer(): string
     {
-        return $this->cert->subjectPublicKeyInfo()->toDER();
+        try {
+            return $this->cert->subjectPublicKeyInfo()->toDER();
+        } catch (Exception $e) {
+            throw new ParseException('Failed to get public key from certificate.', 0, $e);
+        }
     }
 
     private function convertCoseAlgorthm(int $coseAlgorithm): SignatureAlgorithmIdentifier

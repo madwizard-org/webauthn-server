@@ -39,9 +39,14 @@ use MadWizard\WebAuthn\Server\Registration\RegistrationOptions;
 use MadWizard\WebAuthn\Server\Registration\RegistrationRequest;
 use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
 use MadWizard\WebAuthn\Server\Registration\RegistrationVerifier;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
-class WebAuthnServer implements ServerInterface
+final class WebAuthnServer implements ServerInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var RelyingPartyInterface
      */
@@ -93,6 +98,7 @@ class WebAuthnServer implements ServerInterface
         $this->metadataResolver = $metadataResolver;
         $this->trustDecisionManager = $trustDecisionManager;
         $this->extensionRegistry = $extensionRegistry;
+        $this->logger = new NullLogger();
     }
 
     public function startRegistration(RegistrationOptions $options): RegistrationRequest

@@ -14,6 +14,7 @@ use MadWizard\WebAuthn\Json\JsonConverter;
 use MadWizard\WebAuthn\Metadata\Source\MetadataServiceSource;
 use MadWizard\WebAuthn\Metadata\Source\StatementDirectorySource;
 use MadWizard\WebAuthn\Policy\Policy;
+use MadWizard\WebAuthn\Server\Authentication\AuthenticationContext;
 use MadWizard\WebAuthn\Server\Authentication\AuthenticationOptions;
 use MadWizard\WebAuthn\Server\Registration\RegistrationContext;
 use MadWizard\WebAuthn\Server\Registration\RegistrationOptions;
@@ -84,6 +85,7 @@ class Router
                     $policy->setUserPresenceRequired(false);
                 }
             )
+            ->enableCrl(true)
             ->setLogger($this->logger)
             ->trustWithoutMetadata(false)
             ->strictSupportedFormats(true)
@@ -222,18 +224,23 @@ class Router
         $opts->setExcludeExistingCredentials(true);
         $regReq = $this->server->startRegistration($opts);
 
-        $_SESSION['context'] = $regReq->getContext();
+        $challenge = $regReq->getClientOptions()->getChallenge()->getBase64Url();
+        $_SESSION['context'][$challenge] = $regReq->getContext();
         return [200, array_merge(['status' => 'ok', 'errorMessage' => ''], $regReq->getClientOptionsJson())];
     }
 
     public function attestationResult(string $req): array
     {
-        $context = $_SESSION['context'];
+        $pkc = JsonConverter::decodeAttestationString($req);
+        $challenge = $pkc->getResponse()->getParsedClientData()->getChallenge();
+        $context = $_SESSION['context'][$challenge] ?? null;
 
         if (!($context instanceof RegistrationContext)) {
-            return [500, ['status' => 'error', 'errorMessage' => $req]];
+            return [500, ['status' => 'error', 'errorMessage' => 'context missing']];
         }
-        $this->server->finishRegistration(JsonConverter::decodeAttestationString($req), $context);
+        unset($_SESSION['context'][$challenge]);
+
+        $this->server->finishRegistration($pkc, $context);
 
         return [200, ['status' => 'ok', 'errorMessage' => '']];
     }
@@ -249,17 +256,25 @@ class Router
 
         $opts->setUserVerification($req['userVerification'] ?? 'preferred');
 
-        $regReq = $this->server->startAuthentication($opts);
+        $authReq = $this->server->startAuthentication($opts);
 
-        $_SESSION['context'] = $regReq->getContext();
-        return [200, array_merge(['status' => 'ok', 'errorMessage' => ''], $regReq->getClientOptionsJson())];
+        $challenge = $authReq->getClientOptions()->getChallenge()->getBase64Url();
+
+        $_SESSION['context'][$challenge] = $authReq->getContext();
+        return [200, array_merge(['status' => 'ok', 'errorMessage' => ''], $authReq->getClientOptionsJson())];
     }
 
     public function assertionResult(string $req): array
     {
-        $context = $_SESSION['context'];
+        $pkc = JsonConverter::decodeAssertionString($req);
+        $challenge = $pkc->getResponse()->getParsedClientData()->getChallenge();
 
-        $this->server->finishAuthentication(JsonConverter::decodeAssertionString($req), $context);
+        $context = $_SESSION['context'][$challenge];
+        if (!($context instanceof AuthenticationContext)) {
+            return [500, ['status' => 'error', 'errorMessage' => 'context missing']];
+        }
+        unset($_SESSION['context'][$challenge]);
+        $this->server->finishAuthentication($pkc, $context);
 
         return [200, ['status' => 'ok', 'errorMessage' => '']];
     }

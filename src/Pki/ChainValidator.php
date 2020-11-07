@@ -14,11 +14,11 @@ final class ChainValidator implements ChainValidatorInterface
     public const MAX_VALIDATION_LENGTH = 5;
 
     /**
-     * @var CertificateStatusResolverInterface|null
+     * @var CertificateStatusResolverInterface
      */
     private $statusResolver;
 
-    public function __construct(?CertificateStatusResolverInterface $statusResolver)
+    public function __construct(CertificateStatusResolverInterface $statusResolver)
     {
         $this->statusResolver = $statusResolver;
     }
@@ -50,12 +50,10 @@ final class ChainValidator implements ChainValidatorInterface
     public function validateChain(X509Certificate ...$certificates): bool
     {
         if ($this->validateCertificates(...$certificates)) {
-            if ($this->statusResolver) {
-                $numCerts = count($certificates);
-                for ($i = 1; $i < $numCerts; $i++) {
-                    if ($this->statusResolver->isRevoked($certificates[$i], $certificates[$i - 1])) {
-                        return false;
-                    }
+            $numCerts = count($certificates);
+            for ($i = 1; $i < $numCerts; $i++) {
+                if ($this->statusResolver->isRevoked($certificates[$i], ...array_slice($certificates, 0, $i))) {
+                    return false;
                 }
             }
             return true;

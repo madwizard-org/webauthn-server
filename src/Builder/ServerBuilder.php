@@ -9,12 +9,7 @@ use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistry;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\TrustPathValidator;
 use MadWizard\WebAuthn\Attestation\TrustAnchor\TrustPathValidatorInterface;
-use MadWizard\WebAuthn\Attestation\Verifier\AndroidKeyAttestationVerifier;
-use MadWizard\WebAuthn\Attestation\Verifier\AndroidSafetyNetAttestationVerifier;
-use MadWizard\WebAuthn\Attestation\Verifier\FidoU2fAttestationVerifier;
-use MadWizard\WebAuthn\Attestation\Verifier\NoneAttestationVerifier;
-use MadWizard\WebAuthn\Attestation\Verifier\PackedAttestationVerifier;
-use MadWizard\WebAuthn\Attestation\Verifier\TpmAttestationVerifier;
+use MadWizard\WebAuthn\Attestation\Verifier;
 use MadWizard\WebAuthn\Cache\CacheProviderInterface;
 use MadWizard\WebAuthn\Cache\FileCacheProvider;
 use MadWizard\WebAuthn\Config\RelyingParty;
@@ -34,17 +29,16 @@ use MadWizard\WebAuthn\Metadata\Provider\MetadataServiceProvider;
 use MadWizard\WebAuthn\Metadata\Source\MetadataServiceSource;
 use MadWizard\WebAuthn\Metadata\Source\MetadataSourceInterface;
 use MadWizard\WebAuthn\Metadata\Source\StatementDirectorySource;
+use MadWizard\WebAuthn\Pki\CertificateStatusResolverInterface;
 use MadWizard\WebAuthn\Pki\ChainValidator;
 use MadWizard\WebAuthn\Pki\ChainValidatorInterface;
+use MadWizard\WebAuthn\Pki\CrlCertificateStatusResolver;
+use MadWizard\WebAuthn\Pki\NullCertificateStatusResolver;
 use MadWizard\WebAuthn\Policy\Policy;
 use MadWizard\WebAuthn\Policy\PolicyInterface;
 use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManager;
 use MadWizard\WebAuthn\Policy\Trust\TrustDecisionManagerInterface;
-use MadWizard\WebAuthn\Policy\Trust\Voter\AllowEmptyMetadataVoter;
-use MadWizard\WebAuthn\Policy\Trust\Voter\SupportedAttestationTypeVoter;
-use MadWizard\WebAuthn\Policy\Trust\Voter\TrustAttestationTypeVoter;
-use MadWizard\WebAuthn\Policy\Trust\Voter\TrustChainVoter;
-use MadWizard\WebAuthn\Policy\Trust\Voter\UndesiredStatusReportVoter;
+use MadWizard\WebAuthn\Policy\Trust\Voter;
 use MadWizard\WebAuthn\Remote\CachingClientFactory;
 use MadWizard\WebAuthn\Remote\Downloader;
 use MadWizard\WebAuthn\Remote\DownloaderInterface;
@@ -121,6 +115,16 @@ final class ServerBuilder
      */
     private $customExtensions = [];
 
+    /**
+     * @var bool
+     */
+    private $enableCrl = false;
+
+    /**
+     * @var bool
+     */
+    private $crlSilentFailure = true;
+
     private const SUPPORTED_EXTENSIONS = [
         'appid' => AppIdExtension::class,
     ];
@@ -188,6 +192,20 @@ final class ServerBuilder
     public function useMetadata(bool $use): self
     {
         $this->useMetadata = $use;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @experimental
+     */
+    public function enableCrl(bool $enable, bool $silentFailure = true)
+    {
+        if (!class_exists(\phpseclib3\File\X509::class)) {
+            throw new UnsupportedException('CRL support is experimental and requires a (not yet stable) phpseclib v3. Use composer require phpseclib/phpseclib 3.0.x-dev.');
+        }
+        $this->enableCrl = true;
+        $this->crlSilentFailure = $silentFailure;
         return $this;
     }
 
@@ -268,16 +286,21 @@ final class ServerBuilder
             return new TrustPathValidator($c[ChainValidatorInterface::class]);
         };
 
-        $c[ChainValidatorInterface::class] = static function (ServiceContainer $c): ChainValidatorInterface {
-            // TODO
-            //return new ChainValidator($c[CertificateStatusResolverInterface::class]);
-            return new ChainValidator(null);
-        };
+        if ($this->enableCrl) {
+            $this->setupCache($c);
+            $this->setupDownloader($c);
+            $c[CertificateStatusResolverInterface::class] = function (ServiceContainer $c): CertificateStatusResolverInterface {
+                return new CrlCertificateStatusResolver($c[DownloaderInterface::class], $c[CacheProviderInterface::class], $this->crlSilentFailure);
+            };
+        } else {
+            $c[CertificateStatusResolverInterface::class] = static function (ServiceContainer $c): CertificateStatusResolverInterface {
+                return new NullCertificateStatusResolver();
+            };
+        }
 
-        // TODO
-//        $c[CertificateStatusResolverInterface::class] = static function (ServiceContainer $c) {
-//            return new CertificateStatusResolver($c[DownloaderInterface::class], $c[CacheProviderInterface::class]);
-//        };
+        $c[ChainValidatorInterface::class] = function (ServiceContainer $c): ChainValidatorInterface {
+            return new ChainValidator($c[CertificateStatusResolverInterface::class]);
+        };
 
         $c[PolicyInterface::class] = Closure::fromCallable([$this, 'createPolicy']);
         $c[MetadataResolverInterface::class] = Closure::fromCallable([$this, 'createMetadataResolver']);
@@ -375,18 +398,18 @@ final class ServerBuilder
             $tdm = new TrustDecisionManager();
 
             if ($this->allowNoneAttestation) {
-                $tdm->addVoter(new TrustAttestationTypeVoter(AttestationType::NONE));
+                $tdm->addVoter(new Voter\TrustAttestationTypeVoter(AttestationType::NONE));
             }
             if ($this->allowSelfAttestation) {
-                $tdm->addVoter(new TrustAttestationTypeVoter(AttestationType::SELF));
+                $tdm->addVoter(new Voter\TrustAttestationTypeVoter(AttestationType::SELF));
             }
             if ($this->trustWithoutMetadata) {
-                $tdm->addVoter(new AllowEmptyMetadataVoter());
+                $tdm->addVoter(new Voter\AllowEmptyMetadataVoter());
             }
             if ($this->useMetadata) {
-                $tdm->addVoter(new SupportedAttestationTypeVoter());
-                $tdm->addVoter(new UndesiredStatusReportVoter());
-                $tdm->addVoter(new TrustChainVoter($c[TrustPathValidatorInterface::class]));
+                $tdm->addVoter(new Voter\SupportedAttestationTypeVoter());
+                $tdm->addVoter(new Voter\UndesiredStatusReportVoter());
+                $tdm->addVoter(new Voter\TrustChainVoter($c[TrustPathValidatorInterface::class]));
             }
             return $tdm;
         };
@@ -415,23 +438,23 @@ final class ServerBuilder
 
     private function setupFormats(ServiceContainer $c)
     {
-        $c[PackedAttestationVerifier::class] = static function (): PackedAttestationVerifier {
-            return new PackedAttestationVerifier();
+        $c[Verifier\PackedAttestationVerifier::class] = static function (): Verifier\PackedAttestationVerifier {
+            return new Verifier\PackedAttestationVerifier();
         };
-        $c[FidoU2fAttestationVerifier::class] = static function (): FidoU2fAttestationVerifier {
-            return new FidoU2fAttestationVerifier();
+        $c[Verifier\FidoU2fAttestationVerifier::class] = static function (): Verifier\FidoU2fAttestationVerifier {
+            return new Verifier\FidoU2fAttestationVerifier();
         };
-        $c[NoneAttestationVerifier::class] = static function (): NoneAttestationVerifier {
-            return new NoneAttestationVerifier();
+        $c[Verifier\NoneAttestationVerifier::class] = static function (): Verifier\NoneAttestationVerifier {
+            return new Verifier\NoneAttestationVerifier();
         };
-        $c[TpmAttestationVerifier::class] = static function (): TpmAttestationVerifier {
-            return new TpmAttestationVerifier();
+        $c[Verifier\TpmAttestationVerifier::class] = static function (): Verifier\TpmAttestationVerifier {
+            return new Verifier\TpmAttestationVerifier();
         };
-        $c[AndroidSafetyNetAttestationVerifier::class] = static function (): AndroidSafetyNetAttestationVerifier {
-            return new AndroidSafetyNetAttestationVerifier();
+        $c[Verifier\AndroidSafetyNetAttestationVerifier::class] = static function (): Verifier\AndroidSafetyNetAttestationVerifier {
+            return new Verifier\AndroidSafetyNetAttestationVerifier();
         };
-        $c[AndroidKeyAttestationVerifier::class] = static function (): AndroidKeyAttestationVerifier {
-            return new AndroidKeyAttestationVerifier();
+        $c[Verifier\AndroidKeyAttestationVerifier::class] = static function (): Verifier\AndroidKeyAttestationVerifier {
+            return new Verifier\AndroidKeyAttestationVerifier();
         };
 
         $c[AttestationFormatRegistryInterface::class] = function (ServiceContainer $c): AttestationFormatRegistryInterface {
@@ -439,12 +462,12 @@ final class ServerBuilder
 
             $registry->strictSupportedFormats($this->strictSupportedFormats);
 
-            $registry->addFormat($c[PackedAttestationVerifier::class]->getSupportedFormat());
-            $registry->addFormat($c[FidoU2fAttestationVerifier::class]->getSupportedFormat());
-            $registry->addFormat($c[NoneAttestationVerifier::class]->getSupportedFormat());
-            $registry->addFormat($c[TpmAttestationVerifier::class]->getSupportedFormat());
-            $registry->addFormat($c[AndroidSafetyNetAttestationVerifier::class]->getSupportedFormat());
-            $registry->addFormat($c[AndroidKeyAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[Verifier\PackedAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[Verifier\FidoU2fAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[Verifier\NoneAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[Verifier\TpmAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[Verifier\AndroidSafetyNetAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[Verifier\AndroidKeyAttestationVerifier::class]->getSupportedFormat());
 
             return $registry;
         };

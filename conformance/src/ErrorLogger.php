@@ -31,7 +31,7 @@ class ErrorLogger extends AbstractLogger
         $this->output = new ConsoleOutput();
     }
 
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         $escapedMessage = OutputFormatter::escape($this->interpolate($message, $context));
         $formatted = isset(self::COLOR_MAP[$level]) ?
@@ -40,9 +40,9 @@ class ErrorLogger extends AbstractLogger
         $this->output->getErrorOutput()->writeln($formatted);
     }
 
-    private function interpolate($message, array $context = [])
+    private function interpolate(string $message, array $context = []): string
     {
-        //https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
+        // https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
         $replace = [];
         foreach ($context as $key => $val) {
             // check that the value can be cast to string

@@ -16,7 +16,7 @@ class ExtensionRegistry implements ExtensionRegistryInterface
     {
     }
 
-    public function addExtension(ExtensionInterface $extension)
+    public function addExtension(ExtensionInterface $extension): void
     {
         $id = $extension->getIdentifier();
         if (isset($this->extensions[$id])) {

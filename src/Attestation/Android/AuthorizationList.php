@@ -38,7 +38,7 @@ final class AuthorizationList
         return $this->purposeList;
     }
 
-    public function addPurpose(int $purpose)
+    public function addPurpose(int $purpose): void
     {
         $this->purposeList[] = $purpose;
     }

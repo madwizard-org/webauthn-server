@@ -46,6 +46,15 @@ class CertificateDetails implements CertificateDetailsInterface
         }
     }
 
+    public static function fromCertificate(X509Certificate $certificate): CertificateDetails
+    {
+        try {
+            return new self(Certificate::fromDER($certificate->asDer())->tbsCertificate());
+        } catch (Exception $e) {
+            throw new ParseException('Failed to parse PEM certificate.', 0, $e);
+        }
+    }
+
     public function verifySignature(string $data, string $signature, int $coseAlgorithm): bool
     {
         $signatureAlgorithm = $this->convertCoseAlgorthm($coseAlgorithm);

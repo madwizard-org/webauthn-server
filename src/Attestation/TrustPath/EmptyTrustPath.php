@@ -2,9 +2,6 @@
 
 namespace MadWizard\WebAuthn\Attestation\TrustPath;
 
-class EmptyTrustPath implements TrustPathInterface
+final class EmptyTrustPath implements TrustPathInterface
 {
-    public function __construct()
-    {
-    }
 }

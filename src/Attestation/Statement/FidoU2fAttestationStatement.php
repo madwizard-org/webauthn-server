@@ -7,6 +7,7 @@ use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\DataValidator;
+use MadWizard\WebAuthn\Pki\X509Certificate;
 
 class FidoU2fAttestationStatement extends AbstractAttestationStatement
 {
@@ -18,7 +19,7 @@ class FidoU2fAttestationStatement extends AbstractAttestationStatement
     private $signature;
 
     /**
-     * @var string[]
+     * @var X509Certificate[]
      */
     private $certificates;
 
@@ -53,7 +54,7 @@ class FidoU2fAttestationStatement extends AbstractAttestationStatement
     }
 
     /**
-     * @return string[]
+     * @return X509Certificate[]
      */
     public function getCertificates(): array
     {

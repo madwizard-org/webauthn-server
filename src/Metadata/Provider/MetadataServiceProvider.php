@@ -142,7 +142,7 @@ final class MetadataServiceProvider implements MetadataProviderInterface, Logger
         return MetadataStatement::decodeString(Base64UrlEncoding::decode($meta->getData()));
     }
 
-    private function getCachedToc()
+    private function getCachedToc(): MetadataToc
     {
         $url = $this->getTokenUrl($this->mdsSource->getUrl());
         $urlHash = hash('sha256', $url);
@@ -167,9 +167,9 @@ final class MetadataServiceProvider implements MetadataProviderInterface, Logger
         return $data;
     }
 
-    private function downloadToc($url): MetadataToc
+    private function downloadToc(string $url): MetadataToc
     {
-        $this->logger->debug('Dowloading TOC {url}', ['url' => $url]);   // TODO: remove token from logging
+        $this->logger->debug('Dowloading TOC {url}', ['url' => preg_replace('~\?.*$~', '', $url)]);   // Remove parameters to hide token in logs
         $a = $this->downloader->downloadFile($url);
         if (!in_array(strtolower($a->getContentType()), ['application/octet-stream', 'application/jose'])) {
             throw new ParseException('Unexpected mime type.');

@@ -170,8 +170,8 @@ final class WebAuthnServer implements ServerInterface, LoggerAwareInterface
         $context = new RegistrationContext($options->getChallenge(), $origin, $rpId, UserHandle::fromBuffer($options->getUserEntity()->getId()));
 
         $context->setUserPresenceRequired($this->policy->isUserPresenceRequired());
-        $authSel = $options->getAuthenticatorSelection();
-        if ($authSel !== null && $authSel->getUserVerification() === UserVerificationRequirement::REQUIRED) {
+
+        if ($regOptions->getUserVerification() === UserVerificationRequirement::REQUIRED) {
             $context->setUserVerificationRequired(true);
         }
 
@@ -286,7 +286,7 @@ final class WebAuthnServer implements ServerInterface, LoggerAwareInterface
         // TODO: mismatch $rp and rp in $policy? Check?
         $context = new AuthenticationContext($options->getChallenge(), $origin, $rpId, $authOptions->getUserHandle());
 
-        if ($options->getUserVerification() === UserVerificationRequirement::REQUIRED) {
+        if ($authOptions->getUserVerification() === UserVerificationRequirement::REQUIRED) {
             $context->setUserVerificationRequired(true);
         }
 

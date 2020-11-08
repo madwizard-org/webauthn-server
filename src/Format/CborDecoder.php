@@ -45,6 +45,9 @@ final class CborDecoder
 
     /**
      * @return mixed
+     *
+     * @throws ByteBufferException
+     * @throws CborException
      */
     private static function parseItem(ByteBuffer $buf, int &$offset)
     {
@@ -61,6 +64,12 @@ final class CborDecoder
         return self::parseItemData($type, $val, $buf, $offset);
     }
 
+    /**
+     * @return bool|float|mixed|null
+     *
+     * @throws ByteBufferException
+     * @throws CborException
+     */
     private static function parseFloatSimple(int $val, ByteBuffer $buf, int &$offset)
     {
         switch ($val) {
@@ -92,7 +101,7 @@ final class CborDecoder
     }
 
     /**
-     * @return mixed
+     * @return bool|null
      *
      * @throws CborException
      */
@@ -140,6 +149,12 @@ final class CborDecoder
         return $val;
     }
 
+    /**
+     * @return array|bool|float|int|ByteBuffer|CborMap|string|null
+     *
+     * @throws ByteBufferException
+     * @throws CborException
+     */
     private static function parseItemData(int $type, int $val, ByteBuffer $buf, int &$offset)
     {
         switch ($type) {

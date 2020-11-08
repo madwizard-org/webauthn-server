@@ -26,6 +26,9 @@ final class SafetyNetResponse implements SafetyNetResponseInterface
      */
     private $timestampMs;
 
+    /**
+     * @param int|float $timestampMs
+     */
     public function __construct(string $nonce, array $x5c, bool $ctsProfileMatch, $timestampMs)
     {
         $this->nonce = $nonce;

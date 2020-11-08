@@ -11,7 +11,6 @@ use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
 use PHPUnit\Framework\TestCase;
 use function bin2hex;
-use function hex2bin;
 use function json_decode;
 use function var_dump;
 use const PHP_INT_SIZE;
@@ -230,16 +229,15 @@ class CborTest extends TestCase
         self::assertSame('481234567890123456', bin2hex(CborEncoder::encodeByteString(ByteBuffer::fromHex('1234567890123456'))));
     }
 
-    public function testEncodeMapValues()
+    public function testCanonicalMapValues()
     {
-        $vals = [];
+        $map = new CborMap();
 
-        $vals[hex2bin('63616161')] = hex2bin('617A');  // "aaa" : "z"
-        $vals[hex2bin('626462')] = hex2bin('6179');    // "db" : "y"
-        $vals[hex2bin('05')] = hex2bin('F4');          //  5   : false
-        $vals[hex2bin('626461')] = hex2bin('6178');    // "da" : "x"
-        $vals[hex2bin('21')] = hex2bin('F6');          // -2 : null
-
+        $map->set('aaa', 'z');
+        $map->set('db', 'y');
+        $map->set(5, false);
+        $map->set('da', 'x');
+        $map->set(-2, null);
         // Should be sorted according to canonical Cbor
 
         $validCbor =
@@ -258,7 +256,7 @@ class CborTest extends TestCase
 
             ');
 
-        self::assertSame(bin2hex($validCbor), bin2hex(CborEncoder::encodeMapValues($vals)));
+        self::assertSame(bin2hex($validCbor), bin2hex(CborEncoder::encodeMap($map)));
     }
 
     public function testEncodeMap()
@@ -272,7 +270,7 @@ class CborTest extends TestCase
              'a' => 'b',
         ];
 
-        self::assertSame('a51702181901616161626164421234626363626464', bin2hex(CborEncoder::encodeMap($map)));
+        self::assertSame('a51702181901616161626164421234626363626464', bin2hex(CborEncoder::encodeMap(CborMap::fromArray($map))));
     }
 
     public function testDuplicateMapKey()

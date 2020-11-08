@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Attestation\Tpm;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class TpmEccParameters implements KeyParametersInterface
+final class TpmEccParameters implements KeyParametersInterface
 {
     /**
      * @var int

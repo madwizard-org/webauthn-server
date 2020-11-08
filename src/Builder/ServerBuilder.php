@@ -199,7 +199,7 @@ final class ServerBuilder
      * @return $this
      * @experimental
      */
-    public function enableCrl(bool $enable, bool $silentFailure = true)
+    public function enableCrl(bool $enable, bool $silentFailure = true): self
     {
         if ($enable && !class_exists(\phpseclib3\File\X509::class)) {
             throw new UnsupportedException('CRL support is experimental and requires a (not yet stable) phpseclib v3. Use composer require phpseclib/phpseclib 3.0.x-dev.');
@@ -309,7 +309,7 @@ final class ServerBuilder
         return $c;
     }
 
-    private function setupDownloader(ServiceContainer $c)
+    private function setupDownloader(ServiceContainer $c): void
     {
         $this->setupCache($c);
         if (isset($c[DownloaderInterface::class])) {
@@ -324,7 +324,7 @@ final class ServerBuilder
         };
     }
 
-    private function setupCache(ServiceContainer $c)
+    private function setupCache(ServiceContainer $c): void
     {
         if (isset($c[CacheProviderInterface::class])) {
             return;
@@ -392,7 +392,7 @@ final class ServerBuilder
         return new MetadataResolver($this->createMetadataProviders($c));
     }
 
-    private function setupTrustDecisionManager(ServiceContainer $c)
+    private function setupTrustDecisionManager(ServiceContainer $c): void
     {
         $c[TrustDecisionManagerInterface::class] = function (ServiceContainer $c): TrustDecisionManagerInterface {
             $tdm = new TrustDecisionManager();
@@ -436,7 +436,7 @@ final class ServerBuilder
         return $providers;
     }
 
-    private function setupFormats(ServiceContainer $c)
+    private function setupFormats(ServiceContainer $c): void
     {
         $c[Verifier\PackedAttestationVerifier::class] = static function (): Verifier\PackedAttestationVerifier {
             return new Verifier\PackedAttestationVerifier();

@@ -57,6 +57,22 @@ class Der
         return "\x03" . self::length($len) . "\x00" . $bytes;
     }
 
+    public static function octetString(string $bytes): string
+    {
+        $len = \strlen($bytes);
+
+        return "\x04" . self::length($len) . $bytes;
+    }
+
+    public static function contextTag(int $tag, bool $constructed, string $content): string
+    {
+        return \chr(($tag & 0x1F) |   // Context specific tag number
+            (1 << 7) |  // Context-specific flag
+            ($constructed ? (1 << 5) : 0)) .
+            self::length(\strlen($content)) .
+            $content;
+    }
+
     public static function nullValue(): string
     {
         return "\x05\x00";

@@ -11,6 +11,9 @@ final class ExtensionResponse implements ExtensionResponseInterface
      */
     private $hasClientExtensionOutput = false;
 
+    /**
+     * @var mixed
+     */
     private $clientExtensionOutput;
 
     /**
@@ -18,6 +21,9 @@ final class ExtensionResponse implements ExtensionResponseInterface
      */
     private $hasAuthenticatorExtensionOutput = false;
 
+    /**
+     * @var mixed
+     */
     private $authenticatorExtensionOutput;
 
     /**

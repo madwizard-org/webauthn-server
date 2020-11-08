@@ -21,6 +21,9 @@ class Ec2Key extends CoseKey // TODO exceptions
      */
     private $y;
 
+    /**
+     * @var int
+     */
     private $curve;
 
     /**
@@ -179,7 +182,8 @@ class Ec2Key extends CoseKey // TODO exceptions
             self::KTP_X => $this->x,
             self::KTP_Y => $this->y,
         ];
-        return new ByteBuffer(CborEncoder::encodeMap($map));
+
+        return new ByteBuffer(CborEncoder::encodeMap(CborMap::fromArray($map)));
     }
 
     public function getUncompressedCoordinates(): ByteBuffer

@@ -5,7 +5,7 @@ namespace MadWizard\WebAuthn\Attestation\Tpm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class TpmAttest extends AbstractTpmStructure
+final class TpmAttest extends AbstractTpmStructure
 {
     private const TPM_GENERATED = "\xFF\x54\x43\x47";
 

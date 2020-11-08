@@ -121,7 +121,7 @@ final class RegistrationVerifier extends AbstractVerifier
         }
     }
 
-    private function checkAuthenticatorData(AuthenticatorData $authData, RegistrationContext $context, ExtensionProcessingContext $extensionContext)
+    private function checkAuthenticatorData(AuthenticatorData $authData, RegistrationContext $context, ExtensionProcessingContext $extensionContext): void
     {
         if (!$authData->hasAttestedCredentialData()) {
             throw new VerificationException('Authenticator data does not contain attested credential.');

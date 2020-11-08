@@ -7,6 +7,7 @@ use MadWizard\WebAuthn\Attestation\Statement\NoneAttestationStatement;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\CborEncoder;
+use MadWizard\WebAuthn\Format\CborMap;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -29,11 +30,13 @@ class NoneAttestationStatementTest extends TestCase
         $this->expectExceptionMessageMatches('~expecting empty map~i');
         $invalid = AttestationObject::parse(
             new ByteBuffer(
-                CborEncoder::encodeMapValues([
-                    CborEncoder::encodeTextString('fmt') => CborEncoder::encodeTextString('none'),
-                    CborEncoder::encodeTextString('attStmt') => CborEncoder::encodeMap(['a' => 'b']),
-                    CborEncoder::encodeTextString('authData') => CborEncoder::encodeByteString(new ByteBuffer('')),
-                ])
+                CborEncoder::encodeMap(CborMap::fromArray(
+                    [
+                        'fmt' => 'none',
+                        'attStmt' => CborMap::fromArray(['a' => 'b']),
+                        'authData' => new ByteBuffer(''),
+                    ])
+                )
             )
         );
         new NoneAttestationStatement($invalid);

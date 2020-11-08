@@ -37,7 +37,7 @@ abstract class AbstractVerifier
         return $clientOrigin->equals($rpOrigin);
     }
 
-    protected function verifyRpIdHash(AuthenticatorData $authData, AbstractContext $context, ExtensionProcessingContext $extensionContext)
+    protected function verifyRpIdHash(AuthenticatorData $authData, AbstractContext $context, ExtensionProcessingContext $extensionContext): bool
     {
         $effectiveRpId = $context->getRpId();
         $overruledRpId = $extensionContext->getOverruledRpId();
@@ -48,7 +48,7 @@ abstract class AbstractVerifier
         return hash_equals($validHash, $authData->getRpIdHash()->getBinaryString());
     }
 
-    protected function verifyUser(AuthenticatorData $authData, AbstractContext $context)
+    protected function verifyUser(AuthenticatorData $authData, AbstractContext $context): bool
     {
         // Reg 10/11, Auth 12/13
 
@@ -70,7 +70,7 @@ abstract class AbstractVerifier
         return true;
     }
 
-    protected function getClientDataHash(AuthenticatorResponseInterface $response)
+    protected function getClientDataHash(AuthenticatorResponseInterface $response): string
     {
         return hash('sha256', $response->getClientDataJson(), true);
     }

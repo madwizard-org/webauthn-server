@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Attestation\Tpm;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class TpmRsaParameters implements KeyParametersInterface
+final class TpmRsaParameters implements KeyParametersInterface
 {
     public const DEFAULT_EXPONENT = 65537;
 

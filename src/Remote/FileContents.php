@@ -9,8 +9,14 @@ class FileContents implements Serializable
 {
     use SerializableTrait;
 
+    /**
+     * @var string
+     */
     private $data;
 
+    /**
+     * @var string
+     */
     private $contentType;
 
     public function __construct(string $data, string $contentType)

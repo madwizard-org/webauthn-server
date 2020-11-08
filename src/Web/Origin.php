@@ -84,7 +84,7 @@ final class Origin implements Serializable
         return false;
     }
 
-    private static function parseElements($origin): array
+    private static function parseElements(string $origin): array
     {
         if (!preg_match(self::PARSE_REGEXP, $origin, $matches)) {
             throw new ParseException(sprintf("Could not parse origin '%s'.", $origin));
@@ -103,7 +103,7 @@ final class Origin implements Serializable
             $this->scheme === $origin->scheme;
     }
 
-    public function toString()
+    public function toString(): string
     {
         if ($this->usesDefaultPort()) {
             return sprintf('%s://%s', $this->scheme, $this->host);

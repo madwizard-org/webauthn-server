@@ -17,7 +17,7 @@ final class AuthenticationExtensionsClientInputs extends AbstractDictionary
     {
     }
 
-    public function addInput(ExtensionInputInterface $input)
+    public function addInput(ExtensionInputInterface $input): void
     {
         $this->inputs[] = $input;
     }

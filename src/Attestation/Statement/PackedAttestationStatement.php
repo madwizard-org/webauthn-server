@@ -7,6 +7,7 @@ use MadWizard\WebAuthn\Exception\DataValidationException;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Format\DataValidator;
+use MadWizard\WebAuthn\Pki\X509Certificate;
 
 class PackedAttestationStatement extends AbstractAttestationStatement
 {
@@ -23,7 +24,7 @@ class PackedAttestationStatement extends AbstractAttestationStatement
     private $algorithm;
 
     /**
-     * @var string[]|null
+     * @var X509Certificate[]|null
      */
     private $certificates;
 
@@ -75,7 +76,7 @@ class PackedAttestationStatement extends AbstractAttestationStatement
     }
 
     /**
-     * @return string[]|null
+     * @return X509Certificate[]|null
      */
     public function getCertificates(): ?array
     {

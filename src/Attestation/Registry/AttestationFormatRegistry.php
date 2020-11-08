@@ -35,7 +35,7 @@ final class AttestationFormatRegistry implements AttestationFormatRegistryInterf
         $this->allowUnsupportedFormats = $allowed;
     }
 
-    public function addFormat(AttestationFormatInterface $format)
+    public function addFormat(AttestationFormatInterface $format): void
     {
         $this->formats[$format->getFormatId()] = $format;
     }
@@ -65,7 +65,7 @@ final class AttestationFormatRegistry implements AttestationFormatRegistryInterf
         return $format->getVerifier();
     }
 
-    public function strictSupportedFormats(bool $strict)
+    public function strictSupportedFormats(bool $strict): void
     {
         $this->strictSupportedFormats = $strict;
     }

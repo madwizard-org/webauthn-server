@@ -40,7 +40,7 @@ class JsonConverterTest extends TestCase
     public function testNonStringId()
     {
         $this->expectException(DataValidationException::class);
-        $this->expectExceptionMessageMatches('~Expecting key "id" to be of type "string" ~i');
+        $this->expectExceptionMessageMatches('~Expecting key "id" to have value of type "string" ~i');
         JsonConverter::decodeAssertionString('{"type":"public-key","id":333}');
     }
 
@@ -61,7 +61,7 @@ class JsonConverterTest extends TestCase
     public function testInvalidResponse()
     {
         $this->expectException(DataValidationException::class);
-        $this->expectExceptionMessageMatches('~Expecting key "response" to be of type "array"~i');
+        $this->expectExceptionMessageMatches('~Expecting key "response" to have value of type "array"~i');
         $json = array_merge(
                 $this->getResponse(),
                 ['response' => 5]

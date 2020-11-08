@@ -29,7 +29,7 @@ final class Aaguid implements IdentifierInterface
         return self::TYPE;
     }
 
-    public static function parseString(string $aaguid)
+    public static function parseString(string $aaguid): self
     {
         if (!preg_match('~^[0-9A-Fa-f]{8}(-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}$~', $aaguid)) {
             throw new ParseException('Invalid AAGUID');

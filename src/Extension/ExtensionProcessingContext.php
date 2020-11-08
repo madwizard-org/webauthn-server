@@ -39,7 +39,7 @@ final class ExtensionProcessingContext
         $this->overruledRpId = $overruledRpId;
     }
 
-    public function addOutput(ExtensionOutputInterface $output)
+    public function addOutput(ExtensionOutputInterface $output): void
     {
         $this->outputs[$output->getIdentifier()] = $output;
     }

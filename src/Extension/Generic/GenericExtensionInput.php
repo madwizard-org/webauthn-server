@@ -8,6 +8,13 @@ use MadWizard\WebAuthn\Extension\RegistrationExtensionInputInterface;
 
 class GenericExtensionInput extends AbstractExtensionInput implements RegistrationExtensionInputInterface, AuthenticationExtensionInputInterface
 {
+    /**
+     * GenericExtensionInput constructor.
+     *
+     * @param mixed $input
+     *
+     * @throws \MadWizard\WebAuthn\Exception\WebAuthnException
+     */
     public function __construct(string $identifier, $input = null)
     {
         parent::__construct($identifier);

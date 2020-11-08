@@ -20,14 +20,13 @@ use MadWizard\WebAuthn\Server\Registration\RegistrationContext;
 use MadWizard\WebAuthn\Server\Registration\RegistrationOptions;
 use MadWizard\WebAuthn\Server\ServerInterface;
 use MadWizard\WebAuthn\Server\UserIdentity;
-use MadWizard\WebAuthn\Server\WebAuthnServer;
 use RuntimeException;
 use Throwable;
 
 class Router
 {
     /**
-     * @var WebAuthnServer
+     * @var ServerInterface
      */
     private $server;
 
@@ -114,7 +113,7 @@ class Router
         return $json;
     }
 
-    public function run(string $url)
+    public function run(string $url): void
     {
         try {
             $this->debugIdx = null;

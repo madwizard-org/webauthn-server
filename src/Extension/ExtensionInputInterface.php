@@ -8,5 +8,8 @@ interface ExtensionInputInterface extends Serializable
 {
     public function getIdentifier(): string;
 
+    /**
+     * @return mixed
+     */
     public function getInput();
 }

@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Attestation\TrustAnchor;
 
 use MadWizard\WebAuthn\Pki\X509Certificate;
 
-class CertificateTrustAnchor implements TrustAnchorInterface
+final class CertificateTrustAnchor implements TrustAnchorInterface
 {
     public const TYPE = 'certificate';
 

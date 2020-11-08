@@ -32,8 +32,7 @@ final class CborEncoder
         return chr((Cbor::MAJOR_BYTE_STRING << 5) | $minorVal) . $lengthBytes . $bytes->getBinaryString();
     }
 
-    // TODO: use CborMap?
-    public static function encodeMapValues(array $map): string
+    private static function sortAndEncodeMapEntries(array $map): string
     {
         // Use canonical sorting. Shorter keys (as CBOR bytes) always go before longer keys. When length is the same
         // a byte for byte comparison is done.
@@ -50,18 +49,18 @@ final class CborEncoder
         return chr((Cbor::MAJOR_MAP << 5) | $minorVal) . $lengthBytes . $mapContent;
     }
 
-    public static function encodeMap(array $map): string
+    public static function encodeMap(CborMap $map): string
     {
         $mapValues = [];
 
-        foreach ($map as $k => $v) {
-            $mapValues[self::encodeSingleValue($k)] = self::encodeSingleValue($v);
+        foreach ($map->getEntries() as $entry) {
+            $mapValues[self::encodeSingleValue($entry[0])] = self::encodeSingleValue($entry[1]);
         }
 
-        return self::encodeMapValues($mapValues);
+        return self::sortAndEncodeMapEntries($mapValues);
     }
 
-    private static function integerBytes(int $i, &$minorVal): string
+    private static function integerBytes(int $i, ?int &$minorVal): string
     {
         if ($i < 24) {
             $minorVal = $i;
@@ -87,17 +86,35 @@ final class CborEncoder
         return pack('J', $i);
     }
 
-    public static function encodeSingleValue($k): string
+    /**
+     * @param int|string|ByteBuffer|CborMap|bool|null $value
+     *
+     * @throws CborException
+     */
+    public static function encodeSingleValue($value): string
     {
-        if (\is_int($k)) {
-            return self::encodeInteger($k);
+        if (\is_int($value)) {
+            return self::encodeInteger($value);
         }
-        if (\is_string($k)) {
-            return self::encodeTextString($k);
+        if (\is_string($value)) {
+            return self::encodeTextString($value);
         }
-        if ($k instanceof ByteBuffer) {
-            return self::encodeByteString($k);
+        if ($value instanceof ByteBuffer) {
+            return self::encodeByteString($value);
         }
-        throw new CborException('Unsupported type for encodeSingleValue');
+        if ($value instanceof CborMap) {
+            return self::encodeMap($value);
+        }
+        if ($value === false) {
+            return chr(0xF4);
+        }
+        if ($value === true) {
+            return chr(0xF5);
+        }
+        if ($value === null) {
+            return chr(0xF6);
+        }
+        // @phpstan-ignore-next-line
+        throw new CborException(sprintf('Unsupported type "%s" for encodeSingleValue', gettype($value)));
     }
 }

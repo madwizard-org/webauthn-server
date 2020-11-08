@@ -57,7 +57,7 @@ final class AuthenticationOptions
         return $this->userHandle;
     }
 
-    public function addAllowCredential(CredentialId $credential)
+    public function addAllowCredential(CredentialId $credential): void
     {
         $this->allowCredentials[] = $credential;
     }

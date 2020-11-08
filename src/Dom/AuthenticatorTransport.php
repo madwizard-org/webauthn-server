@@ -31,7 +31,7 @@ final class AuthenticatorTransport
     {
     }
 
-    public static function isValidValue($value): bool
+    public static function isValidValue(string $value): bool
     {
         return in_array($value, self::allKnownTransports(), true);
     }

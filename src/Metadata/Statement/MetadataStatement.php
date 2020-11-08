@@ -98,6 +98,9 @@ final class MetadataStatement implements MetadataInterface
 //    /** @var null|ExtensionDescriptor[] */
 //    private $supportedExtensions;
 
+    /**
+     * @var StatusReport[]
+     */
     private $statusReports = [];
 
     public static function decodeString(string $json): self

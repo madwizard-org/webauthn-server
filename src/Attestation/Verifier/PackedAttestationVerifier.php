@@ -18,6 +18,7 @@ use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 use MadWizard\WebAuthn\Pki\CertificateDetails;
 use MadWizard\WebAuthn\Pki\CertificateDetailsInterface;
+use MadWizard\WebAuthn\Pki\X509Certificate;
 
 final class PackedAttestationVerifier implements AttestationVerifierInterface
 {
@@ -50,6 +51,9 @@ final class PackedAttestationVerifier implements AttestationVerifierInterface
         return $this->verifySelf($attStmt->getSignature(), $attStmt->getAlgorithm(), $authenticatorData, $clientDataHash);
     }
 
+    /**
+     * @param X509Certificate[] $x5c
+     */
     private function verifyX5c(array $x5c, ByteBuffer $signature, int $signatureAlgorithm, AuthenticatorData $authenticatorData, string $clientDataHash): VerificationResult
     {
         // Verify that sig is a valid signature over the concatenation of authenticatorData and clientDataHash using
@@ -59,7 +63,7 @@ final class PackedAttestationVerifier implements AttestationVerifierInterface
             throw new VerificationException('Empty X5C in attestation.');
         }
         try {
-            $cert = CertificateDetails::fromPem($x5c[0]);
+            $cert = CertificateDetails::fromPem($x5c[0]->asPem());
             $verificationData = $authenticatorData->getRaw()->getBinaryString() . $clientDataHash;
             $valid = $cert->verifySignature($verificationData, $signature->getBinaryString(), $signatureAlgorithm);
         } catch (WebAuthnException $e) {
@@ -77,7 +81,7 @@ final class PackedAttestationVerifier implements AttestationVerifierInterface
         FidoAaguidExtension::checkAaguidExtension($cert, $authenticatorData->getAaguid());
 
         // If successful, return attestation type Basic and attestation trust path x5c.
-        return new VerificationResult(AttestationType::BASIC, CertificateTrustPath::fromPemList($x5c));
+        return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath(...$x5c));
     }
 
 //    private function verifyEcdaa(ByteBuffer $ecdaaKeyId, AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
@@ -115,7 +119,7 @@ final class PackedAttestationVerifier implements AttestationVerifierInterface
         throw new VerificationException('Signature for self attestation could not be verified.');
     }
 
-    private function checkCertRequirements(CertificateDetailsInterface $cert)
+    private function checkCertRequirements(CertificateDetailsInterface $cert): void
     {
         // 8.2.1. Packed attestation statement certificate requirements
         //  The attestation certificate MUST have the following fields/extensions:

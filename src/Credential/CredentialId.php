@@ -29,7 +29,7 @@ class CredentialId extends BinaryHandle
         return new self($buffer->getBinaryString());
     }
 
-    public function equals(self $other)
+    public function equals(self $other): bool
     {
         return hash_equals($this->raw, $other->raw);
     }

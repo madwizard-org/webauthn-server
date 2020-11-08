@@ -18,12 +18,12 @@ class ExtensionProcessingContextTest extends TestCase
         $this->context = new ExtensionProcessingContext(ExtensionInterface::OPERATION_AUTHENTICATION);
     }
 
-    public function testOperation()
+    public function testOperation(): void
     {
         self::assertSame(ExtensionInterface::OPERATION_AUTHENTICATION, $this->context->getOperation());
     }
 
-    public function testOverruledRpId()
+    public function testOverruledRpId(): void
     {
         self::assertNull($this->context->getOverruledRpId());
         $this->context->setOverruledRpId('https://localhost');

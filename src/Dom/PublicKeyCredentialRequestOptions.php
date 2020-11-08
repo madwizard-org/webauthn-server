@@ -44,7 +44,7 @@ final class PublicKeyCredentialRequestOptions extends AbstractDictionary
         $this->challenge = $challenge;
     }
 
-    public function addAllowedCredential(PublicKeyCredentialDescriptor $credentialDescriptor)
+    public function addAllowedCredential(PublicKeyCredentialDescriptor $credentialDescriptor): void
     {
         if ($this->allowCredentials === null) {
             $this->allowCredentials = [];

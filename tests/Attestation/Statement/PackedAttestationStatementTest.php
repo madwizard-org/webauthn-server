@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Tests\Attestation\Statement;
 use MadWizard\WebAuthn\Attestation\Statement\PackedAttestationStatement;
 use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
+use MadWizard\WebAuthn\Tests\Helper\CertHelper;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -22,7 +23,7 @@ class PackedAttestationStatementTest extends TestCase
         self::assertNull($statement->getEcdaaKeyId());
         $certChain = $statement->getCertificates();
 
-        self::assertSame($chains['packed'], $certChain);
+        self::assertSame($chains['packed'], CertHelper::pemList(...$certChain));
 
         self::assertSame(
             '30460221008b0ad16afdb66b9dfb0688628430db45168bb0cbfe00f1fcf346dcf079ede1' .

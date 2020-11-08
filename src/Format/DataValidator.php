@@ -79,6 +79,12 @@ final class DataValidator
         }
     }
 
+    /**
+     * @param mixed $value
+     * @param mixed $key
+     *
+     * @throws DataValidationException
+     */
     private static function validateDataKey($value, $key, string $type, bool $nullable): void
     {
         if ($nullable && $value === null) {
@@ -91,11 +97,14 @@ final class DataValidator
         }
 
         if ($actualType !== $type) {
-            throw new DataValidationException(sprintf('Expecting key "%s" to be of type "%s" but has type "%s".', $key, $type, $actualType));
+            throw new DataValidationException(sprintf('Expecting key "%s" to have value of type "%s" but has type "%s".', (string) $key, $type, $actualType));
         }
     }
 
-    private static function parseType(string $type, $key, bool &$optional = null, bool &$nullable = null)
+    /**
+     * @param mixed $key
+     */
+    private static function parseType(string $type, $key, bool &$optional = null, bool &$nullable = null): string
     {
         $optional = false;
         $nullable = false;

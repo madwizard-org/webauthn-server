@@ -27,7 +27,7 @@ final class AuthenticatorAttachment
     {
     }
 
-    public static function isValidValue($value): bool
+    public static function isValidValue(string $value): bool
     {
         return $value === self::PLATFORM || $value === self::CROSS_PLATFORM;
     }

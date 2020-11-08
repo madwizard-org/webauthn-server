@@ -83,7 +83,7 @@ abstract class AbstractContext
         return $this->origin;
     }
 
-    public function addExtensionInput(ExtensionInputInterface $input)
+    public function addExtensionInput(ExtensionInputInterface $input): void
     {
         $this->extensionInputs[] = $input;
     }

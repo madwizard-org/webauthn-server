@@ -33,7 +33,7 @@ class X5cParameter
      *
      * @return array|X509Certificate[]
      */
-    public function getCertificates()
+    public function getCertificates(): array
     {
         return $this->certificates;
     }

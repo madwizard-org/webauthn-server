@@ -94,7 +94,7 @@ class RelyingParty implements RelyingPartyInterface
         $this->iconUrl = $url;
     }
 
-    public function setOrigin(string $origin)
+    public function setOrigin(string $origin): void
     {
         try {
             $this->origin = Origin::parse($origin);

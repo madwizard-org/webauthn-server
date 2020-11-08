@@ -34,7 +34,7 @@ final class AndroidKeyAttestationVerifier implements AttestationVerifierInterfac
         if (count($x5c) === 0) {
             throw new VerificationException('No certificates in chain');
         }
-        $cert = CertificateDetails::fromPem($x5c[0]);
+        $cert = CertificateDetails::fromCertificate($x5c[0]);
 
         // Verify that sig is a valid signature over the concatenation of authenticatorData and clientDataHash using
         // the public key in the first certificate in x5c with the algorithm specified in alg.
@@ -58,10 +58,10 @@ final class AndroidKeyAttestationVerifier implements AttestationVerifierInterfac
         $this->checkAndroidKeyExtension($ext, $clientDataHash);
 
         //  If successful, return implementation-specific values representing attestation type Basic and attestation trust path x5c.
-        return new VerificationResult(AttestationType::BASIC, CertificateTrustPath::fromPemList($x5c));
+        return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath(...$x5c));
     }
 
-    private function checkAndroidKeyExtension(AndroidAttestationExtension $ext, string $clientDataHash)
+    private function checkAndroidKeyExtension(AndroidAttestationExtension $ext, string $clientDataHash): void
     {
         // Verify that the attestationChallenge field in the attestation certificate extension data is identical to clientDataHash.
 

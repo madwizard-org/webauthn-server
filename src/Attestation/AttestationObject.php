@@ -34,7 +34,7 @@ final class AttestationObject
         $this->authData = $authData;
     }
 
-    public static function parse(ByteBuffer $buffer)
+    public static function parse(ByteBuffer $buffer): self
     {
         try {
             $data = CborDecoder::decode($buffer);

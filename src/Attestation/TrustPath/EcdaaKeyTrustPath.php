@@ -4,7 +4,7 @@ namespace MadWizard\WebAuthn\Attestation\TrustPath;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-class EcdaaKeyTrustPath implements TrustPathInterface
+final class EcdaaKeyTrustPath implements TrustPathInterface
 {
     /**
      * @var ByteBuffer

@@ -28,7 +28,7 @@ final class ChainValidator implements ChainValidatorInterface
         return new DateTimeImmutable();
     }
 
-    private function validateCertificates(X509Certificate ...$certificates)
+    private function validateCertificates(X509Certificate ...$certificates): bool
     {
         try {
             $pathCerts = array_map(function (X509Certificate $c) {

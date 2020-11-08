@@ -142,7 +142,7 @@ final class PublicKeyCredentialCreationOptions extends AbstractDictionary
         return $this->excludeCredentials;
     }
 
-    public function addExcludeCredential(PublicKeyCredentialDescriptor $descriptor)
+    public function addExcludeCredential(PublicKeyCredentialDescriptor $descriptor): void
     {
         if ($this->excludeCredentials === null) {
             $this->excludeCredentials = [];

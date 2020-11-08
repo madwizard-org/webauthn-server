@@ -21,4 +21,6 @@ interface MetadataInterface
      * @return StatusReport[]
      */
     public function getStatusReports(): array;
+
+    public function getDescription(): string;
 }

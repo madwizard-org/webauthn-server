@@ -13,7 +13,7 @@ final class CredentialCreationOptions extends AbstractDictionary
     {
     }
 
-    public function setPublicKeyOptions(PublicKeyCredentialCreationOptions $options)
+    public function setPublicKeyOptions(PublicKeyCredentialCreationOptions $options): void
     {
         $this->publicKey = $options;
     }

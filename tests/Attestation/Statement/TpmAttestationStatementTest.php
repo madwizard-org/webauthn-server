@@ -6,6 +6,7 @@ use MadWizard\WebAuthn\Attestation\Statement\TpmAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Tpm\TpmPublic;
 use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
+use MadWizard\WebAuthn\Tests\Helper\CertHelper;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use MadWizard\WebAuthn\Tests\Helper\HexData;
 use PHPUnit\Framework\TestCase;
@@ -43,7 +44,7 @@ class TpmAttestationStatementTest extends TestCase
         self::assertSame(HexData::hex(self::RAW_CERTINFO), $statement->getRawCertInfo()->getHex());
         self::assertSame(HexData::hex(self::RAW_SIG), $statement->getSignature()->getHex());
         self::assertNull($statement->getEcdaaKeyId());
-        self::assertSame($chains['tpm'], $statement->getCertificates());
+        self::assertSame($chains['tpm'], CertHelper::pemList(...$statement->getCertificates()));
         self::assertSame(TpmPublic::TPM_ALG_RSA, $statement->getPubArea()->getType());
         self::assertSame('000b7121aebfa6b9afd07032f42f0925e0ec67408dd599a57bfa0f80c7f15601084f', $statement->getCertInfo()->getAttName()->getHex());
     }

@@ -79,10 +79,8 @@ class RsaKey extends CoseKey
     /**
      * Removes all leading zero bytes from a ByteBuffer, but keeps one zero byte if it is the only byte left and the
      * original buffer did not have zero length.
-     *
-     * @return ByteBuffer
      */
-    private function compactIntegerBuffer(ByteBuffer $buffer)
+    private function compactIntegerBuffer(ByteBuffer $buffer): ByteBuffer
     {
         $length = $buffer->getLength();
         $raw = $buffer->getBinaryString();
@@ -138,7 +136,7 @@ class RsaKey extends CoseKey
             self::KTP_N => $this->modulus,
             self::KTP_E => $this->exponent,
         ];
-        return new ByteBuffer(CborEncoder::encodeMap($map));
+        return new ByteBuffer(CborEncoder::encodeMap(CborMap::fromArray($map)));
     }
 
     protected function algorithmSupported(int $algorithm): bool

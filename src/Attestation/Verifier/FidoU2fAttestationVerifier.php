@@ -61,7 +61,7 @@ final class FidoU2fAttestationVerifier implements AttestationVerifierInterface
 
             if ($result === 1) {
                 // 7. If successful, return attestation type Basic with the attestation trust path set to x5c.
-                return new VerificationResult(AttestationType::BASIC, CertificateTrustPath::fromPemList($attStmt->getCertificates()));
+                return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath(...$attStmt->getCertificates()));
             }
 
             if ($result === 0) {
@@ -74,6 +74,11 @@ final class FidoU2fAttestationVerifier implements AttestationVerifierInterface
         }
     }
 
+    /**
+     * @return resource
+     *
+     * @throws VerificationException
+     */
     private function checkAttCertKey(FidoU2fAttestationStatement $attStmt)
     {
         // 2. Check that x5c has exactly one element and let attCert be that element. Let certificate public key
@@ -86,7 +91,7 @@ final class FidoU2fAttestationVerifier implements AttestationVerifierInterface
 
         $attCert = $certificates[0];
 
-        $x509 = openssl_pkey_get_public($attCert);
+        $x509 = openssl_pkey_get_public($attCert->asPem());
         if ($x509 === false) {
             throw new VerificationException('Failed to parse x509 public key.');
         }

@@ -7,7 +7,7 @@ use MadWizard\WebAuthn\Attestation\TrustPath\TrustPathInterface;
 use MadWizard\WebAuthn\Pki\ChainValidatorInterface;
 use function array_reverse;
 
-class TrustPathValidator implements TrustPathValidatorInterface
+final class TrustPathValidator implements TrustPathValidatorInterface
 {
     /**
      * @var ChainValidatorInterface

@@ -6,6 +6,9 @@ use MadWizard\WebAuthn\Exception\UnsupportedException;
 
 class CoseHash
 {
+    /**
+     * @var string
+     */
     private $phpAlg;
 
     private const MAP = [
@@ -29,10 +32,11 @@ class CoseHash
      */
     public function __construct(int $algorithm)
     {
-        $this->phpAlg = self::MAP[$algorithm] ?? null;
-        if ($this->phpAlg === null) {
+        $phpAlg = self::MAP[$algorithm] ?? null;
+        if ($phpAlg === null) {
             throw new UnsupportedException(sprintf('COSE algorithm %d not supported for hashing.', $algorithm));
         }
+        $this->phpAlg = $phpAlg;
     }
 
     public function hash(string $data): string

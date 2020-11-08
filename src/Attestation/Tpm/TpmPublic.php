@@ -9,7 +9,7 @@ use MadWizard\WebAuthn\Format\ByteBuffer;
 /**
  * Represents TPMT_PUBLIC structure.
  */
-class TpmPublic extends AbstractTpmStructure
+final class TpmPublic extends AbstractTpmStructure
 {
     public const TPM_ALG_RSA = 0x0001;
 

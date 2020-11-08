@@ -5,6 +5,7 @@ namespace MadWizard\WebAuthn\Tests\Attestation\Statement;
 use MadWizard\WebAuthn\Attestation\Statement\AndroidKeyAttestationStatement;
 use MadWizard\WebAuthn\Crypto\CoseAlgorithm;
 use MadWizard\WebAuthn\Exception\ParseException;
+use MadWizard\WebAuthn\Tests\Helper\CertHelper;
 use MadWizard\WebAuthn\Tests\Helper\FixtureHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -27,7 +28,7 @@ class AndroidKeyAttestationStatementTest extends TestCase
 
         $certChain = $statement->getCertificates();
 
-        self::assertSame($chains['android-key'], $certChain);
+        self::assertSame($chains['android-key'], CertHelper::pemList(...$certChain));
 
         self::assertSame(CoseAlgorithm::ES256, $statement->getAlgorithm());
     }

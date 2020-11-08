@@ -78,7 +78,7 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
             throw new VerificationException('Empty X5C in attestation.');
         }
         try {
-            $cert = CertificateDetails::fromPem($x5c[0]);
+            $cert = CertificateDetails::fromCertificate($x5c[0]);
 
             $valid = $cert->verifySignature($rawCertInfo->getBinaryString(), $signature->getBinaryString(), $signatureAlgorithm);
         } catch (WebAuthnException $e) {
@@ -97,7 +97,7 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
         FidoAaguidExtension::checkAaguidExtension($cert, $authenticatorData->getAaguid());
 
         // If successful, return attestation type AttCA and attestation trust path x5c.
-        return new VerificationResult(AttestationType::ATT_CA, CertificateTrustPath::fromPemList($x5c));
+        return new VerificationResult(AttestationType::ATT_CA, new CertificateTrustPath(...$x5c));
     }
 
     private function checkTpmPublicKeyMatchesAuthenticatorData(TpmPublic $pubArea, AuthenticatorData $authData): bool
@@ -135,7 +135,7 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
         throw new VerificationException('Unsupported TPM parameters type');
     }
 
-    private function checkCertInfo(TpmAttestationStatement $attStmt, int $alorithm, string $attToBeSigned)
+    private function checkCertInfo(TpmAttestationStatement $attStmt, int $alorithm, string $attToBeSigned): bool
     {
         $certInfo = $attStmt->getCertInfo();
         $pubArea = $attStmt->getPubArea();
@@ -164,7 +164,7 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
         return true;
     }
 
-    private function checkCertRequirements(CertificateDetailsInterface $cert)
+    private function checkCertRequirements(CertificateDetailsInterface $cert): void
     {
         // 8.3.1. TPM Attestation Statement Certificate Requirement
 

@@ -54,6 +54,13 @@ final class CborMap implements JsonSerializable
         return array_key_exists($internalKey, $this->entries);
     }
 
+    /**
+     * @param mixed $key
+     *
+     * @return mixed
+     *
+     * @throws CborException
+     */
     public function get($key)
     {
         $internalKey = $this->getInternalKey($key);
@@ -63,12 +70,25 @@ final class CborMap implements JsonSerializable
         return $this->entries[$internalKey][1];
     }
 
+    /**
+     * @param mixed $key
+     * @param mixed $default
+     *
+     * @return mixed
+     *
+     * @throws CborException
+     */
     public function getDefault($key, $default)
     {
         return $this->has($key) ? $this->get($key) : $default;
     }
 
-    public function remove($key)
+    /**
+     * @param mixed $key
+     *
+     * @throws CborException
+     */
+    public function remove($key): void
     {
         $internalKey = $this->getInternalKey($key);
         if (!isset($this->entries[$internalKey])) {

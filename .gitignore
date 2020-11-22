@@ -3,7 +3,6 @@
 .php_cs.cache
 /composer.lock
 /report
-/sami
 /var
 /_*
 /*.cache

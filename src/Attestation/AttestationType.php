@@ -33,6 +33,13 @@ final class AttestationType
     public const ECDAA = 'ECDAA';
 
     /**
+     * The authenticator works with a cloud-operated Anonymization CA owned by its manufacturer to dynamically generate
+     * per-credential attestation certificates on the CA such that no identification information of an individual
+     * authenticator will be revealed to Relying Parties in the attestation statement.
+     */
+    public const ANON_CA = 'AnonCA';
+
+    /**
      * @codeCoverageIgnore
      */
     private function __construct()
@@ -49,6 +56,7 @@ final class AttestationType
                 self::SELF,
                 self::ATT_CA,
                 self::ECDAA,
+                self::ANON_CA,
             ],
             true
         );

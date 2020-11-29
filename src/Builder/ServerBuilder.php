@@ -26,6 +26,7 @@ use MadWizard\WebAuthn\Metadata\MetadataResolverInterface;
 use MadWizard\WebAuthn\Metadata\NullMetadataResolver;
 use MadWizard\WebAuthn\Metadata\Provider\FileProvider;
 use MadWizard\WebAuthn\Metadata\Provider\MetadataServiceProvider;
+use MadWizard\WebAuthn\Metadata\Source\BundledSource;
 use MadWizard\WebAuthn\Metadata\Source\MetadataServiceSource;
 use MadWizard\WebAuthn\Metadata\Source\MetadataSourceInterface;
 use MadWizard\WebAuthn\Metadata\Source\StatementDirectorySource;
@@ -384,6 +385,12 @@ final class ServerBuilder
         return $this;
     }
 
+    public function addBundledMetadataSource(array $sets = ['@all']): self
+    {
+        $this->metadataSources[] = new BundledSource($sets);
+        return $this;
+    }
+
     private function createMetadataResolver(ServiceContainer $c): MetadataResolverInterface
     {
         if (count($this->metadataSources) === 0) {
@@ -419,19 +426,26 @@ final class ServerBuilder
     {
         $providers = [];
         foreach ($this->metadataSources as $source) {
+            // TODO: More elegant solution than if/else
             if ($source instanceof StatementDirectorySource) {
-                $provider = new FileProvider($source);
+                $providers[] = new FileProvider($source);
             } elseif ($source instanceof MetadataServiceSource) {
                 $this->setupDownloader($c);
-                $provider = new MetadataServiceProvider($source, $c[DownloaderInterface::class], $c[CacheProviderInterface::class], $c[ChainValidatorInterface::class]);
+                $providers[] = new MetadataServiceProvider($source, $c[DownloaderInterface::class], $c[CacheProviderInterface::class], $c[ChainValidatorInterface::class]);
+            } elseif ($source instanceof BundledSource) {
+                $providers = array_merge(
+                    $providers,
+                    $source->createProviders()
+                );
             } else {
                 throw new UnsupportedException(sprintf('No provider available for metadata source of type %s.', get_class($source)));
             }
+        }
 
+        foreach ($providers as $provider) {
             if ($provider instanceof LoggerAwareInterface) {
                 $this->assignLogger($provider);
             }
-            $providers[] = $provider;
         }
         return $providers;
     }
@@ -456,6 +470,9 @@ final class ServerBuilder
         $c[Verifier\AndroidKeyAttestationVerifier::class] = static function (): Verifier\AndroidKeyAttestationVerifier {
             return new Verifier\AndroidKeyAttestationVerifier();
         };
+        $c[Verifier\AppleAttestationVerifier::class] = static function (): Verifier\AppleAttestationVerifier {
+            return new Verifier\AppleAttestationVerifier();
+        };
 
         $c[AttestationFormatRegistryInterface::class] = function (ServiceContainer $c): AttestationFormatRegistryInterface {
             $registry = new AttestationFormatRegistry();
@@ -468,6 +485,7 @@ final class ServerBuilder
             $registry->addFormat($c[Verifier\TpmAttestationVerifier::class]->getSupportedFormat());
             $registry->addFormat($c[Verifier\AndroidSafetyNetAttestationVerifier::class]->getSupportedFormat());
             $registry->addFormat($c[Verifier\AndroidKeyAttestationVerifier::class]->getSupportedFormat());
+            $registry->addFormat($c[Verifier\AppleAttestationVerifier::class]->getSupportedFormat());
 
             return $registry;
         };

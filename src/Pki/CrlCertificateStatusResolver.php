@@ -45,7 +45,7 @@ final class CrlCertificateStatusResolver implements CertificateStatusResolverInt
     public function __construct(DownloaderInterface $downloader, CacheProviderInterface $cacheProvider, bool $silentFailure = false)
     {
         if (!class_exists(\phpseclib3\File\X509::class)) {
-            throw new UnsupportedException('CRL support is experimental and requires a (not yet stable) phpseclib v3. Use composer require phpseclib/phpseclib 3.0.x-dev.');
+            throw new UnsupportedException('CRL support requires phpseclib v3. Use composer require phpseclib/phpseclib ^3.0');
         }
 
         $this->downloader = $downloader;

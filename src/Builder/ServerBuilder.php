@@ -203,7 +203,7 @@ final class ServerBuilder
     public function enableCrl(bool $enable, bool $silentFailure = true): self
     {
         if ($enable && !class_exists(\phpseclib3\File\X509::class)) {
-            throw new UnsupportedException('CRL support is experimental and requires a (not yet stable) phpseclib v3. Use composer require phpseclib/phpseclib 3.0.x-dev.');
+            throw new UnsupportedException('CRL support requires phpseclib v3. Use composer require phpseclib/phpseclib ^3.0');
         }
         $this->enableCrl = $enable;
         $this->crlSilentFailure = $silentFailure;

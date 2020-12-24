@@ -101,6 +101,7 @@ final class X5cParameterReader
             return new RsaKey(new ByteBuffer($details['rsa']['n']), new ByteBuffer($details['rsa']['e']), $algInfo['coseAlg']);
         }
 
+        // @phpstan-ignore-next-line
         throw new UnsupportedException('Mising type handler');
     }
 }

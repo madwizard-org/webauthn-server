@@ -27,7 +27,7 @@ composer require madwizard/webauthn
 
 ## Supported features
 
-- > PHP 7.2
+- PHP 7.2+ / 8
 - FIDO conformant library
 - Attestation types:
     - FIDO U2F

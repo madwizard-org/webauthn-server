@@ -5,17 +5,11 @@ on: ["push", "pull_request"]
 jobs:
     test:
         runs-on: ubuntu-latest
-        continue-on-error: ${{ matrix.experimental }}
         strategy:
             fail-fast: true
             matrix:
-                php: ['7.2', '7.3', '7.4']
+                php: ['7.2', '7.3', '7.4', '8.0']
                 stability: [prefer-lowest, prefer-stable]
-                experimental: [false]
-#                include:
-#                    - php: 8.0
-#                      stability: ignore-platform-req=php
-#                      experimental: true
         name: Test php ${{ matrix.php }} ${{ matrix.stability }}
         steps:
             - name: Checkout code
@@ -32,7 +26,7 @@ jobs:
             - name: Setup problem matchers for PHPUnit
               run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
-            - name: Install composer dependencies ${{ matrix.composer_flags }}
+            - name: Install composer dependencies
               run: composer update --ansi --no-progress --no-scripts --no-suggest --prefer-dist --${{ matrix.stability }}
 
             - name: Run phpunit

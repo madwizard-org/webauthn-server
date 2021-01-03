@@ -40,6 +40,9 @@ final class AuthenticatorStatus
         self::REVOKED,
     ];
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }

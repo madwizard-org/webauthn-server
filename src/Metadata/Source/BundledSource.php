@@ -2,9 +2,9 @@
 
 namespace MadWizard\WebAuthn\Metadata\Source;
 
+use MadWizard\WebAuthn\Exception\UnexpectedValueException;
 use MadWizard\WebAuthn\Metadata\Provider\Apple\AppleDevicesProvider;
 use MadWizard\WebAuthn\Metadata\Provider\MetadataProviderInterface;
-use UnexpectedValueException;
 
 final class BundledSource implements MetadataSourceInterface
 {

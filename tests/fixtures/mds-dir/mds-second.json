@@ -1,0 +1,33 @@
+{
+    "description": "Second authenticator",
+    "aaguid": "b398e102-a1a1-9dd6-5285-b0ac6931b980",
+    "protocolFamily": "fido2",
+    "authenticatorVersion": 2,
+    "upv": [
+        {
+            "major": 1,
+            "minor": 0
+        }
+    ],
+    "assertionScheme": "FIDOV2",
+    "authenticationAlgorithm": 18,
+    "publicKeyAlgAndEncoding": 260,
+    "attestationTypes": [
+        15880
+    ],
+    "userVerificationDetails": [
+        [
+            {
+                "userVerification": 1
+            }
+        ]
+    ],
+    "isSecondFactorOnly": false,
+    "matcherProtection": 1,
+    "tcDisplay": 0,
+    "attachmentHint": 1,
+    "keyProtection": 1,
+    "attestationRootCertificates": [
+        "MIIBUzCB+qADAgECAhRql6CUMVqXFIvJnH0wpCQ+dHC7JTAKBggqhkjOPQQDAjAaMRgwFgYDVQQDDA9lYy1yb290LmV4YW1wbGUwHhcNMjAwMjEwMDAwMDAwWhcNMjAwNTEyMDAwMDAwWjAaMRgwFgYDVQQDDA9lYy1yb290LmV4YW1wbGUwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASMn2j4TvvHVopmsOccq+viXOooDH7lNlaXGWKPuG9MpaC/yLkrpmK1JgaC1hETuYEyAmEo3PHerxpr4JszRNo0ox4wHDAaBgNVHREEEzARgg9lYy1yb290LmV4YW1wbGUwCgYIKoZIzj0EAwIDSAAwRQIhAPUsSaV9/yI6fZILyTJs/5UAtYnf+L6jLlgDq/bZ7aU9AiBasDvUfcXaGRVTQ2Qg689XrrVlpdCUlORizUkiehyZBA=="
+    ]
+}

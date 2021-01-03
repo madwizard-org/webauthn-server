@@ -1,0 +1,34 @@
+{
+    "description": "Test authenticator",
+    "aaguid": "b1a0c872-ce5b-a96d-95fe-ad73f637e591",
+    "protocolFamily": "fido2",
+    "authenticatorVersion": 2,
+    "upv": [
+        {
+            "major": 1,
+            "minor": 0
+        }
+    ],
+    "assertionScheme": "FIDOV2",
+    "authenticationAlgorithm": 18,
+    "publicKeyAlgAndEncoding": 260,
+    "attestationTypes": [
+        15879,
+        15880
+    ],
+    "userVerificationDetails": [
+        [
+            {
+                "userVerification": 1
+            }
+        ]
+    ],
+    "isSecondFactorOnly": true,
+    "matcherProtection": 1,
+    "tcDisplay": 0,
+    "attachmentHint": 1,
+    "keyProtection": 1,
+    "attestationRootCertificates": [
+        "MIIC4zCCAcugAwIBAgIUYNQPaALptGkI2ld2IqK+VERPblAwDQYJKoZIhvcNAQELBQAwGzEZMBcGA1UEAwwQcnNhLXJvb3QuZXhhbXBsZTAeFw0yMDAyMTAwMDAwMDBaFw0yMDA1MTIwMDAwMDBaMBsxGTAXBgNVBAMMEHJzYS1yb290LmV4YW1wbGUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCGf0n6Ist2r3yYqwqSwhYnHXAx9+PKEA8d/6uNb46a/SaOBLXT0+MdHA8+ig8ZBPS0/efSlzORHR9WjpPmqgin6zeVhv7AFvxs4X9ioGSOO0eiLFVFGDdj8xqiivVnoJfAB+aWLvIdimPWt5FMK1vtzVe2M2e9MO4mzpMMakxzm0XSJ+HnBlCuLKdlH9x11MvN91jnyNVXjv2539eake4Dvf7Og8z4mj/aRMabuCMVItlxakZQ4iC8zZoR3KXlVKP1SR37ndhimMfXHTzvd3wrb4Zyv4MTKzc447wadowry3OPbEzssBQGkdQkd8zt85VZ7u0n9xGIkWTuLRGlwJN9AgMBAAGjHzAdMBsGA1UdEQQUMBKCEHJzYS1yb290LmV4YW1wbGUwDQYJKoZIhvcNAQELBQADggEBAC9gw8/xob9xzbNNnrL5CjzgPo5tWDASMxR2MfzZobJD23vAOfFXjTiHC11mc6ChcTHxqE/6NagMJ2ubsApVabrdPiKw2zxz7ERfSzw1Dc713yPkgGdREDxwZzJmpOklJ7wEydIkeBdOR5PYyrB8p3wX3TOhwdSIhs8fgn6NN7UYdOoPVqfvDdWHAU4XlYxfbI+LrGVbx/ZdmxtEkcisdPp9x5b1kk51lndZUDZosDPGo1Rd7dXNButZd2Jt/k0yDc5PX83q3ELUzlzJU3fhuiUcBySDfNirZxNBjG1KHBc3xDOQdqzqXrdOVnz9lqRhSeK6gAQfFfOkM83BhQOAOR0="
+    ]
+}

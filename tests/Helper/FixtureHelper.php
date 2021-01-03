@@ -2,9 +2,9 @@
 
 namespace MadWizard\WebAuthn\Tests\Helper;
 
-use Exception;
 use MadWizard\WebAuthn\Attestation\AttestationObject;
 use MadWizard\WebAuthn\Format\ByteBuffer;
+use RuntimeException;
 use function file_exists;
 use function file_get_contents;
 use function json_last_error;
@@ -16,7 +16,17 @@ class FixtureHelper
     {
         $path = dirname(__DIR__) . '/fixtures/' . $path;
         if (!file_exists($path)) {
-            throw new Exception(sprintf('Cannot find fixture %s.', $path));
+            throw new RuntimeException(sprintf('Cannot find fixture %s.', $path));
+        }
+
+        return $path;
+    }
+
+    public static function getFixtureDirectory(string $path): string
+    {
+        $path = dirname(__DIR__) . '/fixtures/' . $path;
+        if (!is_dir($path)) {
+            throw new RuntimeException(sprintf('Cannot find fixture directory %s.', $path));
         }
 
         return $path;
@@ -26,7 +36,7 @@ class FixtureHelper
     {
         $content = file_get_contents(self::getFixture($path));
         if ($content === false) {
-            throw new Exception(sprintf('Failed to load file contents from %s.', $path));
+            throw new RuntimeException(sprintf('Failed to load file contents from %s.', $path));
         }
         return $content;
     }
@@ -36,7 +46,7 @@ class FixtureHelper
         $content = self::getFixtureContent($path);
         $data = json_decode($content, true);
         if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception(sprintf('Failed to JSON parse file contents from %s.', $path));
+            throw new RuntimeException(sprintf('Failed to JSON parse file contents from %s.', $path));
         }
         return $data;
     }

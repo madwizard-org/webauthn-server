@@ -16,6 +16,8 @@ interface CredentialStoreInterface
     public function findCredential(CredentialId $credentialId): ?UserCredentialInterface;
 
     /**
+     * Register the given credential. You will need to store at least the credential id, user handle, public key
+     * and (if you want to check signature counters) the current counter value.
      * @throws CredentialIdExistsException
      */
     public function registerCredential(CredentialRegistration $credential): void;

@@ -27,6 +27,7 @@ composer require madwizard/webauthn
 
 ## Supported features
 
+- > PHP 7.2
 - FIDO conformant library
 - Attestation types:
     - FIDO U2F
@@ -34,6 +35,7 @@ composer require madwizard/webauthn
     - TPM
     - Android SafetyNet
     - Android Key
+    - Apple
     - None
     - Optional 'unsupported' type to handle future types
 - Metadata service support

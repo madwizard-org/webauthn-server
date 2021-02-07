@@ -11,6 +11,8 @@ final class AppleDevicesProvider implements MetadataProviderInterface
 {
     public function getMetadata(RegistrationResultInterface $registrationResult): ?MetadataInterface
     {
+        // NOTE: Apple always used a zero AAGUID but has changed this to a specific AAGUID later, which might be
+        // resolved using a metadata service.
         if ($registrationResult->getAttestationObject()->getFormat() === AppleAttestationStatement::FORMAT_ID) {
             return new AppleDeviceMetadata();
         }

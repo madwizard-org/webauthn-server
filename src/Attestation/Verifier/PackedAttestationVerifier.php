@@ -43,8 +43,7 @@ final class PackedAttestationVerifier implements AttestationVerifierInterface
         // 3. If ecdaaKeyId is present, then the attestation type is ECDAA.
         $ecdaaKeyId = $attStmt->getEcdaaKeyId();
         if ($ecdaaKeyId !== null) {
-            //return $this->verifyEcdaa($ecdaaKeyId, $attStmt, $authenticatorData, $clientDataHash);
-            throw new UnsupportedException('ECDAA is not supported by this library.');
+            throw new UnsupportedException('ECDAA is not supported by this library and is removed in later WebAuthn specifications.');
         }
 
         // 4. If neither x5c nor ecdaaKeyId is present, self attestation is in use.
@@ -83,13 +82,6 @@ final class PackedAttestationVerifier implements AttestationVerifierInterface
         // If successful, return attestation type Basic and attestation trust path x5c.
         return new VerificationResult(AttestationType::BASIC, new CertificateTrustPath(...$x5c));
     }
-
-//    private function verifyEcdaa(ByteBuffer $ecdaaKeyId, AttestationStatementInterface $attStmt, AuthenticatorData $authenticatorData, string $clientDataHash) : VerificationResult
-//    {
-//        // Verify that sig is a valid signature over the concatenation of authenticatorData and clientDataHash using ECDAA-Verify with ECDAA-Issuer public key identified by ecdaaKeyId (see [FIDOEcdaaAlgorithm]).
-//        // If successful, return attestation type ECDAA and attestation trust path ecdaaKeyId.
-//        throw new UnsupportedException('ECDAA is not supported by this library.');
-//    }
 
     private function verifySelf(ByteBuffer $signature, int $algorithm, AuthenticatorData $authenticatorData, string $clientDataHash): VerificationResult
     {

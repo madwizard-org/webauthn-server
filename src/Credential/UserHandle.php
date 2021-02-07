@@ -2,6 +2,8 @@
 
 namespace MadWizard\WebAuthn\Credential;
 
+use Exception;
+use MadWizard\WebAuthn\Exception\NotAvailableException;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
 use MadWizard\WebAuthn\Format\Base64UrlEncoding;
 use MadWizard\WebAuthn\Format\BinaryHandle;
@@ -42,6 +44,15 @@ class UserHandle extends BinaryHandle
     public static function fromBuffer(ByteBuffer $buffer): self
     {
         return new self($buffer->getBinaryString());
+    }
+
+    public static function random(int $length = self::MAX_USER_HANDLE_BYTES): self
+    {
+        try {
+            return new UserHandle(random_bytes($length));
+        } catch (Exception $e) {
+            throw new NotAvailableException('Cannot generate random bytes for user handle.', 0, $e);
+        }
     }
 
     public function equals(self $other): bool

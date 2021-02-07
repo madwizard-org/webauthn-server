@@ -28,6 +28,7 @@ final class AttestationType
     public const ATT_CA = 'AttCA';
 
     /**
+     * @deprecated Will be removed in WebAuthn spec v2
      * The Authenticator receives direct anonymous attestation (DAA) credentials from a single DAA-Issuer.
      */
     public const ECDAA = 'ECDAA';

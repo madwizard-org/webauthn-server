@@ -110,7 +110,7 @@ final class AuthenticationVerifier extends AbstractVerifier
             throw new VerificationException('Credential does not belong to the user currently being authenticated.');
         }
 
-        return new AuthenticationResult($accountCredential);
+        return new AuthenticationResult($accountCredential, $authData);
     }
 
     /**

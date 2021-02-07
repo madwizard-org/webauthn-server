@@ -66,7 +66,7 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
 
         // Either x5c or ECDAA is set, but only x5c is supported by this library. So if we reach this the statement
         // is unsupported.
-        throw new UnsupportedException('ECDAA is not supported by this library.');
+        throw new UnsupportedException('ECDAA is not supported by this library and is removed in later WebAuthn specifications.');
     }
 
     private function verifyX5c(array $x5c, ByteBuffer $signature, int $signatureAlgorithm, ByteBuffer $rawCertInfo, AuthenticatorData $authenticatorData): VerificationResult

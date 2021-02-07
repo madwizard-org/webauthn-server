@@ -11,11 +11,12 @@ use MadWizard\WebAuthn\Attestation\TrustAnchor\MetadataInterface;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
 use MadWizard\WebAuthn\Attestation\Verifier\VerificationResult;
 use MadWizard\WebAuthn\Credential\CredentialId;
+use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Crypto\CoseKeyInterface;
 use MadWizard\WebAuthn\Pki\CertificateDetails;
 
 final class RegistrationResult implements RegistrationResultInterface // TODO: use interface everywhere
-{ // TODO: add credentialRegistration?
+{
     /**
      * @var CredentialId
      */
@@ -46,13 +47,19 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
      */
     private $cachedIdentifier = false;
 
-    public function __construct(CredentialId $credentialId, AuthenticatorData $authenticatorData, AttestationObject $attestationObject, VerificationResult $verificationResult, ?MetadataInterface $metadata = null)
+    /**
+     * @var UserHandle
+     */
+    private $userHandle;
+
+    public function __construct(CredentialId $credentialId, AuthenticatorData $authenticatorData, AttestationObject $attestationObject, VerificationResult $verificationResult, UserHandle $userHandle, ?MetadataInterface $metadata = null)
     {
         $this->credentialId = $credentialId;
         $this->authenticatorData = $authenticatorData;
         $this->verificationResult = $verificationResult;
         $this->metadata = $metadata;
         $this->attestationObject = $attestationObject;
+        $this->userHandle = $userHandle;
     }
 
     public function getCredentialId(): CredentialId
@@ -63,6 +70,11 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
     public function getPublicKey(): CoseKeyInterface
     {
         return $this->authenticatorData->getKey();
+    }
+
+    public function getUserHandle(): UserHandle
+    {
+        return $this->userHandle;
     }
 
     public function getVerificationResult(): VerificationResult
@@ -100,7 +112,7 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
 
     public function withMetadata(?MetadataInterface $metadata): RegistrationResult
     {
-        return new RegistrationResult($this->credentialId, $this->authenticatorData, $this->attestationObject, $this->verificationResult, $metadata);
+        return new RegistrationResult($this->credentialId, $this->authenticatorData, $this->attestationObject, $this->verificationResult, $this->userHandle, $metadata);
     }
 
     private static function pkIdFromPemCertificate(string $pem): IdentifierInterface
@@ -131,5 +143,10 @@ final class RegistrationResult implements RegistrationResultInterface // TODO: u
             }
         }
         return null;
+    }
+
+    public function isUserVerified(): bool
+    {
+        return $this->authenticatorData->isUserVerified();
     }
 }

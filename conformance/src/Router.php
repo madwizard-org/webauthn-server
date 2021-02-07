@@ -4,7 +4,6 @@ namespace MadWizard\WebAuthn\Conformance;
 
 use MadWizard\WebAuthn\Builder\ServerBuilder;
 use MadWizard\WebAuthn\Config\RelyingParty;
-use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\ResidentKeyRequirement;
 use MadWizard\WebAuthn\Exception\WebAuthnException;
@@ -31,7 +30,7 @@ class Router
     private $server;
 
     /**
-     * @var CredentialStoreInterface
+     * @var TestCredentialStore
      */
     private $store;
 
@@ -239,7 +238,8 @@ class Router
         }
         unset($_SESSION['context'][$challenge]);
 
-        $this->server->finishRegistration($pkc, $context);
+        $result = $this->server->finishRegistration($pkc, $context);
+        $this->store->registerCredential($result);
 
         return [200, ['status' => 'ok', 'errorMessage' => '']];
     }

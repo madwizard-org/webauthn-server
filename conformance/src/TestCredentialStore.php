@@ -3,11 +3,11 @@
 namespace MadWizard\WebAuthn\Conformance;
 
 use MadWizard\WebAuthn\Credential\CredentialId;
-use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredential;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
+use MadWizard\WebAuthn\Server\Registration\RegistrationResultInterface;
 use function array_filter;
 use function array_map;
 
@@ -22,12 +22,12 @@ class TestCredentialStore implements CredentialStoreInterface
         return $_SESSION['credentials'][$credentialId->toString()]['credential'] ?? null;
     }
 
-    public function registerCredential(CredentialRegistration $credential): void
+    public function registerCredential(RegistrationResultInterface $registration): void
     {
-        $_SESSION['credentials'][$credential->getCredentialId()->toString()] =
+        $_SESSION['credentials'][$registration->getCredentialId()->toString()] =
             [
-                'credential' => new UserCredential($credential->getCredentialId(), $credential->getPublicKey(), $credential->getUserHandle()),
-                'counter' => $credential->getSignCounter(),
+                'credential' => new UserCredential($registration->getCredentialId(), $registration->getPublicKey(), $registration->getUserHandle()),
+                'counter' => $registration->getSignatureCounter(),
             ];
     }
 

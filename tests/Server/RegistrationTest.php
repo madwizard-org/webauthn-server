@@ -4,7 +4,6 @@ namespace MadWizard\WebAuthn\Tests\Server;
 
 use MadWizard\WebAuthn\Builder\ServerBuilder;
 use MadWizard\WebAuthn\Config\RelyingParty;
-use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserCredentialInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
@@ -57,25 +56,15 @@ class RegistrationTest extends TestCase
 
         $credential = $json['challengeResponseAttestationU2fMsgB64Url'];
 
-        $this->store
-            ->expects($this->once())
-            ->method('registerCredential')
-            ->with(
-                $this->callback(
-                    function (CredentialRegistration $reg) {
-                        return $reg->getCredentialId()->toString() === self::CREDENTIAL_ID &&
-                            $reg->getUserHandle()->equals(UserHandle::fromHex('00112233')) &&
-                            $reg->getPublicKey() instanceof Ec2Key;
-                    }
-                )
-            );
-
         $challenge = new ByteBuffer(Base64UrlEncoding::decode('Vu8uDqnkwOjd83KLj6Scn2BgFNLFbGR7Kq_XJJwQnnatztUR7XIBL7K8uMPCIaQmKw1MCVQ5aazNJFk7NakgqA'));
         $context = new RegistrationContext($challenge, Origin::parse('https://localhost:8443'), 'localhost', UserHandle::fromHex('00112233'));
         $result = $this->server->finishRegistration(JsonConverter::decodeAttestation($credential), $context);
 
         self::assertSame(self::CREDENTIAL_ID, $result->getCredentialId()->toString());
-        self::assertSame('Basic', $result->getVerificationResult()->getAttestationType());  // TODO:ugly
+        self::assertSame('Basic', $result->getVerificationResult()->getAttestationType());
+
+        self::assertSame('00112233', $result->getUserHandle()->toHex());
+        self::assertInstanceOf(Ec2Key::class, $result->getPublicKey());
     }
 
     protected function setUp(): void

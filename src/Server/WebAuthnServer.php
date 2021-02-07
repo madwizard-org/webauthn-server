@@ -5,7 +5,6 @@ namespace MadWizard\WebAuthn\Server;
 use MadWizard\WebAuthn\Attestation\Registry\AttestationFormatRegistryInterface;
 use MadWizard\WebAuthn\Config\RelyingPartyInterface;
 use MadWizard\WebAuthn\Credential\CredentialId;
-use MadWizard\WebAuthn\Credential\CredentialRegistration;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
 use MadWizard\WebAuthn\Credential\UserHandle;
 use MadWizard\WebAuthn\Dom\AuthenticationExtensionsClientInputs;
@@ -241,15 +240,6 @@ final class WebAuthnServer implements ServerInterface, LoggerAwareInterface
         //    have access to certificate status information for the intermediate CA certificates. The Relying Party MUST
         //    also be able to build the attestation certificate chain if the client did not provide this chain in the
         //    attestation information.
-
-        $registration = new CredentialRegistration(
-            $registrationResult->getCredentialId(),
-            $registrationResult->getPublicKey(),
-            $context->getUserHandle(),
-            $response->getAttestationObject(),
-            $registrationResult->getSignatureCounter()
-        );
-        $this->credentialStore->registerCredential($registration);
         return $registrationResult;
     }
 

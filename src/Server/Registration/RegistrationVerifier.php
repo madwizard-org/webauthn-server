@@ -91,7 +91,7 @@ final class RegistrationVerifier extends AbstractVerifier
         //     of the serialized client data computed in step 7.
         $verificationResult = $verifier->verify($statement, $authData, $clientDataHash);
 
-        return new RegistrationResult(CredentialId::fromBuffer($credential->getRawId()), $authData, $attestation, $verificationResult);
+        return new RegistrationResult(CredentialId::fromBuffer($credential->getRawId()), $authData, $attestation, $verificationResult, $context->getUserHandle());
     }
 
     private function checkClientData(CollectedClientData $clientData, RegistrationContext $context): void

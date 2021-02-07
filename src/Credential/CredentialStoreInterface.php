@@ -2,8 +2,6 @@
 
 namespace MadWizard\WebAuthn\Credential;
 
-use MadWizard\WebAuthn\Exception\CredentialIdExistsException;
-
 /**
  * Interface to implement by users of this library to persist user credentials.
  */
@@ -14,14 +12,6 @@ interface CredentialStoreInterface
      * Return null if no credential exists with this id.
      */
     public function findCredential(CredentialId $credentialId): ?UserCredentialInterface;
-
-    /**
-     * Register the given credential. You will need to store at least the credential id, user handle, public key
-     * and (if you want to check signature counters) the current counter value.
-     *
-     * @throws CredentialIdExistsException
-     */
-    public function registerCredential(CredentialRegistration $credential): void;
 
     /**
      * Retrieve the current signature counter for a given credential id. Return null if the signature counter has not

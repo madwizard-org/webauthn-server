@@ -116,5 +116,8 @@ abstract class CoseKey implements CoseKeyInterface
 
     abstract public function asDer(): string;
 
-    abstract public function asPem(): string;
+    public function asPem(): string
+    {
+        return Der::pem('PUBLIC KEY', $this->asDer());
+    }
 }

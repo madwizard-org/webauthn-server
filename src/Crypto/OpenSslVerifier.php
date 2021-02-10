@@ -39,9 +39,9 @@ class OpenSslVerifier
         return $openSslAlgorithm;
     }
 
-    public function verify(string $data, string $signature, string $pem): bool
+    public function verify(string $data, string $signature, string $keyPem): bool
     {
-        $publicKey = openssl_pkey_get_public($pem);
+        $publicKey = openssl_pkey_get_public($keyPem);
         if ($publicKey === false) {
             throw new WebAuthnException('Public key invalid');
         }

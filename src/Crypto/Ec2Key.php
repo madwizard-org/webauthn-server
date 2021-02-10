@@ -128,9 +128,9 @@ class Ec2Key extends CoseKey // TODO exceptions
         $curve = $data->get(self::KTP_CRV);
         $x = $data->get(self::KTP_X);
         $y = $data->get(self::KTP_Y);
-        $alorithm = $data->get(self::COSE_KEY_PARAM_ALG);
+        $algorithm = $data->get(self::COSE_KEY_PARAM_ALG);
 
-        return new Ec2Key($x, $y, $curve, $alorithm);
+        return new Ec2Key($x, $y, $curve, $algorithm);
     }
 
     public function getX(): ByteBuffer
@@ -161,11 +161,6 @@ class Ec2Key extends CoseKey // TODO exceptions
                     $this->getUncompressedCoordinates()->getBinaryString()
                 )
             );
-    }
-
-    public function asPem(): string
-    {
-        return Der::pem('PUBLIC KEY', $this->asDER());
     }
 
     private function getCurveOid(): string

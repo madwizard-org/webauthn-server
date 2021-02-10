@@ -63,11 +63,11 @@ class RsaKey extends CoseKey
             ]
         );
 
-        $alorithm = $data->get(self::COSE_KEY_PARAM_ALG);
+        $algorithm = $data->get(self::COSE_KEY_PARAM_ALG);
         $modulus = $data->get(self::KTP_N);
         $exponent = $data->get(self::KTP_E);
 
-        return new RsaKey($modulus, $exponent, $alorithm);
+        return new RsaKey($modulus, $exponent, $algorithm);
     }
 
     public function verifySignature(ByteBuffer $data, ByteBuffer $signature): bool
@@ -121,11 +121,6 @@ class RsaKey extends CoseKey
                     )
                 )
             );
-    }
-
-    public function asPem(): string
-    {
-        return Der::pem('PUBLIC KEY', $this->asDer());
     }
 
     public function getCbor(): ByteBuffer

@@ -135,12 +135,12 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
         throw new VerificationException('Unsupported TPM parameters type');
     }
 
-    private function checkCertInfo(TpmAttestationStatement $attStmt, int $alorithm, string $attToBeSigned): bool
+    private function checkCertInfo(TpmAttestationStatement $attStmt, int $algorithm, string $attToBeSigned): bool
     {
         $certInfo = $attStmt->getCertInfo();
         $pubArea = $attStmt->getPubArea();
 
-        $hash = new CoseHash($alorithm);
+        $hash = new CoseHash($algorithm);
 
         // Verify that magic is set to TPM_GENERATED_VALUE.
         // Verify that type is set to TPM_ST_ATTEST_CERTIFY.

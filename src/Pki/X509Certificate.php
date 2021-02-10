@@ -24,6 +24,11 @@ final class X509Certificate implements Serializable
         $this->base64 = $base64;
     }
 
+    public function equals(X509Certificate $cert): bool
+    {
+        return $this->base64 === $cert->base64;
+    }
+
     public static function fromDer(string $der): self
     {
         return new self(base64_encode($der));

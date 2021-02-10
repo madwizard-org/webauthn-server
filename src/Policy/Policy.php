@@ -12,6 +12,7 @@ final class Policy implements PolicyInterface
     private const MIN_CHALLENGE_LENGTH = 32;
 
     private const SUPPORTED_ALGORITHMS = [
+        CoseAlgorithm::EDDSA,
         CoseAlgorithm::ES512,
         CoseAlgorithm::ES384,
         CoseAlgorithm::ES256,
@@ -22,6 +23,7 @@ final class Policy implements PolicyInterface
     ];
 
     private const DEFAULT_ALGORITHMS = [
+        CoseAlgorithm::EDDSA,
         CoseAlgorithm::ES512,
         CoseAlgorithm::ES384,
         CoseAlgorithm::ES256,

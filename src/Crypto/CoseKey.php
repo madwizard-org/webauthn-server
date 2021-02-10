@@ -12,6 +12,11 @@ use MadWizard\WebAuthn\Format\DataValidator;
 abstract class CoseKey implements CoseKeyInterface
 {
     /**
+     * OKP key type.
+     */
+    protected const COSE_KTY_OKP = 1;
+
+    /**
      * EC2 key type.
      */
     protected const COSE_KTY_EC2 = 2;
@@ -96,6 +101,9 @@ abstract class CoseKey implements CoseKeyInterface
     {
         if ($keyType === self::COSE_KTY_EC2) {
             return Ec2Key::fromCborData($data);
+        }
+        if ($keyType === self::COSE_KTY_OKP) {
+            return OkpKey::fromCborData($data);
         }
         if ($keyType === self::COSE_KTY_RSA) {
             return RsaKey::fromCborData($data);

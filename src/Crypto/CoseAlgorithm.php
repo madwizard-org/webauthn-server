@@ -17,6 +17,11 @@ final class CoseAlgorithm
     public const ES256 = -7;
 
     /**
+     * EdDSA.
+     */
+    public const EDDSA = -8;
+
+    /**
      * ECDSA w/ SHA-384 (RFC8152).
      */
     public const ES384 = -35;

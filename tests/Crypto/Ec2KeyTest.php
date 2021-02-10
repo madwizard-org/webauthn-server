@@ -37,6 +37,9 @@ class Ec2KeyTest extends TestCase
         $valid = $key->verifySignature($message, $signature);
         self::assertTrue($valid);
 
+        $valid = $key->verifySignature(new ByteBuffer('diffmessage'), $wrongSignature);
+        self::assertFalse($valid);
+
         $valid = $key->verifySignature($message, $wrongSignature);
         self::assertFalse($valid);
     }

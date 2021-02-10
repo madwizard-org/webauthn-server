@@ -81,6 +81,7 @@ class Router
                     // Conformance tools do not require user presence
                     // see https://github.com/fido-alliance/conformance-tools-issues/issues/434
                     $policy->setUserPresenceRequired(false);
+                    $policy->setAllowedAlgorithms(Policy::SUPPORTED_ALGORITHMS);
                 }
             )
             ->enableCrl(true)

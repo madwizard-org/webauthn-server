@@ -187,7 +187,7 @@ final class MetadataServiceProvider implements MetadataProviderInterface, Logger
         try {
             $claims = $jwtValidator->validate($jwt, $context);
         } catch (WebAuthnException $e) {
-            throw new VerificationException('Failed to verify JWT.', 0, $e);
+            throw new VerificationException(sprintf('Failed to verify JWT: %s', $e->getMessage()), 0, $e);
         }
 
         if (!$this->chainValidator->validateChain(X509Certificate::fromPem($this->mdsSource->getRootCert()), ...array_reverse($x5cParam->getCertificates()))) {

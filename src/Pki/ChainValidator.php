@@ -5,12 +5,18 @@ namespace MadWizard\WebAuthn\Pki;
 use DateTimeImmutable;
 use Exception;
 use MadWizard\WebAuthn\Exception\VerificationException;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 use Sop\X509\Certificate\Certificate;
 use Sop\X509\CertificationPath\CertificationPath;
+use Sop\X509\CertificationPath\Exception\PathValidationException;
 use Sop\X509\CertificationPath\PathValidation\PathValidationConfig;
 
-final class ChainValidator implements ChainValidatorInterface
+final class ChainValidator implements ChainValidatorInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     public const MAX_VALIDATION_LENGTH = 5;
 
     /**
@@ -21,6 +27,7 @@ final class ChainValidator implements ChainValidatorInterface
     public function __construct(CertificateStatusResolverInterface $statusResolver)
     {
         $this->statusResolver = $statusResolver;
+        $this->logger = new NullLogger();
     }
 
     private function getReferenceDate(): DateTimeImmutable
@@ -37,13 +44,16 @@ final class ChainValidator implements ChainValidatorInterface
             $path = new CertificationPath(...$pathCerts);
             $config = new PathValidationConfig($this->getReferenceDate(), self::MAX_VALIDATION_LENGTH);
         } catch (Exception $e) {
-            throw new VerificationException('Failed to validate certificate: ' . $e->getMessage(), 0, $e);
+            throw new VerificationException(sprintf('Failed to validate certificate: %s', $e->getMessage()), 0, $e);
         }
         try {
             $path->validate($config);
             return true;
-        } catch (Exception $e) {
+        } catch (PathValidationException $e) {
+            $this->logger->debug(sprintf('Path validation of certificate failed: %s', $e->getMessage()));
             return false;
+        } catch (Exception $e) {
+            throw new VerificationException(sprintf('Failed to validate certificate: %s', $e->getMessage()), 0, $e);
         }
     }
 

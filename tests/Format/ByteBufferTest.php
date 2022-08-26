@@ -245,9 +245,9 @@ class ByteBufferTest extends TestCase
         self::assertSame(-2.0, $testHalf('C000'));
         self::assertSame(65504.0, $testHalf('7BFF')); // max half precision
 
-        self::assertSame(6.10352e-5, $testHalf('0400')); // minimum positive normal
-        self::assertSame(6.097562e-5, $testHalf('03FF')); // maximum subnormal
-        self::assertSame(5.96046e-8, $testHalf('0001')); // minimum positive subnormal
+        self::assertSame(0.00006103515625, $testHalf('0400')); // minimum positive normal
+        self::assertSame(0.00006097555160522461, $testHalf('03FF')); // maximum subnormal
+        self::assertSame(5.960464477539063e-8, $testHalf('0001')); // minimum positive subnormal
 
         self::assertSame(0.0, $testHalf('0000')); // 0
         self::assertSame(-0.0, $testHalf('8000')); // -0

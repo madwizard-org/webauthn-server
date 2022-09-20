@@ -182,7 +182,7 @@ class ByteBufferTest extends TestCase
     public function testGetFloatVal()
     {
         $buf = new ByteBuffer("a\x40\x49\x0f\xdb");
-        self::assertEquals(3.14159274102, $buf->getFloatVal(1));
+        self::assertEquals(3.1415927410125732, $buf->getFloatVal(1));
 
         $buf = new ByteBuffer("a\x7f\x80\x00\x00");
 

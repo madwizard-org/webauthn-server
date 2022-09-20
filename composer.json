@@ -36,7 +36,8 @@
         "symfony/var-dumper": "^5.2",
         "symfony/console": "^5.2",
         "symfony/dotenv": "^5.2",
-        "phpseclib/phpseclib": "^3.0.1"
+        "phpseclib/phpseclib": "^3.0.1",
+        "sebastian/comparator": "^3.0.5"
     },
     "archive": {
         "exclude": [

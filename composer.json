@@ -31,7 +31,7 @@
         "symfony/cache": "^5.2|^6.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.5",
+        "phpunit/phpunit": "^8.5.29",
         "phpstan/phpstan": "^0.12.64",
         "symfony/var-dumper": "^5.2",
         "symfony/console": "^5.2",

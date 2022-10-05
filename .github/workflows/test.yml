@@ -9,13 +9,13 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                php: ['7.2', '7.3', '7.4']
+                php: ['7.2', '7.3', '7.4', '8.0', '8.1']
                 stability: [prefer-lowest, prefer-stable]
                 experimental: [false]
-#                include:
-#                    - php: 8.0
-#                      stability: ignore-platform-req=php
-#                      experimental: true
+                include:
+                    - php: 8.2
+                      stability: ignore-platform-req=php
+                      experimental: true
         name: Test php ${{ matrix.php }} ${{ matrix.stability }}
         steps:
             - name: Checkout code

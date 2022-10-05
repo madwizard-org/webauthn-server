@@ -79,7 +79,9 @@ final class X5cParameterReader
             throw new ParseException('Failed to parse X5C certificate.');
         }
         $details = openssl_pkey_get_details($pkey);
-        openssl_free_key($pkey);
+        if (PHP_VERSION_ID < 80000) {
+            openssl_free_key($pkey);
+        }
         if ($details === false) {
             throw new ParseException('Failed to get X5C key details.');
         }

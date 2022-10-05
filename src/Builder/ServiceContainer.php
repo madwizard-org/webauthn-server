@@ -34,7 +34,7 @@ class ServiceContainer implements ArrayAccess
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->serviceMap[$offset]) || isset($this->instantiators[$offset]);
     }
@@ -46,7 +46,7 @@ class ServiceContainer implements ArrayAccess
      * @phpstan-param class-string<T> $service
      * @phpstan-return T
      */
-    public function offsetGet($service)
+    public function offsetGet($service): object
     {
         /**
          * @phpstan-var T
@@ -58,6 +58,7 @@ class ServiceContainer implements ArrayAccess
     /**
      * @param string $offset
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new RuntimeException('Unset operation is not supported.');
@@ -69,7 +70,7 @@ class ServiceContainer implements ArrayAccess
      * @phpstan-param class-string $offset
      * @phpstan-param callable(self): object $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->instantiators[$offset] = $value;
     }

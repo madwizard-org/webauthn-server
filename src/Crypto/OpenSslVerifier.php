@@ -56,7 +56,9 @@ class OpenSslVerifier
 
             throw new WebAuthnException('Failed to check signature');
         } finally {
-            openssl_free_key($publicKey);
+            if (PHP_VERSION_ID < 80000) {
+                openssl_free_key($publicKey);
+            }
         }
     }
 }

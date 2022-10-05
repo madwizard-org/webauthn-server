@@ -11,10 +11,10 @@ build:
     coverage:
       tests:
         override:
-         - command: vendor/bin/phpunit --coverage-clover=coverage.xml
+         - command: php -dxdebug.mode=coverage vendor/bin/phpunit --coverage-clover=coverage.xml
            coverage:
              file: coverage.xml
-             format: php-clover            
+             format: php-clover
 filter:
     paths: ["src/*"]
     dependency_paths:

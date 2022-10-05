@@ -70,7 +70,9 @@ final class FidoU2fAttestationVerifier implements AttestationVerifierInterface
 
             throw new VerificationException('Failed to check signature');
         } finally {
-            openssl_free_key($key);
+            if (PHP_VERSION_ID < 80000) {
+                openssl_free_key($key);
+            }
         }
     }
 

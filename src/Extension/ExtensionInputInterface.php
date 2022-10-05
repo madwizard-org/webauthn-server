@@ -12,4 +12,7 @@ interface ExtensionInputInterface extends Serializable
      * @return mixed
      */
     public function getInput();
+
+    public function __serialize(): array;
+    public function __unserialize(array $data): void;
 }

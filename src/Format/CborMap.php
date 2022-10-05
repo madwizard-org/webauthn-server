@@ -129,7 +129,10 @@ final class CborMap implements JsonSerializable
         return $map;
     }
 
-    public function jsonSerialize()
+    /**
+     * @return ArrayObject<int|string, mixed>
+     */
+    public function jsonSerialize(): ArrayObject
     {
         $obj = new ArrayObject();
         foreach ($this->entries as [$k, $v]) {

@@ -2,7 +2,6 @@
 
     <php>
         <ini name="xdebug.overload_var_dump" value="off" />
-        <ini name="serialize_precision" value="14" />
     </php>
 
     <testsuites>

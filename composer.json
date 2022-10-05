@@ -19,7 +19,7 @@
         "ext-openssl": "*",
         "ext-json": "*",
         "guzzlehttp/guzzle": "^6.5|^7.0",
-        "psr/cache": "^1.0",
+        "psr/cache": "^1.0|^2.0|^3.0",
         "kevinrob/guzzle-cache-middleware": "^3.3",
         "psr/log": "^1.1|^2.0|^3.0",
         "sop/asn1": "^4.1",

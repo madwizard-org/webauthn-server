@@ -37,6 +37,7 @@ final class TpmRsaParameters implements KeyParametersInterface
         $this->symmetric = $symmetric;
         $this->scheme = $scheme;
         $this->keyBits = $keyBits;
+        // Spec: When zero, indicates that the exponent is the default of 2^16 + 1
         $this->exponent = ($exponent === 0 ? self::DEFAULT_EXPONENT : $exponent);
     }
 
@@ -59,7 +60,7 @@ final class TpmRsaParameters implements KeyParametersInterface
             // so bail out if scheme algorithm is not null
             throw new UnsupportedException('Only TPM_ALG_NULL supported for scheme field in TPMS_RSA_PARMS');
         }        $keyBits = $buffer->getUint16Val($offset + 4);
-        $exponent = $buffer->getUint16Val($offset + 6);
+        $exponent = $buffer->getUint32Val($offset + 6);
         $endOffset = $offset + 10;
         return new self($symmetric, $scheme, $keyBits, $exponent);
     }

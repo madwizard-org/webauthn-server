@@ -9,8 +9,10 @@ use MadWizard\WebAuthn\Format\ByteBuffer;
 /**
  * Represents TPMT_PUBLIC structure.
  */
-final class TpmPublic extends AbstractTpmStructure
+final class TpmPublic
 {
+    use TpmStructureTrait;
+
     public const TPM_ALG_RSA = 0x0001;
 
     public const TPM_ALG_ECC = 0x0023;
@@ -60,7 +62,7 @@ final class TpmPublic extends AbstractTpmStructure
     private $parameters;
 
     /**
-     * @var ByteBuffer
+     * @var KeyPublicIdInterface
      */
     private $unique;
 
@@ -75,11 +77,10 @@ final class TpmPublic extends AbstractTpmStructure
         $offset = 8;
 
         // Auth policy
-        $this->readLengthPrefixed($data, $offset);
+        self::readLengthPrefixed($data, $offset);
 
         $this->parameters = $this->parseParameters($this->type, $data, $offset);
-
-        $this->unique = $this->readLengthPrefixed($data, $offset);
+        $this->unique = $this->parseUnique($this->type, $data, $offset);
 
         if ($offset !== $data->getLength()) {
             throw new ParseException('Unexpected bytes after TPMT_PUBLIC structure.');
@@ -97,6 +98,21 @@ final class TpmPublic extends AbstractTpmStructure
             $parameters = TpmEccParameters::parse($buffer, $offset, $endOffset);
             $offset = $endOffset;
             return $parameters;
+        }
+        throw new UnsupportedException(sprintf('TPM public key type %d is not supported.', $type));
+    }
+
+    private function parseUnique(int $type, ByteBuffer $buffer, int &$offset): KeyPublicIdInterface
+    {
+        if ($type === self::TPM_ALG_RSA) {
+            $unique = TpmRsaPublicId::parse($buffer, $offset, $endOffset);
+            $offset = $endOffset;
+            return $unique;
+        }
+        if ($type === self::TPM_ALG_ECC) {
+            $unique = TpmEccPublicId::parse($buffer, $offset, $endOffset);
+            $offset = $endOffset;
+            return $unique;
         }
         throw new UnsupportedException(sprintf('TPM public key type %d is not supported.', $type));
     }
@@ -121,7 +137,7 @@ final class TpmPublic extends AbstractTpmStructure
         return $this->nameAlg;
     }
 
-    public function getUnique(): ByteBuffer
+    public function getUnique(): KeyPublicIdInterface
     {
         return $this->unique;
     }

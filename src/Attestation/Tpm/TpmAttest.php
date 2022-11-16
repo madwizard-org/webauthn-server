@@ -5,8 +5,10 @@ namespace MadWizard\WebAuthn\Attestation\Tpm;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-final class TpmAttest extends AbstractTpmStructure
+final class TpmAttest
 {
+    use TpmStructureTrait;
+
     private const TPM_GENERATED = "\xFF\x54\x43\x47";
 
     public const TPM_ST_ATTEST_CERTIFY = 0x8017;
@@ -39,22 +41,22 @@ final class TpmAttest extends AbstractTpmStructure
         $offset = 6;
 
         // qualifiedSigner
-        $this->readLengthPrefixed($data, $offset);
+        self::readLengthPrefixed($data, $offset);
 
         // Extra data
-        $this->extraData = $this->readLengthPrefixed($data, $offset);
+        $this->extraData = self::readLengthPrefixed($data, $offset);
 
         // Clock info
-        $this->readFixed($data, $offset, 17);
+        self::readFixed($data, $offset, 17);
 
         // Firmware version
-        $this->readFixed($data, $offset, 8);
+        self::readFixed($data, $offset, 8);
 
         // Attested name
-        $this->attName = $this->readLengthPrefixed($data, $offset);
+        $this->attName = self::readLengthPrefixed($data, $offset);
 
         // Attested qualified name
-        $this->readLengthPrefixed($data, $offset);
+        self::readLengthPrefixed($data, $offset);
 
         if ($offset !== $data->getLength()) {
             throw new ParseException('Unexpected bytes after TPMS_ATTEST structure.');

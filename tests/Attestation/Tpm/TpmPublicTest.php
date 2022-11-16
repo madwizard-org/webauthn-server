@@ -4,6 +4,7 @@ namespace MadWizard\WebAuthn\Tests\Attestation\Tpm;
 
 use MadWizard\WebAuthn\Attestation\Tpm\TpmPublic;
 use MadWizard\WebAuthn\Attestation\Tpm\TpmRsaParameters;
+use MadWizard\WebAuthn\Attestation\Tpm\TpmRsaPublicId;
 use MadWizard\WebAuthn\Exception\ParseException;
 use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
@@ -55,7 +56,9 @@ class TpmPublicTest extends TestCase
             )
         );
 
-        self::assertSame(HexData::buf(self::RSA_KEY_BITS)->getHex(), $public->getUnique()->getHex());
+        $unique = $public->getUnique();
+        self::assertInstanceOf(TpmRsaPublicId::class, $unique);
+        self::assertSame(HexData::buf(self::RSA_KEY_BITS)->getHex(), $unique->getModulus()->getHex());
 
         /** @var TpmRsaParameters $parameters */
         $parameters = $public->getParameters();

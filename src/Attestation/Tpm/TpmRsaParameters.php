@@ -2,8 +2,12 @@
 
 namespace MadWizard\WebAuthn\Attestation\Tpm;
 
+use MadWizard\WebAuthn\Exception\UnsupportedException;
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
+/**
+ * Represents TPMS_RSA_PARMS structure.
+ */
 final class TpmRsaParameters implements KeyParametersInterface
 {
     public const DEFAULT_EXPONENT = 65537;
@@ -44,8 +48,17 @@ final class TpmRsaParameters implements KeyParametersInterface
     public static function parse(ByteBuffer $buffer, int $offset, ?int &$endOffset): KeyParametersInterface
     {
         $symmetric = $buffer->getUint16Val($offset);
+        if ($symmetric !== TpmPublic::TPM_ALG_NULL) {
+            // Values other than TPM_ALG_NULL may be followed by additional fields (in TPMT_SYM_DEF_OBJECT)
+            // so bail out if symmetric algorithm is not null
+            throw new UnsupportedException('Only TPM_ALG_NULL supported for symmetric field in TPMS_RSA_PARMS');
+        }
         $scheme = $buffer->getUint16Val($offset + 2);
-        $keyBits = $buffer->getUint16Val($offset + 4);
+        if ($scheme !== TpmPublic::TPM_ALG_NULL) {
+            // Values other than TPM_ALG_NULL may be followed by additional fields (in TPMT_RSA_SCHEME)
+            // so bail out if scheme algorithm is not null
+            throw new UnsupportedException('Only TPM_ALG_NULL supported for scheme field in TPMS_RSA_PARMS');
+        }        $keyBits = $buffer->getUint16Val($offset + 4);
         $exponent = $buffer->getUint16Val($offset + 6);
         $endOffset = $offset + 10;
         return new self($symmetric, $scheme, $keyBits, $exponent);

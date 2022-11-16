@@ -4,9 +4,9 @@ namespace MadWizard\WebAuthn\Attestation\Tpm;
 
 use MadWizard\WebAuthn\Format\ByteBuffer;
 
-abstract class AbstractTpmStructure
+trait TpmStructureTrait
 {
-    protected function readLengthPrefixed(ByteBuffer $buffer, int &$offset): ByteBuffer
+    private static function readLengthPrefixed(ByteBuffer $buffer, int &$offset): ByteBuffer
     {
         $len = $buffer->getUint16Val($offset);
         $data = $buffer->getBytes($offset + 2, $len);
@@ -14,7 +14,7 @@ abstract class AbstractTpmStructure
         return new ByteBuffer($data);
     }
 
-    protected function readFixed(ByteBuffer $buffer, int &$offset, int $length): ByteBuffer
+    private static function readFixed(ByteBuffer $buffer, int &$offset, int $length): ByteBuffer
     {
         $data = $buffer->getBytes($offset, $length);
         $offset += $length;

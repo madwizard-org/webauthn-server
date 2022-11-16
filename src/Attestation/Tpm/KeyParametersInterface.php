@@ -8,5 +8,5 @@ interface KeyParametersInterface
 {
     public function getAlgorithm(): int;
 
-    public static function parse(ByteBuffer $buffer, int $offset, int &$endOffset): KeyParametersInterface;
+    public static function parse(ByteBuffer $buffer, int $offset, ?int &$endOffset): KeyParametersInterface;
 }

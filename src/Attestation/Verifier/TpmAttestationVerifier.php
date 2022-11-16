@@ -10,8 +10,10 @@ use MadWizard\WebAuthn\Attestation\Registry\BuiltInAttestationFormat;
 use MadWizard\WebAuthn\Attestation\Statement\AttestationStatementInterface;
 use MadWizard\WebAuthn\Attestation\Statement\TpmAttestationStatement;
 use MadWizard\WebAuthn\Attestation\Tpm\TpmEccParameters;
+use MadWizard\WebAuthn\Attestation\Tpm\TpmEccPublicId;
 use MadWizard\WebAuthn\Attestation\Tpm\TpmPublic;
 use MadWizard\WebAuthn\Attestation\Tpm\TpmRsaParameters;
+use MadWizard\WebAuthn\Attestation\Tpm\TpmRsaPublicId;
 use MadWizard\WebAuthn\Attestation\TrustPath\CertificateTrustPath;
 use MadWizard\WebAuthn\Crypto\CoseHash;
 use MadWizard\WebAuthn\Crypto\Ec2Key;
@@ -104,6 +106,7 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
     {
         $key = $authData->getKey();
         $params = $pubArea->getParameters();
+        $publicdId = $pubArea->getUnique();
         if ($params instanceof TpmRsaParameters) {
             if (!($key instanceof RsaKey)) {
                 return false;
@@ -112,8 +115,10 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
             if (!$params->getExponentAsBuffer()->equals($key->getExponent())) {
                 return false;
             }
-
-            if (!$pubArea->getUnique()->equals($key->getModulus())) {
+            if (!$publicdId instanceof TpmRsaPublicId) {
+                return false;
+            }
+            if (!$publicdId->getModulus()->equals($key->getModulus())) {
                 return false;
             }
 
@@ -123,14 +128,22 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
             if (!($key instanceof Ec2Key)) {
                 return false;
             }
-
-            if (!$pubArea->getUnique()->equals($key->getUncompressedCoordinates())) {
+            if (!$publicdId instanceof TpmEccPublicId) {
                 return false;
             }
 
-            // TODO: CHECK CURVE ID
-            throw new UnsupportedException('Not implemented yet');
-            //return true;
+            if (!$publicdId->getX()->equals($key->getX()) ||
+                !$publicdId->getY()->equals($key->getY())) {
+                return false;
+            }
+
+            if ($key->getCurve() !== Ec2Key::CURVE_P256) {
+                throw new UnsupportedException("Only P-256 NIST curves supported for TPM ECC keys");
+            }
+            if ($params->getCurveId() !== TpmEccParameters::TPM_ECC_NIST_P256) {
+                return false;
+            }
+            return true;
         }
         throw new VerificationException('Unsupported TPM parameters type');
     }

@@ -34,14 +34,14 @@ class Ec2Key extends CoseKey // TODO exceptions
     public const CURVE_P256 = 1;
 
     /**
-     * NIST P-256 also known as secp256r1.
+     * NIST P-384 also known as secp384r1.
      *
      * @see https://www.iana.org/assignments/cose/cose.xhtml#elliptic-curves
      */
     public const CURVE_P384 = 2;
 
     /**
-     * NIST P-521 also known as secp256r1.
+     * NIST P-521 also known as secp521r1.
      *
      * @see https://www.iana.org/assignments/cose/cose.xhtml#elliptic-curves
      */

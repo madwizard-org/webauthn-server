@@ -6,3 +6,4 @@
 /var
 /_*
 /*.cache
+/tools/*/vendor

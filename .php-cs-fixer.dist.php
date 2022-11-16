@@ -4,7 +4,7 @@ $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
 ;
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setRules([
         '@PSR2' => true,
 
@@ -115,7 +115,6 @@ return PhpCsFixer\Config::create()
         ],
         //  'phpdoc_annotation_without_dot' => true,
         'phpdoc_indent' => true,
-        'phpdoc_inline_tag' => true,
         'phpdoc_no_access' => true,
         'phpdoc_no_alias_tag' => true,
         'phpdoc_no_package' => true,
@@ -150,7 +149,7 @@ return PhpCsFixer\Config::create()
         'standardize_increment' => true,
         'standardize_not_equals' => true,
 
-        'trailing_comma_in_multiline_array' => true,
+        'trailing_comma_in_multiline' => true,
         'trim_array_spaces' => true,
 
         'whitespace_after_comma_in_array' => true,

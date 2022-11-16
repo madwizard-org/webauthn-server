@@ -11,7 +11,7 @@ build:
     coverage:
       tests:
         override:
-         - command: php -dxdebug.mode=coverage vendor/bin/phpunit --coverage-clover=coverage.xml
+         - command: php -dxdebug.mode=coverage -dxdebug.overload_var_dump=off vendor/bin/phpunit --coverage-clover=coverage.xml
            coverage:
              file: coverage.xml
              format: php-clover

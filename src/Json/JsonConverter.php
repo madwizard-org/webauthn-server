@@ -69,13 +69,16 @@ final class JsonConverter
      */
     public static function decodeCredential(array $json, string $responseType): PublicKeyCredentialInterface
     {
-        DataValidator::checkArray($json,
+        DataValidator::checkArray(
+            $json,
             [
                 'type' => 'string',
                 'id' => 'string',
                 'response' => 'array',
                 'clientExtensionResults' => '?array',
-            ], false);
+            ],
+            false
+        );
         if (($json['type'] ?? null) !== PublicKeyCredentialType::PUBLIC_KEY) {
             throw new ParseException("Expecting type 'public-key'");
         }
@@ -161,7 +164,12 @@ final class JsonConverter
         $userHandle = null;
 
         $encUserHandle = $response['userHandle'] ?? null;
-        if ($encUserHandle !== null) {
+
+        // Note: a non-null but empty userHandle is invalid according to spec but iOS incorrectly sends this instead of a real null value
+        // To maintain compatibility an empty userHandle is seen as null here.
+        // See https://bugs.webkit.org/show_bug.cgi?id=239737
+        // and https://github.com/w3c/webauthn/issues/1722
+        if ($encUserHandle !== null && $encUserHandle !== '') {
             $userHandle = new ByteBuffer(Base64UrlEncoding::decode($encUserHandle));
         }
 

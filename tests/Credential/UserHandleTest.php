@@ -63,4 +63,34 @@ class UserHandleTest extends TestCase
         self::assertTrue($id1->equals($id2));
         self::assertFalse($id2->equals($id3));
     }
+
+    /**
+     * @param callable():void $fn
+     *
+     * @dataProvider emptyCalls
+     */
+    public function testDisallowEmpty(callable $fn): void
+    {
+        $this->expectException(WebAuthnException::class);
+        $this->expectDeprecationMessageMatches('~not be empty~');
+        $fn();
+    }
+
+    public function emptyCalls()
+    {
+        return [
+            'string' => [function () { UserHandle::fromString(''); }],
+            'buffer' => [function () { UserHandle::fromBuffer(new ByteBuffer('')); }],
+            'hex' => [function () { UserHandle::fromHex(''); }],
+            'binary' => [function () { UserHandle::fromBinary(''); }],
+            'constructor' => [function () {
+                (new class() extends UserHandle {
+                    public function __construct()
+                    {
+                        parent::__construct('');
+                    }
+                })();
+            },
+        ], ];
+    }
 }

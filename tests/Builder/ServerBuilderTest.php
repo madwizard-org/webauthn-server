@@ -5,8 +5,8 @@ namespace MadWizard\WebAuthn\Tests\Builder;
 use MadWizard\WebAuthn\Builder\ServerBuilder;
 use MadWizard\WebAuthn\Config\RelyingParty;
 use MadWizard\WebAuthn\Credential\CredentialStoreInterface;
-use PHPStan\Testing\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \MadWizard\WebAuthn\Builder\ServerBuilder

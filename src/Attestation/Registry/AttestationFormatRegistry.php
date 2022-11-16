@@ -19,20 +19,10 @@ final class AttestationFormatRegistry implements AttestationFormatRegistryInterf
     /**
      * @var bool
      */
-    private $allowUnsupportedFormats = false;
-
-    /**
-     * @var bool
-     */
     private $strictSupportedFormats = true;
 
     public function __construct()
     {
-    }
-
-    public function setAllowUnsupportedFormats(bool $allowed): void
-    {
-        $this->allowUnsupportedFormats = $allowed;
     }
 
     public function addFormat(AttestationFormatInterface $format): void

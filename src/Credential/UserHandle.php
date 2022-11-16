@@ -23,6 +23,10 @@ class UserHandle extends BinaryHandle
         if (\strlen($rawBytes) > self::MAX_USER_HANDLE_BYTES) {
             throw new WebAuthnException(sprintf('User handle cannot be larger than %d bytes.', self::MAX_USER_HANDLE_BYTES));
         }
+        if ($rawBytes === '') {
+            // https://www.w3.org/TR/webauthn-2/#dom-publickeycredentialuserentity-id
+            throw new WebAuthnException('User handle must not be empty');
+        }
         parent::__construct($rawBytes);
     }
 

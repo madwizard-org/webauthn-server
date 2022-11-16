@@ -3,7 +3,7 @@
 namespace MadWizard\WebAuthn\Tests\Pki;
 
 use MadWizard\WebAuthn\Pki\X509Certificate;
-use PHPStan\Testing\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class X509CertificateTest extends TestCase
 {

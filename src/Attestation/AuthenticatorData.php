@@ -44,7 +44,7 @@ final class AuthenticatorData
      /**
      * Backup State (BS).
      */
-    private const FLAG_ED = 1 << 4;
+    private const FLAG_BS = 1 << 4;
 
     /**
      * SHA-256 hash of the RP ID associated with the credential.

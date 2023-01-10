@@ -35,6 +35,16 @@ final class AuthenticatorData
      * Extension data included (ED).
      */
     private const FLAG_ED = 1 << 7;
+    
+     /**
+     * Backup Eligibility (BE).
+     */
+    private const FLAG_BE = 1 << 3;
+    
+     /**
+     * Backup State (BS).
+     */
+    private const FLAG_BS = 1 << 4;
 
     /**
      * SHA-256 hash of the RP ID associated with the credential.
@@ -149,6 +159,16 @@ final class AuthenticatorData
     public function isUserVerified(): bool
     {
         return ($this->flags & self::FLAG_UV) !== 0;
+    }
+    
+    public function isBackupEligable(): bool
+    {
+        return ($this->flags & self::FLAG_BE) !== 0;
+    }
+
+    public function isBackedUp(): bool
+    {
+        return ($this->flags & self::FLAG_BS) !== 0;
     }
 
     public function hasAttestedCredentialData(): bool

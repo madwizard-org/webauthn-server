@@ -74,6 +74,11 @@ abstract class CoseKey implements CoseKeyInterface
 
     public static function parseCbor(ByteBuffer $buffer, int $offset = 0, int &$endOffset = null): CoseKey
     {
+        // Fix incorrect EdDSA keys
+        $isIncorrectKey = $buffer->getBytes($offset, 17) == "\xa3\x01\x63\x4f\x4b\x50\x03\x27\x20\x67\x45\x64\x32\x35\x35\x31\x39";
+        if ($isIncorrectKey) {
+            $buffer = new ByteBuffer($buffer->getBytes(0, $offset) . "\xa4" . $buffer->getBytes($offset + 1, $buffer->getLength() - $offset - 1));
+        }
         $data = CborDecoder::decodeInPlace($buffer, $offset, $endOffset);
 
         if (!$data instanceof CborMap) {
@@ -93,6 +98,11 @@ abstract class CoseKey implements CoseKeyInterface
             ],
             false
         );
+
+        // Fix incorrect EdDSA keys, part 2: x coordinate should be bstr, not array
+        if ($isIncorrectKey && $data->has(-2) && is_array($data->get(-2))) {
+            $data->set(-2, new ByteBuffer(implode(array_map('chr', $data->get(-2)))));
+        }
 
         $keyType = $data->get(self::COSE_KEY_PARAM_KTY);
         return self::createKey($keyType, $data);

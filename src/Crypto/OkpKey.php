@@ -113,6 +113,16 @@ class OkpKey extends CoseKey
 
     public static function fromCborData(CborMap $data): OkpKey
     {
+        // Translate literal curves to their numeric constant
+        if ($data->get(self::KTP_CRV) === 'X25519')
+            $data->set(self::KTP_CRV, 4);
+        elseif ($data->get(self::KTP_CRV) === 'X448')
+            $data->set(self::KTP_CRV, 5);
+        elseif ($data->get(self::KTP_CRV) === 'Ed25519')
+            $data->set(self::KTP_CRV, 6);
+        elseif ($data->get(self::KTP_CRV) === 'Ed448')
+            $data->set(self::KTP_CRV, 7);
+
         // Note: leading zeroes in X and Y coordinates are preserved in CBOR
         // See RFC8152 13.1.1. Double Coordinate Curves
         DataValidator::checkMap(

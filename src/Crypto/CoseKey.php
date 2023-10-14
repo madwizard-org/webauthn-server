@@ -80,6 +80,12 @@ abstract class CoseKey implements CoseKeyInterface
             throw new DataValidationException('Failed to decode CBOR encoded COSE key'); // TODO: change exceptions
         }
 
+        // Replace textual kty's with their numeric counterparts
+        if ($data->get(self::COSE_KEY_PARAM_KTY) === 'OKP')
+            $data->set(self::COSE_KEY_PARAM_KTY, 1);
+        elseif ($data->get(self::COSE_KEY_PARAM_KTY) === 'EC2')
+            $data->set(self::COSE_KEY_PARAM_KTY, 2);
+
         DataValidator::checkMap(
             $data,
             [

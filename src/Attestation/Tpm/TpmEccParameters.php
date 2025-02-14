@@ -32,6 +32,10 @@ final class TpmEccParameters implements KeyParametersInterface
 
     public const TPM_ECC_NIST_P256 = 0x0003;
 
+    public const TPM_ECC_NIST_P384 = 0x0004;
+
+    public const TPM_ECC_NIST_P521 = 0x0005;
+
     public const TPM_ECC_BN_P256 = 0x0010;
 
     public const TPM_ECC_SM2_P256 = 0x0020;

@@ -137,10 +137,18 @@ final class TpmAttestationVerifier implements AttestationVerifierInterface
                 return false;
             }
 
-            if ($key->getCurve() !== Ec2Key::CURVE_P256) {
-                throw new UnsupportedException("Only P-256 NIST curves supported for TPM ECC keys");
+            $curveMap = [
+                TpmEccParameters::TPM_ECC_NIST_P256 => Ec2Key::CURVE_P256,
+                TpmEccParameters::TPM_ECC_NIST_P384 => Ec2Key::CURVE_P384,
+                TpmEccParameters::TPM_ECC_NIST_P521 => Ec2Key::CURVE_P521,
+            ];
+
+            $expectedCurve = $curveMap[$params->getCurveId()] ?? null;
+            if ($expectedCurve === null) {
+                throw new UnsupportedException("Unsupported curve for TPM ECC keys");
             }
-            if ($params->getCurveId() !== TpmEccParameters::TPM_ECC_NIST_P256) {
+
+            if ($key->getCurve() !== $expectedCurve) {
                 return false;
             }
             return true;
